@@ -7,14 +7,7 @@
 
 #include "core.h"
 #include "camera.h"
-#include "cube.h"
-#include "Skeleton.h"
-#include "Skin.h"
-#include "Animate.h"
-#include "Cloth.h"
 #include <iostream>
-#include "ball.h"
-#include "Floor.h"
 using namespace std;
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -46,13 +39,6 @@ private:
 
 	// Components
 	Camera Cam;
-	SpinningCube Cube;
-    Skeleton bones;
-    std::vector<Matrix34> worldmat;
-    Skin skins;
-    Animate tion;
-    Cloth flag;
-    ball bball;
     bool temp;
     bool n;
     bool s;
@@ -71,9 +57,6 @@ private:
     int nextx, nexty;
     bool gridon;
     bool floor;
-    Vector3 wind;
-    Floor ground;
-    
     
 };
 

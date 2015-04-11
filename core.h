@@ -2,25 +2,35 @@
 // core.h
 ////////////////////////////////////////
 
-#ifndef CSE169_CORE_H
-#define CSE169_CORE_H
+#ifndef _CORE_H
+#define _CORE_H
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifdef WIN32
-#define M_PI	3.14159f
-#include <windows.h>
+#ifdef _WIN32
+	#define M_PI	3.14159f
+	#include <math.h>
+	#include <stdlib.h>
+	#include <stdio.h>
+	#include <string.h>
+	#include <ctype.h>
+
+	#include <windows.h>
+	#include <GL/gl.h>
+	#include <GL/glut.h>
 #endif
 
-#include <math.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
+#ifdef __APPLE__
+	#include <math.h>
+	#include <stdlib.h>
+	#include <stdio.h>
+	#include <string.h>
+	#include <ctype.h>
 
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#include <GLUT/glut.h>
+	#include <OpenGL/gl.h>
+	#include <OpenGL/glu.h>
+	#include <GLUT/glut.h>
+#endif
 
 void drawAxis(float size);
 void drawWireBox(float xmin,float ymin,float zmin,float xmax,float ymax,float zmax);
