@@ -6,6 +6,7 @@
 #define CSE169_CAMERA_H
 
 #include "core.h"
+#include "Vector4.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -18,8 +19,9 @@ public:
 	void Draw();
 
 	// Access functions
+	void SetPosition(float x, float y, float z)		{ cx = x; cy = y; cz = z; }
 	void SetAspect(float a)		{Aspect=a;}
-	void SetDistance(float d)	{Distance=d;}
+	void SetDistance(float d)	{if(d>MIN_CAMERA_DISTANCE && d<MAX_CAMERA_DISTANCE) Distance=d;}
 	void SetAzimuth(float a)	{Azimuth=a;}
 	void SetIncline(float i)	{Incline=i;}
 

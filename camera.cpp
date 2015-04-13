@@ -9,7 +9,7 @@
 Camera::Camera() {
 	Reset();
     cx=0;
-    cy=0;
+    cy=-5;
     cz=0;
 }
 
@@ -26,7 +26,7 @@ void Camera::Reset() {
 	NearClip=0.1f;
 	FarClip=100.0f;
 
-	Distance=5.0f;
+	Distance=20.0f;
 	Azimuth=0.0f;
 	Incline=0.0f;
 }
@@ -42,7 +42,7 @@ void Camera::Draw() {
 	gluPerspective(FOV,Aspect,NearClip,FarClip);
 
 	// Place camera
-	glTranslatef(cx,cy,cz-Distance);
+	glTranslatef(cx, cy, cz - Distance);
 	glRotatef(Incline,1.0f,0.0f,0.0f);
 	glRotatef(Azimuth,0.0f,1.0f,0.0f);
 

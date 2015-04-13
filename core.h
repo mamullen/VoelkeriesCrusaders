@@ -6,27 +6,20 @@
 #define _CORE_H
 
 ////////////////////////////////////////////////////////////////////////////////
+#include <math.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
 
 #ifdef _WIN32
 	#define M_PI	3.14159f
-	#include <math.h>
-	#include <stdlib.h>
-	#include <stdio.h>
-	#include <string.h>
-	#include <ctype.h>
 
 	#include <windows.h>
-	#include <GL/gl.h>
-	#include <GL/glut.h>
+	#include <GL/freeglut.h>
 #endif
 
 #ifdef __APPLE__
-	#include <math.h>
-	#include <stdlib.h>
-	#include <stdio.h>
-	#include <string.h>
-	#include <ctype.h>
-
 	#include <OpenGL/gl.h>
 	#include <OpenGL/glu.h>
 	#include <GLUT/glut.h>
@@ -34,6 +27,13 @@
 
 void drawAxis(float size);
 void drawWireBox(float xmin,float ymin,float zmin,float xmax,float ymax,float zmax);
+
+static const int MOUSE_UP = 1;
+static const int MOUSE_DOWN = -1;
+static const int MIN_CAMERA_DISTANCE = 7;
+static const int MAX_CAMERA_DISTANCE = 20;
+static const int ROTATE_LEFT = 10;
+static const int ROTATE_RIGHT = -10;
 
 ////////////////////////////////////////////////////////////////////////////////
 

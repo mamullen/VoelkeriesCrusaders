@@ -6,6 +6,7 @@
 #define CSE169_MATRIX34_H
 
 #include "vector3.h"
+#include "vector4.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -23,6 +24,7 @@ public:
 
 	// Transform
 	void Transform(const Vector3 &in,Vector3 &out) const;
+	void Transform(const Vector4 &in, Vector4 &out) const;
 	void Transform3x3(const Vector3 &in,Vector3 &out) const;
 
 	// MakeRotate (NOTE: t is an angle in RADIANS)

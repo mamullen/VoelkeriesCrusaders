@@ -4,7 +4,7 @@
 
 #include "tester.h"
 
-#define WINDOWTITLE	"Project 1 Skeleton"
+#define WINDOWTITLE	"Voelkeries Crusaders"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -27,14 +27,15 @@ static void resize(int x,int y)							{TESTER->Resize(x,y);}
 static void keyboard(unsigned char key,int x,int y)		{TESTER->Keyboard(key,x,y);}
 static void mousebutton(int btn,int state,int x,int y)	{TESTER->MouseButton(btn,state,x,y);}
 static void mousemotion(int x, int y)					{TESTER->MouseMotion(x,y);}
+static void mouseroll(int wheel,int dir,int x,int y)	{TESTER->MouseRoll(wheel, dir, x, y);}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 Tester::Tester(int argc,char **argv) {
-	WinX=640;
-	WinY=480;
+	WinX=1024;
+	WinY=768;
     
-	LeftDown=MiddleDown=RightDown=false;
+	LeftDown=MiddleDown=RightDown=BothDown=false;
 	MouseX=MouseY=0;
 
 	// Create the window
@@ -46,7 +47,7 @@ Tester::Tester(int argc,char **argv) {
 	glutSetWindow( WindowHandle );
 
 	// Background color
-	glClearColor( 0., 0., 0., 1. );
+	glClearColor( 0.5, 0., 0., 1. );
 
 	// Callbacks
 	glutDisplayFunc( display );
@@ -55,9 +56,8 @@ Tester::Tester(int argc,char **argv) {
 	glutMouseFunc( mousebutton );
 	glutMotionFunc( mousemotion );
 	glutPassiveMotionFunc( mousemotion );
+	glutMouseWheelFunc( mouseroll );
 	glutReshapeFunc( resize );
-
-
 
 	// Initialize components
 
@@ -98,7 +98,28 @@ void Tester::Draw() {
 
 	// Draw components
 	Cam.Draw();		// Sets up projection & viewing matrices
-	glutSolidCube(6);
+
+	if (BothDown) {
+		player.moveForward(0.01);
+	}
+
+	glPushMatrix();
+	glLoadIdentity();
+	glTranslatef(player.getPos().x, player.getPos().y, player.getPos().z);
+
+	//create ground plane
+	glColor3f(0.7, 0.7, 0.7);
+	glBegin(GL_QUADS);
+	glNormal3f(0, 1, 0);
+	glVertex3f(-20, 0, -20);
+	glVertex3f(-20, 0, 20);
+	glVertex3f(20, 0, 20);
+	glVertex3f(20, 0, -20);
+	glEnd();
+	glPopMatrix();
+
+	player.update();
+
 	glFinish();
 	glutSwapBuffers();
 }
@@ -121,8 +142,33 @@ void Tester::Resize(int x,int y) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Tester::Keyboard(int key,int x,int y) {
+void Tester::Keyboard(int key, int x, int y) {
+	float playerRotation = -player.getRotation();
 
+	switch (key)
+	{
+		case 'w':
+			player.moveForward();
+			Cam.SetAzimuth(playerRotation);
+			break;
+		case 'a':
+			player.rotateLeft();
+			break;
+		case 's':
+			player.moveBackward();
+			break;
+		case 'd':
+			player.rotateRight();
+			break;
+		case 'q':
+			player.moveLeft();
+			Cam.SetAzimuth(playerRotation); // needs some kind of fade effect
+			break;
+		case 'e':
+			player.moveRight();
+			Cam.SetAzimuth(playerRotation);
+			break;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -131,21 +177,34 @@ void Tester::MouseButton(int btn,int state,int x,int y) {
 	if(rotate)
     {
         if(btn==GLUT_LEFT_BUTTON) {
-            LeftDown = (state==GLUT_DOWN);
+			LeftDown = (state == GLUT_DOWN);
+			BothDown = RightDown && (state == GLUT_DOWN);
         }
         else if(btn==GLUT_MIDDLE_BUTTON) {
             MiddleDown = (state==GLUT_DOWN);
         }
         else if(btn==GLUT_RIGHT_BUTTON) {
             RightDown = (state==GLUT_DOWN);
+			BothDown = LeftDown && (state == GLUT_DOWN);
         }
     }
     else
     {
         if(btn==GLUT_LEFT_BUTTON) {
             LeftDownTwo = (state==GLUT_DOWN);
-        }
+        } 
     }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Tester::MouseRoll(int wheel, int dir, int x, int y) {
+	const float rate = 0.1f;
+	if (dir == MOUSE_UP) {
+		Cam.SetDistance(Cam.GetDistance()*(1.0f - rate));
+	} else if (dir == MOUSE_DOWN) {
+		Cam.SetDistance(Cam.GetDistance()*(1.0f + rate));
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -157,16 +216,17 @@ void Tester::MouseMotion(int nx,int ny) {
 	MouseX = nx;
 	MouseY = ny;
 
+	const float rate = 1.0f;
 	// Move camera
 	// NOTE: this should really be part of Camera::Update()
 	if(LeftDown) {
-		const float rate=1.0f;
 		Cam.SetAzimuth(Cam.GetAzimuth()+dx*rate);
 		Cam.SetIncline(Cam.GetIncline()-dy*rate);
 	}
 	if(RightDown) {
-		const float rate=0.01f;
-		Cam.SetDistance(Cam.GetDistance()*(1.0f-dx*rate));
+		Cam.SetAzimuth(Cam.GetAzimuth() + dx*rate);
+		Cam.SetIncline(Cam.GetIncline() - dy*rate);
+		player.setRotation(-Cam.GetAzimuth());
 	}
 }
 

@@ -73,6 +73,15 @@ void Matrix34::Transform(const Vector3 &in,Vector3 &out) const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void Matrix34::Transform(const Vector4 &in, Vector4 &out) const {
+	float x = in.x*a.x + in.y*b.x + in.z*c.x + d.x;
+	float y = in.x*a.y + in.y*b.y + in.z*c.y + d.y;
+	float z = in.x*a.z + in.y*b.z + in.z*c.z + d.z;
+	out.Set(x, y, z, in.w);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void Matrix34::Transform3x3(const Vector3 &in,Vector3 &out) const {
 	float x=in.x*a.x + in.y*b.x + in.z*c.x;
 	float y=in.x*a.y + in.y*b.y + in.z*c.y;

@@ -13,7 +13,8 @@
 #include <string>
 #include <math.h>
 
-#define M_PI 3.14159265358979323846
+#include "vector3.h"
+
 class Vector4
 {
 public:
@@ -21,6 +22,7 @@ public:
     double y;
     double z;
     double w;
+	void Set(float x0, float y0, float z0, float w0)				{ x = x0; y = y0; z = z0; w = w0; }
     Vector4();
     ~Vector4();
     Vector4(double x, double y, double z, double w);
@@ -28,13 +30,12 @@ public:
     Vector4 operator-(const Vector4& v);
     void dehomogenize();
     void print(std::string comment);
-    float length();
+	double length();
     void normalize();
     double dot(const Vector4& v1, const Vector4& v2);
     Vector4 cross(const Vector4& v1, const Vector4& v2);
     
-    void scale(double s);
-    
+    Vector4 scale(double s);
     
 };
 

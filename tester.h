@@ -7,6 +7,7 @@
 
 #include "core.h"
 #include "camera.h"
+#include "player.h"
 #include <iostream>
 using namespace std;
 ////////////////////////////////////////////////////////////////////////////////
@@ -26,6 +27,7 @@ public:
 	void Resize(int x,int y);
 	void Keyboard(int key,int x,int y);
 	void MouseButton(int btn,int state,int x,int y);
+	void MouseRoll(int wheel, int dir, int x, int y);
 	void MouseMotion(int x,int y);
 
 private:
@@ -34,30 +36,13 @@ private:
 	int WinX,WinY;
 
 	// Input
-	bool LeftDown,MiddleDown,RightDown,LeftDownTwo;
+	bool LeftDown,MiddleDown,RightDown,LeftDownTwo,BothDown;
 	int MouseX,MouseY;
 
 	// Components
 	Camera Cam;
-    bool temp;
-    bool n;
-    bool s;
-    int skelskin;
-    int light;
-    int dofnum;
-    float dofx;
-    float dofy;
-    float dofz;
-    bool cull;
-    float tt;
-    int posjoint;
-    bool rotate;
-    float newx,newy,newz;
-    int xtimes,ytimes,ztimes;
-    int nextx, nexty;
-    bool gridon;
-    bool floor;
-    
+	Player player;
+	bool rotate;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

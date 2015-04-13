@@ -32,35 +32,27 @@ Vector4::Vector4(double x, double y, double z, double w)
 
 Vector4 Vector4::operator+(const Vector4& v)
 {
-    x += v.x;
-    y += v.y;
-    z += v.z;
-    
-    return *this;
+	return Vector4(x + v.x, y + v.y, z + v.z, w);
 }
 
-float Vector4::length()
+Vector4 Vector4::operator-(const Vector4& v)
+{
+	return Vector4(x - v.x, y - v.y, z - v.z, w);
+}
+
+double Vector4::length()
 {
     return sqrt(x*x + y*y + z*z);
 }
 
 void Vector4::normalize()
 {
-    float l = this->length();
+    double l = this->length();
     x = x/l;
-    y=y/l;
-    z=z/l;
-    
+    y = y/l;
+    z = z/l;
 }
 
-Vector4 Vector4::operator-(const Vector4& v)
-{
-    x -= v.x;
-    y -= v.y;
-    z -= v.z;
-    
-    return *this;
-}
 void Vector4::dehomogenize()
 {
     //w -> 1 turns on translation else w -> 0 off translation
@@ -69,8 +61,6 @@ void Vector4::dehomogenize()
     z = z / w;
     w = w / w;
 }
-
-
 
 double Vector4::dot(const Vector4& v1, const Vector4& v2)
 {
@@ -87,10 +77,7 @@ Vector4 Vector4::cross(const Vector4& v1, const Vector4& v2)
     return *this;
 }
 
-
-void Vector4::scale(double s)
+Vector4 Vector4::scale(double s)
 {
-    x = s*x;
-    y = s*y;
-    z = s*z;
+	return Vector4(s*x, s*y, s*z, w);
 }
