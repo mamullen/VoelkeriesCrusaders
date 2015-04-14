@@ -16,8 +16,8 @@ private:
 	Matrix34 rotateMx;
 
 	Vector4 position = Vector4(0, 2, 0, 1);
-	Vector4 forward = Vector4(0, 0, 1, 1);
-	Vector4 right = Vector4(-1, 0, 0, 1);
+	Vector4 forward = INIT_FORWARD;
+	Vector4 right = INIT_RIGHT;
 	Vector4 up = Vector4(0, 1, 0, 1); 
 
 public:

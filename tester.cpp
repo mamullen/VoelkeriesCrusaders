@@ -24,7 +24,8 @@ int main(int argc, char **argv) {
 static void display()									{TESTER->Draw();}
 static void idle()										{TESTER->Update();}
 static void resize(int x,int y)							{TESTER->Resize(x,y);}
-static void keyboard(unsigned char key,int x,int y)		{TESTER->Keyboard(key,x,y);}
+static void keyboard_down(unsigned char key, int x, int y)		{ TESTER->KeyboardDown(key, x, y); }
+static void keyboard_up(unsigned char key, int x, int y)		{ TESTER->KeyboardUp(key, x, y); }
 static void mousebutton(int btn,int state,int x,int y)	{TESTER->MouseButton(btn,state,x,y);}
 static void mousemotion(int x, int y)					{TESTER->MouseMotion(x,y);}
 static void mouseroll(int wheel,int dir,int x,int y)	{TESTER->MouseRoll(wheel, dir, x, y);}
@@ -36,6 +37,9 @@ Tester::Tester(int argc,char **argv) {
 	WinY=768;
     
 	LeftDown=MiddleDown=RightDown=BothDown=false;
+	for (int i = 0; i < 256; i++) { //256 being the size of keys
+		keys[i] = false;
+	}
 	MouseX=MouseY=0;
 
 	// Create the window
@@ -52,7 +56,8 @@ Tester::Tester(int argc,char **argv) {
 	// Callbacks
 	glutDisplayFunc( display );
 	glutIdleFunc( idle );
-	glutKeyboardFunc( keyboard );
+	glutKeyboardFunc( keyboard_down );
+	glutKeyboardUpFunc( keyboard_up ); 
 	glutMouseFunc( mousebutton );
 	glutMotionFunc( mousemotion );
 	glutPassiveMotionFunc( mousemotion );
@@ -92,6 +97,7 @@ void Tester::Reset() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Tester::Draw() {
+	KeyOperations();
 	// Begin drawing scene
 	glViewport(0, 0, WinX, WinY);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -142,32 +148,41 @@ void Tester::Resize(int x,int y) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Tester::Keyboard(int key, int x, int y) {
+void Tester::KeyboardDown(int key, int x, int y) {
+	keys[key] = BUTTON_DOWN;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Tester::KeyboardUp(int key, int x, int y) {
+	keys[key] = BUTTON_UP;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Tester::KeyOperations() {
 	float playerRotation = -player.getRotation();
 
-	switch (key)
-	{
-		case 'w':
-			player.moveForward();
-			Cam.SetAzimuth(playerRotation);
-			break;
-		case 'a':
-			player.rotateLeft();
-			break;
-		case 's':
-			player.moveBackward();
-			break;
-		case 'd':
-			player.rotateRight();
-			break;
-		case 'q':
-			player.moveLeft();
-			Cam.SetAzimuth(playerRotation); // needs some kind of fade effect
-			break;
-		case 'e':
-			player.moveRight();
-			Cam.SetAzimuth(playerRotation);
-			break;
+	if (keys['w']) {
+		player.moveForward();
+		Cam.SetAzimuth(playerRotation);
+	}
+	if (keys['a']) {
+		player.rotateLeft();
+	}
+	if (keys['s']) {
+		player.moveBackward();
+	}
+	if (keys['d']) {
+		player.rotateRight();
+	}
+	if (keys['q']) {
+		player.moveLeft();
+		Cam.SetAzimuth(playerRotation); // needs some kind of fade effect
+	}
+	if (keys['e']) {
+		player.moveRight();
+		Cam.SetAzimuth(playerRotation);
 	}
 }
 

@@ -24,11 +24,13 @@ public:
 	void Quit();
 
 	// Event handlers
-	void Resize(int x,int y);
-	void Keyboard(int key,int x,int y);
+	void Resize(int x, int y);	
+	void KeyboardDown(int key, int x, int y);
+	void KeyboardUp(int key, int x, int y);
 	void MouseButton(int btn,int state,int x,int y);
 	void MouseRoll(int wheel, int dir, int x, int y);
 	void MouseMotion(int x,int y);
+	void KeyOperations();
 
 private:
 	// Window management
@@ -43,6 +45,7 @@ private:
 	Camera Cam;
 	Player player;
 	bool rotate;
+	unsigned char keys[256];
 };
 
 ////////////////////////////////////////////////////////////////////////////////

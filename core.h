@@ -28,6 +28,8 @@
 void drawAxis(float size);
 void drawWireBox(float xmin,float ymin,float zmin,float xmax,float ymax,float zmax);
 
+static const int BUTTON_DOWN = 1;
+static const int BUTTON_UP = 0;
 static const int MOUSE_UP = 1;
 static const int MOUSE_DOWN = -1;
 static const int MIN_CAMERA_DISTANCE = 7;
