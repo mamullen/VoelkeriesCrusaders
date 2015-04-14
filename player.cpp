@@ -10,10 +10,19 @@ void Player::update() {
 
 	//initial player model is just a cone for now
 	glPushMatrix();
-	glColor3f(0, 1, 0);
+
 	glRotatef(180, 0, 1, 0);
 	glRotatef(rotation, 0, 1, 0);
-	glutSolidCone(0.5, 1, 20, 20);
+
+	glBegin(GL_TRIANGLES);
+	glColor3f(1.f, 1.f, 0.f);
+	glVertex3f(-0.6f, 2.f, -0.4f);
+	glColor3f(0.f, 0.f, 1.f);
+	glVertex3f(0.6f, 2.f, -0.4f);
+	glColor3f(0.f, 1.f, 1.f);
+	glVertex3f(0.f, 2.f, 0.6f);
+
+	glEnd();
 	glPopMatrix();
 }
 
@@ -21,25 +30,26 @@ void Player::jump() {
 	position = position + forward.scale(speed) + up.scale(speed);
 }
 
-void Player::moveForward() {
+void Player::MoveForward() {
 	position = position + forward.scale(speed);
 }
 
-void Player::moveForward(float speed) {
+void Player::MoveForward(float speed) {
 	position = position + forward.scale(speed);
 }
 
-void Player::moveBackward() {
+void Player::MoveBackward() {
 	position = position - forward.scale(speed);
 }
 
-void Player::moveRight() {
+void Player::StrafeLeft() {
+	position = position - right.scale(speed);
+}
+
+void Player::StrafeRight() {
 	position = position + right.scale(speed);
 }
 
-void Player::moveLeft() {
-	position = position - right.scale(speed);
-}
 
 void Player::rotateLeft() {
 	rotation += ROTATE_LEFT;

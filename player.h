@@ -9,6 +9,14 @@
 static const Vector4 INIT_FORWARD = Vector4(0, 0, 1, 1);
 static const Vector4 INIT_RIGHT = Vector4(-1, 0, 0, 1);
 
+// Player's Controls
+const int FORWARD = GLFW_KEY_W;
+const int BACKWARD = GLFW_KEY_S;
+const int STRAFELEFT = GLFW_KEY_Q;
+const int STRAFERIGHT = GLFW_KEY_E;
+const int ROTATELEFT = GLFW_KEY_A;
+const int ROTATERIGHT = GLFW_KEY_D;
+
 class Player {
 private:
 	float speed = 0.5;
@@ -21,11 +29,12 @@ private:
 	Vector4 up = Vector4(0, 1, 0, 1); 
 
 public:
-	void moveForward();
-	void moveForward(float speed);
-	void moveBackward();
-	void moveLeft();
-	void moveRight();
+	void MoveForward();
+	void MoveForward(float speed);
+	void MoveBackward();
+	void StrafeLeft();
+	void StrafeRight();
+
 	void rotateLeft();
 	void rotateRight();
 	void jump();
@@ -38,7 +47,6 @@ public:
 	void setRotation(float rot)			{ rotation = rot; rotateMx.MakeRotateY(rot*M_PI/180); resetForward(rotateMx); }
 	void setForward(Matrix34 rotate)	{ rotate.Transform(forward, forward); rotate.Transform(right, right); }
 	void resetForward(Matrix34 rotate)	{ rotate.Transform(INIT_FORWARD, forward); rotate.Transform(INIT_RIGHT, right); }
-
 };
 
 #endif

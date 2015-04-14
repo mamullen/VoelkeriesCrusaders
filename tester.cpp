@@ -9,26 +9,31 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 static Tester *TESTER;
-
-int main(int argc, char **argv) {
-    
-	glutInit(&argc, argv);
-	TESTER = new Tester(argc,argv);
-	glutMainLoop();
-	return 0;
-}
+static GLFWwindow* window;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// These are really HACKS to make glut call member functions instead of static functions
-static void display()									{TESTER->Draw();}
-static void idle()										{TESTER->Update();}
-static void resize(int x,int y)							{TESTER->Resize(x,y);}
-static void keyboard_down(unsigned char key, int x, int y)		{ TESTER->KeyboardDown(key, x, y); }
-static void keyboard_up(unsigned char key, int x, int y)		{ TESTER->KeyboardUp(key, x, y); }
-static void mousebutton(int btn,int state,int x,int y)	{TESTER->MouseButton(btn,state,x,y);}
-static void mousemotion(int x, int y)					{TESTER->MouseMotion(x,y);}
-static void mouseroll(int wheel,int dir,int x,int y)	{TESTER->MouseRoll(wheel, dir, x, y);}
+// These are really HACKS to make glfw call member functions instead of static functions
+static void keyboard_down(GLFWwindow* window, int key, int scancode, int action, int mods)		{ TESTER->KeyCallback(window, key, scancode, action, mods); }
+static void mouse_button(GLFWwindow* window, int button, int action, int mods)					{ TESTER->MouseButton(window, button, action, mods); }
+static void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos)					{ TESTER->MouseMotion(window, xpos, ypos); }
+static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)					{ TESTER->MouseScroll(window, xoffset, yoffset); }
+
+static void error_callback(int error, const char* description)									{ fputs(description, stderr); }
+
+////////////////////////////////////////////////////////////////////////////////
+
+int main(int argc, char **argv) {
+	glfwSetErrorCallback(error_callback);
+
+	if (!glfwInit())
+		exit(EXIT_FAILURE);
+
+	TESTER = new Tester(argc, argv);	//initialize
+	TESTER->Loop();
+
+	return 0;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -37,35 +42,32 @@ Tester::Tester(int argc,char **argv) {
 	WinY=768;
     
 	LeftDown=MiddleDown=RightDown=BothDown=false;
-	for (int i = 0; i < 256; i++) { //256 being the size of keys
-		keys[i] = false;
-	}
 	MouseX=MouseY=0;
 
 	// Create the window
-	glutInitDisplayMode( GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH );
-	glutInitWindowSize( WinX, WinY );
-	glutInitWindowPosition( 0, 0 );
-	WindowHandle = glutCreateWindow( WINDOWTITLE );
-	glutSetWindowTitle( WINDOWTITLE );
-	glutSetWindow( WindowHandle );
+	window = glfwCreateWindow(1366, 768, WINDOWTITLE, NULL, NULL); // pass in glfwGetPrimaryMonitor() to first null for fullscreen
+	if (!window)
+	{
+		glfwTerminate();
+		exit(EXIT_FAILURE);
+	}
+
+	glfwMakeContextCurrent(window);
+	glfwSwapInterval(0);	// no vsync
+
+	glfwSetKeyCallback(window, keyboard_down); 
+	glfwSetCursorPosCallback(window, cursor_pos_callback);
+	glfwSetMouseButtonCallback(window, mouse_button);
+	glfwSetScrollCallback(window, scroll_callback);
+
+	glfwGetFramebufferSize(window, &WinX, &WinY);
+	ratio = WinX / (float)WinY;
 
 	// Background color
 	glClearColor( 0.5, 0., 0., 1. );
-
-	// Callbacks
-	glutDisplayFunc( display );
-	glutIdleFunc( idle );
-	glutKeyboardFunc( keyboard_down );
-	glutKeyboardUpFunc( keyboard_up ); 
-	glutMouseFunc( mousebutton );
-	glutMotionFunc( mousemotion );
-	glutPassiveMotionFunc( mousemotion );
-	glutMouseWheelFunc( mouseroll );
-	glutReshapeFunc( resize );
+	glEnable(GL_DEPTH_TEST);
 
 	// Initialize components
-
 	Cam.SetAspect(float(WinX)/float(WinY));
 }
 
@@ -73,7 +75,9 @@ Tester::Tester(int argc,char **argv) {
 
 Tester::~Tester() {
 	glFinish();
-	glutDestroyWindow(WindowHandle);
+	glfwDestroyWindow(window);
+	glfwTerminate();
+	exit(EXIT_SUCCESS);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -83,8 +87,6 @@ void Tester::Update() {
 	Cam.Update();
     
 	// Tell glut to re-display the scene
-	glutSetWindow(WindowHandle);
-	glutPostRedisplay();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -96,25 +98,12 @@ void Tester::Reset() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Tester::Draw() {
-	KeyOperations();
-	// Begin drawing scene
-	glViewport(0, 0, WinX, WinY);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// Draw components
-	Cam.Draw();		// Sets up projection & viewing matrices
-
-	if (BothDown) {
-		player.moveForward(0.01);
-	}
-
+void drawsomeground() { // deprecate this one day
 	glPushMatrix();
-	glLoadIdentity();
-	glTranslatef(player.getPos().x, player.getPos().y, player.getPos().z);
-
+	//glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
 	//create ground plane
-	glColor3f(0.7, 0.7, 0.7);
+	glTranslatef(0.f, -1.f, 0.f);
+	glColor3f(0.5f, 0.5f, 0.5f);
 	glBegin(GL_QUADS);
 	glNormal3f(0, 1, 0);
 	glVertex3f(-20, 0, -20);
@@ -123,18 +112,47 @@ void Tester::Draw() {
 	glVertex3f(20, 0, -20);
 	glEnd();
 	glPopMatrix();
+}
 
-	player.update();
+void Tester::Loop() {
+	while (!glfwWindowShouldClose(window))
+	{
+		if (BothDown) {
+			player.MoveForward(0.01);
+		}
 
-	glFinish();
-	glutSwapBuffers();
+		// Set up glStuff
+		glViewport(0, 0, WinX, WinY);
+		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+		// Draw components
+		Cam.Draw(ratio);		// Sets up projection & viewing matrices
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		player.update();
+
+		glTranslatef(player.getPos().x, player.getPos().y, player.getPos().z);
+
+		// Begin drawing player and scene
+		drawsomeground();
+
+
+		glEnd();
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Tester::Quit() {
 	glFinish();
-	glutDestroyWindow(WindowHandle);
+	glfwDestroyWindow(window);
+	glfwTerminate();
+	exit(EXIT_SUCCESS);
 	exit(0);
 }
 
@@ -148,97 +166,93 @@ void Tester::Resize(int x,int y) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Tester::KeyboardDown(int key, int x, int y) {
-	keys[key] = BUTTON_DOWN;
-}
+void Tester::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) // exit
+		glfwSetWindowShouldClose(window, GL_TRUE);
 
-////////////////////////////////////////////////////////////////////////////////
-
-void Tester::KeyboardUp(int key, int x, int y) {
-	keys[key] = BUTTON_UP;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void Tester::KeyOperations() {
 	float playerRotation = -player.getRotation();
 
-	if (keys['w']) {
-		player.moveForward();
+	if (glfwGetKey(window, FORWARD)) {
+		player.MoveForward();
 		Cam.SetAzimuth(playerRotation);
 	}
-	if (keys['a']) {
-		player.rotateLeft();
-	}
-	if (keys['s']) {
-		player.moveBackward();
-	}
-	if (keys['d']) {
-		player.rotateRight();
-	}
-	if (keys['q']) {
-		player.moveLeft();
+
+	if (glfwGetKey(window, STRAFELEFT)) {
+		player.StrafeLeft();
 		Cam.SetAzimuth(playerRotation); // needs some kind of fade effect
 	}
-	if (keys['e']) {
-		player.moveRight();
-		Cam.SetAzimuth(playerRotation);
+
+	if (glfwGetKey(window, STRAFERIGHT)) {
+		player.StrafeRight();
+	}
+
+	if (glfwGetKey(window, BACKWARD)) {
+		player.MoveBackward();
+	}
+
+	if (glfwGetKey(window, ROTATELEFT)) {
+		player.rotateLeft();
+	}
+
+	if (glfwGetKey(window, ROTATERIGHT)) {
+		player.rotateRight();
 	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Tester::MouseButton(int btn,int state,int x,int y) {
+void Tester::MouseButton(GLFWwindow* window, int button, int action, int mods) {
+	float playerRotation = -player.getRotation();
+
+	if (action == GLFW_PRESS) {
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
+	else if (action == GLFW_RELEASE) {
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
+
 	if(rotate)
     {
-        if(btn==GLUT_LEFT_BUTTON) {
-			LeftDown = (state == GLUT_DOWN);
-			BothDown = RightDown && (state == GLUT_DOWN);
+		if (button == GLFW_MOUSE_BUTTON_LEFT) {
+			LeftDown = (action == GLFW_PRESS);
+			BothDown = RightDown && (action == GLFW_PRESS);
         }
-        else if(btn==GLUT_MIDDLE_BUTTON) {
-            MiddleDown = (state==GLUT_DOWN);
+		else if (button == GLFW_MOUSE_BUTTON_MIDDLE) {
+			MiddleDown = (action == GLFW_PRESS);
         }
-        else if(btn==GLUT_RIGHT_BUTTON) {
-            RightDown = (state==GLUT_DOWN);
-			BothDown = LeftDown && (state == GLUT_DOWN);
+		else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+			if (action == GLFW_PRESS) {
+				Cam.SetAzimuth(playerRotation);
+			}
+			RightDown = (action == GLFW_PRESS);
+			BothDown = LeftDown && (action == GLFW_PRESS);
         }
     }
     else
     {
-        if(btn==GLUT_LEFT_BUTTON) {
-            LeftDownTwo = (state==GLUT_DOWN);
+		if (button == GLFW_MOUSE_BUTTON_LEFT) {
+			LeftDownTwo = (action == GLFW_PRESS);
         } 
     }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Tester::MouseRoll(int wheel, int dir, int x, int y) {
-	const float rate = 0.1f;
-	if (dir == MOUSE_UP) {
-		Cam.SetDistance(Cam.GetDistance()*(1.0f - rate));
-	} else if (dir == MOUSE_DOWN) {
-		Cam.SetDistance(Cam.GetDistance()*(1.0f + rate));
-	}
-}
+void Tester::MouseMotion(GLFWwindow* window, double xpos, double ypos) {
+	int dx = xpos - MouseX;
+	int dy = -(ypos - MouseY);
 
-////////////////////////////////////////////////////////////////////////////////
-
-void Tester::MouseMotion(int nx,int ny) {
-	int dx = nx - MouseX;
-	int dy = -(ny - MouseY);
-
-	MouseX = nx;
-	MouseY = ny;
+	MouseX = xpos;
+	MouseY = ypos;
 
 	const float rate = 1.0f;
 	// Move camera
 	// NOTE: this should really be part of Camera::Update()
-	if(LeftDown) {
-		Cam.SetAzimuth(Cam.GetAzimuth()+dx*rate);
-		Cam.SetIncline(Cam.GetIncline()-dy*rate);
+	if (LeftDown) {
+		Cam.SetAzimuth(Cam.GetAzimuth() + dx*rate);
+		Cam.SetIncline(Cam.GetIncline() - dy*rate);
 	}
-	if(RightDown) {
+	if (RightDown) {
 		Cam.SetAzimuth(Cam.GetAzimuth() + dx*rate);
 		Cam.SetIncline(Cam.GetIncline() - dy*rate);
 		player.setRotation(-Cam.GetAzimuth());
@@ -246,3 +260,14 @@ void Tester::MouseMotion(int nx,int ny) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Tester::MouseScroll(GLFWwindow* window, double xoffset, double yoffset) {
+	const float rate = 0.1f;
+	if (yoffset > 0) {
+		Cam.SetDistance(Cam.GetDistance()*(1.0f - rate));
+	} else if (yoffset < 0) {
+		Cam.SetDistance(Cam.GetDistance()*(1.0f + rate));
+	}
+}

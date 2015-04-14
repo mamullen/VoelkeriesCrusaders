@@ -19,21 +19,21 @@ public:
 
 	void Update();
 	void Reset();
-	void Draw();
+	void Loop();
 
 	void Quit();
 
 	// Event handlers
 	void Resize(int x, int y);	
-	void KeyboardDown(int key, int x, int y);
-	void KeyboardUp(int key, int x, int y);
-	void MouseButton(int btn,int state,int x,int y);
-	void MouseRoll(int wheel, int dir, int x, int y);
-	void MouseMotion(int x,int y);
-	void KeyOperations();
+	void MouseButton(GLFWwindow* window, int button, int action, int mods);
+	void MouseScroll(GLFWwindow* window, double xoffset, double yoffset);
+	void MouseMotion(GLFWwindow* window, double xpos, double ypos);
+
+	void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 private:
 	// Window management
+	float ratio;
 	int WindowHandle;
 	int WinX,WinY;
 
@@ -44,8 +44,7 @@ private:
 	// Components
 	Camera Cam;
 	Player player;
-	bool rotate;
-	unsigned char keys[256];
+	bool rotate; 
 };
 
 ////////////////////////////////////////////////////////////////////////////////

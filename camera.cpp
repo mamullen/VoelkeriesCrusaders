@@ -29,25 +29,23 @@ void Camera::Reset() {
 	Distance=20.0f;
 	Azimuth=0.0f;
 	Incline=0.0f;
-}
+} 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Camera::Draw() {
+void Camera::Draw(float ratio) {
 	// Tell GL we are going to adjust the projection matrix
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
 	// Set perspective projection
 	gluPerspective(FOV,Aspect,NearClip,FarClip);
+	//glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
 
 	// Place camera
 	glTranslatef(cx, cy, cz - Distance);
 	glRotatef(Incline,1.0f,0.0f,0.0f);
 	glRotatef(Azimuth,0.0f,1.0f,0.0f);
-
-	// Return to modelview matrix mode
-	glMatrixMode(GL_MODELVIEW);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

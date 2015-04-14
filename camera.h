@@ -16,14 +16,14 @@ public:
     float cx,cy,cz;
 	void Update();
 	void Reset();
-	void Draw();
+	void Draw(float);
 
 	// Access functions
 	void SetPosition(float x, float y, float z)		{ cx = x; cy = y; cz = z; }
 	void SetAspect(float a)		{Aspect=a;}
 	void SetDistance(float d)	{if(d>MIN_CAMERA_DISTANCE && d<MAX_CAMERA_DISTANCE) Distance=d;}
 	void SetAzimuth(float a)	{Azimuth=a;}
-	void SetIncline(float i)	{Incline=i;}
+	void SetIncline(float i)	{if(i>MIN_CAMERA_INCLINE && i<MAX_CAMERA_INCLINE) Incline=i;}
 
 	float GetDistance()			{return Distance;}
 	float GetAzimuth()			{return Azimuth;}

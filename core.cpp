@@ -31,7 +31,7 @@ void drawWireBox(float xmin,float ymin,float zmin,float xmax,float ymax,float zm
 		glTranslatef(0.5f*(xmin+xmax),0.5f*(ymin+ymax),0.5f*(zmin+zmax));
 		glScalef(xmax-xmin,ymax-ymin,zmax-zmin);
 		glColor4f(1.0f,1.0f,1.0f,1.0f);
-		glutWireCube(1.0f);
+		//glutWireCube(1.0f);
 	glPopMatrix();
 }
 
