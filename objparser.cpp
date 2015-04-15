@@ -1,16 +1,19 @@
 #include "objparser.h"
 
 ObjParser::ObjParser() {
-	//ParseFile("dragon.obj", bunnyInfo, bunnyMapping);
+	ParseFile("Object/REALDummy.obj", v, n, t, m);
 }
 
-void ObjParser::ParseFile(char *filename, std::vector<info> &vec_info, std::vector<mapping> &vec_mapping) {
+void ObjParser::ParseFile(char *filename, std::vector<Vector3> &vertices, std::vector<Vector3> &normals, std::vector<Vector3> &textures, std::vector<Mapping> &mapping) {
 	std::cout << "parse " << filename << std::endl;
 	FILE *fp;
-	float x, y, z;
-	float r, g, b;
-	float vn1, vn2, vn3;
-	int v1, v2, v3, n1, n2, n3;
+	float vertex1, vertex2, vertex3;
+	float texture1, texture2;
+	float normal1, normal2, normal3;
+
+	int v1, v2, v3, v4;
+	int t1, t2, t3, t4;
+	int n1, n2, n3, n4;
 	int c1=0, c2;
 	
 	fp = fopen(filename, "r"); // _CRT_SECURE_NO_DEPRECATE 
@@ -21,50 +24,54 @@ void ObjParser::ParseFile(char *filename, std::vector<info> &vec_info, std::vect
 
 	while (c1 != EOF) {
 		c1 = fgetc(fp); c2 = fgetc(fp);
-		if (c1 == '#') {
+		if (c1 == 'v' && c2 == ' ') {
+			fscanf(fp, "%f %f %f\n", &v1, &v2, &v3);
+			vertices.push_back(Vector3(v1, v2, v3));
+		}
+		else if (c1 == 'v' && c2 == 'n') {
+			fscanf(fp, " %f %f %f\n", &n1, &n2, &n3);
+			normals.push_back(Vector3(n1, n2, n3));
+		}
+		else if (c1 == 'v' && c2 == 't') {
+			fscanf(fp, "%f %f\n", &t1, &t2);
+			textures.push_back(Vector3(t1, t2, 0));
+		}
+		else if (c1 == 'f' && c2 == ' ') { // face
+			fscanf(fp, "%d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d\n", &v1, &t1, &n1, &v2, &t2, &n2, &v3, &t3, &n3, &v4, &t4, &n4);
+			//printf("%d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d\n", v1, t1, n1, v2, t2, n2, v3, t3, n3, v4, t4, n4);
+			Mapping map;
+			Relation one;
+			one.vertex = --v1;
+			one.texture = --t1;
+			one.normal = --n1;
+
+			Relation two; 
+			two.vertex = --v2;
+			two.texture = --t2;
+			two.normal = --n2;
+
+			Relation three; 
+			three.vertex = --v3;
+			three.texture = --t3;
+			three.normal = --n3;
+
+			Relation four;
+			four.vertex = --v4;
+			four.texture = --t4;
+			four.normal = --n4;
+
+			map.first = one;
+			map.second = two;
+			map.third = three;
+			map.fourth = four;
+			mapping.push_back(map);
+		}
+		else {
 			while (c1 != '\n') {
 				c1 = fgetc(fp);
 				if (c1 == EOF)
 					break;
 			}
-
-		}
-		else if (c1 == 'v' && c2 == 'n') {
-			fscanf(fp, " %f %f %f\n", &vn1, &vn2, &vn3);
-			//printf("vn: %f %f %f\n", vn1, vn2, vn3);
-
-			c1 = fgetc(fp); c2 = fgetc(fp);
-			if (c1 == 'v' && c2 == ' ') {
-				fscanf(fp, "%f %f %f %f %f %f\n", &x, &y, &z, &r, &g, &b);
-				//printf("v: %f %f %f %f %f %f\n", x, y, z, r, g, b);
-			}
-
-			info bI;
-			bI.vertices = Vector3(x, y, z);
-			bI.colors = Vector3(r, g, b);
-			bI.normals = Vector3(vn1, vn2, vn3);
-			vec_info.push_back(bI);
-		}
-		else if (c1 == 'f' && c2 == ' ') { // face
-			fscanf(fp, "%d//%d %d//%d %d//%d\n", &v1, &n1, &v2, &n2, &v3, &n3);
-			//printf("%d//%d %d//%d %d//%d\n", v1, n1, v2, n2, v3, n3);
-			mapping map;
-			vertNormRelation one;
-			one.first = --v1;
-			one.second = --n1;
-
-			vertNormRelation two;
-			two.first = --v2;
-			two.second = --n2;
-
-			vertNormRelation three;
-			three.first = --v3;
-			three.second = --n3;
-
-			map.first = one;
-			map.second = two;
-			map.third = three;
-			vec_mapping.push_back(map);
 		}
 	}
 	std::cout << "done with " << filename << std::endl;
@@ -72,21 +79,22 @@ void ObjParser::ParseFile(char *filename, std::vector<info> &vec_info, std::vect
 	fclose(fp);
 }
 
-void ObjParser::Draw(std::vector<info>& vec_info, int vertexIndex, int normalIndex)
+void ObjParser::Draw(int vertex, int texture, int normal)
 {
-	glNormal3f(vec_info.at(normalIndex).normals.x, vec_info.at(normalIndex).normals.y, vec_info.at(normalIndex).normals.z);
-	glColor3f(vec_info.at(vertexIndex).colors.x, vec_info.at(vertexIndex).colors.y, vec_info.at(vertexIndex).colors.z);
-	glVertex3f(vec_info.at(normalIndex).vertices.x, vec_info.at(normalIndex).vertices.y, vec_info.at(normalIndex).vertices.z);
+	glColor3f(1, 1, 1);
+	glVertex3f(v.at(vertex).x, v.at(vertex).y, v.at(vertex).z);
+	glNormal3f(n.at(normal).x, n.at(normal).y, n.at(normal).z);
 }
 
 void ObjParser::ParserDraw() {
-	glBegin(GL_TRIANGLES);
+	glBegin(GL_QUADS);
 
-	for (std::vector<mapping>::iterator it = tmp_mapping_ptr->begin(); it != tmp_mapping_ptr->end(); ++it) {
-		mapping tmp = *it;
-		Draw(*tmp_info_ptr, tmp.first.first, tmp.first.second);
-		Draw(*tmp_info_ptr, tmp.second.first, tmp.second.second);
-		Draw(*tmp_info_ptr, tmp.third.first, tmp.third.second);
+	for (std::vector<Mapping>::iterator it = m.begin(); it != m.end(); ++it) {
+		Mapping tmp = *it;
+		Draw(tmp.first.vertex, tmp.first.texture, tmp.first.normal);
+		Draw(tmp.second.vertex, tmp.second.texture, tmp.second.normal);
+		Draw(tmp.third.vertex, tmp.third.texture, tmp.third.normal);
+		Draw(tmp.fourth.vertex, tmp.fourth.texture, tmp.fourth.normal);
 	}
 
 	glEnd();

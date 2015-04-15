@@ -47,7 +47,7 @@ Tester::Tester(int argc,char **argv) {
 	MouseX=MouseY=0;
 
 	// Create the window
-	window = glfwCreateWindow(1366, 768, WINDOWTITLE, glfwGetPrimaryMonitor(), NULL); // pass in glfwGetPrimaryMonitor() to first null for fullscreen
+	window = glfwCreateWindow(1024, 768, WINDOWTITLE, NULL, NULL); // pass in glfwGetPrimaryMonitor() to first null for fullscreen
 	if (!window)
 	{
 		glfwTerminate();
