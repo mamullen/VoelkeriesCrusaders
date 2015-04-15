@@ -33,14 +33,13 @@ void Camera::Reset() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Camera::Draw(float ratio) {
+void Camera::Draw() {
 	// Tell GL we are going to adjust the projection matrix
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
 	// Set perspective projection
 	gluPerspective(FOV,Aspect,NearClip,FarClip);
-	//glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
 
 	// Place camera
 	glTranslatef(cx, cy, cz - Distance);

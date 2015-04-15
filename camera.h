@@ -16,7 +16,7 @@ public:
     float cx,cy,cz;
 	void Update();
 	void Reset();
-	void Draw(float);
+	void Draw();
 
 	// Access functions
 	void SetPosition(float x, float y, float z)		{ cx = x; cy = y; cz = z; }

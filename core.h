@@ -14,7 +14,7 @@
 
 #ifdef _WIN32
 	#define M_PI	3.14159f
-
+	
 	#define GLFW_INCLUDE_GLU
 	#include <GLFW/glfw3.h>
 #endif

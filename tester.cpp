@@ -37,6 +37,8 @@ int main(int argc, char **argv) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+ObjParser parser;
+
 Tester::Tester(int argc,char **argv) {
 	WinX=1024;
 	WinY=768;
@@ -45,7 +47,7 @@ Tester::Tester(int argc,char **argv) {
 	MouseX=MouseY=0;
 
 	// Create the window
-	window = glfwCreateWindow(1366, 768, WINDOWTITLE, NULL, NULL); // pass in glfwGetPrimaryMonitor() to first null for fullscreen
+	window = glfwCreateWindow(1366, 768, WINDOWTITLE, glfwGetPrimaryMonitor(), NULL); // pass in glfwGetPrimaryMonitor() to first null for fullscreen
 	if (!window)
 	{
 		glfwTerminate();
@@ -127,7 +129,7 @@ void Tester::Loop() {
 		glClear(GL_DEPTH_BUFFER_BIT);
 
 		// Draw components
-		Cam.Draw(ratio);		// Sets up projection & viewing matrices
+		Cam.Draw();		// Sets up projection & viewing matrices
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
@@ -138,8 +140,7 @@ void Tester::Loop() {
 		// Begin drawing player and scene
 		drawsomeground();
 
-
-		glEnd();
+		parser.ParserDraw();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -258,8 +259,6 @@ void Tester::MouseMotion(GLFWwindow* window, double xpos, double ypos) {
 		player.setRotation(-Cam.GetAzimuth());
 	}
 }
-
-////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 
