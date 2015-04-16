@@ -25,16 +25,16 @@ void ObjParser::ParseFile(char *filename, std::vector<Vector3> &vertices, std::v
 	while (c1 != EOF) {
 		c1 = fgetc(fp); c2 = fgetc(fp);
 		if (c1 == 'v' && c2 == ' ') {
-			fscanf(fp, "%f %f %f\n", &v1, &v2, &v3);
-			vertices.push_back(Vector3(v1, v2, v3));
+			fscanf(fp, "%f %f %f\n", &vertex1, &vertex2, &vertex3);
+			vertices.push_back(Vector3(vertex1, vertex2, vertex3));
 		}
 		else if (c1 == 'v' && c2 == 'n') {
-			fscanf(fp, " %f %f %f\n", &n1, &n2, &n3);
-			normals.push_back(Vector3(n1, n2, n3));
+			fscanf(fp, " %f %f %f\n", &normal1, &normal2, &normal3);
+			normals.push_back(Vector3(normal1, normal2, normal3));
 		}
 		else if (c1 == 'v' && c2 == 't') {
-			fscanf(fp, "%f %f\n", &t1, &t2);
-			textures.push_back(Vector3(t1, t2, 0));
+			fscanf(fp, "%f %f\n", &texture1, &texture2);
+			textures.push_back(Vector3(texture1, texture2, 0));
 		}
 		else if (c1 == 'f' && c2 == ' ') { // face
 			fscanf(fp, "%d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d\n", &v1, &t1, &n1, &v2, &t2, &n2, &v3, &t3, &n3, &v4, &t4, &n4);
@@ -81,12 +81,15 @@ void ObjParser::ParseFile(char *filename, std::vector<Vector3> &vertices, std::v
 
 void ObjParser::Draw(int vertex, int texture, int normal)
 {
-	glColor3f(1, 1, 1);
+	glColor3f(n.at(normal).x, n.at(normal).y, n.at(normal).z);
 	glVertex3f(v.at(vertex).x, v.at(vertex).y, v.at(vertex).z);
 	glNormal3f(n.at(normal).x, n.at(normal).y, n.at(normal).z);
 }
 
 void ObjParser::ParserDraw() {
+	glPushMatrix();
+	glScalef(0.3, 0.3, 0.3);
+	glTranslatef(0, 2, -2);
 	glBegin(GL_QUADS);
 
 	for (std::vector<Mapping>::iterator it = m.begin(); it != m.end(); ++it) {
@@ -98,4 +101,5 @@ void ObjParser::ParserDraw() {
 	}
 
 	glEnd();
+	glPopMatrix();
 }

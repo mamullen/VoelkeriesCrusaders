@@ -37,8 +37,6 @@ int main(int argc, char **argv) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ObjParser parser;
-
 Tester::Tester(int argc,char **argv) {
 	WinX=1024;
 	WinY=768;
@@ -139,8 +137,6 @@ void Tester::Loop() {
 
 		// Begin drawing player and scene
 		drawsomeground();
-
-		parser.ParserDraw();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

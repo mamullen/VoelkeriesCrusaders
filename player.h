@@ -4,6 +4,7 @@
 #include "core.h"
 #include "matrix34.h"
 #include "Vector4.h"
+#include "objparser.h"
 #include <iostream>
 
 static const Vector4 INIT_FORWARD = Vector4(0, 0, 1, 1);
