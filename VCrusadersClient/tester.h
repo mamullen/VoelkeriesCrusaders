@@ -9,6 +9,8 @@
 #include "camera.h"
 #include "player.h"
 #include "objparser.h"
+#include "GamePlay.h"
+#include <vector>
 
 using namespace std;
 ////////////////////////////////////////////////////////////////////////////////
@@ -47,7 +49,14 @@ private:
 	Player player;
 	bool rotate; 
 
+
+
 };
+
+// Backend server business
+GamePlay * gameplay;
+
+
 
 ////////////////////////////////////////////////////////////////////////////////
 

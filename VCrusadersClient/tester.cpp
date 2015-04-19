@@ -29,20 +29,33 @@ int main(int argc, char **argv) {
 	if (!glfwInit())
 		exit(EXIT_FAILURE);
 
+
+	// initializing backend business
+	gameplay = new GamePlay();
+	gameplay->start();
+
+
+
 	TESTER = new Tester(argc, argv);	//initialize
 	TESTER->Loop();
+
+	// client loop
+	//while (true){
+	//	gameplay->clientloop();
+	//}
+
 
 	return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Tester::Tester(int argc,char **argv) {
-	WinX=1024;
-	WinY=768;
-    
-	LeftDown=MiddleDown=RightDown=BothDown=false;
-	MouseX=MouseY=0;
+Tester::Tester(int argc, char **argv) {
+	WinX = 1024;
+	WinY = 768;
+
+	LeftDown = MiddleDown = RightDown = BothDown = false;
+	MouseX = MouseY = 0;
 
 	// Create the window
 	window = glfwCreateWindow(1024, 768, WINDOWTITLE, NULL, NULL); // pass in glfwGetPrimaryMonitor() to first null for fullscreen
@@ -55,7 +68,7 @@ Tester::Tester(int argc,char **argv) {
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(0);	// no vsync
 
-	glfwSetKeyCallback(window, keyboard_down); 
+	glfwSetKeyCallback(window, keyboard_down);
 	glfwSetCursorPosCallback(window, cursor_pos_callback);
 	glfwSetMouseButtonCallback(window, mouse_button);
 	glfwSetScrollCallback(window, scroll_callback);
@@ -64,11 +77,11 @@ Tester::Tester(int argc,char **argv) {
 	ratio = WinX / (float)WinY;
 
 	// Background color
-	glClearColor( 0.5, 0., 0., 1. );
+	glClearColor(0.5, 0., 0., 1.);
 	glEnable(GL_DEPTH_TEST);
 
 	// Initialize components
-	Cam.SetAspect(float(WinX)/float(WinY));
+	Cam.SetAspect(float(WinX) / float(WinY));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -85,7 +98,7 @@ Tester::~Tester() {
 void Tester::Update() {
 	// Update the components in the world
 	Cam.Update();
-    
+
 	// Tell glut to re-display the scene
 }
 
@@ -93,7 +106,7 @@ void Tester::Update() {
 
 void Tester::Reset() {
 	Cam.Reset();
-	Cam.SetAspect(float(WinX)/float(WinY));
+	Cam.SetAspect(float(WinX) / float(WinY));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -117,6 +130,9 @@ void drawsomeground() { // deprecate this one day
 void Tester::Loop() {
 	while (!glfwWindowShouldClose(window))
 	{
+		// back-end packet business
+		gameplay->clientLoop();
+
 		if (BothDown) {
 			player.MoveForward(0.01);
 		}
@@ -155,10 +171,10 @@ void Tester::Quit() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Tester::Resize(int x,int y) {
+void Tester::Resize(int x, int y) {
 	WinX = x;
 	WinY = y;
-	Cam.SetAspect(float(WinX)/float(WinY));
+	Cam.SetAspect(float(WinX) / float(WinY));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -172,27 +188,33 @@ void Tester::KeyCallback(GLFWwindow* window, int key, int scancode, int action, 
 	if (glfwGetKey(window, FORWARD)) {
 		player.MoveForward();
 		Cam.SetAzimuth(playerRotation);
+		gameplay->pushEvent("move_forward;");
 	}
 
 	if (glfwGetKey(window, STRAFELEFT)) {
 		player.StrafeLeft();
 		Cam.SetAzimuth(playerRotation); // needs some kind of fade effect
+		gameplay->pushEvent("move_left;");
 	}
 
 	if (glfwGetKey(window, STRAFERIGHT)) {
 		player.StrafeRight();
+		gameplay->pushEvent("move_right;");
 	}
 
 	if (glfwGetKey(window, BACKWARD)) {
 		player.MoveBackward();
+		gameplay->pushEvent("move_backward;");
 	}
 
 	if (glfwGetKey(window, ROTATELEFT)) {
 		player.rotateLeft();
+		gameplay->pushEvent("rotate_left;");
 	}
 
 	if (glfwGetKey(window, ROTATERIGHT)) {
 		player.rotateRight();
+		gameplay->pushEvent("rotate_right;");
 	}
 }
 
@@ -208,29 +230,29 @@ void Tester::MouseButton(GLFWwindow* window, int button, int action, int mods) {
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
 
-	if(rotate)
-    {
+	if (rotate)
+	{
 		if (button == GLFW_MOUSE_BUTTON_LEFT) {
 			LeftDown = (action == GLFW_PRESS);
 			BothDown = RightDown && (action == GLFW_PRESS);
-        }
+		}
 		else if (button == GLFW_MOUSE_BUTTON_MIDDLE) {
 			MiddleDown = (action == GLFW_PRESS);
-        }
+		}
 		else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
 			if (action == GLFW_PRESS) {
 				Cam.SetAzimuth(playerRotation);
 			}
 			RightDown = (action == GLFW_PRESS);
 			BothDown = LeftDown && (action == GLFW_PRESS);
-        }
-    }
-    else
-    {
+		}
+	}
+	else
+	{
 		if (button == GLFW_MOUSE_BUTTON_LEFT) {
 			LeftDownTwo = (action == GLFW_PRESS);
-        } 
-    }
+		}
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -262,7 +284,8 @@ void Tester::MouseScroll(GLFWwindow* window, double xoffset, double yoffset) {
 	const float rate = 0.1f;
 	if (yoffset > 0) {
 		Cam.SetDistance(Cam.GetDistance()*(1.0f - rate));
-	} else if (yoffset < 0) {
+	}
+	else if (yoffset < 0) {
 		Cam.SetDistance(Cam.GetDistance()*(1.0f + rate));
 	}
 }
