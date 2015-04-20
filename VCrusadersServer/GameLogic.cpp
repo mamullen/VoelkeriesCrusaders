@@ -28,7 +28,7 @@ void GameLogic::update()
 
 	//figure out what packets to send back to clients
 	for (unsigned int i = 0; i < gameObjects.size(); i++){
-		std::map<char*, bool> changes = gameObjects.at(i)->getChanges();
+		std::map<std::string*, bool> changes = gameObjects.at(i)->getChanges();
 		if (changes.size()>0){
 			serverPackets.push_back(packetParser->createPacket(changes, gameObjects.at(i)));
 		}

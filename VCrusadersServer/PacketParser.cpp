@@ -13,20 +13,35 @@ PacketParser::~PacketParser()
 
 void PacketParser::parse(char* input, Player* player)
 {
-	if (strcmp(input, "move_forward")==0){
-		player->moveForward();
+	std::string in = std::string(input);
+	int currInd = 0;
+
+	//map used to check for duplicate client events (so player doesn't move too far in one update, etc.)
+	std::map<std::string, bool> duplicates;
+
+	int currEnd = in.find(';', currInd);
+	while (currEnd != std::string::npos)
+	{
+		std::string cEvent = in.substr(currInd, currEnd - currInd);
+		currInd = currEnd + 1;
+		currEnd = in.find(';', currInd);
+
+		if (cEvent == "move_forward" && duplicates.find("move_forward")==duplicates.end()){
+			player->moveForward();
+			duplicates.insert(std::pair<std::string, bool>(std::string("move_forward"), true));
+		}
 	}
 }
 
-Packet* PacketParser::createPacket(std::map<char*, bool> changes, GameObject * object)
+Packet* PacketParser::createPacket(std::map<std::string*, bool> changes, GameObject * object)
 {
 	char data[PACKET_DATA_LEN];
 	int pointer = 0;
 
-	for (std::map<char*, bool>::iterator it = changes.begin(); it != changes.end(); it++)
+	for (std::map<std::string*, bool>::iterator it = changes.begin(); it != changes.end(); it++)
 	{
-		char* key = it->first;
-		if (strcmp(key, "pos"))
+		std::string* key = it->first;
+		if (*key == "pos")
 		{
 			float x = object->getPos().x;
 			float y = object->getPos().y;
@@ -40,7 +55,7 @@ Packet* PacketParser::createPacket(std::map<char*, bool> changes, GameObject * o
 			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
 			pointer += sizeof(float);
 		}
-		else if (strcmp(key, "dir"))
+		else if (*key == "dir")
 		{
 
 		}

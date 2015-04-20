@@ -74,26 +74,27 @@ void ServerGame::receiveFromClients()
 				break;
 
 			case ACTION_EVENT:
+			{
+				//printf("server received action event packet from client %d\n", iter->first);
+				//printf(packet.packet_data);
+				//printf("\n");
 
-				printf("server received action event packet from client %d\n", iter->first);
-				printf(packet.packet_data);
-				printf("\n");
+				char* buf = new char[PACKET_DATA_LEN];
+				strcpy_s(buf, PACKET_DATA_LEN, packet.packet_data);
+				gameLogic->savePacket(iter->first, buf);
 
 				sendActionPackets(iter->first);
 
 				break;
-
+			}
 			case COMMUNICATION:
 
 				printf("server received communication packet from client %d\n", iter->first);
 				printf(packet.packet_data);
 				printf("\n");
 				//packet.id = iter->first;
-				char buf[PACKET_DATA_LEN];
-				strcpy_s(buf, packet.packet_data);
-				gameLogic->savePacket(iter->first,buf);
 				
-				//sendCommunicationPackets(packet);
+				sendCommunicationPackets(packet);
 				break;
 			default:
 
@@ -112,7 +113,7 @@ void ServerGame::sendPackets()
 	{
 		Packet p = **it;
 		// send action packet
-		printf("%d\n",p.packet_type);
+		printf("Packet Type: %d, Object ID: %d",p.packet_type, p.id);
 		printf("\n");
 		const unsigned int packet_size = sizeof(Packet);
 		char packet_data[packet_size];

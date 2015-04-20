@@ -10,6 +10,6 @@ public:
 	~PacketParser();
 
 	void parse(char* input, Player* player);
-	Packet* createPacket(std::map<char*, bool> changes, GameObject * object);
+	Packet* createPacket(std::map<std::string*, bool> changes, GameObject * object);
 };
 

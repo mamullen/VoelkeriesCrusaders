@@ -1,9 +1,12 @@
 #include "stdafx.h"
 #include "GameObject.h"
 
-GameObject::GameObject(int i)
+unsigned int GameObject::totalId;
+
+GameObject::GameObject()
 {
-	id = i;
+	id = totalId;
+	totalId++;
 	position = Vector3(0, 0, 0);
 	pPosition = Vector3(position.x, position.y, position.z);
 	forward = Vector3(0, 0, 1);
@@ -46,7 +49,7 @@ int GameObject::getID()
 	return id;
 }
 
-std::map<char*, bool> GameObject::getChanges()
+std::map<std::string*, bool> GameObject::getChanges()
 {
 	//check if any properties of this object have changed from previous check
 	if (position.x != pPosition.x || position.y != pPosition.y || position.z != pPosition.z)
@@ -54,22 +57,24 @@ std::map<char*, bool> GameObject::getChanges()
 		pPosition.x = position.x;
 		pPosition.y = position.y;
 		pPosition.z = position.z;
-		addChange("pos");
+		std::string* change = new std::string("pos");
+		addChange(change);
 	}
 	if (forward.x != pForward.x || forward.y != pForward.y || forward.z != pForward.z)
 	{
 		pForward.x = forward.x;
 		pForward.y = forward.y;
 		pForward.z = forward.z;
-		addChange("dir");
+		std::string* change = new std::string("dir");
+		addChange(change);
 	}
 
 	return changeList;
 }
 
-void GameObject::addChange(char* change)
+void GameObject::addChange(std::string* change)
 {
-	changeList.insert(std::pair<char*,bool>(change,true));
+	changeList.insert(std::pair<std::string*,bool>(change,true));
 }
 
 void GameObject::clearChanges()

@@ -9,7 +9,7 @@
 class GameObject
 {
 public:
-	GameObject(int i);
+	GameObject();
 	~GameObject();
 
 	Vector3 getPos();
@@ -22,14 +22,17 @@ public:
 
 	virtual void update() = 0;
 
-	std::map<char*, bool> getChanges();
-	void addChange(char* change);
+	std::map<std::string*, bool> getChanges();
+	void addChange(std::string* change);
 	void clearChanges();
+
 private:
+	static unsigned int totalId;
+
 	Vector3 position, forward, right, up;
 	Vector3 pPosition, pForward;
 	double speed=.5;
-	int id;
-	std::map<char*, bool> changeList;
+	unsigned int id;
+	std::map<std::string*, bool> changeList;
 };
 
