@@ -6,7 +6,11 @@
 
 #include "player.h"
 
-ObjParser human;
+ObjParser mech;
+
+Player::Player() {
+	mech = ObjParser("Object/MechAnimation.obj");
+}
 
 void Player::update() {
 
@@ -16,7 +20,7 @@ void Player::update() {
 	glRotatef(180, 0, 1, 0);
 	glRotatef(rotation, 0, 1, 0);
 
-	human.ParserDraw();
+	mech.Draw();
 
 	glBegin(GL_TRIANGLES);
 	glColor3f(1.f, 1.f, 0.f);

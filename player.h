@@ -30,6 +30,7 @@ private:
 	Vector4 up = Vector4(0, 1, 0, 1); 
 
 public:
+	Player();
 	void MoveForward();
 	void MoveForward(float speed);
 	void MoveBackward();
