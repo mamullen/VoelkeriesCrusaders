@@ -42,6 +42,29 @@ void ClientGame::sendActionPackets()
 	NetworkServices::sendMessage(network->ConnectSocket, data, packet_size);
 }
 
+
+void ClientGame::processActionPacket(char* the_data){
+	char* token = strtok(the_data, ",");
+	while (token != NULL){
+		if (strcmp(token, "Hello") != 0){
+			int dataSize = 0;
+
+
+			if (strcmp(token, "pos:") == 0)
+				dataSize = 17;
+
+			char * pToken = (char*)malloc(dataSize * sizeof(char));
+			memcpy(pToken, token, dataSize * sizeof(char));
+			serverEvents.push_back(pToken);
+		}
+		token = strtok(NULL, ",");
+	}
+
+}
+
+
+
+
 void ClientGame::update()
 {
 	Packet packet;
@@ -58,13 +81,13 @@ void ClientGame::update()
 	{
 		packet.deserialize(&(network_data[i]));
 		i += sizeof(Packet);
-		
+
 		switch (packet.packet_type) {
 
 		case ACTION_EVENT:
 
 			printf("client received action event packet from server\n");
-
+			processActionPacket(packet.packet_data);
 			sendActionPackets();
 
 			break;

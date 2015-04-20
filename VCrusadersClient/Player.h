@@ -35,6 +35,7 @@ public:
 	void MoveBackward();
 	void StrafeLeft();
 	void StrafeRight();
+	void moveToCoord(double x, double y, double z);
 
 	void rotateLeft();
 	void rotateRight();

@@ -16,6 +16,7 @@ public:
 	void serverLoop();
 	void clientLoop();
 	void pushEvent(char * evt);
+	const char * popServerEvent();
 
 private:
 	void printPrompt();

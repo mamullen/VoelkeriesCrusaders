@@ -90,3 +90,17 @@ void GamePlay::pushEvent(char * evt)
 		return;
 	client->inputEvents.push_back(evt);
 }
+
+const char * GamePlay::popServerEvent(){
+	if (!client->serverEvents.empty()){
+		const char * ret = client->serverEvents.back();
+		/*float jesus;
+		memcpy(&jesus, ret + 12, sizeof(float));
+		char msgbuf[2048];
+		sprintf(msgbuf, "FLOAT ME BABY %f\n", jesus);
+		OutputDebugString(msgbuf);*/
+		client->serverEvents.pop_back();
+		return ret;
+	}
+	return NULL;
+}

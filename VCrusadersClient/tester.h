@@ -23,6 +23,7 @@ public:
 	void Update();
 	void Reset();
 	void Loop();
+	void UpdateFromServer();
 
 	void Quit();
 

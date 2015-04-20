@@ -3,6 +3,8 @@
 #include "NetworkData.h"
 #include <iostream>
 #include <vector>
+#include <sstream>
+#include <string>
 
 class ClientGame
 {
@@ -14,9 +16,11 @@ public:
 	char network_data[MAX_PACKET_SIZE];
 	
 	void sendActionPackets();
+	void processActionPacket(char*);
 	void update();
 	void connectToServer(const char*);
 	std::vector<const char *> inputEvents;
+	std::vector<const char *> serverEvents;
 
 private:
 	std::vector<std::string> serverIPList;
