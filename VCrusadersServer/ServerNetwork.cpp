@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "ServerNetwork.h"
-
+#include <list>
 
 ServerNetwork::ServerNetwork()
 {
@@ -148,6 +148,7 @@ bool ServerNetwork::acceptNewClient(unsigned int & id)
 		setsockopt(ClientSocket, IPPROTO_TCP, TCP_NODELAY, &value, sizeof(value));
 
 		// insert new client into session id table
+		printf("Accepting Client: %d\n",id);
 		sessions.insert(pair<unsigned int, SOCKET>(id, ClientSocket));
 
 		return true;
@@ -167,6 +168,7 @@ int ServerNetwork::receiveData(unsigned int client_id, char * recvbuf)
 		{
 			printf("Connection closed\n");
 			closesocket(currentSocket);
+			//sessions.erase(client_id);
 		}
 		return iResult;
 	}
@@ -187,7 +189,8 @@ void ServerNetwork::sendToAll(char * packets, int totalSize)
 		if (iSendResult == SOCKET_ERROR)
 		{
 			printf("send failed with error: %d\n", WSAGetLastError());
-			closesocket(currentSocket);
+			//closesocket(currentSocket);
+			//sessions.erase(iter->first);
 		}
 	}
 }

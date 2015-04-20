@@ -115,6 +115,16 @@ void ServerGame::sendPackets()
 		// send action packet
 		printf("Packet Type: %d, Object ID: %d",p.packet_type, p.id);
 		printf("\n");
+
+		/*float test1;
+		float test2;
+		float test3;
+		memcpy_s(&test1, sizeof(float), (p.packet_data) + 4, sizeof(float));
+		memcpy_s(&test2, sizeof(float), (p.packet_data) + 8, sizeof(float));
+		memcpy_s(&test3, sizeof(float), (p.packet_data) + 12, sizeof(float));
+
+		printf("Coord: %f, %f, %f\n", test1, test2, test3);*/
+
 		const unsigned int packet_size = sizeof(Packet);
 		char packet_data[packet_size];
 

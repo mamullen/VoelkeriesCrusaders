@@ -7,7 +7,7 @@
 #include <chrono>
 #include <thread>
 
-#define MS_PER_FRAME 200
+#define MS_PER_FRAME 50
 
 main::main()
 {

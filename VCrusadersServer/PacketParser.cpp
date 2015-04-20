@@ -30,6 +30,18 @@ void PacketParser::parse(char* input, Player* player)
 			player->moveForward();
 			duplicates.insert(std::pair<std::string, bool>(std::string("move_forward"), true));
 		}
+		if (cEvent == "move_backward" && duplicates.find("move_backward")==duplicates.end()){
+			player->moveBackward();
+			duplicates.insert(std::pair<std::string, bool>(std::string("move_backward"), true));
+		}
+		if (cEvent == "move_left" && duplicates.find("move_left") == duplicates.end()){
+			player->strafeLeft();
+			duplicates.insert(std::pair<std::string, bool>(std::string("move_left"), true));
+		}
+		if (cEvent == "move_right" && duplicates.find("move_right") == duplicates.end()){
+			player->strafeRight();
+			duplicates.insert(std::pair<std::string, bool>(std::string("move_right"), true));
+		}
 	}
 }
 
@@ -54,12 +66,17 @@ Packet* PacketParser::createPacket(std::map<std::string*, bool> changes, GameObj
 			pointer += sizeof(float);
 			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
 			pointer += sizeof(float);
+			data[pointer] = ',';
+			pointer++;
 		}
 		else if (*key == "dir")
 		{
-
+			
 		}
 	}
+
+	//add '\0' to denote end of this packet
+	data[pointer-1] = '\0';
 
 	Packet* p = new Packet;
 	p->packet_type = ACTION_EVENT;
