@@ -34,6 +34,10 @@ void Player::jump() {
 	position = position + forward.scale(speed) + up.scale(speed);
 }
 
+void Player::moveToCoord(double x, double y, double z){
+	position = Vector4(x, y, z, 1);
+}
+
 void Player::MoveForward() {
 	position = position + forward.scale(speed);
 }

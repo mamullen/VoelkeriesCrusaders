@@ -26,6 +26,10 @@ int ClientNetwork::receivePackets(char * recvbuf)
 	if (iResult == 0)
 	{
 		printf("Connection closed\n");
+		OutputDebugString("Connection closed\n");
+		//char asdf[2000];
+		//sprintf(asdf, "recv failed with error: %d\n", WSAGetLastError());
+		//OutputDebugString(asdf);
 		closesocket(ConnectSocket);
 		WSACleanup();
 		exit(1);

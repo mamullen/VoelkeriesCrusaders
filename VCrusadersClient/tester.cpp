@@ -39,10 +39,6 @@ int main(int argc, char **argv) {
 	TESTER = new Tester(argc, argv);	//initialize
 	TESTER->Loop();
 
-	// client loop
-	//while (true){
-	//	gameplay->clientloop();
-	//}
 
 
 	return 0;
@@ -127,11 +123,44 @@ void drawsomeground() { // deprecate this one day
 	glPopMatrix();
 }
 
+void Tester::UpdateFromServer(){
+	const char * serverEvent = gameplay->popServerEvent();
+	while (serverEvent != NULL){
+
+		if (strstr(serverEvent, "pos:") != NULL){
+			float xPos;
+			float yPos;
+			float zPos;
+			memcpy(&xPos, serverEvent + 4, sizeof(float));
+			memcpy(&yPos, serverEvent + 8, sizeof(float));
+			memcpy(&zPos, serverEvent + 12, sizeof(float));
+
+			char msgbuf[2048];
+			sprintf(msgbuf, "pos: with %f, %f, %f\n", xPos, yPos, zPos);
+			OutputDebugString(msgbuf);
+
+			player.moveToCoord(xPos, yPos, zPos);
+		}
+
+
+		//float jesus;
+		//memcpy(&jesus, ret + 12, sizeof(float));
+		//char msgbuf[2048];
+		//sprintf(msgbuf, "FLOAT ME BABY %f\n", jesus);
+		//OutputDebugString(msgbuf);
+
+		serverEvent = gameplay->popServerEvent();
+	}
+}
+
 void Tester::Loop() {
 	while (!glfwWindowShouldClose(window))
 	{
 		// back-end packet business
 		gameplay->clientLoop();
+
+		// update based on server events
+		UpdateFromServer();
 
 		if (BothDown) {
 			player.MoveForward(0.01);
@@ -148,6 +177,8 @@ void Tester::Loop() {
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 		player.update();
+	
+
 
 		glTranslatef(player.getPos().x, player.getPos().y, player.getPos().z);
 
@@ -186,24 +217,24 @@ void Tester::KeyCallback(GLFWwindow* window, int key, int scancode, int action, 
 	float playerRotation = -player.getRotation();
 
 	if (glfwGetKey(window, FORWARD)) {
-		player.MoveForward();
+		//player.MoveForward();
 		Cam.SetAzimuth(playerRotation);
 		gameplay->pushEvent("move_forward;");
 	}
 
 	if (glfwGetKey(window, STRAFELEFT)) {
-		player.StrafeLeft();
+		//player.StrafeLeft();
 		Cam.SetAzimuth(playerRotation); // needs some kind of fade effect
 		gameplay->pushEvent("move_left;");
 	}
 
 	if (glfwGetKey(window, STRAFERIGHT)) {
-		player.StrafeRight();
+		//player.StrafeRight();
 		gameplay->pushEvent("move_right;");
 	}
 
 	if (glfwGetKey(window, BACKWARD)) {
-		player.MoveBackward();
+		//player.MoveBackward();
 		gameplay->pushEvent("move_backward;");
 	}
 
