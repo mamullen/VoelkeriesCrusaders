@@ -1,17 +1,18 @@
 #pragma once
 
+#include "vector3.h"
+#include <map>
+
 /*
  * Abstract base class for objects in the game
  */
 class GameObject
 {
 public:
-	GameObject(int i) : id(i){};
+	GameObject();
 	~GameObject();
 
-	double getX();
-	double getY();
-	double getZ();
+	Vector3 getPos();
 	int getID();
 
 	void moveForward();
@@ -19,10 +20,19 @@ public:
 	void strafeLeft();
 	void strafeRight();
 
-	virtual void update()=0;
+	virtual void update() = 0;
+
+	std::map<std::string*, bool> getChanges();
+	void addChange(std::string* change);
+	void clearChanges();
+
 private:
-	double xPos=0, yPos=0, zPos=0;
-	double speed=1;
-	int id;
+	static unsigned int totalId;
+
+	Vector3 position, forward, right, up;
+	Vector3 pPosition, pForward;
+	double speed=.5;
+	unsigned int id;
+	std::map<std::string*, bool> changeList;
 };
 

@@ -1,16 +1,18 @@
 #pragma once
 #include "ServerNetwork.h"
 #include "NetworkData.h"
+#include "GameLogic.h"
 
 class ServerGame
 {
 public:
-	ServerGame();
+	ServerGame(GameLogic* g);
 	virtual ~ServerGame();
 	
 	void createServer();
 	void update();
 	void receiveFromClients();
+	void sendPackets();
 	const char* getIP();
 
 private:
@@ -19,6 +21,7 @@ private:
 
 	// The ServerNetwork object 
 	ServerNetwork* network;
+	GameLogic* gameLogic;
 
 	// data buffer
 	char network_data[MAX_PACKET_SIZE];

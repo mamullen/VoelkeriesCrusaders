@@ -179,7 +179,6 @@ void ServerNetwork::sendToAll(char * packets, int totalSize)
 	SOCKET currentSocket;
 	std::map<unsigned int, SOCKET>::iterator iter;
 	int iSendResult;
-
 	for (iter = sessions.begin(); iter != sessions.end(); iter++)
 	{
 		currentSocket = iter->second;

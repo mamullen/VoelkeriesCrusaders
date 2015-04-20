@@ -3,12 +3,13 @@
 
 unsigned int ServerGame::client_id;
 
-ServerGame::ServerGame()
+ServerGame::ServerGame(GameLogic* g)
 {
 	// id's to assign clients for our table
 	client_id = 0;
 	// set up the server network to listen 
 	network = new ServerNetwork();
+	gameLogic = g;
 }
 
 
@@ -25,7 +26,7 @@ void ServerGame::createServer()
 void ServerGame::update()
 {
 	// reply for searching server
-	network->respondToFind();
+	//network->respondToFind();
 
 	// get new clients
 	if (network->acceptNewClient(client_id))
@@ -67,27 +68,31 @@ void ServerGame::receiveFromClients()
 			case INIT_CONNECTION:
 
 				printf("server received init packet from client %d\n",iter->first);
-				
+				gameLogic->addPlayer(iter->first);
 				sendActionPackets(iter->first);
 
 				break;
 
 			case ACTION_EVENT:
+			{
+				//printf("server received action event packet from client %d\n", iter->first);
+				//printf(packet.packet_data);
+				//printf("\n");
 
-				printf("server received action event packet from client %d\n", iter->first);
-				printf(packet.packet_data);
-				printf("\n");
+				char* buf = new char[PACKET_DATA_LEN];
+				strcpy_s(buf, PACKET_DATA_LEN, packet.packet_data);
+				gameLogic->savePacket(iter->first, buf);
 
 				sendActionPackets(iter->first);
 
 				break;
-
+			}
 			case COMMUNICATION:
 
 				printf("server received communication packet from client %d\n", iter->first);
 				printf(packet.packet_data);
 				printf("\n");
-				packet.id = iter->first;
+				//packet.id = iter->first;
 				
 				sendCommunicationPackets(packet);
 				break;
@@ -101,6 +106,23 @@ void ServerGame::receiveFromClients()
 	}
 }
 
+void ServerGame::sendPackets()
+{
+	std::list<Packet*> serverPackets = gameLogic->getServerPackets();
+	for (std::list<Packet*>::iterator it = serverPackets.begin(); it != serverPackets.end(); it++)
+	{
+		Packet p = **it;
+		// send action packet
+		printf("Packet Type: %d, Object ID: %d",p.packet_type, p.id);
+		printf("\n");
+		const unsigned int packet_size = sizeof(Packet);
+		char packet_data[packet_size];
+
+		p.serialize(packet_data);
+		network->sendToAll(packet_data, packet_size);
+	}
+}
+
 void ServerGame::sendActionPackets(unsigned int id)
 {
 	// send action packet
@@ -109,7 +131,7 @@ void ServerGame::sendActionPackets(unsigned int id)
 
 	Packet packet;
 	packet.packet_type = ACTION_EVENT;
-	memcpy(packet.packet_data,"hello",PACKET_DATA_LEN);
+	memcpy(packet.packet_data,"Hello",PACKET_DATA_LEN);
 
 	packet.serialize(packet_data);
 
