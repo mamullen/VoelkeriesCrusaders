@@ -3,13 +3,14 @@
 class Player : public GameObject
 {
 public:
-	Player(int i) : GameObject(){ pid = i; };
+	Player();
+	Player(int i);// : GameObject(){ pid = i; };
 	~Player();
 
-	void update();
+	void update(Packet*);
 	unsigned int getPID();
 
 private:
-	unsigned int pid;
+	unsigned int pid; // corresponds to Client ID
 };
 

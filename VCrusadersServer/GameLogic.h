@@ -7,6 +7,7 @@
 #include <list>
 #include <map>
 #include <vector>
+#include <string>
 
 class GameLogic
 {
@@ -16,13 +17,13 @@ public:
 
 	void update();
 	std::list<Packet*> getServerPackets();
-	void savePacket(int id,char* p);
+	void savePacket(int id,Packet* p);
 	void clearPackets();
 	void addPlayer(int id);
 
 private:
 	std::vector<GameObject*> gameObjects;
-	std::list<std::pair<int,char*>> packets;
+	std::list<std::pair<int,Packet*>> packets;
 	std::list<Packet*> serverPackets;
 	std::map<int, Player*> players;
 	PacketParser* packetParser;

@@ -29,17 +29,13 @@ int main(int argc, char **argv) {
 	if (!glfwInit())
 		exit(EXIT_FAILURE);
 
-
 	// initializing backend business
 	gameplay = new GamePlay();
 	gameplay->start();
 
-
-
+	//std::cin.get();
 	TESTER = new Tester(argc, argv);	//initialize
 	TESTER->Loop();
-
-
 
 	return 0;
 }
@@ -137,7 +133,7 @@ void Tester::UpdateFromServer(){
 
 			char msgbuf[2048];
 			sprintf(msgbuf, "pos: with %f, %f, %f\n", xPos, yPos, zPos);
-			OutputDebugString(msgbuf);
+			//OutputDebugString(msgbuf);
 
 			player.moveToCoord(xPos, yPos, zPos);
 		}

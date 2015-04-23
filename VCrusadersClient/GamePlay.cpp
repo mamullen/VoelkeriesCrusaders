@@ -56,7 +56,7 @@ void GamePlay::processInput()
 		}
 	}
 	else
-		client->connectToServer("128.54.230.92");
+		client->connectToServer("137.110.91.60");
 
 	//}
 	//else if (strcmp(user_input, "3") == 0){
@@ -75,7 +75,7 @@ void GamePlay::update()
 
 void GamePlay::start()
 {
-	//printPrompt();
+	printPrompt();
 	processInput();
 }
 

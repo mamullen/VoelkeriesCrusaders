@@ -1,13 +1,19 @@
-﻿Build started 4/20/2015 3:16:53 PM.
-     1>Project "C:\Users\Brandon\Documents\Source\Repos\VoelkeriesCrusaders\VoelkeriesCrusaders\VCrusadersServer\VCrusadersServer.vcxproj" on node 2 (Build target(s)).
+﻿Build started 4/23/2015 4:02:13 PM.
+     1>Project "C:\Users\XM\Desktop\CSE_125_GAME\REPO\VCrusadersServer\VCrusadersServer.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _WINSOCK_DEPRECATED_NO_WARNINGS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\VCrusadersServer.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt GameLogic.cpp ServerGame.cpp
-         ServerGame.cpp
-     1>c:\users\brandon\documents\source\repos\voelkeriescrusaders\voelkeriescrusaders\vcrusadersserver\servergame.cpp(61): warning C4018: '<' : signed/unsigned mismatch
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _WINSOCK_DEPRECATED_NO_WARNINGS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\VCrusadersServer.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt GameLogic.cpp GameObject.cpp PacketParser.cpp Player.cpp ServerGame.cpp main.cpp
+         Player.cpp
+     1>c:\users\xm\desktop\cse_125_game\repo\vcrusadersserver\player.cpp(16): warning C4018: '<' : signed/unsigned mismatch
          GameLogic.cpp
+     1>c:\users\xm\desktop\cse_125_game\repo\vcrusadersserver\gamelogic.cpp(21): warning C4018: '<' : signed/unsigned mismatch
          Generating Code...
+         Skipping... (no relevant changes detected)
+         main.cpp
+         ServerGame.cpp
+         PacketParser.cpp
+         GameObject.cpp
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Brandon\Documents\Source\Repos\VoelkeriesCrusaders\VoelkeriesCrusaders\Debug\VCrusadersServer.exe" /INCREMENTAL /NOLOGO kernel32.lib shell32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Brandon\Documents\Source\Repos\VoelkeriesCrusaders\VoelkeriesCrusaders\Debug\VCrusadersServer.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Brandon\Documents\Source\Repos\VoelkeriesCrusaders\VoelkeriesCrusaders\Debug\VCrusadersServer.lib" /MACHINE:X86 Debug\GameLogic.obj
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\XM\Desktop\CSE_125_GAME\REPO\Debug\VCrusadersServer.exe" /INCREMENTAL /NOLOGO kernel32.lib shell32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\XM\Desktop\CSE_125_GAME\REPO\Debug\VCrusadersServer.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\XM\Desktop\CSE_125_GAME\REPO\Debug\VCrusadersServer.lib" /MACHINE:X86 Debug\GameLogic.obj
          Debug\GameObject.obj
          Debug\main.obj
          Debug\matrix34.obj
@@ -18,9 +24,9 @@
          Debug\ServerNetwork.obj
          Debug\stdafx.obj
          Debug\vector3.obj
-         VCrusadersServer.vcxproj -> C:\Users\Brandon\Documents\Source\Repos\VoelkeriesCrusaders\VoelkeriesCrusaders\Debug\VCrusadersServer.exe
-     1>Done Building Project "C:\Users\Brandon\Documents\Source\Repos\VoelkeriesCrusaders\VoelkeriesCrusaders\VCrusadersServer\VCrusadersServer.vcxproj" (Build target(s)).
+         VCrusadersServer.vcxproj -> C:\Users\XM\Desktop\CSE_125_GAME\REPO\Debug\VCrusadersServer.exe
+     1>Done Building Project "C:\Users\XM\Desktop\CSE_125_GAME\REPO\VCrusadersServer\VCrusadersServer.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:01.57
+Time Elapsed 00:00:01.83

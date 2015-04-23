@@ -97,6 +97,8 @@ void ServerNetwork::createServer()
 	memcpy(&addr, hp->h_addr_list[0], sizeof(struct in_addr));
 	//	std::cout << "Address " << 0 << ": " << inet_ntoa(addr) << endl;
 	memcpy(&localIP, inet_ntoa(addr), sizeof(localIP));
+	printf(localIP);
+	printf("\n");
 	//////////////////////////////////////////////////////////////////////////////////////
 
 	// Set the mode of the socket to be nonblocking
@@ -189,8 +191,8 @@ void ServerNetwork::sendToAll(char * packets, int totalSize)
 		if (iSendResult == SOCKET_ERROR)
 		{
 			printf("send failed with error: %d\n", WSAGetLastError());
-			//closesocket(currentSocket);
-			//sessions.erase(iter->first);
+			closesocket(currentSocket);
+			sessions.erase(iter->first);
 		}
 	}
 }
@@ -206,6 +208,7 @@ void ServerNetwork::sendToOne(unsigned int id, char * packets, int totalSize)
 	if (iSendResult == SOCKET_ERROR)
 	{
 		printf("send failed with error: %d\n", WSAGetLastError());
+		//printf("send id = %d\n", id);
 		closesocket(currentSocket);
 	}
 }

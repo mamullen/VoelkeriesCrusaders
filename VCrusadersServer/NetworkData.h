@@ -16,7 +16,7 @@ enum PacketTypes {
 struct Packet {
 
 	unsigned int packet_type;
-	unsigned int id;
+	int id;
 	char packet_data[PACKET_DATA_LEN];
 
 	void serialize(char * data) {

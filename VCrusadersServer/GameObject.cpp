@@ -2,17 +2,20 @@
 #include "GameObject.h"
 
 unsigned int GameObject::totalId;
+std::map<int,std::string*> GameObject::changes;
 
 GameObject::GameObject()
 {
 	id = totalId;
 	totalId++;
+	/*
 	position = Vector3(0, 0, 0);
 	pPosition = Vector3(position.x, position.y, position.z);
 	forward = Vector3(0, 0, 1);
 	pForward = Vector3(forward.x, forward.y, forward.z);
 	right = Vector3(-1, 0, 0);
 	up = Vector3(0, 1, 0);
+	*/
 }
 
 GameObject::~GameObject()
@@ -79,5 +82,8 @@ void GameObject::addChange(std::string* change)
 
 void GameObject::clearChanges()
 {
-	changeList.clear();
+	//changeList.clear();
+	for (int i = 0; i < attr_num; i++){
+		isChanged[i] = false;
+	}
 }

@@ -32,7 +32,6 @@ void ServerGame::update()
 	if (network->acceptNewClient(client_id))
 	{
 		printf("client %d has been connected to the server\n", client_id);
-
 		client_id++;
 	}
 
@@ -61,6 +60,8 @@ void ServerGame::receiveFromClients()
 		while (i < (unsigned int)data_length)
 		{
 			packet.deserialize(&(network_data[i]));
+			Packet* temp = new Packet();
+			temp->deserialize(&(network_data[i]));
 			i += sizeof(Packet);
 
 			switch (packet.packet_type) {
@@ -75,16 +76,13 @@ void ServerGame::receiveFromClients()
 
 			case ACTION_EVENT:
 			{
-				//printf("server received action event packet from client %d\n", iter->first);
-				//printf(packet.packet_data);
-				//printf("\n");
-
-				char* buf = new char[PACKET_DATA_LEN];
-				strcpy_s(buf, PACKET_DATA_LEN, packet.packet_data);
-				gameLogic->savePacket(iter->first, buf);
-
-				sendActionPackets(iter->first);
-
+				printf("server received action event packet from client %d\n", iter->first);
+				printf(packet.packet_data);
+				printf("\n");
+				gameLogic->savePacket(iter->first, temp);
+				if (packet.id == 1000){
+					sendActionPackets(iter->first);
+				}
 				break;
 			}
 			case COMMUNICATION:

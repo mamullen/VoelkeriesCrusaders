@@ -37,17 +37,24 @@ void serverLoop(void * arg)
 			std::chrono::duration_cast<std::chrono::milliseconds>
 			(std::chrono::system_clock::now().time_since_epoch()).count();
 
+		// server receive packets and accept connections
 		server->update();
+
+		// gameLogic updates and create packets for sending
 		gameLogic->update();
+
+		// server sends udpated packets
 		server->sendPackets();
+
+		// gameLogic resets, clear all packet buffer
 		gameLogic->clearPackets();
+
 		unsigned long long endTime =
 			std::chrono::duration_cast<std::chrono::milliseconds>
 			(std::chrono::system_clock::now().time_since_epoch()).count();
 
-		//printf("%d\n", MS_PER_FRAME - (endTime-startTime));
-		std::this_thread::sleep_for(std::chrono::milliseconds(MS_PER_FRAME-(endTime-startTime)));
-		
+		//printf("wait time = %d\n", MS_PER_FRAME - (endTime-startTime));
+		std::this_thread::sleep_for(std::chrono::milliseconds(MS_PER_FRAME-(endTime-startTime)));	
 	}
 	
 }
