@@ -170,7 +170,7 @@ int ServerNetwork::receiveData(unsigned int client_id, char * recvbuf)
 		{
 			printf("Connection closed\n");
 			closesocket(currentSocket);
-			//sessions.erase(client_id);
+			sessions.erase(client_id);
 		}
 		return iResult;
 	}

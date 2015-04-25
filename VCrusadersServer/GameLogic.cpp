@@ -3,7 +3,7 @@
 
 GameLogic::GameLogic()
 {
-	packetParser = new PacketParser();
+	//packetParser = new PacketParser();
 }
 
 
@@ -25,7 +25,7 @@ void GameLogic::update()
 	}
 	
 	// go through GameObject changes, update each entry, and then create packets
-	for (std::map<int,std::string*>::iterator it = GameObject::changes.begin(); it != GameObject::changes.end(); it++){
+	for (std::list<std::pair<int, std::string*>>::iterator it = GameObject::changes.begin(); it != GameObject::changes.end(); it++){
 		printf("gamelogic update 2\n");
 		std::string* key = it->second;
 		int index = it->first;
@@ -69,6 +69,11 @@ std::list<Packet*> GameLogic::getServerPackets()
 	return serverPackets;
 }
 
+std::vector<GameObject*> GameLogic::getGameObjects()
+{
+	return gameObjects;
+}
+
 void GameLogic::savePacket(int id,Packet* p)
 {
 	printf("saved packet = ");
@@ -85,7 +90,7 @@ void GameLogic::clearPackets()
 	for (std::list<Packet*>::iterator it = serverPackets.begin(); it != serverPackets.end(); it++){
 		delete *it;
 	}
-	for (std::map<int, std::string*>::iterator it = GameObject::changes.begin(); it != GameObject::changes.end(); it++){
+	for (std::list<std::pair<int, std::string*>>::iterator it = GameObject::changes.begin(); it != GameObject::changes.end(); it++){
 		delete it->second;
 	}
 

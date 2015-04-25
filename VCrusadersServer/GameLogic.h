@@ -17,9 +17,11 @@ public:
 
 	void update();
 	std::list<Packet*> getServerPackets();
+	std::vector<GameObject*> getGameObjects();
 	void savePacket(int id,Packet* p);
 	void clearPackets();
 	void addPlayer(int id);
+	
 
 private:
 	std::vector<GameObject*> gameObjects;

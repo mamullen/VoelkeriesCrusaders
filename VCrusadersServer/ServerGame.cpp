@@ -69,9 +69,9 @@ void ServerGame::receiveFromClients()
 			case INIT_CONNECTION:
 
 				printf("server received init packet from client %d\n",iter->first);
+				sendInitPackets(iter->first);
 				gameLogic->addPlayer(iter->first);
 				sendActionPackets(iter->first);
-
 				break;
 
 			case ACTION_EVENT:
@@ -80,9 +80,9 @@ void ServerGame::receiveFromClients()
 				printf(packet.packet_data);
 				printf("\n");
 				gameLogic->savePacket(iter->first, temp);
-				if (packet.id == 1000){
+				//if (packet.id == 1000){
 					sendActionPackets(iter->first);
-				}
+				//}
 				break;
 			}
 			case COMMUNICATION:
@@ -128,6 +128,21 @@ void ServerGame::sendPackets()
 
 		p.serialize(packet_data);
 		network->sendToAll(packet_data, packet_size);
+	}
+}
+
+void ServerGame::sendInitPackets(unsigned int id)
+{
+	std::vector<GameObject*> gameObjects = gameLogic->getGameObjects();
+	for (int i = 0; i < gameObjects.size(); i++){
+		const unsigned int packet_size = sizeof(Packet);
+		char packet_data[packet_size];
+		Packet p;
+		p.packet_type = ACTION_EVENT;
+		p.id = i;
+		memcpy_s(p.packet_data, PACKET_DATA_LEN, "create", 6);
+		p.serialize(packet_data);
+		network->sendToOne(id, packet_data, packet_size);
 	}
 }
 

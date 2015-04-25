@@ -3,6 +3,7 @@
 #include "vector3.h"
 #include "NetworkData.h"
 #include <map>
+#include <list>
 #include <vector>
 #include <iostream>
 
@@ -28,8 +29,9 @@ public:
 	std::map<std::string*, bool> getChanges();
 	void addChange(std::string* change);
 	void clearChanges();
+	//void getStatusPacket();
 
-	static std::map<int,std::string*> changes;
+	static std::list<std::pair<int, std::string*>> changes;
 
 protected:
 	static unsigned int totalId;
@@ -39,7 +41,7 @@ protected:
 	double speed=.5;
 	unsigned int id;
 	unsigned int attr_num;  // number of attributes
-	std::map<std::string*, bool> changeList;
+	//std::list<std::string*, bool> changeList;
 	bool *isChanged;		// array indicating if a attribute such as position has been modified
 };
 

@@ -19,9 +19,9 @@ void GamePlay::printPrompt()
 	printf("Press 2 for creating a server\n");
 	printf("Press 3 to manually connect to a server with IP\n");
 	printf("Type your message: ");
-	std::cin.getline(user_input, PACKET_DATA_LEN);
-	printf(user_input);
-	printf("\n");
+	//std::cin.getline(user_input, PACKET_DATA_LEN);
+	//printf(user_input);
+	//printf("\n");
 }
 
 void GamePlay::processInput()
@@ -56,7 +56,7 @@ void GamePlay::processInput()
 		}
 	}
 	else
-		client->connectToServer("137.110.91.60");
+		client->connectToServer("192.168.1.65");
 
 	//}
 	//else if (strcmp(user_input, "3") == 0){

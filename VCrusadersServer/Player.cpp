@@ -41,7 +41,7 @@ void Player::update(Packet* packet)
 			if (!isChanged[0]){
 				isChanged[0] = true;
 				std::string* change = new std::string("pos:");
-				changes.insert(std::pair<int, std::string*>(id, change));
+				changes.push_back(std::pair<int, std::string*>(id, change));
 			}
 			this->moveForward();
 		}
@@ -49,23 +49,23 @@ void Player::update(Packet* packet)
 			if (!isChanged[0]){
 				isChanged[0] = true;
 				std::string* change = new std::string("pos:");
-				changes.insert(std::pair<int, std::string*>(id, change));
+				changes.push_back(std::pair<int, std::string*>(id, change));
 			}
 			this->moveBackward();
 		}
-		else if (cEvent.compare("move_left") == 0){
+		else if (cEvent.compare("rotate_left") == 0){
 			if (!isChanged[0]){
 				isChanged[0] = true;
 				std::string* change = new std::string("pos:");
-				changes.insert(std::pair<int, std::string*>(id, change));
+				changes.push_back(std::pair<int, std::string*>(id, change));
 			}
 			this->strafeLeft();
 		}
-		else if (cEvent.compare("move_right") == 0){
+		else if (cEvent.compare("rotate_right") == 0){
 			if (!isChanged[0]){
 				isChanged[0] = true;
 				std::string* change = new std::string("pos:");
-				changes.insert(std::pair<int, std::string*>(id, change));
+				changes.push_back(std::pair<int, std::string*>(id, change));
 			}
 			this->strafeRight();
 		}

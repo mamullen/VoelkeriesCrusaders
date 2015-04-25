@@ -2,7 +2,7 @@
 #include "GameObject.h"
 
 unsigned int GameObject::totalId;
-std::map<int,std::string*> GameObject::changes;
+std::list<std::pair<int, std::string*>> GameObject::changes;
 
 GameObject::GameObject()
 {
@@ -52,6 +52,15 @@ int GameObject::getID()
 	return id;
 }
 
+void GameObject::clearChanges()
+{
+	//changeList.clear();
+	for (int i = 0; i < attr_num; i++){
+		isChanged[i] = false;
+	}
+}
+
+/*
 std::map<std::string*, bool> GameObject::getChanges()
 {
 	//check if any properties of this object have changed from previous check
@@ -79,11 +88,4 @@ void GameObject::addChange(std::string* change)
 {
 	changeList.insert(std::pair<std::string*,bool>(change,true));
 }
-
-void GameObject::clearChanges()
-{
-	//changeList.clear();
-	for (int i = 0; i < attr_num; i++){
-		isChanged[i] = false;
-	}
-}
+*/
