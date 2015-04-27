@@ -9,7 +9,8 @@
 #include "camera.h"
 #include "player.h"
 #include "objparser.h"
-#include "GamePlay.h"
+#include "ClientGame.h"
+#include "GameObject.h"
 #include <vector>
 
 using namespace std;
@@ -24,6 +25,7 @@ public:
 	void Reset();
 	void Loop();
 	void UpdateFromServer();
+	void getClientInputs();
 
 	void Quit();
 
@@ -43,21 +45,19 @@ private:
 
 	// Input
 	bool LeftDown,MiddleDown,RightDown,LeftDownTwo,BothDown;
+	//keep track of keys that are held down
+	bool moveLeft, moveRight, moveBackward, moveForward, rotateLeft, rotateRight;
 	int MouseX,MouseY;
 
 	// Components
 	Camera Cam;
 	Player player;
+	GameObject object;
 	bool rotate; 
 
-
+	ClientGame * client;
 
 };
-
-// Backend server business
-GamePlay * gameplay;
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 

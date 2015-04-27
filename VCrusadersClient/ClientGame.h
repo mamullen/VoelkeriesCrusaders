@@ -19,12 +19,14 @@ public:
 	void processActionPacket(char*);
 	void update();
 	void connectToServer(const char*);
-	std::vector<const char *> inputEvents;
-	std::vector<const char *> serverEvents;
+	void pushEvent(char * evt);
+	const char * popServerEvent();
 
 private:
 	std::vector<std::string> serverIPList;
 	char user_input[PACKET_DATA_LEN];
+	std::vector<const char *> inputEvents;
+	std::vector<const char *> serverEvents;
 };
 
 
