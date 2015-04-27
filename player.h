@@ -20,7 +20,7 @@ const int ROTATERIGHT = GLFW_KEY_D;
 
 class Player {
 private:
-	float speed = 0.5;
+	float speed = 2;
 	float rotation = 0;
 	Matrix34 rotateMx;
 

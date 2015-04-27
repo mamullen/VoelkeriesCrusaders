@@ -26,6 +26,8 @@ public:
 	void MouseScroll(GLFWwindow* window, double xoffset, double yoffset);
 private:
 	GLFWwindow* window;
+	Building* b1;
+	Building* b2;
 
 	// Window management
 	float ratio;
