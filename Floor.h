@@ -14,7 +14,6 @@
 #include "Building.h"
 #include <iostream>
 #include <vector>
-#include "Text.h"
 
 class Floor{
 public:
@@ -31,7 +30,7 @@ public:
     float floorsizez=20;
     GLuint texture[5];
     bool state;
-    Text t;
+   // Text t;
     
 };
 

@@ -57,7 +57,7 @@ void Floor::createTile(Building* b, float offsetx, float offsetz)
     if(state)
     {
         glGenTextures(1, texture);
-        t.loadTexture("/Users/michaelmullenjr/Downloads/10984245_10153174086971095_5588850874871390930_n_phpwRaZiJ.ppm", texture[0]);
+       // t.loadTexture("/Users/michaelmullenjr/Downloads/10984245_10153174086971095_5588850874871390930_n_phpwRaZiJ.ppm", texture[0]);
         
         state = false;
     }
