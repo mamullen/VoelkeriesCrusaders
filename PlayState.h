@@ -7,6 +7,8 @@
 
 #include "core.h"
 #include "GameState.h"
+#include "Building.h"
+#include "Floor.h"
 
 class PlayState : public GameState
 {
@@ -37,6 +39,7 @@ private:
 	// Components
 	Camera Cam;
 	Player player;
+    Floor field;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

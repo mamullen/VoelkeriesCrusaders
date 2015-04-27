@@ -87,7 +87,19 @@ void PlayState::Draw() {
 	glTranslatef(player.getPos().x, player.getPos().y, player.getPos().z);
 
 	// Begin drawing player and scene
-	drawsomeground();
+    Building* b1 = new Building(25, -20, -10, -20, -10);
+    Building* b2 = new Building(15, 20, 18, 20, 18);
+    field.buildingList.push_back(b1);
+    field.buildingList.push_back(b2);
+    field.createFloor(0, 0);
+    field.createFloor(40, 0);
+    field.createFloor(-40, 0);
+    field.createFloor(40, 40);
+    field.createFloor(-40, 40);
+    field.createFloor(40, -40);
+    field.createFloor(-40, -40);
+    field.createFloor(0, 40);
+    field.createFloor(0, -40);
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();
