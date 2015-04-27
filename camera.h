@@ -14,7 +14,7 @@ class Camera {
 public:
 	Camera();
     float cx,cy,cz;
-	void Update();
+	void Update(bool LeftDown, bool RightDown, int dx, int dy);
 	void Reset();
 	void Draw();
 

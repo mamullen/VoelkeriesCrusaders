@@ -25,6 +25,8 @@
 	#include <GLUT/glut.h>
 #endif
 
+#define WINDOWTITLE	"Voelkeries Crusaders"
+
 void drawAxis(float size);
 void drawWireBox(float xmin,float ymin,float zmin,float xmax,float ymax,float zmax);
 

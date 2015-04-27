@@ -4,6 +4,7 @@
 #include "core.h"
 #include "matrix34.h"
 #include "Vector4.h"
+#include "objparser.h"
 #include <iostream>
 
 static const Vector4 INIT_FORWARD = Vector4(0, 0, 1, 1);
@@ -19,7 +20,7 @@ const int ROTATERIGHT = GLFW_KEY_D;
 
 class Player {
 private:
-	float speed = 0.5;
+	float speed = 2;
 	float rotation = 0;
 	Matrix34 rotateMx;
 
@@ -29,6 +30,7 @@ private:
 	Vector4 up = Vector4(0, 1, 0, 1); 
 
 public:
+	Player();
 	void MoveForward();
 	void MoveForward(float speed);
 	void MoveBackward();

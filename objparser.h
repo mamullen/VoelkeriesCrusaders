@@ -14,34 +14,31 @@
 
 class ObjParser {
 	private:
-		struct info {
-			Vector3 vertices;
-			Vector3 colors;
-			Vector3 normals;
+		struct Relation {
+			int vertex;
+			int texture;
+			int normal;
 		};
 
-		struct vertNormRelation {
-			int first;
-			int second;
-		};
-
-		struct mapping {
-			vertNormRelation first;
-			vertNormRelation second;
-			vertNormRelation third;
+		struct Mapping {
+			Relation first;
+			Relation second;
+			Relation third;
 		};
 
 	public:
 		ObjParser();
-		void ParseFile(char *filename, std::vector<info> &vec_info, std::vector<mapping> &vec_mapping);
-		void Draw(std::vector<info>& vec_info, int vertexIndex, int normalIndex);
-		void ParserDraw();
+		ObjParser(char*);
+		void ParseFile(char *filename, std::vector<Vector3>&, std::vector<Vector3>&, std::vector<Vector3>&, std::vector<Mapping>&);
+		void DrawHelper(int, int, int);
+		void Draw();
 
-		std::vector<info> bunnyInfo;
-		std::vector<mapping> bunnyMapping;
+		std::vector<Vector3> v;
+		std::vector<Vector3> t;
+		std::vector<Vector3> n;
+		std::vector<Mapping> m;
 
-		std::vector<info> *tmp_info_ptr = &bunnyInfo;
-		std::vector<mapping> *tmp_mapping_ptr = &bunnyMapping;
+		std::vector<Mapping> *tmp_mapping_ptr = &m;
 
 };
 
