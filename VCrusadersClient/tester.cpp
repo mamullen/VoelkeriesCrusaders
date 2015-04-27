@@ -29,10 +29,6 @@ int main(int argc, char **argv) {
 	if (!glfwInit())
 		exit(EXIT_FAILURE);
 
-	// initializing backend business
-	gameplay = new GamePlay();
-	gameplay->start();
-
 	//std::cin.get();
 	TESTER = new Tester(argc, argv);	//initialize
 	TESTER->Loop();
@@ -47,6 +43,7 @@ Tester::Tester(int argc, char **argv) {
 	WinY = 768;
 
 	LeftDown = MiddleDown = RightDown = BothDown = false;
+	moveLeft = moveRight = moveForward = moveBackward = rotateLeft = rotateRight = false;
 	MouseX = MouseY = 0;
 
 	// Create the window
@@ -74,6 +71,12 @@ Tester::Tester(int argc, char **argv) {
 
 	// Initialize components
 	Cam.SetAspect(float(WinX) / float(WinY));
+
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+	// Initialize backend
+	client = new ClientGame();
+	client->connectToServer("128.54.237.156");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -120,7 +123,7 @@ void drawsomeground() { // deprecate this one day
 }
 
 void Tester::UpdateFromServer(){
-	const char * serverEvent = gameplay->popServerEvent();
+	const char * serverEvent = client->popServerEvent();
 	while (serverEvent != NULL){
 
 		if (strstr(serverEvent, "pos:") != NULL){
@@ -131,36 +134,53 @@ void Tester::UpdateFromServer(){
 			memcpy(&yPos, serverEvent + 8, sizeof(float));
 			memcpy(&zPos, serverEvent + 12, sizeof(float));
 
-			char msgbuf[2048];
-			sprintf(msgbuf, "pos: with %f, %f, %f\n", xPos, yPos, zPos);
+			//char msgbuf[2048];
+			//sprintf(msgbuf, "pos: with %f, %f, %f\n", xPos, yPos, zPos);
 			//OutputDebugString(msgbuf);
 
 			player.moveToCoord(xPos, yPos, zPos);
 		}
 
+		serverEvent = client->popServerEvent();
+	}
+}
 
-		//float jesus;
-		//memcpy(&jesus, ret + 12, sizeof(float));
-		//char msgbuf[2048];
-		//sprintf(msgbuf, "FLOAT ME BABY %f\n", jesus);
-		//OutputDebugString(msgbuf);
-
-		serverEvent = gameplay->popServerEvent();
+void Tester::getClientInputs(){
+	if (moveForward){
+		client->pushEvent("move_forward;");
+	}
+	if (moveBackward){
+		client->pushEvent("move_backward;");
+	}
+	if (moveRight){
+		client->pushEvent("move_right;");
+	}
+	if (moveLeft){
+		client->pushEvent("move_left;");
+	}
+	if (rotateLeft){
+		client->pushEvent("rotate_left;");
+	}
+	if (rotateRight){
+		client->pushEvent("rotate_right;");
 	}
 }
 
 void Tester::Loop() {
 	while (!glfwWindowShouldClose(window))
 	{
+		//get inputs from client
+		getClientInputs();
+
 		// back-end packet business
-		gameplay->clientLoop();
+		client->update();
 
 		// update based on server events
 		UpdateFromServer();
 
-		if (BothDown) {
-			player.MoveForward(0.01);
-		}
+		//if (BothDown) {
+		//	player.MoveForward(0.01);
+		//}
 
 		// Set up glStuff
 		glViewport(0, 0, WinX, WinY);
@@ -173,11 +193,11 @@ void Tester::Loop() {
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 		player.update();
-	
+		
 
 
 		glTranslatef(player.getPos().x, player.getPos().y, player.getPos().z);
-
+		object.update();
 		// Begin drawing player and scene
 		drawsomeground();
 
@@ -213,49 +233,54 @@ void Tester::KeyCallback(GLFWwindow* window, int key, int scancode, int action, 
 	float playerRotation = -player.getRotation();
 
 	if (glfwGetKey(window, FORWARD)) {
-		//player.MoveForward();
-		Cam.SetAzimuth(playerRotation);
-		gameplay->pushEvent("move_forward;");
+		//Cam.SetAzimuth(playerRotation);
+		moveForward = true;
+	}
+	else{
+		moveForward = false;
 	}
 
 	if (glfwGetKey(window, STRAFELEFT)) {
-		//player.StrafeLeft();
-		Cam.SetAzimuth(playerRotation); // needs some kind of fade effect
-		gameplay->pushEvent("move_left;");
+		moveLeft = true;
+	}
+	else{
+		moveLeft = false;
 	}
 
 	if (glfwGetKey(window, STRAFERIGHT)) {
-		//player.StrafeRight();
-		gameplay->pushEvent("move_right;");
+		moveRight = true;
+	}
+	else{
+		moveRight = false;
 	}
 
 	if (glfwGetKey(window, BACKWARD)) {
-		//player.MoveBackward();
-		gameplay->pushEvent("move_backward;");
+		moveBackward = true;
+	}
+	else{
+		moveBackward = false;
 	}
 
 	if (glfwGetKey(window, ROTATELEFT)) {
-		player.rotateLeft();
-		gameplay->pushEvent("rotate_left;");
+		rotateLeft = true;
+	}
+	else{
+		rotateLeft = false;
 	}
 
 	if (glfwGetKey(window, ROTATERIGHT)) {
-		player.rotateRight();
-		gameplay->pushEvent("rotate_right;");
+		rotateRight = true;
+	}
+	else{
+		rotateRight = false;
 	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Tester::MouseButton(GLFWwindow* window, int button, int action, int mods) {
+	/*
 	float playerRotation = -player.getRotation();
-
-	if (action == GLFW_PRESS) {
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	}
-	else if (action == GLFW_RELEASE) {
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-	}
 
 	if (rotate)
 	{
@@ -280,6 +305,7 @@ void Tester::MouseButton(GLFWwindow* window, int button, int action, int mods) {
 			LeftDownTwo = (action == GLFW_PRESS);
 		}
 	}
+	*/
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -294,15 +320,13 @@ void Tester::MouseMotion(GLFWwindow* window, double xpos, double ypos) {
 	const float rate = 1.0f;
 	// Move camera
 	// NOTE: this should really be part of Camera::Update()
-	if (LeftDown) {
-		Cam.SetAzimuth(Cam.GetAzimuth() + dx*rate);
-		Cam.SetIncline(Cam.GetIncline() - dy*rate);
-	}
-	if (RightDown) {
+	Cam.SetAzimuth(Cam.GetAzimuth() + dx*rate);
+	Cam.SetIncline(Cam.GetIncline() - dy*rate);
+	/*if (RightDown) {
 		Cam.SetAzimuth(Cam.GetAzimuth() + dx*rate);
 		Cam.SetIncline(Cam.GetIncline() - dy*rate);
 		player.setRotation(-Cam.GetAzimuth());
-	}
+	}*/
 }
 
 ////////////////////////////////////////////////////////////////////////////////

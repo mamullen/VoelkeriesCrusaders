@@ -1,16 +1,14 @@
-﻿Build started 4/25/2015 11:13:56 AM.
-     1>Project "C:\Users\XM\Desktop\CSE_125_GAME\REPO\VCrusadersClient\VCrusadersClient.vcxproj" on node 2 (Build target(s)).
+﻿Build started 4/27/2015 1:57:08 AM.
+     1>Project "C:\Users\Brandon\Documents\Source\Repos\VoelkeriesCrusaders\VoelkeriesCrusaders\VCrusadersClient\VCrusadersClient.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:/glfw/include /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _WINSOCK_DEPRECATED_NO_WARNINGS /D _CRT_SECURE_NO_WARNINGS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt GamePlay.cpp
-         GamePlay.cpp
-     1>c:\users\xm\desktop\cse_125_game\repo\vcrusadersclient\gameplay.cpp(33): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\xm\desktop\cse_125_game\repo\vcrusadersclient\gameplay.cpp(44): warning C4018: '<' : signed/unsigned mismatch
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:/glfw/include /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _WINSOCK_DEPRECATED_NO_WARNINGS /D _CRT_SECURE_NO_WARNINGS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt player.cpp
+         player.cpp
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\XM\Desktop\CSE_125_GAME\REPO\Debug\VCrusadersClient.exe" /INCREMENTAL /NOLOGO /LIBPATH:C:/glfw/lib kernel32.lib glfw3.lib opengl32.lib glu32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\XM\Desktop\CSE_125_GAME\REPO\Debug\VCrusadersClient.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /ENTRY:"mainCRTStartup" /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\XM\Desktop\CSE_125_GAME\REPO\Debug\VCrusadersClient.lib" /MACHINE:X86 Debug\camera.obj
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Brandon\Documents\Source\Repos\VoelkeriesCrusaders\VoelkeriesCrusaders\Debug\VCrusadersClient.exe" /INCREMENTAL /NOLOGO /LIBPATH:C:/glfw/lib kernel32.lib glfw3.lib opengl32.lib glu32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Brandon\Documents\Source\Repos\VoelkeriesCrusaders\VoelkeriesCrusaders\Debug\VCrusadersClient.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /ENTRY:"mainCRTStartup" /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Brandon\Documents\Source\Repos\VoelkeriesCrusaders\VoelkeriesCrusaders\Debug\VCrusadersClient.lib" /MACHINE:X86 Debug\camera.obj
          Debug\ClientGame.obj
          Debug\ClientNetwork.obj
          Debug\core.obj
-         Debug\GamePlay.obj
+         Debug\GameObject.obj
          Debug\matrix34.obj
          Debug\NetworkServices.obj
          Debug\objparser.obj
@@ -19,9 +17,9 @@
          Debug\tester.obj
          Debug\vector3.obj
          Debug\Vector4.obj
-         VCrusadersClient.vcxproj -> C:\Users\XM\Desktop\CSE_125_GAME\REPO\Debug\VCrusadersClient.exe
-     1>Done Building Project "C:\Users\XM\Desktop\CSE_125_GAME\REPO\VCrusadersClient\VCrusadersClient.vcxproj" (Build target(s)).
+         VCrusadersClient.vcxproj -> C:\Users\Brandon\Documents\Source\Repos\VoelkeriesCrusaders\VoelkeriesCrusaders\Debug\VCrusadersClient.exe
+     1>Done Building Project "C:\Users\Brandon\Documents\Source\Repos\VoelkeriesCrusaders\VoelkeriesCrusaders\VCrusadersClient\VCrusadersClient.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:02.19
+Time Elapsed 00:00:00.63

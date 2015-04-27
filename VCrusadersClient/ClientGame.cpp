@@ -22,35 +22,32 @@ void ClientGame::sendActionPackets()
 
 	Packet packet;
 	packet.packet_type = ACTION_EVENT;
+
+	//only send if there are events to send to server
 	if (!inputEvents.empty()){
 		std::string acc = accumulate(inputEvents.begin(), inputEvents.end(), std::string(""));
 		inputEvents.clear();
 		char *accP = (char*)acc.c_str();
 		memcpy(packet.packet_data, accP, sizeof(packet_data));
 		packet.id = 0;
-	}
-	else{
-		packet.id = 1000;
-		memcpy(packet.packet_data, ".", sizeof(packet_data));
-	}
-	packet.serialize(data);
+		packet.serialize(data);
 
-	NetworkServices::sendMessage(network->ConnectSocket, data, packet_size);
+		NetworkServices::sendMessage(network->ConnectSocket, data, packet_size);
+	}
 }
 
 
 void ClientGame::processActionPacket(char* the_data){
 	char* token = strtok(the_data, ",");
 	while (token != NULL){
-		if (strcmp(token, "Hello") != 0){
-			int dataSize = 0;
+		int dataSize = 0;
 
-			if (strcmp(token, "pos:") == 0){
-				dataSize = 17;
-			}
+		if (strcmp(token, "pos:") == 0){
+			dataSize = 17;
+		}
 				
-
-			char * pToken = (char*)malloc(dataSize * sizeof(char));
+		if (dataSize > 0){
+			char * pToken = new char[dataSize];
 			memcpy(pToken, token, dataSize * sizeof(char));
 			serverEvents.push_back(pToken);
 		}
@@ -61,6 +58,10 @@ void ClientGame::processActionPacket(char* the_data){
 
 void ClientGame::update()
 {
+	//send packets that need to be sent to server
+	sendActionPackets();
+
+	//check what packets have been received
 	Packet packet;
 	int data_length = network->receivePackets(network_data);
 
@@ -84,7 +85,7 @@ void ClientGame::update()
 			processActionPacket(packet.packet_data);
 			printf(packet.packet_data);
 			printf("\n");
-			sendActionPackets();
+			
 
 			break;
 
@@ -94,8 +95,6 @@ void ClientGame::update()
 			printf("Client %d said: ", packet.id);
 			printf(packet.packet_data);
 			printf("\n");
-
-			sendActionPackets();
 			break;
 		default:
 
@@ -121,4 +120,20 @@ void ClientGame::connectToServer(const char* ip)
 
 	int result = NetworkServices::sendMessage(network->ConnectSocket, packet_data, packet_size);
 	printf("result of initialization = %d\n", result);
+}
+
+void ClientGame::pushEvent(char * evt)
+{
+	if (!inputEvents.empty() && strcmp(inputEvents.back(), evt) == 0)
+		return;
+	inputEvents.push_back(evt);
+}
+
+const char * ClientGame::popServerEvent(){
+	if (!serverEvents.empty()){
+		const char * ret = serverEvents.back();
+		serverEvents.pop_back();
+		return ret;
+	}
+	return NULL;
 }
