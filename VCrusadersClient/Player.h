@@ -20,7 +20,7 @@ const int ROTATERIGHT = GLFW_KEY_D;
 
 class Player {
 private:
-	float speed = 0.5;
+	float speed = 2;
 	float rotation = 0;
 	Matrix34 rotateMx;
 
@@ -30,12 +30,12 @@ private:
 	Vector4 up = Vector4(0, 1, 0, 1); 
 
 public:
+	Player();
 	void MoveForward();
 	void MoveForward(float speed);
 	void MoveBackward();
 	void StrafeLeft();
 	void StrafeRight();
-	void moveToCoord(double x, double y, double z);
 
 	void rotateLeft();
 	void rotateRight();
@@ -45,6 +45,7 @@ public:
 	void print(std::string);
 
 	Vector4 getPos()					{ return position; }
+	void setPos(double x, double y, double z);
 	float getRotation()					{ return rotation; }
 	void setRotation(float rot)			{ rotation = rot; rotateMx.MakeRotateY(rot*M_PI/180); resetForward(rotateMx); }
 	void setForward(Matrix34 rotate)	{ rotate.Transform(forward, forward); rotate.Transform(right, right); }

@@ -24,14 +24,14 @@ class ObjParser {
 			Relation first;
 			Relation second;
 			Relation third;
-			Relation fourth;
 		};
 
 	public:
 		ObjParser();
+		ObjParser(char*);
 		void ParseFile(char *filename, std::vector<Vector3>&, std::vector<Vector3>&, std::vector<Vector3>&, std::vector<Mapping>&);
-		void Draw(int, int, int);
-		void ParserDraw();
+		void DrawHelper(int, int, int);
+		void Draw();
 
 		std::vector<Vector3> v;
 		std::vector<Vector3> t;

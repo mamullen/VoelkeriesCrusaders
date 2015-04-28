@@ -10,7 +10,7 @@ void GameObject::update() {
 	glRotatef(180, 0, 1, 0);
 	glRotatef(rotation, 0, 1, 0);
 	
-	human2.ParserDraw();
+	//human2.ParserDraw();
 
 	/*glBegin(GL_TRIANGLES);
 	glColor3f(1.f, 1.f, 0.f);
