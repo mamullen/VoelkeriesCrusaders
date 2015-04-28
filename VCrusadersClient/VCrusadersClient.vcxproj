@@ -86,34 +86,41 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Building.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="ClientGame.cpp" />
     <ClCompile Include="ClientNetwork.cpp" />
     <ClCompile Include="core.cpp" />
+    <ClCompile Include="Floor.cpp" />
+    <ClCompile Include="GameEngine.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="matrix34.cpp" />
     <ClCompile Include="NetworkServices.cpp" />
     <ClCompile Include="objparser.cpp" />
     <ClCompile Include="player.cpp" />
+    <ClCompile Include="PlayState.cpp" />
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="tester.cpp" />
     <ClCompile Include="vector3.cpp" />
     <ClCompile Include="Vector4.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Building.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="ClientGame.h" />
     <ClInclude Include="ClientNetwork.h" />
     <ClInclude Include="core.h" />
+    <ClInclude Include="Floor.h" />
+    <ClInclude Include="GameEngine.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GameState.h" />
     <ClInclude Include="matrix34.h" />
     <ClInclude Include="NetworkData.h" />
     <ClInclude Include="NetworkServices.h" />
     <ClInclude Include="objparser.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="PlayState.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="tester.h" />
     <ClInclude Include="vector3.h" />
     <ClInclude Include="Vector4.h" />
   </ItemGroup>

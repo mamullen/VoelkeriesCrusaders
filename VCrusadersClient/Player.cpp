@@ -6,7 +6,11 @@
 
 #include "player.h"
 
-ObjParser human;
+ObjParser mech;
+
+Player::Player() {
+	mech = ObjParser("Object/MechAnimation.obj");
+}
 
 void Player::update() {
 
@@ -16,15 +20,16 @@ void Player::update() {
 	glRotatef(180, 0, 1, 0);
 	glRotatef(rotation, 0, 1, 0);
 
-	human.ParserDraw();
+	mech.Draw();
 
-	glBegin(GL_TRIANGLES);
+	//draws a simple triangle
+	/*glBegin(GL_TRIANGLES);
 	glColor3f(1.f, 1.f, 0.f);
-	glVertex3f(-0.2f, 3.f, -0.4f);
+	glVertex3f(-0.6f, 2.f, -0.4f);
 	glColor3f(0.f, 0.f, 1.f);
-	glVertex3f(0.2f, 3.f, -0.4f);
+	glVertex3f(0.6f, 2.f, -0.4f);
 	glColor3f(0.f, 1.f, 1.f);
-	glVertex3f(0.f, 3.f, 0.6f);
+	glVertex3f(0.f, 2.f, 0.6f);*/
 
 	glEnd();
 	glPopMatrix();
@@ -34,7 +39,7 @@ void Player::jump() {
 	position = position + forward.scale(speed) + up.scale(speed);
 }
 
-void Player::moveToCoord(double x, double y, double z){
+void Player::setPos(double x, double y, double z){
 	position = Vector4(x, y, z, 1);
 }
 

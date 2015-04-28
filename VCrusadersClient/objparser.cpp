@@ -1,7 +1,10 @@
 #include "objparser.h"
 
 ObjParser::ObjParser() {
-	ParseFile("Object/REALDummy.obj", v, n, t, m);
+}
+
+ObjParser::ObjParser(char *filename) {
+	ParseFile(filename, v, n, t, m);
 }
 
 void ObjParser::ParseFile(char *filename, std::vector<Vector3> &vertices, std::vector<Vector3> &normals, std::vector<Vector3> &textures, std::vector<Mapping> &mapping) {
@@ -55,15 +58,9 @@ void ObjParser::ParseFile(char *filename, std::vector<Vector3> &vertices, std::v
 			three.texture = --t3;
 			three.normal = --n3;
 
-			Relation four;
-			four.vertex = --v4;
-			four.texture = --t4;
-			four.normal = --n4;
-
 			map.first = one;
 			map.second = two;
 			map.third = three;
-			map.fourth = four;
 			mapping.push_back(map);
 		}
 		else {
@@ -79,25 +76,24 @@ void ObjParser::ParseFile(char *filename, std::vector<Vector3> &vertices, std::v
 	fclose(fp);
 }
 
-void ObjParser::Draw(int vertex, int texture, int normal)
+void ObjParser::DrawHelper(int vertex, int texture, int normal)
 {
 	glColor3f(n.at(normal).x, n.at(normal).y, n.at(normal).z);
 	glVertex3f(v.at(vertex).x, v.at(vertex).y, v.at(vertex).z);
 	glNormal3f(n.at(normal).x, n.at(normal).y, n.at(normal).z);
 }
 
-void ObjParser::ParserDraw() {
+void ObjParser::Draw() {
 	glPushMatrix();
 	glScalef(0.3, 0.3, 0.3);
 	glTranslatef(0, 2, -2);
-	glBegin(GL_QUADS);
+	glBegin(GL_TRIANGLES);
 
 	for (std::vector<Mapping>::iterator it = m.begin(); it != m.end(); ++it) {
 		Mapping tmp = *it;
-		Draw(tmp.first.vertex, tmp.first.texture, tmp.first.normal);
-		Draw(tmp.second.vertex, tmp.second.texture, tmp.second.normal);
-		Draw(tmp.third.vertex, tmp.third.texture, tmp.third.normal);
-		Draw(tmp.fourth.vertex, tmp.fourth.texture, tmp.fourth.normal);
+		DrawHelper(tmp.first.vertex, tmp.first.texture, tmp.first.normal);
+		DrawHelper(tmp.second.vertex, tmp.second.texture, tmp.second.normal);
+		DrawHelper(tmp.third.vertex, tmp.third.texture, tmp.third.normal);
 	}
 
 	glEnd();

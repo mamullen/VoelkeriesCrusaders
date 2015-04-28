@@ -15,7 +15,17 @@ Camera::Camera() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Camera::Update() {
+void Camera::Update(bool LeftDown, bool RightDown, int dx, int dy) {
+	const float rate = 1.0f;
+
+	if (LeftDown) {
+		SetAzimuth(GetAzimuth() + dx*rate);
+		SetIncline(GetIncline() - dy*rate);
+	}
+	if (RightDown) {
+		SetAzimuth(GetAzimuth() + dx*rate);
+		SetIncline(GetIncline() - dy*rate);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
