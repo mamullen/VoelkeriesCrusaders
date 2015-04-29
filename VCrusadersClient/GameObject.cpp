@@ -1,6 +1,9 @@
 #include "GameObject.h"
 
-ObjParser human2;
+GameObject::GameObject(ObjParser* m)
+{
+	model = m;
+}
 
 void GameObject::update() {
 
@@ -10,25 +13,31 @@ void GameObject::update() {
 	glRotatef(180, 0, 1, 0);
 	glRotatef(rotation, 0, 1, 0);
 	
-	//human2.ParserDraw();
-
-	/*glBegin(GL_TRIANGLES);
-	glColor3f(1.f, 1.f, 0.f);
-	glVertex3f(-0.6f, 2.f, -0.4f);
-	glColor3f(0.f, 0.f, 1.f);
-	glVertex3f(0.6f, 2.f, -0.4f);
-	glColor3f(0.f, 1.f, 1.f);
-	glVertex3f(0.f, 2.f, 0.6f);*/
+	//check  model is not null
+	if (model){
+		model->Draw();
+	}
+	else {
+		//no model, so use draw method to draw object
+		drawObj();
+	}
 	
 	glEnd();
 	glPopMatrix();
 }
 
-void GameObject::jump() {
-	position = position + forward.scale(speed) + up.scale(speed);
+void GameObject::drawObj(){
+	//draws a simple triangle
+	glBegin(GL_TRIANGLES);
+	glColor3f(1.f, 1.f, 0.f);
+	glVertex3f(-0.6f, 2.f, -0.4f);
+	glColor3f(0.f, 0.f, 1.f);
+	glVertex3f(0.6f, 2.f, -0.4f);
+	glColor3f(0.f, 1.f, 1.f);
+	glVertex3f(0.f, 2.f, 0.6f);
 }
 
-void GameObject::moveToCoord(double x, double y, double z){
+void GameObject::setPos(double x, double y, double z){
 	position = Vector4(x, y, z, 1);
 }
 

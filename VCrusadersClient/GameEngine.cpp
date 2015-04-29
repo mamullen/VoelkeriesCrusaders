@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
 		double frameTime = newTime - currentTime;
 
 		currentTime = newTime;
-		std::cout << frameTime << std::endl;
+		//std::cout << frameTime << std::endl;
 
 		//currently goes as fast as possible
 
@@ -74,7 +74,7 @@ GameEngine::GameEngine(int argc, char **argv) {
 	
 	// Initialize the part of the client that connects to the server
 	Client = new ClientGame();
-	Client->connectToServer("128.54.237.156"); //set ip of server here
+	Client->connectToServer("137.110.92.46"); //set ip of server here
 
 	//Callbacks
 	glfwSetKeyCallback(window, key_callback);

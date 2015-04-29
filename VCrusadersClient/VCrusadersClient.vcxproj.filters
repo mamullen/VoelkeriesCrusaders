@@ -24,9 +24,6 @@
     <ClCompile Include="matrix34.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="player.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="vector3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
