@@ -63,7 +63,7 @@ void ServerGame::receiveFromClients()
 			Packet* temp = new Packet();
 			temp->deserialize(&(network_data[i]));
 			i += sizeof(Packet);
-
+			
 			switch (packet.packet_type) {
 
 			case INIT_CONNECTION:
@@ -71,7 +71,8 @@ void ServerGame::receiveFromClients()
 				printf("server received init packet from client %d\n",iter->first);
 				sendInitPackets(iter->first);
 				gameLogic->addPlayer(iter->first);
-				sendActionPackets(iter->first);
+				gameLogic->createNewObjects();
+				//sendActionPackets(iter->first);
 				break;
 
 			case ACTION_EVENT:
@@ -80,9 +81,7 @@ void ServerGame::receiveFromClients()
 				printf(packet.packet_data);
 				printf("\n");
 				gameLogic->savePacket(iter->first, temp);
-				//if (packet.id == 1000){
-					sendActionPackets(iter->first);
-				//}
+				//sendActionPackets(iter->first);
 				break;
 			}
 			case COMMUNICATION:
@@ -111,7 +110,7 @@ void ServerGame::sendPackets()
 	{
 		Packet p = **it;
 		// send action packet
-		printf("Packet Type: %d, Object ID: %d",p.packet_type, p.id);
+		printf("Packet Type: %d, Object ID: %d\n",p.packet_type, p.id);
 		printf("\n");
 
 		/*float test1;
@@ -134,6 +133,7 @@ void ServerGame::sendPackets()
 void ServerGame::sendInitPackets(unsigned int id)
 {
 	std::vector<GameObject*> gameObjects = gameLogic->getGameObjects();
+
 	for (int i = 0; i < gameObjects.size(); i++){
 		const unsigned int packet_size = sizeof(Packet);
 		char packet_data[packet_size];

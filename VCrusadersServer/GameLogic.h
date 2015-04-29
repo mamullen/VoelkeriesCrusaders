@@ -21,7 +21,7 @@ public:
 	void savePacket(int id,Packet* p);
 	void clearPackets();
 	void addPlayer(int id);
-	
+	void createNewObjects();
 
 private:
 	std::vector<GameObject*> gameObjects;

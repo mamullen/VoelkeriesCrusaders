@@ -76,9 +76,9 @@ std::vector<GameObject*> GameLogic::getGameObjects()
 
 void GameLogic::savePacket(int id,Packet* p)
 {
-	printf("saved packet = ");
-	printf(p->packet_data);
-	printf("\n");
+	//printf("saved packet = ");
+	//printf(p->packet_data);
+	//printf("\n");
 	packets.push_back(std::pair<int,Packet*>(id,p));
 }
 
@@ -103,4 +103,13 @@ void GameLogic::addPlayer(int id)
 {
 	Player* newP = new Player(id);
 	gameObjects.push_back(newP);
+}
+
+void GameLogic::createNewObjects()
+{
+	Packet* p = new Packet;
+	p->packet_type = ACTION_EVENT;
+	p->id = gameObjects.size()-1;
+	memcpy_s(p->packet_data, PACKET_DATA_LEN, "new", 3);
+	serverPackets.push_back(p);
 }
