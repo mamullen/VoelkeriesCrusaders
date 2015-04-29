@@ -45,7 +45,7 @@ void GameLogic::update()
 			pointer += sizeof(float);
 			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
 			pointer += sizeof(float);
-			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float)+1);
 			pointer += sizeof(float);
 			data[pointer] = ',';
 			pointer++;
@@ -110,6 +110,6 @@ void GameLogic::createNewObjects()
 	Packet* p = new Packet;
 	p->packet_type = ACTION_EVENT;
 	p->id = gameObjects.size()-1;
-	memcpy_s(p->packet_data, PACKET_DATA_LEN, "new", 3);
+	memcpy_s(p->packet_data, PACKET_DATA_LEN, "new", 3+1);
 	serverPackets.push_back(p);
 }
