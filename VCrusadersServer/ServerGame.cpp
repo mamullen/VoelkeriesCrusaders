@@ -140,7 +140,7 @@ void ServerGame::sendInitPackets(unsigned int id)
 		Packet p;
 		p.packet_type = ACTION_EVENT;
 		p.id = i;
-		memcpy_s(p.packet_data, PACKET_DATA_LEN, "create", 6);
+		memcpy_s(p.packet_data, PACKET_DATA_LEN, "create", 6+1);
 		p.serialize(packet_data);
 		network->sendToOne(id, packet_data, packet_size);
 	}
