@@ -40,10 +40,7 @@ void PlayState::Initialize() {
 	// Initialize components
 	Cam.SetAspect(float(WinX) / float(WinY));
 
-	b1 = new Building(25, -20, -10, -20, -10);
-	b2 = new Building(15, 20, 18, 20, 18);
-	field.buildingList.push_back(b1);
-	field.buildingList.push_back(b2);
+	player = NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -51,6 +48,19 @@ void PlayState::Initialize() {
 void PlayState::Update(ClientGame* client) {
 	const char * serverEvent = client->popServerEvent();
 	while (serverEvent != NULL){
+
+		if (strstr(serverEvent, "new") != NULL){
+			if (!player){
+				player = new Player();
+			}
+			else{
+				gameObjects.insert(std::pair<int, GameObject*>(1, new Player()));
+			}
+		}
+
+		if (strstr(serverEvent, "create") != NULL){
+			gameObjects.insert(std::pair<int,GameObject*>(1,new Player()));
+		}
 
 		if (strstr(serverEvent, "pos:") != NULL){
 			float xPos;
@@ -63,8 +73,8 @@ void PlayState::Update(ClientGame* client) {
 			//char msgbuf[2048];
 			//sprintf(msgbuf, "pos: with %f, %f, %f\n", xPos, yPos, zPos);
 			//OutputDebugString(msgbuf);
-
-			player.setPos(xPos, yPos, zPos);
+			if (player)
+				player->setPos(xPos, yPos, zPos);
 		}
 
 		serverEvent = client->popServerEvent();
@@ -92,9 +102,8 @@ void drawsomeground() { // deprecate this one day
 ////////////////////////////////////////////////////////////////////////////////
 
 void PlayState::Draw() {
-	/*if (BothDown) {
-		player.MoveForward(0.01);
-	}*/
+	if (!player)
+		return;
 
 	// Set up glStuff
 	glViewport(0, 0, WinX, WinY);
@@ -106,21 +115,16 @@ void PlayState::Draw() {
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	player.update();
+	player->update();
 
-	glTranslatef(player.getPos().x, player.getPos().y, player.getPos().z);
+	glTranslatef(player->getPos().x, player->getPos().y, player->getPos().z);
 
 	drawsomeground();
-	// Begin drawing player and scene
-    /*field.createFloor(0, 0);
-    field.createFloor(40, 0);
-    field.createFloor(-40, 0);
-    field.createFloor(40, 40);
-    field.createFloor(-40, 40);
-    field.createFloor(40, -40);
-    field.createFloor(-40, -40);
-    field.createFloor(0, 40);
-    field.createFloor(0, -40);*/
+	std::map<int, GameObject*>::iterator it;
+	for (it = gameObjects.begin(); it != gameObjects.end(); it++)
+	{
+		it->second->update();
+	}
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();
@@ -129,7 +133,10 @@ void PlayState::Draw() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void PlayState::Input(ClientGame* client) {
-	float playerRotation = -player.getRotation();
+	if (!player)
+		return;
+
+	float playerRotation = -player->getRotation();
 
 	if (glfwGetKey(window, FORWARD)) {
 		client->pushEvent("move_forward;");
@@ -168,7 +175,10 @@ void PlayState::KeyCallback(GLFWwindow* window, int key, int scancode, int actio
 ////////////////////////////////////////////////////////////////////////////////
 
 void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods) {
-	float playerRotation = -player.getRotation();
+	if (!player)
+		return;
+
+	float playerRotation = -player->getRotation();
 
 	if (action == GLFW_PRESS) {
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -196,6 +206,9 @@ void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods
 ////////////////////////////////////////////////////////////////////////////////
 
 void PlayState::MouseMotion(GLFWwindow* window, double xpos, double ypos) {
+	if (!player)
+		return;
+
 	int dx = xpos - MouseX;
 	int dy = -(ypos - MouseY);
 
@@ -205,7 +218,7 @@ void PlayState::MouseMotion(GLFWwindow* window, double xpos, double ypos) {
 	// Move camera
 	Cam.Update(LeftDown, RightDown, dx, dy);
 	if (RightDown) {
-		player.setRotation(-Cam.GetAzimuth());
+		player->setRotation(-Cam.GetAzimuth());
 	}
 }
 

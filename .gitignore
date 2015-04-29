@@ -4,3 +4,6 @@
 # Build results
 [Dd]ebug/
 [Rr]elease/
+
+*.sdf
+*.suo

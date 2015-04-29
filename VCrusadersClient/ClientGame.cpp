@@ -45,6 +45,14 @@ void ClientGame::processActionPacket(char* the_data){
 		if (strcmp(token, "pos:") == 0){
 			dataSize = 17;
 		}
+
+		if (strcmp(token, "new") == 0){
+			dataSize = 3;
+		}
+
+		if (strcmp(token, "create") == 0){
+			dataSize = 6;
+		}
 				
 		if (dataSize > 0){
 			char * pToken = new char[dataSize];
@@ -63,6 +71,7 @@ void ClientGame::update()
 
 	//check what packets have been received
 	Packet packet;
+	memset(&packet, 0, sizeof(Packet));
 	int data_length = network->receivePackets(network_data);
 
 	if (data_length <= 0)
@@ -102,6 +111,9 @@ void ClientGame::update()
 
 			break;
 		}
+
+		//clear prev Packet
+		memset(&packet, 0, sizeof(Packet));
 	}
 }
 

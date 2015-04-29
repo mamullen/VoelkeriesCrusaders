@@ -10,6 +10,7 @@
 #include "Building.h"
 #include "Floor.h"
 #include "ClientGame.h"
+#include <map>
 
 class PlayState : public GameState
 {
@@ -27,8 +28,6 @@ public:
 	void MouseScroll(GLFWwindow* window, double xoffset, double yoffset);
 private:
 	GLFWwindow* window;
-	Building* b1;
-	Building* b2;
 
 	// Window management
 	float ratio;
@@ -41,8 +40,10 @@ private:
 
 	// Components
 	Camera Cam;
-	Player player;
-    Floor field;
+	Player* player;
+	int pid = -1;
+	//player is not stored in this map
+	std::map<int, GameObject*> gameObjects;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
