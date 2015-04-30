@@ -45,14 +45,15 @@ void GameLogic::update()
 			pointer += sizeof(float);
 			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
 			pointer += sizeof(float);
-			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float)+1);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
 			pointer += sizeof(float);
 			data[pointer] = ',';
 			pointer++;
+			data[pointer] = '\0';
 			///////////////////////////////////////////////////////////////////////////
 			Packet* p = new Packet;
 			p->packet_type = ACTION_EVENT;
-			memcpy(p->packet_data, data, PACKET_DATA_LEN);
+			memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
 			p->id = index;
 
 			serverPackets.push_back(p);
