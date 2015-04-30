@@ -24,14 +24,15 @@ class GameObject {
 public:
 	//initialize game object with some model.  If there is no model
 	//associated with this GameObject, then just pass in NULL
-	GameObject(ObjParser* m);
+	GameObject(ObjParser* m, unsigned int i);
 
 	void rotateLeft();
 	void rotateRight();
-	void update();
+	void update(bool isPlayer);
 	virtual void drawObj(); //will draw a triangle if not overridden
 	void print(std::string);
 
+	unsigned int getID()				{ return id; }
 	Vector4 getPos()					{ return position; }
 	void setPos(double x, double y, double z);
 	float getRotation()					{ return rotation; }
@@ -40,7 +41,7 @@ public:
 	void resetForward(Matrix34 rotate)	{ rotate.Transform(Vector4(0, 0, 1, 1), forward); rotate.Transform(Vector4(-1, 0, 0, 1), right); }
 
 private:
-	int id;
+	unsigned int id;
 	float rotation = 0;
 	Matrix34 rotateMx;
 

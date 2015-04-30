@@ -46,20 +46,26 @@ void PlayState::Initialize() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void PlayState::Update(ClientGame* client) {
-	const char * serverEvent = client->popServerEvent();
-	while (serverEvent != NULL){
+	Packet * serverPacket = client->popServerEvent();
+	
+	while (serverPacket != NULL){
+		char * serverEvent = serverPacket->packet_data;
+		unsigned int objID = serverPacket->id;
+
+		//printf("%s\n", serverEvent);
+		//printf("%d\n", objID);
 
 		if (strstr(serverEvent, "new") != NULL){
 			if (!player){
-				player = new Player();
+				player = new Player(objID);
 			}
 			else{
-				gameObjects.insert(std::pair<int, GameObject*>(1, new Player()));
+				gameObjects.insert(std::pair<int, GameObject*>(objID, new Player(objID)));
 			}
 		}
 
 		if (strstr(serverEvent, "create") != NULL){
-			gameObjects.insert(std::pair<int,GameObject*>(1,new Player()));
+			gameObjects.insert(std::pair<int, GameObject*>(objID, new Player(objID)));
 		}
 
 		if (strstr(serverEvent, "pos:") != NULL){
@@ -73,11 +79,16 @@ void PlayState::Update(ClientGame* client) {
 			//char msgbuf[2048];
 			//sprintf(msgbuf, "pos: with %f, %f, %f\n", xPos, yPos, zPos);
 			//OutputDebugString(msgbuf);
-			if (player)
+			if (objID == player->getID()){
 				player->setPos(xPos, yPos, zPos);
+			}
+			else if (gameObjects.find(objID) != gameObjects.end()){
+				GameObject* o = gameObjects.at(objID);
+				o->setPos(xPos, yPos, zPos);
+			}
 		}
-
-		serverEvent = client->popServerEvent();
+		delete serverPacket;
+		serverPacket = client->popServerEvent();
 	}
 }
 
@@ -115,7 +126,7 @@ void PlayState::Draw() {
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	player->update();
+	player->update(true);
 
 	glTranslatef(player->getPos().x, player->getPos().y, player->getPos().z);
 
@@ -123,7 +134,7 @@ void PlayState::Draw() {
 	std::map<int, GameObject*>::iterator it;
 	for (it = gameObjects.begin(); it != gameObjects.end(); it++)
 	{
-		it->second->update();
+		it->second->update(false);
 	}
 
 	glfwSwapBuffers(window);
@@ -136,32 +147,30 @@ void PlayState::Input(ClientGame* client) {
 	if (!player)
 		return;
 
-	float playerRotation = -player->getRotation();
-
 	if (glfwGetKey(window, FORWARD)) {
-		client->pushEvent("move_forward;");
+		client->addEvent(player->getID(),"move_forward;");
 		//Cam.SetAzimuth(playerRotation);
 	}
 
 	if (glfwGetKey(window, STRAFELEFT)) {
-		client->pushEvent("move_left;");
+		client->addEvent(player->getID(), "move_left;");
 		//Cam.SetAzimuth(playerRotation); // needs some kind of fade effect
 	}
 
 	if (glfwGetKey(window, STRAFERIGHT)) {
-		client->pushEvent("move_right;");
+		client->addEvent(player->getID(), "move_right;");
 	}
 
 	if (glfwGetKey(window, BACKWARD)) {
-		client->pushEvent("move_backward;");
+		client->addEvent(player->getID(), "move_backward;");
 	}
 
 	if (glfwGetKey(window, ROTATELEFT)) {
-		client->pushEvent("rotate_left;");
+		client->addEvent(player->getID(), "rotate_left;");
 	}
 
 	if (glfwGetKey(window, ROTATERIGHT)) {
-		client->pushEvent("rotate_right;");
+		client->addEvent(player->getID(), "rotate_right;");
 	}
 }
 

@@ -10,7 +10,7 @@
 
 class Player: public GameObject {
 public:
-	Player() : GameObject(new ObjParser("Object/MechAnimation.obj")){};
+	Player(unsigned int i) : GameObject(new ObjParser("Object/MechAnimation.obj"),i){};
 };
 
 #endif
