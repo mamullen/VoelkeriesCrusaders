@@ -22,7 +22,7 @@ void ClientGame::sendActionPackets()
 	for (it = inputEvents.begin(); it != inputEvents.end(); it++)
 	{
 		const unsigned int packet_size = sizeof(Packet);
-		char packet_data[PACKET_DATA_LEN];
+		//char packet_data[PACKET_DATA_LEN];
 		char data[packet_size];
 
 		Packet packet;
@@ -30,7 +30,7 @@ void ClientGame::sendActionPackets()
 
 		//printf("%s\n", (it->second)->c_str());
 
-		memcpy(packet.packet_data, it->second, sizeof(packet_data));
+		memcpy(packet.packet_data, it->second, PACKET_DATA_LEN);
 		packet.id = it->first;
 		packet.serialize(data);
 
@@ -39,41 +39,12 @@ void ClientGame::sendActionPackets()
 	inputEvents.clear();
 }
 
-
-void ClientGame::processActionPacket(char* the_data){
-	char* token = strtok(the_data, ",");
-	while (token != NULL){
-		int dataSize = 0;
-
-		if (strcmp(token, "pos:") == 0){
-			dataSize = 17;
-		}
-
-		if (strcmp(token, "new") == 0){
-			dataSize = 3;
-		}
-
-		if (strcmp(token, "create") == 0){
-			dataSize = 6;
-		}
-				
-		if (dataSize > 0){
-			char * pToken = new char[dataSize];
-			memcpy(pToken, token, dataSize * sizeof(char));
-			//serverEvents.push_back(pToken);
-		}
-		token = strtok(NULL, ",");
-	}
-
-}
-
 void ClientGame::update()
 {
 	//send packets that need to be sent to server
 	sendActionPackets();
 
 	//check what packets have been received
-	Packet packet;
 	int data_length = network->receivePackets(network_data);
 
 	if (data_length <= 0)
@@ -82,7 +53,7 @@ void ClientGame::update()
 		return;
 	}
 
-	int i = 0;
+	unsigned int i = 0;
 	while (i < (unsigned int)data_length)
 	{
 		Packet* packet = new Packet;
@@ -96,7 +67,6 @@ void ClientGame::update()
 		case ACTION_EVENT:
 
 			//printf("client received action event packet from server\n");
-			//processActionPacket(packet->packet_data);
 			//printf(packet->packet_data);
 			//printf("\n");
 			

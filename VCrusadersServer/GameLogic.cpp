@@ -39,8 +39,8 @@ void GameLogic::update()
 			///////////////////////////////////////////////////////////////////////////
 			char data[PACKET_DATA_LEN];
 			int pointer = 0;
-			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "pos:", 4);
-			pointer += 4;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "pos:", 5);
+			pointer += 5;
 			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &x, sizeof(float));
 			pointer += sizeof(float);
 			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
@@ -49,7 +49,6 @@ void GameLogic::update()
 			pointer += sizeof(float);
 			data[pointer] = ',';
 			pointer++;
-			data[pointer] = '\0';
 			///////////////////////////////////////////////////////////////////////////
 			Packet* p = new Packet;
 			p->packet_type = ACTION_EVENT;

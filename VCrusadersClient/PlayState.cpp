@@ -72,9 +72,9 @@ void PlayState::Update(ClientGame* client) {
 			float xPos;
 			float yPos;
 			float zPos;
-			memcpy(&xPos, serverEvent + 4, sizeof(float));
-			memcpy(&yPos, serverEvent + 8, sizeof(float));
-			memcpy(&zPos, serverEvent + 12, sizeof(float));
+			memcpy(&xPos, serverEvent + 5, sizeof(float));
+			memcpy(&yPos, serverEvent + 9, sizeof(float));
+			memcpy(&zPos, serverEvent + 13, sizeof(float));
 
 			//char msgbuf[2048];
 			//sprintf(msgbuf, "pos: with %f, %f, %f\n", xPos, yPos, zPos);
