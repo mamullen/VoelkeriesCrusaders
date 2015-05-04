@@ -54,23 +54,26 @@ void PlayState::Update() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void drawsomeground() { // deprecate this one day
+void lightmeup()
+{
+	GLfloat light1_ambient[] = { .4, .4, .4, 1.0 };
+	GLfloat light1_diffuse[] = { .9, .9, .9, 1.0 };
+	GLfloat light1_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat light1_position[] = { 0, 4.0, 0.0, 1.0 };
+
 	glPushMatrix();
-	//glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
-	//create ground plane
-	glTranslatef(0.f, -1.f, 0.f);
-	glColor3f(0.5f, 0.5f, 0.5f);
-	glBegin(GL_QUADS);
-	glNormal3f(0, 1, 0);
-	glVertex3f(-20, 0, -20);
-	glVertex3f(-20, 0, 20);
-	glVertex3f(20, 0, 20);
-	glVertex3f(20, 0, -20);
-	glEnd();
+	glLoadIdentity();
+	glTranslatef(0.f, 4.f, 0.f);
+	glShadeModel(GL_SMOOTH);
+
+	glLightfv(GL_LIGHT0, GL_AMBIENT, light1_ambient);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, light1_diffuse);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, light1_specular);
+	glLightfv(GL_LIGHT0, GL_POSITION, light1_position);
+
+	glEnable(GL_LIGHT0);
 	glPopMatrix();
 }
-
-////////////////////////////////////////////////////////////////////////////////
 
 void PlayState::Draw() {
 	if (BothDown) {
@@ -86,6 +89,8 @@ void PlayState::Draw() {
 	Cam.Draw();		// Sets up projection & viewing matrices
 
 	glMatrixMode(GL_MODELVIEW);
+	lightmeup();
+
 	glLoadIdentity();
 	player.update();
 

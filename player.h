@@ -2,7 +2,9 @@
 #define PLAYER_H_
 
 #include "core.h"
+#include "DaeLoader.h"
 #include "matrix34.h"
+
 #include "Vector4.h"
 #include "objparser.h"
 #include <iostream>

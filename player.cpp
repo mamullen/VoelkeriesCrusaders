@@ -7,20 +7,21 @@
 #include "player.h"
 
 ObjParser mech;
+DaeLoader mech2;
 
 Player::Player() {
-	mech = ObjParser("Object/MechAnimation.obj");
+	mech = ObjParser("Object/MoonModel.obj");
+	mech2 = DaeLoader("Object/MechAnimBlender.dae");
 }
 
 void Player::update() {
-
 	//initial player model is just a cone for now
 	glPushMatrix();
 
 	glRotatef(180, 0, 1, 0);
 	glRotatef(rotation, 0, 1, 0);
-
-	mech.Draw();
+	glColor3f(1.f, 0.f, 0.f);
+	mech2.Render();
 
 	glBegin(GL_TRIANGLES);
 	glColor3f(1.f, 1.f, 0.f);

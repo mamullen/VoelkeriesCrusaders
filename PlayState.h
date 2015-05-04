@@ -7,6 +7,7 @@
 
 #include "core.h"
 #include "GameState.h"
+#include "DaeLoader.h"
 #include "Building.h"
 #include "Floor.h"
 
@@ -41,6 +42,7 @@ private:
 	// Components
 	Camera Cam;
 	Player player;
+	DaeLoader mech;
     Floor field;
 };
 

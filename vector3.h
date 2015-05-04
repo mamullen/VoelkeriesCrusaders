@@ -12,6 +12,7 @@
 class Vector3 {
 public:
 	Vector3 () : x (0.0f), y (0.0f), z (0.0f)			{}
+	~Vector3() {}
 	Vector3 (float x0, float y0, float z0) :
 		x (x0), y (y0), z (z0)							{}
 	void Set (float x0, float y0, float z0)				{x = x0; y = y0; z = z0;}

@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
 		double frameTime = newTime - currentTime;
 
 		currentTime = newTime;
-		std::cout << currentTime << std::endl;
+		//std::cout << currentTime << std::endl;
 
 		//currently goes as fast as possible
 		Game->Input();
