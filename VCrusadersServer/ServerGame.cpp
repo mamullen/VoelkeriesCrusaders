@@ -140,7 +140,31 @@ void ServerGame::sendInitPackets(unsigned int id)
 		Packet p;
 		p.packet_type = ACTION_EVENT;
 		p.id = i;
-		memcpy_s(p.packet_data, PACKET_DATA_LEN, "create", 6+1);
+
+		char data[PACKET_DATA_LEN];
+		int pointer = 0;
+
+		//memcpy_s(p.packet_data, PACKET_DATA_LEN, "create", 6+1);
+		float x = gameObjects.at(i)->getPos().x;
+		float y = gameObjects.at(i)->getPos().y;
+		float z = gameObjects.at(i)->getPos().z;
+		float r = gameObjects.at(i)->getRot();
+		///////////////////////////////////////////////////////////////////////////
+		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "create", 7);
+		pointer += 7;
+		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &x, sizeof(float));
+		pointer += sizeof(float);
+		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
+		pointer += sizeof(float);
+		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
+		pointer += sizeof(float);
+		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &r, sizeof(float));
+		pointer += sizeof(float);
+		data[pointer] = ',';
+		pointer++;
+
+		memcpy_s(p.packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+		
 		p.serialize(packet_data);
 		network->sendToOne(id, packet_data, packet_size);
 	}

@@ -42,9 +42,30 @@ void GameObject::strafeRight()
 	position = position + right*speed;
 }
 
+void GameObject::rotLeft()
+{
+	rotation += ROTATE_LEFT;
+	rotateMx.MakeRotateY(rotation*PI / 180);
+	forward = rotateMx.c;
+	right = -1 * rotateMx.a;
+}
+
+void GameObject::rotRight()
+{
+	rotation += ROTATE_RIGHT;
+	rotateMx.MakeRotateY(rotation*PI / 180);
+	forward = rotateMx.c;
+	right = -1 * rotateMx.a;
+}
+
 Vector3 GameObject::getPos()
 {
 	return position;
+}
+
+float GameObject::getRot()
+{
+	return rotation;
 }
 
 int GameObject::getID()
