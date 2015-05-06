@@ -9,13 +9,15 @@ GameObject::GameObject(ObjParser* m, unsigned int i)
 void GameObject::update(bool isPlayer) {
 
 	//initial player model is just a cone for now
+	//glPopMatrix();
 	glPushMatrix();
-	//glLoadIdentity();
+	glLoadIdentity();
 	
-	glTranslatef(getPos().x, getPos().y, getPos().z);
+	glTranslatef(this->getPos().x, this->getPos().y, this->getPos().z);
 	glRotatef(180, 0, 1, 0);
 	glRotatef(rotation, 0, 1, 0);
-	
+	//glTranslatef(getPos().x, getPos().y, getPos().z);
+
 	//if (!isPlayer)
 		//glTranslatef(getPos().x, getPos().y, getPos().z);
 

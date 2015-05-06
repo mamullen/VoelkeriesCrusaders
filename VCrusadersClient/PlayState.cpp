@@ -149,14 +149,16 @@ void PlayState::Draw() {
 	glClear(GL_DEPTH_BUFFER_BIT);
 
 	// Draw components
+	
 	Cam.Draw();		// Sets up projection & viewing matrices
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	player->update(true);
-
+	
 	//glTranslatef(player->getPos().x, player->getPos().y, player->getPos().z);
-
+	
+	
 	drawsomeground();
 	std::map<int, GameObject*>::iterator it;
 	for (it = gameObjects.begin(); it != gameObjects.end(); it++)
