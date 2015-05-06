@@ -39,7 +39,7 @@ void GameLogic::update()
 			///////////////////////////////////////////////////////////////////////////
 			char data[PACKET_DATA_LEN];
 			int pointer = 0;
-			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "pos:", 4);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "pos", 4);
 			pointer += 4;
 			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &x, sizeof(float));
 			pointer += sizeof(float);
@@ -49,7 +49,26 @@ void GameLogic::update()
 			pointer += sizeof(float);
 			data[pointer] = ',';
 			pointer++;
-			data[pointer] = '\0';
+			///////////////////////////////////////////////////////////////////////////
+			Packet* p = new Packet;
+			p->packet_type = ACTION_EVENT;
+			memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+			p->id = index;
+
+			serverPackets.push_back(p);
+		}
+		else if (key->compare("rot:") == 0){
+			float r = gameObjects.at(index)->getRot();
+			///////////////////////////////////////////////////////////////////////////
+			//printf("rot = %f\n", r);
+			char data[PACKET_DATA_LEN];
+			int pointer = 0;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "rot", 4);
+			pointer += 4;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &r, sizeof(float));
+			pointer += sizeof(float);
+			data[pointer] = ',';
+			pointer++;
 			///////////////////////////////////////////////////////////////////////////
 			Packet* p = new Packet;
 			p->packet_type = ACTION_EVENT;

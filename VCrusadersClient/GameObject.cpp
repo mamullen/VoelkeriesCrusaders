@@ -1,18 +1,22 @@
 #include "GameObject.h"
 
-GameObject::GameObject(ObjParser* m)
+GameObject::GameObject(ObjParser* m, unsigned int i)
 {
 	model = m;
+	id = i;
 }
 
-void GameObject::update() {
+void GameObject::update(bool isPlayer) {
 
 	//initial player model is just a cone for now
 	glPushMatrix();
 
 	glRotatef(180, 0, 1, 0);
 	glRotatef(rotation, 0, 1, 0);
-	
+
+	if (!isPlayer)
+		glTranslatef(getPos().x, getPos().y, getPos().z);
+
 	//check  model is not null
 	if (model){
 		model->Draw();
