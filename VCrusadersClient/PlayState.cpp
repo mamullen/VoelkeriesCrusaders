@@ -153,9 +153,11 @@ void PlayState::Draw() {
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	player->update(true);
 
-	//glTranslatef(player->getPos().x, player->getPos().y, player->getPos().z);
+	glTranslatef(player->getPos().x, player->getPos().y, player->getPos().z);
+	glRotatef(180, 0, 1, 0);
+
+	player->update(true);
 
 	drawsomeground();
 	std::map<int, GameObject*>::iterator it;
