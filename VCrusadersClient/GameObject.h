@@ -36,14 +36,13 @@ public:
 	Vector4 getPos()					{ return position; }
 	void setPos(double x, double y, double z);
 	float getRotation()					{ return rotation; }
-	void setRotation(float rot)			{ rotation = rot; rotateMx.MakeRotateY(rot*M_PI / 180); resetForward(rotateMx); }
+	void setRotation(float rot);
 	void setForward(Matrix34 rotate)	{ rotate.Transform(forward, forward); rotate.Transform(right, right); }
 	void resetForward(Matrix34 rotate)	{ rotate.Transform(Vector4(0, 0, 1, 1), forward); rotate.Transform(Vector4(-1, 0, 0, 1), right); }
 
 private:
 	unsigned int id;
 	float rotation = 0;
-	Matrix34 rotateMx;
 
 	Vector4 position = Vector4(0, 2, 0, 1);
 	Vector4 forward = INIT_FORWARD;
