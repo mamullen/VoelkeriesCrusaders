@@ -29,8 +29,9 @@ void ClientGame::sendActionPackets()
 		packet.packet_type = ACTION_EVENT;
 
 		//printf("%s\n", (it->second)->c_str());
+		//printf("%d\n", (it->second)->size());
 
-		memcpy(packet.packet_data, it->second, PACKET_DATA_LEN);
+		memcpy(packet.packet_data, it->second->c_str(), it->second->size() + 1);
 		packet.id = it->first;
 		packet.serialize(data);
 
@@ -67,9 +68,9 @@ void ClientGame::update()
 		case ACTION_EVENT:
 
 			//printf("client received action event packet from server\n");
-			//printf(packet->packet_data);
-			//printf("\n");
-			
+			printf(packet->packet_data);
+			printf("\n");
+
 
 			break;
 

@@ -65,16 +65,30 @@ void PlayState::Update(ClientGame* client) {
 		}
 
 		if (strstr(serverEvent, "create") != NULL){
-			gameObjects.insert(std::pair<int, GameObject*>(objID, new Player(objID)));
-		}
-
-		if (strstr(serverEvent, "pos:") != NULL){
+			//get init data
 			float xPos;
 			float yPos;
 			float zPos;
-			memcpy(&xPos, serverEvent + 5, sizeof(float));
-			memcpy(&yPos, serverEvent + 9, sizeof(float));
-			memcpy(&zPos, serverEvent + 13, sizeof(float));
+			float rot;
+			memcpy(&xPos, serverEvent + 7, sizeof(float));
+			memcpy(&yPos, serverEvent + 11, sizeof(float));
+			memcpy(&zPos, serverEvent + 15, sizeof(float));
+			memcpy(&rot, serverEvent + 19, sizeof(float));
+
+			Player* p = new Player(objID);
+			p->setPos(xPos, yPos, zPos);
+			p->setRotation(rot);
+
+			gameObjects.insert(std::pair<int, GameObject*>(objID, p));
+		}
+
+		if (strstr(serverEvent, "pos") != NULL){
+			float xPos;
+			float yPos;
+			float zPos;
+			memcpy(&xPos, serverEvent + 4, sizeof(float));
+			memcpy(&yPos, serverEvent + 8, sizeof(float));
+			memcpy(&zPos, serverEvent + 12, sizeof(float));
 
 			//char msgbuf[2048];
 			//sprintf(msgbuf, "pos: with %f, %f, %f\n", xPos, yPos, zPos);
@@ -85,6 +99,19 @@ void PlayState::Update(ClientGame* client) {
 			else if (gameObjects.find(objID) != gameObjects.end()){
 				GameObject* o = gameObjects.at(objID);
 				o->setPos(xPos, yPos, zPos);
+			}
+		}
+
+		if (strcmp(serverEvent, "rot") == 0){
+			float rot;
+			memcpy(&rot, serverEvent + 4, sizeof(float));
+			printf("%f\n", rot);
+			if (objID == player->getID()){
+				player->setRotation(rot);
+			}
+			else if (gameObjects.find(objID) != gameObjects.end()){
+				GameObject* o = gameObjects.at(objID);
+				o->setRotation(rot);
 			}
 		}
 		delete serverPacket;
@@ -128,7 +155,7 @@ void PlayState::Draw() {
 	glLoadIdentity();
 	player->update(true);
 
-	glTranslatef(player->getPos().x, player->getPos().y, player->getPos().z);
+	//glTranslatef(player->getPos().x, player->getPos().y, player->getPos().z);
 
 	drawsomeground();
 	std::map<int, GameObject*>::iterator it;
