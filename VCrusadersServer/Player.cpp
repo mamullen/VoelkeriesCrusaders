@@ -44,48 +44,53 @@ void Player::update(Packet* packet)
 				isChanged[0] = true;
 				std::string* change = new std::string("pos:");
 				changes.push_back(std::pair<int, std::string*>(id, change));
+				this->moveForward();
 			}
-			this->moveForward();
+			
 		}
 		else if (cEvent.compare("move_backward") == 0){
 			if (!isChanged[0]){
 				isChanged[0] = true;
 				std::string* change = new std::string("pos:");
 				changes.push_back(std::pair<int, std::string*>(id, change));
+				this->moveBackward();
 			}
-			this->moveBackward();
+			
 		}
 		else if (cEvent.compare("move_left") == 0){
 			if (!isChanged[0]){
 				isChanged[0] = true;
 				std::string* change = new std::string("pos:");
 				changes.push_back(std::pair<int, std::string*>(id, change));
+				this->strafeLeft();
 			}
-			this->strafeLeft();
+			
 		}
 		else if (cEvent.compare("move_right") == 0){
 			if (!isChanged[0]){
 				isChanged[0] = true;
 				std::string* change = new std::string("pos:");
 				changes.push_back(std::pair<int, std::string*>(id, change));
+				this->strafeRight();
 			}
-			this->strafeRight();
+			
 		}
 		else if (cEvent.compare("rotate_left") == 0){
 			if (!isChanged[1]){
 				isChanged[1] = true;
 				std::string* change = new std::string("rot:");
 				changes.push_back(std::pair<int, std::string*>(id, change));
+				this->rotLeft();
 			}
-			this->rotLeft();
+			
 		}
 		else if (cEvent.compare("rotate_right") == 0){
 			if (!isChanged[1]){
 				isChanged[1] = true;
 				std::string* change = new std::string("rot:");
 				changes.push_back(std::pair<int, std::string*>(id, change));
+				this->rotRight();
 			}
-			this->rotRight();
 		}
 	}
 }
