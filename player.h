@@ -2,12 +2,13 @@
 #define PLAYER_H_
 
 #include "core.h"
-#include "DaeLoader.h"
 #include "matrix34.h"
-
 #include "Vector4.h"
 #include "objparser.h"
 #include <iostream>
+#include "Building.h"
+#include "Floor.h"
+#include "Matrix4.h"
 
 static const Vector4 INIT_FORWARD = Vector4(0, 0, 1, 1);
 static const Vector4 INIT_RIGHT = Vector4(-1, 0, 0, 1);
@@ -33,8 +34,9 @@ private:
 
 public:
 	Player();
-	void MoveForward();
-	void MoveForward(float speed);
+	Player(int pn);
+	void MoveForward(Floor);
+	void MoveForward(float speed, Floor f);
 	void MoveBackward();
 	void StrafeLeft();
 	void StrafeRight();
@@ -51,6 +53,22 @@ public:
 	void setRotation(float rot)			{ rotation = rot; rotateMx.MakeRotateY(rot*M_PI/180); resetForward(rotateMx); }
 	void setForward(Matrix34 rotate)	{ rotate.Transform(forward, forward); rotate.Transform(right, right); }
 	void resetForward(Matrix34 rotate)	{ rotate.Transform(INIT_FORWARD, forward); rotate.Transform(INIT_RIGHT, right); }
+
+	void setRadius(float x)				{ radius = x; }
+	float getRadius()					{ return radius; }
+	void setcoll(bool x)				{ collision = x; }
+	bool collide(Floor tile);
+	bool inrange(Player bob);
+	
+
+private:
+	float radius;
+	bool collision;
+	Vector3 mx;
+	Vector3 mn;
+	float atkrange;
+	int playernumber;
+	float health;
 };
 
 #endif

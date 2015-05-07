@@ -5,6 +5,8 @@ ObjParser::ObjParser() {
 
 ObjParser::ObjParser(char *filename) {
 	ParseFile(filename, v, n, t, m);
+	max = Vector3(0,0,0);
+	min = Vector3(0,0,0);
 }
 
 void ObjParser::ParseFile(char *filename, std::vector<Vector3> &vertices, std::vector<Vector3> &normals, std::vector<Vector3> &textures, std::vector<Mapping> &mapping) {
@@ -30,6 +32,32 @@ void ObjParser::ParseFile(char *filename, std::vector<Vector3> &vertices, std::v
 		if (c1 == 'v' && c2 == ' ') {
 			fscanf(fp, "%f %f %f\n", &vertex1, &vertex2, &vertex3);
 			vertices.push_back(Vector3(vertex1, vertex2, vertex3));
+			if (vertex1 > max.x)
+			{
+				printf("%d\n\n", vertex1);
+				max.x = vertex1;
+			}
+			if (vertex2 > max.y)
+			{
+				max.y = vertex2;
+			}
+			if (vertex3 > max.z)
+			{
+				max.z = vertex3;
+			}
+
+			if (vertex1 < min.x)
+			{
+				min.x = vertex1;
+			}
+			if (vertex2 < min.y)
+			{
+				min.y = vertex2;
+			}
+			if (vertex3 < min.z)
+			{
+				min.z = vertex3;
+			}
 		}
 		else if (c1 == 'v' && c2 == 'n') {
 			fscanf(fp, " %f %f %f\n", &normal1, &normal2, &normal3);
@@ -73,6 +101,24 @@ void ObjParser::ParseFile(char *filename, std::vector<Vector3> &vertices, std::v
 	}
 	std::cout << "done with " << filename << std::endl;
 
+
+	glColor3f(1, 1, 1);
+
+
+
+	glBegin(GL_QUADS);
+	glVertex3f(max.x, max.y, max.z); // vertex 1
+	glVertex3f(max.x, max.y, min.z); // vertex 2
+	glVertex3f(min.x, max.y, min.z); // vertex 3
+	glVertex3f(min.x, max.y, max.z); // vertex 4
+
+	glVertex3f(max.x, max.y, max.z); // vertex 1
+	glVertex3f(max.x, max.y, min.z); // vertex 2
+	glVertex3f(max.x, min.y, min.z); // vertex 2
+	glVertex3f(max.x, min.y, max.z); // vertex 1
+
+	glEnd();
+	
 	fclose(fp);
 }
 

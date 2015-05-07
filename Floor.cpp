@@ -7,6 +7,7 @@
 //
 
 #include "Floor.h"
+
 Floor::Floor()
 {
     state = true;
@@ -47,12 +48,13 @@ void Floor::createFloor(float offsetx, float offsetz)
 
 void Floor::createTile(Building* b, float offsetx, float offsetz)
 {
+	
     glEnable(GL_DEPTH_TEST);
    // if(tilenumber)
     glDisable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     
-    glEnable(GL_TEXTURE_2D);
+    /*glEnable(GL_TEXTURE_2D);
     
     if(state)
     {
@@ -61,10 +63,18 @@ void Floor::createTile(Building* b, float offsetx, float offsetz)
         
         state = false;
     }
+    */
+   // glBindTexture(GL_TEXTURE_2D, texture[0]);
     
-    glBindTexture(GL_TEXTURE_2D, texture[0]);
     
-    
+
+	//glfwLoadTexture2D("image.tga", GLFW_BUILD_MIPMAPS_BIT);
+
+	// Use trilinear interpolation for minification
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	// Use bilinear interpolation for magnification
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glEnable(GL_TEXTURE_2D);
     //////////////FLLLOOOOOOOOOOOR
     glColor3f(1,1,1);
     
@@ -201,9 +211,35 @@ void Floor::createTile(Building* b, float offsetx, float offsetz)
     glVertex3f(b->x2+offsetx, floorsizey+b->maxy, b->z2+offsetz);
     glVertex3f(b->x1+offsetx, floorsizey+b->maxy, b->z2+offsetz);
     
-    
+
+	if (b->x1 + offsetx < b->x2 + offsetx)
+	{
+		b->min.x = b->x1 + offsetx;
+		b->max.x = b->x2 + offsetx;
+	}
+	else
+	{
+		b->max.x = b->x1 + offsetx;
+		b->min.x = b->x2 + offsetx;
+	}
+
+	if (b->z1 + offsetz < b->z2 + offsetz)
+	{
+		b->min.z = b->z1 + offsetz;
+		b->max.z = b->z2 + offsetz;
+	}
+	else
+	{
+		b->max.z = b->z1 + offsetz;
+		b->min.z = b->z2 + offsetz;
+	}
+	
+	b->min.y = floorsizey;
+	b->max.y = floorsizey + b->maxy;
+	
     
     //all four walls--counter clockwise creation
+	glColor3f(1, 0, 0);
     glTexCoord2f(0, 0);
     glVertex3f(b->x1+offsetx, floorsizey+b->maxy, b->z1+offsetz);
     glTexCoord2f(1, 0);
@@ -212,7 +248,9 @@ void Floor::createTile(Building* b, float offsetx, float offsetz)
     glVertex3f(b->x2+offsetx, floorsizey, b->z1+offsetz);
     glTexCoord2f(0, 1);
     glVertex3f(b->x1+offsetx, floorsizey, b->z1+offsetz);
-    
+	
+	
+	glColor3f(1, 1, 1);
     glTexCoord2f(0, 0);
     glVertex3f(b->x2+offsetx, floorsizey+b->maxy, b->z1+offsetz);
    glTexCoord2f(1, 0);
@@ -225,10 +263,8 @@ void Floor::createTile(Building* b, float offsetx, float offsetz)
      glTexCoord2f(0, 0);
     glVertex3f(b->x2+offsetx, floorsizey+b->maxy, b->z2+offsetz);
     glTexCoord2f(1, 0);
-
     glVertex3f(b->x1+offsetx, floorsizey+b->maxy, b->z2+offsetz);
      glTexCoord2f(1, 1);
-    
     glVertex3f(b->x1+offsetx, floorsizey, b->z2+offsetz);
      glTexCoord2f(0, 1);
     glVertex3f(b->x2+offsetx, floorsizey, b->z2+offsetz);

@@ -9,8 +9,9 @@
 #ifndef __cse169__Floor__
 #define __cse169__Floor__
 
+#include "core.h"
 #include "vector3.h"
-#include <stdio.h>
+
 #include "Building.h"
 #include <iostream>
 #include <vector>

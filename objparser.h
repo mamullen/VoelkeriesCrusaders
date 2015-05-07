@@ -40,6 +40,8 @@ class ObjParser {
 
 		std::vector<Mapping> *tmp_mapping_ptr = &m;
 
+		Vector3 max;
+		Vector3 min;
 };
 
 

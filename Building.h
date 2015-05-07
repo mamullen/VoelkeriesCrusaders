@@ -10,6 +10,7 @@
 #define __cse169__Building__
 
 #include <stdio.h>
+#include "vector3.h"
 
 class Building{
 public:
@@ -18,6 +19,8 @@ public:
     float x1,x2,x3,x4;//corners of the box for x
     float z1,z2,z3,z4;//corners of the box for z
     Building(float y, float ex1, float ex2, float ze1, float z2);
+	Vector3 max;
+	Vector3 min;
     
 };
 
