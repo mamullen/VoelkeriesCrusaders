@@ -74,7 +74,7 @@ GameEngine::GameEngine(int argc, char **argv) {
 	
 	// Initialize the part of the client that connects to the server
 	Client = new ClientGame();
-	Client->connectToServer("137.110.92.143"); //set ip of server here
+	Client->connectToServer("172.16.246.170"); //set ip of server here
 
 	//Callbacks
 	glfwSetKeyCallback(window, key_callback);

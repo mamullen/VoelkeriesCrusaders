@@ -40,6 +40,8 @@ void PlayState::Initialize() {
 	// Initialize components
 	Cam.SetAspect(float(WinX) / float(WinY));
 
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 	player = NULL;
 }
 
@@ -93,7 +95,7 @@ void PlayState::Update(ClientGame* client) {
 			//char msgbuf[2048];
 			//sprintf(msgbuf, "pos: with %f, %f, %f\n", xPos, yPos, zPos);
 			//OutputDebugString(msgbuf);
-			if (objID == player->getID()){
+			if (!player || objID == player->getID()){
 				player->setPos(xPos, yPos, zPos);
 			}
 			else if (gameObjects.find(objID) != gameObjects.end()){
@@ -105,8 +107,7 @@ void PlayState::Update(ClientGame* client) {
 		if (strcmp(serverEvent, "rot") == 0){
 			float rot;
 			memcpy(&rot, serverEvent + 4, sizeof(float));
-			printf("%f\n", rot);
-			if (objID == player->getID()){
+			if (!player || objID == player->getID()){
 				player->setRotation(rot);
 			}
 			else if (gameObjects.find(objID) != gameObjects.end()){
@@ -201,6 +202,10 @@ void PlayState::Input(ClientGame* client) {
 	if (glfwGetKey(window, ROTATERIGHT)) {
 		client->addEvent(player->getID(), "rotate_right;");
 	}
+
+	if (rotationChanged){
+
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -215,7 +220,7 @@ void PlayState::KeyCallback(GLFWwindow* window, int key, int scancode, int actio
 void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods) {
 	if (!player)
 		return;
-
+	/*
 	float playerRotation = -player->getRotation();
 
 	if (action == GLFW_PRESS) {
@@ -239,6 +244,7 @@ void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods
 		RightDown = (action == GLFW_PRESS);
 		BothDown = LeftDown && (action == GLFW_PRESS);
 	}
+	*/
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -254,10 +260,11 @@ void PlayState::MouseMotion(GLFWwindow* window, double xpos, double ypos) {
 	MouseY = ypos;
 
 	// Move camera
-	Cam.Update(LeftDown, RightDown, dx, dy);
-	if (RightDown) {
-		player->setRotation(-Cam.GetAzimuth());
-	}
+	Cam.Update(true, false, dx, dy);
+	rotationChanged = true;
+	printf("AZIM %f\n", Cam.GetAzimuth());
+	printf("Player: %f\n", player->getRotation());
+	//player->setRotation(-Cam.GetAzimuth());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
