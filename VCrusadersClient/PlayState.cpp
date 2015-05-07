@@ -204,7 +204,22 @@ void PlayState::Input(ClientGame* client) {
 	}
 
 	if (rotationChanged){
-
+		float rotate = -Cam.GetAzimuth() + 360;
+		char * floatStr = new char[3];
+		sprintf(floatStr, "%3.0d", (int)rotate);
+		char * data = new char[PACKET_DATA_LEN];
+		int pointer = 0;
+		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "rotate", 6);
+		pointer += 6;
+		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, floatStr, 3);
+		pointer += 3;
+		data[pointer] = ';';
+		pointer++;
+		data[pointer] = '\0';
+		client->addEvent(player->getID(), data);
+		printf("STRING IS %s\n", data);
+		printf("AZIM %f\n", rotate );
+		//printf("Player: %f\n", player->getRotation());
 	}
 }
 
@@ -262,8 +277,8 @@ void PlayState::MouseMotion(GLFWwindow* window, double xpos, double ypos) {
 	// Move camera
 	Cam.Update(true, false, dx, dy);
 	rotationChanged = true;
-	printf("AZIM %f\n", Cam.GetAzimuth());
-	printf("Player: %f\n", player->getRotation());
+	//printf("AZIM %f\n", Cam.GetAzimuth());
+	//printf("Player: %f\n", player->getRotation());
 	//player->setRotation(-Cam.GetAzimuth());
 }
 
