@@ -23,6 +23,7 @@ public:
 
 	void moveForward();
 	void moveBackward();
+	void setRotation(float f);
 	void rotLeft();
 	void rotRight();
 	void strafeLeft();
