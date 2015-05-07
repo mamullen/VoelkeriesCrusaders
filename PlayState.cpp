@@ -1,26 +1,29 @@
-////////////////////////////////////////
-// PlayState.cpp
-//	wesley
-//	for handling the play state
-//	of the current game
-////////////////////////////////////////
-
 #include "PlayState.h"
-
-////////////////////////////////////////////////////////////////////////////////
 
 static PlayState *state;
 
-////////////////////////////////////////////////////////////////////////////////
+static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) { state->KeyCallback(window, key, scancode, action, mods); }
+static void mouse_motion(GLFWwindow* window, double xpos, double ypos) { state->MouseMotion(window, xpos, ypos); }
+static void mouse_button(GLFWwindow* window, int button, int action, int mods) { state->MouseButton(window, button, action, mods); }
+static void mouse_scroll(GLFWwindow* window, double xoffset, double yoffset) { state->MouseScroll(window, xoffset, yoffset); }
 
 PlayState::PlayState(GLFWwindow* window) {
 	this->window = window;
 	Initialize();
+
+
+	//in order for it to read two different players.  The players must be initialized with 
+	//different numbers
+	player = Player(1);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
 void PlayState::Initialize() {
+	//Callbacks
+	glfwSetKeyCallback(window, key_callback);
+	//glfwSetCursorPosCallback(window, mouse_motion);
+	//glfwSetMouseButtonCallback(window, mouse_button);
+	//glfwSetScrollCallback(window, mouse_scroll);
+
 	WinX = 1024;
 	WinY = 768;
 
@@ -40,38 +43,29 @@ void PlayState::Initialize() {
 	// Initialize components
 	Cam.SetAspect(float(WinX) / float(WinY));
 
-	b1 = new Building(25, -20, -10, -20, -10);
+	b1 = new Building(25, -20, 10, -40, -18);
 	b2 = new Building(15, 20, 18, 20, 18);
 	field.buildingList.push_back(b1);
 	field.buildingList.push_back(b2);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
 void PlayState::Update() {
-
+	
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-void lightmeup()
-{
-	GLfloat light1_ambient[] = { .4, .4, .4, 1.0 };
-	GLfloat light1_diffuse[] = { .9, .9, .9, 1.0 };
-	GLfloat light1_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat light1_position[] = { 0, 4.0, 0.0, 1.0 };
-
+void drawsomeground() { // deprecate this one day
 	glPushMatrix();
-	glLoadIdentity();
-	glTranslatef(0.f, 4.f, 0.f);
-	glShadeModel(GL_SMOOTH);
-
-	glLightfv(GL_LIGHT0, GL_AMBIENT, light1_ambient);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, light1_diffuse);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, light1_specular);
-	glLightfv(GL_LIGHT0, GL_POSITION, light1_position);
-
-	glEnable(GL_LIGHT0);
+	//glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
+	//create ground plane
+	glTranslatef(0.f, -1.f, 0.f);
+	glColor3f(0.5f, 0.5f, 0.5f);
+	glBegin(GL_QUADS);
+	glNormal3f(0, 1, 0);
+	glVertex3f(-20, 0, -20);
+	glVertex3f(-20, 0, 20);
+	glVertex3f(20, 0, 20);
+	glVertex3f(20, 0, -20);
+	glEnd();
 	glPopMatrix();
 }
 
@@ -89,26 +83,26 @@ void PlayState::Draw() {
 	Cam.Draw();		// Sets up projection & viewing matrices
 
 	glMatrixMode(GL_MODELVIEW);
-	lightmeup();
-
 	glLoadIdentity();
 	player.update();
 
 	glTranslatef(player.getPos().x, player.getPos().y, player.getPos().z);
 
 	// Begin drawing player and scene
-    field.createFloor(0, 0);
-    field.createFloor(40, 0);
-    field.createFloor(-40, 0);
-    field.createFloor(40, 40);
-    field.createFloor(-40, 40);
-    field.createFloor(40, -40);
-    field.createFloor(-40, -40);
-    field.createFloor(0, 40);
-    field.createFloor(0, -40);
+	field.createFloor(0, 0);
+	
+	
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();
+}
+
+void PlayState::Pause() {
+
+}
+
+void PlayState::Resume() {
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -117,7 +111,8 @@ void PlayState::Input() {
 	float playerRotation = -player.getRotation();
 
 	if (glfwGetKey(window, FORWARD)) {
-		player.MoveForward();
+		
+		player.MoveForward(field);
 		Cam.SetAzimuth(playerRotation);
 	}
 
@@ -187,9 +182,16 @@ void PlayState::MouseMotion(GLFWwindow* window, double xpos, double ypos) {
 	MouseX = xpos;
 	MouseY = ypos;
 
+	const float rate = 1.0f;
 	// Move camera
-	Cam.Update(LeftDown, RightDown, dx, dy);
+	// NOTE: this should really be part of Camera::Update()
+	if (LeftDown) {
+		Cam.SetAzimuth(Cam.GetAzimuth() + dx*rate);
+		Cam.SetIncline(Cam.GetIncline() - dy*rate);
+	}
 	if (RightDown) {
+		Cam.SetAzimuth(Cam.GetAzimuth() + dx*rate);
+		Cam.SetIncline(Cam.GetIncline() - dy*rate);
 		player.setRotation(-Cam.GetAzimuth());
 	}
 }

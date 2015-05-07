@@ -1,13 +1,8 @@
-////////////////////////////////////////
-// PlayState.h
-////////////////////////////////////////
-
 #ifndef PLAYSTATE_H_
 #define PLAYSTATE_H_
 
 #include "core.h"
 #include "GameState.h"
-#include "DaeLoader.h"
 #include "Building.h"
 #include "Floor.h"
 
@@ -16,6 +11,9 @@ class PlayState : public GameState
 public:
 	PlayState(GLFWwindow* window);
 	void Initialize();
+
+	void Pause();
+	void Resume();
 
 	void Input();
 	void Update();
@@ -27,9 +25,6 @@ public:
 	void MouseScroll(GLFWwindow* window, double xoffset, double yoffset);
 private:
 	GLFWwindow* window;
-	Building* b1;
-	Building* b2;
-
 	// Window management
 	float ratio;
 	int WindowHandle;
@@ -38,14 +33,12 @@ private:
 	// Input
 	bool LeftDown, MiddleDown, RightDown, LeftDownTwo, BothDown;
 	double MouseX, MouseY;
-
+	Building* b1, *b2;
+	Floor field;
 	// Components
 	Camera Cam;
 	Player player;
-	DaeLoader mech;
-    Floor field;
-};
 
-////////////////////////////////////////////////////////////////////////////////
+};
 
 #endif
