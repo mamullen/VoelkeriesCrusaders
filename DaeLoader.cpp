@@ -1,6 +1,6 @@
 #include "DaeLoader.h"
 
-double currentTime;
+double currentTime = 0;
 
 #define aisgl_min(x,y) (x<y?x:y)
 #define aisgl_max(x,y) (y>x?y:x)
@@ -94,7 +94,7 @@ void set_float4(float f[4], float a, float b, float c, float d)
 	f[3] = d;
 }
 
-void DaeLoader::apply_material(const struct aiMaterial *mtl)
+void DaeLoader::apply_material(const aiMaterial *mtl)
 {
 	float c[4];
 
@@ -159,42 +159,24 @@ void DaeLoader::apply_material(const struct aiMaterial *mtl)
 		glEnable(GL_CULL_FACE);
 }
 
-void DaeLoader::recursive_render(const struct aiScene *sc, const struct aiNode* nd) {
-	unsigned int i;
-	unsigned int n = 0, t;
-	aiMatrix4x4 m = mAnimator->GetLocalTransform(nd);
+void DaeLoader::RenderNode(const aiNode* node) {
+	aiMatrix4x4 aiMe = mAnimator->GetLocalTransform(node);
+	aiMe.Transpose();
 
-	aiTransposeMatrix4(&m);
 	glPushMatrix();
-	glMultMatrixf((float*)&m);
-	
-	for (; n < nd->mNumMeshes; ++n) {
-		const struct aiMesh* mesh = scene->mMeshes[nd->mMeshes[n]];
+	glMultMatrixf((float*)&aiMe);
 
-		apply_material(sc->mMaterials[mesh->mMaterialIndex]);
+	for (unsigned int i = 0; i < node->mNumMeshes; ++i) {
+		const aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+		apply_material(scene->mMaterials[mesh->mMaterialIndex]);
 
-		if (mesh->mNormals == NULL) {
-			glDisable(GL_LIGHTING);
-		}
-		else {
-			glEnable(GL_LIGHTING);
-		}
+		for (unsigned j = 0; j < mesh->mNumFaces; ++j) {
+			const aiFace* face = &mesh->mFaces[j];
 
-		for (t = 0; t < mesh->mNumFaces; ++t) {
-			const struct aiFace* face = &mesh->mFaces[t];
-			GLenum face_mode;
+			glBegin(GL_TRIANGLES);
 
-			switch (face->mNumIndices) {
-			case 1: face_mode = GL_POINTS; break;
-			case 2: face_mode = GL_LINES; break;
-			case 3: face_mode = GL_TRIANGLES; break;
-			default: face_mode = GL_POLYGON; break;
-			}
-
-			glBegin(face_mode);
-
-			for (i = 0; i < face->mNumIndices; i++) {
-				int index = face->mIndices[i];
+			for (unsigned int k = 0; k < face->mNumIndices; k++) {
+				int index = face->mIndices[k];
 				if (mesh->mColors[0] != NULL)
 					glColor4fv((GLfloat*)&mesh->mColors[0][index]);
 				if (mesh->mNormals != NULL)
@@ -204,21 +186,20 @@ void DaeLoader::recursive_render(const struct aiScene *sc, const struct aiNode* 
 
 			glEnd();
 		}
-
-	}
-	// draw all children
-	for (n = 0; n < nd->mNumChildren; ++n) {
-		recursive_render(sc, nd->mChildren[n]);
 	}
 
+	for (unsigned int i = 0; i < node->mNumChildren; ++i) {
+		RenderNode(node->mChildren[i]);
+	}
 	glPopMatrix();
 }
 
 void DaeLoader::Render() {
 	static double lastPlaying = 0.;
-	currentTime += glfwGetTime() - lastPlaying;
+
 	ai_assert(mAnimator);
 
+	currentTime += glfwGetTime() - lastPlaying;
 	double time = currentTime;
 	aiAnimation* mAnim = mAnimator->CurrentAnim();
 	if (mAnim && mAnim->mDuration > 0.0) {
@@ -229,24 +210,10 @@ void DaeLoader::Render() {
 	lastPlaying = currentTime;
 
 	float tmp = 2;
-	/*tmp = scene_max.x - scene_min.x;
-	tmp = aisgl_max(scene_max.y - scene_min.y, tmp);
-	tmp = aisgl_max(scene_max.z - scene_min.z, tmp);
-	tmp = 1.f / tmp;*/
 	glScalef(tmp, tmp, tmp);
-
 	glTranslatef(-scene_center.x, -scene_center.y, -scene_center.z);
 
-	//draw model
-	if (scene_list == 0) {
-		scene_list = glGenLists(1);
-		glNewList(scene_list, GL_COMPILE);
-		// now begin at the root node of the imported data and traverse
-		// the scenegraph by multiplying subsequent local transforms
-		// together on GL's matrix stack.
-		recursive_render(scene, scene->mRootNode);
-		glEndList();
-	}
-
-	glCallList(scene_list);
+	glEnable(GL_LIGHTING);
+	RenderNode(scene->mRootNode);
+	glDisable(GL_LIGHTING);
 }

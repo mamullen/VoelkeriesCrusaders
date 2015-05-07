@@ -61,8 +61,6 @@ void SceneAnimator::SetAnimIndex(size_t pAnimIndex)
 	mAnimEvaluator = new AnimEvaluator(mScene->mAnimations[mCurrentAnimIndex]);
 }
 
-#include <iostream>
-
 // ------------------------------------------------------------------------------------------------
 // Calculates the node transformations for the scene. 
 void SceneAnimator::Calculate(double pTime)
