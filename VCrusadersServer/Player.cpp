@@ -46,7 +46,6 @@ void Player::update(Packet* packet)
 				changes.push_back(std::pair<int, std::string*>(id, change));
 				this->moveForward();
 			}
-			
 		}
 		else if (cEvent.compare("move_backward") == 0){
 			if (!isChanged[0]){
@@ -55,7 +54,6 @@ void Player::update(Packet* packet)
 				changes.push_back(std::pair<int, std::string*>(id, change));
 				this->moveBackward();
 			}
-			
 		}
 		else if (cEvent.compare("move_left") == 0){
 			if (!isChanged[0]){
@@ -64,7 +62,6 @@ void Player::update(Packet* packet)
 				changes.push_back(std::pair<int, std::string*>(id, change));
 				this->strafeLeft();
 			}
-			
 		}
 		else if (cEvent.compare("move_right") == 0){
 			if (!isChanged[0]){
@@ -73,25 +70,39 @@ void Player::update(Packet* packet)
 				changes.push_back(std::pair<int, std::string*>(id, change));
 				this->strafeRight();
 			}
-			
 		}
+		else if (cEvent.substr(0,6).compare("rotate") == 0){
+
+			std::string num = cEvent.substr(6, currEnd);
+			num = num.substr(num.find_last_of(' ') + 1);
+			int n = atoi(num.c_str());
+			printf("%s\n", num.c_str());
+
+			if (!isChanged[1]){
+				isChanged[1] = true;
+				std::string* change = new std::string("rot:");
+				changes.push_back(std::pair<int, std::string*>(id, change));
+			}
+			this->setRotation(n);
+		}
+		/*
 		else if (cEvent.compare("rotate_left") == 0){
 			if (!isChanged[1]){
 				isChanged[1] = true;
 				std::string* change = new std::string("rot:");
 				changes.push_back(std::pair<int, std::string*>(id, change));
-				this->rotLeft();
 			}
-			
+			this->rotLeft();
 		}
 		else if (cEvent.compare("rotate_right") == 0){
 			if (!isChanged[1]){
 				isChanged[1] = true;
 				std::string* change = new std::string("rot:");
 				changes.push_back(std::pair<int, std::string*>(id, change));
-				this->rotRight();
 			}
+			this->rotRight();
 		}
+		*/
 	}
 }
 

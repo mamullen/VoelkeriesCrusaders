@@ -77,9 +77,10 @@ void ServerGame::receiveFromClients()
 
 			case ACTION_EVENT:
 			{
-				printf("server received action event packet from client %d\n", iter->first);
-				printf(packet.packet_data);
-				printf("\n");
+				//printf("server received action event packet from client %d\n", iter->first);
+				//printf("PACKET DATA: %s\n", packet.packet_data);
+				//printf(packet.packet_data);
+				//printf("\n");
 				gameLogic->savePacket(iter->first, temp);
 				//sendActionPackets(iter->first);
 				break;

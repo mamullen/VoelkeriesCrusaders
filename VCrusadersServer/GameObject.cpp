@@ -42,6 +42,13 @@ void GameObject::strafeRight()
 	position = position + right*speed;
 }
 
+void GameObject::setRotation(float f){
+	rotation = f;
+	rotateMx.MakeRotateY(rotation*PI / 180);
+	forward = rotateMx.c;
+	right = -1 * rotateMx.a;
+}
+
 void GameObject::rotLeft()
 {
 	rotation += ROTATE_LEFT;

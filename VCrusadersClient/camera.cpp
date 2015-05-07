@@ -30,6 +30,18 @@ void Camera::Update(bool LeftDown, bool RightDown, int dx, int dy) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void Camera::SetAzimuth(float a){
+	while (a < 0){
+		a += 360;
+	}
+	while (a >= 360){
+		a -= 360;
+	}
+	Azimuth = a;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void Camera::Reset() {
 	FOV=60.0f;
 	Aspect=1.33f;

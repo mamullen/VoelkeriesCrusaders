@@ -29,7 +29,7 @@ void ClientGame::sendActionPackets()
 		packet.packet_type = ACTION_EVENT;
 
 		//printf("%s\n", (it->second)->c_str());
-		//printf("%d\n", (it->second)->size());
+		//printf("SIZE IS SOMETHING HERE %d\n", (it->second)->size());
 
 		memcpy(packet.packet_data, it->second->c_str(), it->second->size() + 1);
 		packet.id = it->first;
