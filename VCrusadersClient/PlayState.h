@@ -36,7 +36,7 @@ private:
 
 	// Input
 	bool LeftDown, MiddleDown, RightDown, LeftDownTwo, BothDown;
-	bool rotationChanged;
+	bool rotationChanged, attacking;
 	double MouseX, MouseY;
 
 	// Components
