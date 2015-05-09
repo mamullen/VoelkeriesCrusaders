@@ -42,6 +42,8 @@ void PlayState::Initialize() {
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+	rotationChanged = false;
+	attacking = false;
 	player = NULL;
 }
 
@@ -95,7 +97,7 @@ void PlayState::Update(ClientGame* client) {
 			//char msgbuf[2048];
 			//sprintf(msgbuf, "pos: with %f, %f, %f\n", xPos, yPos, zPos);
 			//OutputDebugString(msgbuf);
-			if (!player || objID == player->getID()){
+			if (player && objID == player->getID()){
 				player->setPos(xPos, yPos, zPos);
 			}
 			else if (gameObjects.find(objID) != gameObjects.end()){
@@ -195,15 +197,8 @@ void PlayState::Input(ClientGame* client) {
 		client->addEvent(player->getID(), "move_backward;");
 	}
 
-	if (glfwGetKey(window, ROTATELEFT)) {
-		client->addEvent(player->getID(), "rotate_left;");
-	}
-
-	if (glfwGetKey(window, ROTATERIGHT)) {
-		client->addEvent(player->getID(), "rotate_right;");
-	}
-
 	if (rotationChanged){
+		rotationChanged = false;
 		float rotate = -Cam.GetAzimuth() + 360;
 		char * floatStr = new char[3];
 		sprintf(floatStr, "%3.0d", (int)rotate);
@@ -217,9 +212,13 @@ void PlayState::Input(ClientGame* client) {
 		pointer++;
 		data[pointer] = '\0';
 		client->addEvent(player->getID(), data);
-		printf("STRING IS %s\n", data);
-		printf("AZIM %f\n", rotate );
+		//printf("STRING IS %s\n", data);
+		//printf("AZIM %f\n", rotate );
 		//printf("Player: %f\n", player->getRotation());
+	}
+
+	if (attacking){
+		client->addEvent(player->getID(), "attack;");
 	}
 }
 
@@ -235,6 +234,12 @@ void PlayState::KeyCallback(GLFWwindow* window, int key, int scancode, int actio
 void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods) {
 	if (!player)
 		return;
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS){
+		attacking = true;
+	}
+	else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
+		attacking = false;
+	}
 	/*
 	float playerRotation = -player->getRotation();
 
