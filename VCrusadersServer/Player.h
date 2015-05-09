@@ -12,5 +12,8 @@ public:
 
 private:
 	unsigned int pid; // corresponds to Client ID
+	float hp;
+	float attack_range;
+	float attack_dmg;
 };
 

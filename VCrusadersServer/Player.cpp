@@ -4,9 +4,13 @@
 
 Player::Player() :GameObject()
 {
+	// attributes
 	position = Vector3(0, 0, 0);
 	rotation = 0;
-
+	hp = 100;
+	attack_dmg = 10;
+	attack_range = 150;
+	//////////////////////////////////
 	pPosition = Vector3(position.x, position.y, position.z);
 	forward = Vector3(0, 0, 1);
 	pForward = Vector3(forward.x, forward.y, forward.z);

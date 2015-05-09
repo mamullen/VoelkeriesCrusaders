@@ -107,7 +107,7 @@ void PlayState::Update(ClientGame* client) {
 		if (strcmp(serverEvent, "rot") == 0){
 			float rot;
 			memcpy(&rot, serverEvent + 4, sizeof(float));
-			if (!player || objID == player->getID()){
+			if (player && objID == player->getID()){
 				player->setRotation(rot);
 			}
 			else if (gameObjects.find(objID) != gameObjects.end()){
