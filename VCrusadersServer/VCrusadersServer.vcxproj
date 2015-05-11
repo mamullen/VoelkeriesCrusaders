@@ -146,7 +146,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Action.h" />
-    <ClInclude Include="BasicAttack.h" />
     <ClInclude Include="GameLogic.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="main.h" />
@@ -162,8 +161,6 @@
     <ClInclude Include="vector3.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Action.cpp" />
-    <ClCompile Include="BasicAttack.cpp" />
     <ClCompile Include="GameLogic.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="main.cpp" />

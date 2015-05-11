@@ -7,10 +7,11 @@
 #include "objparser.h"
 #include "GameObject.h"
 #include <iostream>
+#include "ConfigSettings.h"
 
 class Player: public GameObject {
 public:
-	Player(unsigned int i) : GameObject(new ObjParser("Object/MechAnimation.obj"),i){};
+	Player(unsigned int i) : GameObject(new ObjParser( (char*) ConfigSettings::config->getValue("MechAnimationFilePath").c_str() ),i){};
 };
 
 #endif

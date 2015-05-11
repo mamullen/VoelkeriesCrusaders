@@ -60,9 +60,6 @@
     <ClInclude Include="Action.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BasicAttack.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -96,12 +93,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="vector3.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Action.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BasicAttack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -74,10 +74,10 @@ GameEngine::GameEngine(int argc, char **argv) {
 	
 	// Initialize the part of the client that connects to the server
 	Client = new ClientGame();
-	string configIP;
-	ConfigSettings::config->getValue("ServerIP", configIP);
-	printf("Connecting to Server IP: %s\n", configIP.c_str());
-	Client->connectToServer(configIP.c_str()); //set ip of server here
+	//string configIP;
+	//ConfigSettings::config->getValue("ServerIP", configIP);
+	//printf("Connecting to Server IP: %s\n", configIP.c_str());
+	Client->connectToServer(ConfigSettings::config->getValue("ServerIP").c_str()); //set ip of server here
 
 	//Callbacks
 	glfwSetKeyCallback(window, key_callback);
