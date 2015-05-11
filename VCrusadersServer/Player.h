@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "BasicAttack.h"
 class Player : public GameObject
 {
 public:
@@ -9,11 +10,12 @@ public:
 
 	void update(Packet*);
 	unsigned int getPID();
+	
+	void basic_attack(GameObject&);
 
+	Action* basic_att;
 private:
 	unsigned int pid; // corresponds to Client ID
-	float hp;
-	float attack_range;
-	float attack_dmg;
+	
 };
 

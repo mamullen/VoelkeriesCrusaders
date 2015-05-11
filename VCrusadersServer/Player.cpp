@@ -10,6 +10,9 @@ Player::Player() :GameObject()
 	hp = 100;
 	attack_dmg = 10;
 	attack_range = 150;
+	
+	// actions
+	basic_att = new BasicAttack();
 	//////////////////////////////////
 	pPosition = Vector3(position.x, position.y, position.z);
 	forward = Vector3(0, 0, 1);
@@ -17,7 +20,8 @@ Player::Player() :GameObject()
 	right = Vector3(-1, 0, 0);
 	up = Vector3(0, 1, 0);
 
-	attr_num = 2;
+
+	attr_num = 5;
 	isChanged = new bool[attr_num];
 	for (int i = 0; i < attr_num; i++){
 		isChanged[i] = false;
@@ -35,6 +39,7 @@ Player::~Player()
 void Player::update(Packet* packet)
 {
 	std::string in = std::string(packet->packet_data);
+	int pid = packet->id;
 	int currInd = 0;
 	int currEnd = in.find(';', currInd);
 	std::cout << "packet update = " << in.c_str() << std::endl;
@@ -89,6 +94,9 @@ void Player::update(Packet* packet)
 			}
 			this->setRotation(n);
 		}
+		else if (cEvent.compare("basic_attack") == 0){
+
+		}
 		/*
 		else if (cEvent.compare("rotate_left") == 0){
 			if (!isChanged[1]){
@@ -113,4 +121,9 @@ void Player::update(Packet* packet)
 unsigned int Player::getPID()
 {
 	return pid;
+}
+
+void Player::basic_attack()
+{
+
 }

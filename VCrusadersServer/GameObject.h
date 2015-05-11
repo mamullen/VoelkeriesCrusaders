@@ -3,6 +3,7 @@
 #include "vector3.h"
 #include "matrix34.h"
 #include "NetworkData.h"
+#include "Action.h"
 #include <map>
 #include <list>
 #include <vector>
@@ -37,6 +38,10 @@ public:
 	//void getStatusPacket();
 
 	static std::list<std::pair<int, std::string*>> changes;
+
+	float hp;
+	float attack_range;
+	float attack_dmg;
 
 protected:
 	static unsigned int totalId;
