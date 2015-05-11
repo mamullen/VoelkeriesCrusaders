@@ -90,6 +90,7 @@
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="ClientGame.cpp" />
     <ClCompile Include="ClientNetwork.cpp" />
+    <ClCompile Include="ConfigSettings.cpp" />
     <ClCompile Include="core.cpp" />
     <ClCompile Include="Floor.cpp" />
     <ClCompile Include="GameEngine.cpp" />
@@ -107,6 +108,7 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="ClientGame.h" />
     <ClInclude Include="ClientNetwork.h" />
+    <ClInclude Include="ConfigSettings.h" />
     <ClInclude Include="core.h" />
     <ClInclude Include="Floor.h" />
     <ClInclude Include="GameEngine.h" />
