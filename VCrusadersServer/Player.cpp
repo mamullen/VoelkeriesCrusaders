@@ -12,7 +12,7 @@ Player::Player() :GameObject()
 	attack_range = 150;
 	
 	// actions
-	basic_att = new BasicAttack();
+
 	//////////////////////////////////
 	pPosition = Vector3(position.x, position.y, position.z);
 	forward = Vector3(0, 0, 1);
@@ -123,7 +123,7 @@ unsigned int Player::getPID()
 	return pid;
 }
 
-void Player::basic_attack()
+void Player::basic_attack(GameObject*)
 {
 
 }

@@ -1,6 +1,8 @@
 #pragma once
 #include "Action.h"
-#include "Player.h"
+
+class GameObject;
+
 class BasicAttack :
 	public Action
 {
@@ -8,7 +10,7 @@ public:
 	BasicAttack();
 	virtual ~BasicAttack();
 	
-	void update(GameObject&,GameObject&);
+	virtual void update(GameObject*,GameObject*);
 private:
 	float getDis();
 };
