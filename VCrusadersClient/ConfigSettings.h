@@ -33,6 +33,7 @@ public:
 	void copySettingsTemplate();
 	void copyMissingSettings();
 
+	string getValue(string key);
 	bool getValue(string key, bool & ret);
 	bool getValue(string key, int & ret);
 	bool getValue(string key, float & ret);
