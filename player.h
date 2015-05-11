@@ -5,6 +5,7 @@
 #include "matrix34.h"
 #include "Vector4.h"
 #include "objparser.h"
+#include "DaeLoader.h"
 #include <iostream>
 #include "Building.h"
 #include "Floor.h"

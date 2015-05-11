@@ -7,8 +7,10 @@
 #include "player.h"
 
 ObjParser mech;
+DaeLoader mech2;
 Player::Player() {
 	mech = ObjParser("Object/MechAnimation.obj");
+	mech2 = DaeLoader("Object/MechAnimBlender.dae");
 	mn = mech.min;
 	mx = mech.max;
 
@@ -19,6 +21,7 @@ Player::Player() {
 }
 Player::Player(int pn) {
 	mech = ObjParser("Object/MechAnimation.obj");
+	mech2 = DaeLoader("Object/MechAnimBlender.dae");
 	mn = mech.min;
 	mx = mech.max;
 	
@@ -36,7 +39,8 @@ void Player::update() {
 	glRotatef(180, 0, 1, 0);
 	glRotatef(rotation, 0, 1, 0);
 
-	mech.Draw();
+	//mech.Draw();
+	mech2.Render();
 	
 	glBegin(GL_TRIANGLES);
 	glColor3f(1.f, 1.f, 0.f);
