@@ -6,6 +6,7 @@
 #include <sstream>
 #include <string>
 #include <map>
+#include "ConfigSettings.h"
 
 class ClientGame
 {

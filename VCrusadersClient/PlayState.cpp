@@ -21,8 +21,12 @@ PlayState::PlayState(GLFWwindow* window) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void PlayState::Initialize() {
-	WinX = 1024;
-	WinY = 768;
+	string configWinX;
+	string configWinY;
+	ConfigSettings::config->getValue("WinX", configWinX);
+	ConfigSettings::config->getValue("WinY", configWinY);
+	WinX = stoi(configWinX);
+	WinY = stoi(configWinY);
 
 	LeftDown = MiddleDown = RightDown = BothDown = 0;
 	MouseX = MouseY = 0;

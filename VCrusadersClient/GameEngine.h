@@ -12,6 +12,7 @@
 #include <thread>
 #include <stack>
 #include "objparser.h"
+#include "ConfigSettings.h"
 
 using namespace std;
 ////////////////////////////////////////////////////////////////////////////////
