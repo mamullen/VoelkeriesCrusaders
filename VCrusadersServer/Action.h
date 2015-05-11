@@ -7,6 +7,6 @@ public:
 	Action();
 	virtual ~Action();
 
-	virtual void update(GameObject&) = 0;
+	virtual void update(GameObject&,GameObject&) = 0;
 };
 
