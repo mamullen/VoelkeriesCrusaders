@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core.h"
+#include "DaeLoader.h"
 #include "matrix34.h"
 #include "Vector4.h"
 #include "objparser.h"
@@ -24,7 +25,7 @@ class GameObject {
 public:
 	//initialize game object with some model.  If there is no model
 	//associated with this GameObject, then just pass in NULL
-	GameObject(ObjParser* m, unsigned int i);
+	GameObject(DaeLoader* m, unsigned int i);
 
 	void rotateLeft();
 	void rotateRight();
@@ -50,6 +51,6 @@ private:
 	Vector4 up = Vector4(0, 1, 0, 1);
 
 	//the model of the object
-	ObjParser* model;
+	DaeLoader* model;
 };
 

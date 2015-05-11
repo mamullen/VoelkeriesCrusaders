@@ -1,6 +1,6 @@
 #include "GameObject.h"
 
-GameObject::GameObject(ObjParser* m, unsigned int i)
+GameObject::GameObject(DaeLoader* m, unsigned int i)
 {
 	model = m;
 	id = i;
@@ -16,7 +16,7 @@ void GameObject::update(bool isPlayer) {
 	
 	//check  model is not null
 	if (model){
-		model->Draw();
+		model->Render();
 	}
 	else {
 		//no model, so use draw method to draw object

@@ -14,7 +14,12 @@
 
 #ifdef _WIN32
 	#define M_PI	3.14159f
-	
+
+	#include <assimp/ai_assert.h>
+	#include <assimp/Importer.hpp>
+	#include <assimp/cimport.h>
+	#include <assimp/scene.h>
+	#include <assimp/postprocess.h>
 	#define GLFW_INCLUDE_GLU
 	#include <GLFW/glfw3.h>
 #endif
