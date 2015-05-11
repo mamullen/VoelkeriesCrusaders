@@ -144,6 +144,16 @@ void ConfigSettings::saveSettingsFile(){
 
 }
 
+string ConfigSettings::getValue(string key){
+	hash_map <string, string>::iterator i = settings.find(key);
+
+	if (i != settings.end()){
+		string ret = i->second;
+		return ret;
+	}
+	return NULL;
+}
+
 bool ConfigSettings::getValue(string key, string & ret){
 	hash_map <string,string>::iterator i = settings.find(key);
 	
