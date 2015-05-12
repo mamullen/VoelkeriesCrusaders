@@ -3,7 +3,6 @@
 
 # Build results
 ./[Dd]ebug/
-[Rr]elease/
 ipch/
 
 *.sdf
