@@ -22,10 +22,6 @@ static void error_callback(int error, const char* description)									{ fputs(d
 ////////////////////////////////////////////////////////////////////////////////
 
 int main(int argc, char **argv) {
-	glewExperimental = GL_TRUE;
-	if (!glewInit())
-		exit(EXIT_FAILURE);
-
 	glfwSetErrorCallback(error_callback);
 
 	if (!glfwInit())
@@ -88,6 +84,13 @@ GameEngine::GameEngine(int argc, char **argv) {
 	glfwSetCursorPosCallback(window, mouse_motion);
 	glfwSetMouseButtonCallback(window, mouse_button);
 	glfwSetScrollCallback(window, mouse_scroll);
+
+	GLenum err = glewInit();
+	if (err != GLEW_OK) {
+		fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+		exit(EXIT_FAILURE);
+	}
+	
 }
 
 ////////////////////////////////////////////////////////////////////////////////
