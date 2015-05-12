@@ -1,6 +1,5 @@
 #include "Animator.h"
 
-using namespace AssimpView;
 // ------------------------------------------------------------------------------------------------
 // Constructor for a given scene.
 SceneAnimator::SceneAnimator(const aiScene* pScene, size_t pAnimIndex)

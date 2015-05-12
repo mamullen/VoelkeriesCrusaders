@@ -1,1 +1,1 @@
-Linker->Input->Additional Dependencies: assimp.lib;glfw3.lib;opengl32.lib;glu32.lib;
+Linker->Input->Additional Dependencies: assimp.lib;glfw3.lib;opengl32.lib;glu32.lib;glew32.lib;
