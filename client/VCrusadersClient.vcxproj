@@ -103,6 +103,7 @@
     <ClCompile Include="objparser.cpp" />
     <ClCompile Include="PlayState.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="vector3.cpp" />
     <ClCompile Include="Vector4.cpp" />
   </ItemGroup>
@@ -127,6 +128,7 @@
     <ClInclude Include="PlayState.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="vector3.h" />
     <ClInclude Include="Vector4.h" />
   </ItemGroup>
