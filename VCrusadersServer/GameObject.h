@@ -3,6 +3,7 @@
 #include "vector3.h"
 #include "matrix34.h"
 #include "NetworkData.h"
+
 #include <map>
 #include <list>
 #include <vector>
@@ -29,7 +30,7 @@ public:
 	void strafeLeft();
 	void strafeRight();
 
-	virtual void update(Packet*) = 0;
+	virtual void update(Packet*, std::vector<GameObject*>*) = 0;
 
 	std::map<std::string*, bool> getChanges();
 	void addChange(std::string* change);
@@ -38,9 +39,7 @@ public:
 
 	static std::list<std::pair<int, std::string*>> changes;
 
-	float hp;
-	float attack_range;
-	float attack_dmg;
+	bool isPlayer;
 
 protected:
 	static unsigned int totalId;
@@ -48,7 +47,7 @@ protected:
 	const float ROTATE_LEFT = 1;
 	const float ROTATE_RIGHT = -1;
 	const float PI = 3.14159;
-
+	
 	float rotation;
 	Matrix34 rotateMx;
 	Vector3 position, forward, right, up;

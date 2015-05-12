@@ -20,7 +20,7 @@ void GameLogic::update()
 	for (std::list<std::pair<int,Packet*>>::const_iterator iter = packets.begin(); iter != packets.end(); ++iter){
 		if (iter->second->id < gameObjects.size()){
 			printf("gamelogic update\n");
-			gameObjects.at(iter->second->id)->update(iter->second);
+			gameObjects.at(iter->second->id)->update(iter->second,&gameObjects);
 		}
 	}
 	
@@ -77,7 +77,26 @@ void GameLogic::update()
 
 			serverPackets.push_back(p);
 		}
+		else if (key->compare("hp") == 0){
+			Player* temp = (Player*)gameObjects.at(index);
+			float hp = temp->getHp();
+			///////////////////////////////////////////////////////////////////////////
+			char data[PACKET_DATA_LEN];
+			int pointer = 0;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "hp", 3);
+			pointer += 3;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &hp, sizeof(float));
+			pointer += sizeof(float);
+			data[pointer] = ',';
+			pointer++;
+			///////////////////////////////////////////////////////////////////////////
+			Packet* p = new Packet;
+			p->packet_type = ACTION_EVENT;
+			memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+			p->id = index;
 
+			serverPackets.push_back(p);
+		}
 		// clear the change bool array after done processing all the changes 
 		// need fix
 		gameObjects.at(index)->clearChanges();

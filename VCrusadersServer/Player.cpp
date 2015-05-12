@@ -8,19 +8,19 @@ Player::Player() :GameObject()
 	position = Vector3(0, 0, 0);
 	rotation = 0;
 	hp = 100;
-	attack_dmg = 10;
+	attack_dmg = 0;
 	attack_range = 150;
-	
-	// actions
 
+	// actions
+	attack_mode = new BasicAttack();
 	//////////////////////////////////
 	pPosition = Vector3(position.x, position.y, position.z);
 	forward = Vector3(0, 0, 1);
 	pForward = Vector3(forward.x, forward.y, forward.z);
 	right = Vector3(-1, 0, 0);
 	up = Vector3(0, 1, 0);
-
-
+	isPlayer = true;
+	//////////////////////////////////
 	attr_num = 5;
 	isChanged = new bool[attr_num];
 	for (int i = 0; i < attr_num; i++){
@@ -36,7 +36,7 @@ Player::~Player()
 {
 }
 
-void Player::update(Packet* packet)
+void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 {
 	std::string in = std::string(packet->packet_data);
 	int pid = packet->id;
@@ -94,8 +94,9 @@ void Player::update(Packet* packet)
 			}
 			this->setRotation(n);
 		}
-		else if (cEvent.compare("basic_attack") == 0){
-
+		else if (cEvent.compare("attack") == 0){
+			attack_dmg = attack_mode->update();
+			this->attack(objects);
 		}
 		/*
 		else if (cEvent.compare("rotate_left") == 0){
@@ -123,7 +124,34 @@ unsigned int Player::getPID()
 	return pid;
 }
 
-void Player::basic_attack(GameObject*)
+void Player::attack(std::vector<GameObject*>* objects)
 {
+	for (int i = 0; i < objects->size(); i++){
+		if (this->id == objects->at(i)->getID() || !objects->at(i)->isPlayer){
+			continue;
+		}
+		if (inRange((Player*)objects->at(i))){
+			Player* t = (Player*)objects->at(i);
+			t->isAttacked(attack_dmg);
+		}
+	}
+}
 
+void Player::isAttacked(float dmg)
+{
+	if (!isChanged[2]){
+		isChanged[2] = true;
+		std::string* change = new std::string("hp");
+		changes.push_back(std::pair<int, std::string*>(id, change));
+		hp -= dmg;
+	}
+}
+
+bool Player::inRange(Player*)
+{
+	return true;
+}
+
+float Player::getHp(){
+	return hp;
 }
