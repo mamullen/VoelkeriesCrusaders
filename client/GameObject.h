@@ -29,11 +29,17 @@ public:
 
 	void rotateLeft();
 	void rotateRight();
-	void update(bool isPlayer);
+	void update(bool isPlayer,float rot);
 	virtual void drawObj(); //will draw a triangle if not overridden
 	void print(std::string);
 
 	unsigned int getID()				{ return id; }
+	float getHealth()						{ return currHP; }
+	void setHealth(float h);
+	float getMaxHealth()					{ return maxHP; }
+	void setMaxHealth(float h);
+	bool getShowHP()					{ return showHP; }
+	void setShowHP(bool t)				{ showHP = t; }
 	Vector4 getPos()					{ return position; }
 	void setPos(double x, double y, double z);
 	float getRotation()					{ return rotation; }
@@ -44,6 +50,8 @@ public:
 private:
 	unsigned int id;
 	float rotation = 0;
+	bool showHP = false;
+	float currHP,maxHP;
 
 	Vector4 position = Vector4(0, 2, 0, 1);
 	Vector4 forward = INIT_FORWARD;

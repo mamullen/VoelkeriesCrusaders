@@ -148,6 +148,7 @@
   <ItemGroup>
     <ClInclude Include="Action.h" />
     <ClInclude Include="Basic_Attack.h" />
+    <ClInclude Include="ConfigSettings.h" />
     <ClInclude Include="GameLogic.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="main.h" />
@@ -165,6 +166,7 @@
   <ItemGroup>
     <ClCompile Include="Action.cpp" />
     <ClCompile Include="Basic_Attack.cpp" />
+    <ClCompile Include="ConfigSettings.cpp" />
     <ClCompile Include="GameLogic.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="main.cpp" />
@@ -181,6 +183,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="vector3.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ConfigTemplate.ini" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
