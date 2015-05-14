@@ -17,7 +17,7 @@ class PlayState : public GameState
 {
 public:
 	PlayState(GLFWwindow* window);
-	void Initialize();
+	int Initialize();
 
 	void Input(ClientGame* Client);
 	void Update(ClientGame* Client);
@@ -44,6 +44,7 @@ private:
 	// Components
 	Camera Cam;
 	Player* player;
+	Particles* balloons;
 	int pid = -1;
 	//player is not stored in this map
 	std::map<int, GameObject*> gameObjects;

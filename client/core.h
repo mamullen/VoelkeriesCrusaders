@@ -16,14 +16,7 @@
 	#define M_PI	3.14159f
 
 	#include <GL/glew.h>
-	#define GLFW_INCLUDE_GLU
 	#include <GLFW/glfw3.h>
-#endif
-
-#ifdef __APPLE__
-	#include <OpenGL/gl.h>
-	#include <OpenGL/glu.h>
-	#include <GLUT/glut.h>
 #endif
 
 #define WINDOWTITLE	"Voelkeries Crusaders"

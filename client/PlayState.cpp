@@ -14,6 +14,7 @@ static PlayState *state;
 ////////////////////////////////////////////////////////////////////////////////
 
 PlayState::PlayState(GLFWwindow* window) {
+	balloons = new Particles();
 	this->window = window;
 	Initialize();
 }
@@ -36,7 +37,7 @@ void InitLights() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void PlayState::Initialize() {
+int PlayState::Initialize() {
 	double lastTime = glfwGetTime();
 
 	string configWinX;
@@ -49,7 +50,12 @@ void PlayState::Initialize() {
 	LeftDown = MiddleDown = RightDown = BothDown = 0;
 	MouseX = MouseY = 0;
 
-	glfwMakeContextCurrent(window);
+	glewExperimental = GL_TRUE;
+	if (glewInit() != GLEW_OK) {
+		fprintf(stderr, "Failed to initialize GLEW\n");
+		return -1;
+	}
+
 	glfwSwapInterval(0);	// no vsync
 
 	glfwGetFramebufferSize(window, &WinX, &WinY);
@@ -64,10 +70,12 @@ void PlayState::Initialize() {
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+	balloons->Init();
 	InitLights();
 	rotationChanged = false;
 	attacking = false;
 	player = NULL;
+	return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -166,13 +174,17 @@ void drawsomeground() { // deprecate this one day
 ////////////////////////////////////////////////////////////////////////////////
 
 void PlayState::Draw() {
-	if (!player)
-		return;
-
+	// Clear the screen
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// Set up glStuff
 	glViewport(0, 0, WinX, WinY);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glClear(GL_DEPTH_BUFFER_BIT);
+
+	double currentTime = glfwGetTime();
+	double delta = currentTime - lastTime;
+	lastTime = currentTime;
+
+	if (!player)
+		return;
 
 	// Draw components
 	Cam.Draw();		// Sets up projection & viewing matrices
@@ -192,6 +204,8 @@ void PlayState::Draw() {
 	{
 		it->second->update(false);
 	}
+
+	balloons->Loop(delta);
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();

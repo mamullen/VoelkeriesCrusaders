@@ -26,6 +26,7 @@ public:
 	void ChangeState(GameState *state);
 	void PushState(GameState *state);
 	void PopState();
+	GameState *PeekState() { return states.top(); }
 
 	void Input(ClientGame* Client);
 	void Update(ClientGame* Client);

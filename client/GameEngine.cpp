@@ -24,10 +24,16 @@ static void error_callback(int error, const char* description)									{ fputs(d
 int main(int argc, char **argv) {
 	glfwSetErrorCallback(error_callback);
 
-	if (!glfwInit())
-		exit(EXIT_FAILURE);
+	if (!glfwInit()) {
+		fprintf(stderr, "Failed to initialize GLFW\n");
+		return -1;
+	}
 
 	Game = new GameEngine(argc, argv);	//initialize
+	if (Game->PeekState()->Initialize() != 0) {
+		fprintf(stderr, "Failed to initialize state\n");
+		return -1;
+	}
 
 	double currentTime = glfwGetTime();
 
@@ -63,9 +69,11 @@ GameEngine::GameEngine(int argc, char **argv) {
 
 	if (!window)
 	{
+		fprintf(stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
+	glfwMakeContextCurrent(window);
 
 	// Currently just starts it with the PlayState
 	PlayState *state = new PlayState(window);
@@ -84,12 +92,6 @@ GameEngine::GameEngine(int argc, char **argv) {
 	glfwSetCursorPosCallback(window, mouse_motion);
 	glfwSetMouseButtonCallback(window, mouse_button);
 	glfwSetScrollCallback(window, mouse_scroll);
-
-	GLenum err = glewInit();
-	if (err != GLEW_OK) {
-		fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
-		exit(EXIT_FAILURE);
-	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -8,7 +8,7 @@
 
 class GameState {
 public:
-	virtual void Initialize() = 0;
+	virtual int Initialize() = 0;
 	
 	/*virtual void Pause() = 0;
 	virtual void Resume() = 0;*/
