@@ -8,6 +8,7 @@ GameObject::GameObject()
 {
 	id = totalId;
 	totalId++;
+	isPlayer = false;
 	/*
 	position = Vector3(0, 0, 0);
 	pPosition = Vector3(position.x, position.y, position.z);
@@ -87,6 +88,12 @@ void GameObject::clearChanges()
 		isChanged[i] = false;
 	}
 }
+
+float GameObject::getHP()
+{
+	return hp;
+}
+
 
 /*
 std::map<std::string*, bool> GameObject::getChanges()

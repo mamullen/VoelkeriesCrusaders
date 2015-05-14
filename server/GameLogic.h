@@ -23,11 +23,16 @@ public:
 	void addPlayer(int id);
 	void createNewObjects();
 
+	bool gameEnd();
+
 private:
 	std::vector<GameObject*> gameObjects;
+	std::vector<Player*> playerList;
 	std::list<std::pair<int,Packet*>> packets;
 	std::list<Packet*> serverPackets;
 	std::map<int, Player*> players;
 	PacketParser* packetParser;
+
+	bool start;
 };
 

@@ -150,6 +150,7 @@ void ServerGame::sendInitPackets(unsigned int id)
 		float y = gameObjects.at(i)->getPos().y;
 		float z = gameObjects.at(i)->getPos().z;
 		float r = gameObjects.at(i)->getRot();
+		float hp = gameObjects.at(i)->getHP();
 		///////////////////////////////////////////////////////////////////////////
 		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "create", 7);
 		pointer += 7;
@@ -160,6 +161,8 @@ void ServerGame::sendInitPackets(unsigned int id)
 		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
 		pointer += sizeof(float);
 		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &r, sizeof(float));
+		pointer += sizeof(float);
+		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &hp, sizeof(float));
 		pointer += sizeof(float);
 		data[pointer] = ',';
 		pointer++;
