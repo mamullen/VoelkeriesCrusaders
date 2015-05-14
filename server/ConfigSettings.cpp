@@ -1,11 +1,13 @@
+#include "stdafx.h"
 #include "ConfigSettings.h"
+
 
 string ConfigSettings::str_screen_width = "ScreenWidth";
 string ConfigSettings::str_screen_height = "ScreenHeight";
 string ConfigSettings::str_full_screen = "FullScreen";
 
 typedef pair <string, string> String_Pair;
-ConfigSettings * ConfigSettings::config = new ConfigSettings("ServerConfig.ini", "ConfigTemplate.ini");
+ConfigSettings * ConfigSettings::config = new ConfigSettings(str_settings_file, str_template_settings_file);
 
 ConfigSettings::ConfigSettings(string fname, string template_fname) {
 	file_name = fname;
