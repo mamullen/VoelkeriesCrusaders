@@ -20,6 +20,8 @@
 	#include <assimp/cimport.h>
 	#include <assimp/scene.h>
 	#include <assimp/postprocess.h>
+
+	#include <GL/glew.h>
 	#define GLFW_INCLUDE_GLU
 	#include <GLFW/glfw3.h>
 #endif

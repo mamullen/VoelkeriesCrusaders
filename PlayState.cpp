@@ -11,7 +11,6 @@ PlayState::PlayState(GLFWwindow* window) {
 	this->window = window;
 	Initialize();
 
-
 	//in order for it to read two different players.  The players must be initialized with 
 	//different numbers
 	player = Player(1);
@@ -69,6 +68,8 @@ void drawsomeground() { // deprecate this one day
 	glPopMatrix();
 }
 
+double lastTime = glfwGetTime();
+
 void PlayState::Draw() {
 	if (BothDown) {
 		player.MoveForward(0.01);
@@ -90,8 +91,11 @@ void PlayState::Draw() {
 
 	// Begin drawing player and scene
 	field.createFloor(0, 0);
-	
-	
+
+	double currentTime = glfwGetTime();
+	double delta = currentTime - lastTime;
+	//balloons.Loop(delta);
+	lastTime = currentTime;
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();

@@ -70,6 +70,13 @@ GameEngine::GameEngine(int argc, char **argv) {
 	glfwSetCursorPosCallback(window, mouse_motion);
 	glfwSetMouseButtonCallback(window, mouse_button);
 	glfwSetScrollCallback(window, mouse_scroll);
+
+	glewExperimental = GL_TRUE;
+	GLenum err = glewInit();
+	if (err != GLEW_OK) {
+		fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+		exit(EXIT_FAILURE);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -2,6 +2,7 @@
 #define PLAYSTATE_H_
 
 #include "core.h"
+#include "ParticleSystem.h"
 #include "GameState.h"
 #include "Building.h"
 #include "Floor.h"
@@ -38,6 +39,7 @@ private:
 	// Components
 	Camera Cam;
 	Player player;
+	//Particles balloons;
 
 };
 

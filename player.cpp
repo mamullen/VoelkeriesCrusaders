@@ -10,7 +10,7 @@ ObjParser mech;
 DaeLoader mech2;
 Player::Player() {
 	mech = ObjParser("Object/MechAnimation.obj");
-	mech2 = DaeLoader("Object/MechAnimBlender.dae");
+	mech2 = DaeLoader("./Object/MechAnimBlender.dae");
 	mn = mech.min;
 	mx = mech.max;
 
@@ -21,7 +21,7 @@ Player::Player() {
 }
 Player::Player(int pn) {
 	mech = ObjParser("Object/MechAnimation.obj");
-	mech2 = DaeLoader("Object/MechAnimBlender.dae");
+	mech2 = DaeLoader("./Object/MechAnimBlender.dae");
 	mn = mech.min;
 	mx = mech.max;
 	
