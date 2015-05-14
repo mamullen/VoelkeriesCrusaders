@@ -20,7 +20,25 @@ PlayState::PlayState(GLFWwindow* window) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void InitLights() {
+	GLfloat light_ambient[] = { 0.0, 0.0, 0.0, 1.0 };
+	GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat light_position[] = { -1.0, -1.0, -1.0, 0.0 };
+
+	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+
+	glEnable(GL_LIGHT0);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void PlayState::Initialize() {
+	double lastTime = glfwGetTime();
+
 	string configWinX;
 	string configWinY;
 	ConfigSettings::config->getValue("WinX", configWinX);
@@ -46,6 +64,7 @@ void PlayState::Initialize() {
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+	InitLights();
 	rotationChanged = false;
 	attacking = false;
 	player = NULL;
@@ -167,6 +186,7 @@ void PlayState::Draw() {
 	player->update(true);
 
 	drawsomeground();
+
 	std::map<int, GameObject*>::iterator it;
 	for (it = gameObjects.begin(); it != gameObjects.end(); it++)
 	{

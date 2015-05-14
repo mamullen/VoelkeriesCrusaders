@@ -6,6 +6,7 @@
 #define PLAYSTATE_H_
 
 #include "core.h"
+#include "ParticleSystem.h"
 #include "GameState.h"
 #include "Building.h"
 #include "Floor.h"
@@ -38,6 +39,7 @@ private:
 	bool LeftDown, MiddleDown, RightDown, LeftDownTwo, BothDown;
 	bool rotationChanged, attacking;
 	double MouseX, MouseY;
+	double lastTime;
 
 	// Components
 	Camera Cam;

@@ -90,7 +90,6 @@ GameEngine::GameEngine(int argc, char **argv) {
 		fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
 		exit(EXIT_FAILURE);
 	}
-	
 }
 
 ////////////////////////////////////////////////////////////////////////////////
