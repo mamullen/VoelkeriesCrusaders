@@ -5,7 +5,7 @@ string ConfigSettings::str_screen_height = "ScreenHeight";
 string ConfigSettings::str_full_screen = "FullScreen";
 
 typedef pair <string, string> String_Pair;
-ConfigSettings * ConfigSettings::config = new ConfigSettings("ClientConfig.ini", "ConfigTemplate.ini");
+ConfigSettings * ConfigSettings::config = new ConfigSettings("ServerConfig.ini", "ConfigTemplate.ini");
 
 ConfigSettings::ConfigSettings(string fname, string template_fname) {
 	file_name = fname;
@@ -18,7 +18,7 @@ ConfigSettings::ConfigSettings(string fname, string template_fname) {
 		copyMissingSettings();
 	}
 
-	printf("ClientConfig.ini file loaded!\n");
+	printf("ServerConfig.ini file loaded!\n");
 }
 
 //Reads and loads the settings
