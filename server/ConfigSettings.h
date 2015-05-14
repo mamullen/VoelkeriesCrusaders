@@ -12,7 +12,7 @@
 
 using namespace std;
 
-const string str_settings_file = "ClientConfig.ini";
+const string str_settings_file = "ServerConfig.ini";
 const string str_template_settings_file = "ConfigTemplate.ini";
 
 class ConfigSettings {

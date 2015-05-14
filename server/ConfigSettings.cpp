@@ -1,4 +1,6 @@
+#include "stdafx.h"
 #include "ConfigSettings.h"
+
 
 string ConfigSettings::str_screen_width = "ScreenWidth";
 string ConfigSettings::str_screen_height = "ScreenHeight";
@@ -18,7 +20,7 @@ ConfigSettings::ConfigSettings(string fname, string template_fname) {
 		copyMissingSettings();
 	}
 
-	printf("ClientConfig.ini file loaded!\n");
+	printf("ServerConfig.ini file loaded!\n");
 }
 
 //Reads and loads the settings
