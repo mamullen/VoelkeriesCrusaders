@@ -11,6 +11,9 @@
 
 static PlayState *state;
 
+Vector3 g_DefaultCameraTranslate(0, 0, 100);
+Vector3 g_DefaultCameraRotate(40, 0, 0);
+
 ////////////////////////////////////////////////////////////////////////////////
 
 PlayState::PlayState(GLFWwindow* window) {
@@ -64,10 +67,38 @@ int PlayState::Initialize() {
 	glClearColor(0.5, 0., 0., 1.);
 	glEnable(GL_DEPTH_TEST);
 
-	// Initialize components
-	Cam.SetAspect(float(WinX) / float(WinY));
-
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+	// Camera
+	Cam.SetTranslate(g_DefaultCameraTranslate);
+	Cam.SetRotate(g_DefaultCameraRotate);
+
+	// Particles
+	if (g_ParticleEffect.LoadTexture("./particles/Textures/Particle-Texture.png"))
+	{
+		std::cout << "Successfully loaded particle texture." << std::endl;
+	}
+	else
+	{
+		std::cerr << "Failed to load particle texture!" << std::endl;
+	}
+
+	ParticleEffect::ColorInterpolator colors;
+
+	colors.AddValue(0.0f, Vector4(1, 0, 0, 1));     // red
+	colors.AddValue(0.15f, Vector4(1, 0, 1, 1));     // magenta
+	colors.AddValue(0.33f, Vector4(0, 0, 1, 1));     // blue
+	colors.AddValue(0.5f, Vector4(0, 1, 1, 1));     // cyan
+	colors.AddValue(0.67f, Vector4(0, 1, 0, 0.75));  // green
+	colors.AddValue(0.84f, Vector4(1, 1, 0, 0.5));   // yellow
+	colors.AddValue(1.0f, Vector4(1, 0, 0, 0));     // red
+
+	g_ParticleEffect.SetColorInterplator(colors);
+
+	g_ParticleEffect.SetParticleEmitter(&g_ParticleEmitter);
+	g_ParticleEffect.EmitParticles();
+	g_ParticleEffect.SetCamera(&Cam);
+	// End particles
 
 	InitLights();
 	rotationChanged = false;
@@ -202,6 +233,8 @@ void PlayState::Draw() {
 	{
 		it->second->update(false);
 	}
+
+	g_ParticleEffect.Render();
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();

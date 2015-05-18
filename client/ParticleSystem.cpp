@@ -114,6 +114,53 @@ void ParticleEffect::Update(float fDeltaTime)
 
 void ParticleEffect::BuildVertexBuffer()
 {
+	/*const Vector3 X(0.5, 0, 0);
+	const Vector3 Y(0, 0.5, 0);
+	const Vector3 Z(0, 0, 1.0);
+
+	Quaternion cameraRotation;
+	Vector3 v = m_pCamera->GetRotation().inRadians();
+
+	if (m_pCamera != NULL)
+	{
+		cameraRotation = Quaternion(v);
+	}
+
+	// Make sure the vertex buffer has enough vertices to render the effect
+	// If the vertex buffer is already the correct size, no change is made.
+	m_VertexBuffer.resize(m_Particles.size() * 4, Vertex());
+
+	for (unsigned int i = 0; i < m_Particles.size(); ++i)
+	{
+		Particle& particle = m_Particles[i];
+		Quaternion rotation = angleAxis(particle.m_fRotate, Z);
+
+		unsigned int vertexIndex = i * 4;
+		Vertex& v0 = m_VertexBuffer[vertexIndex + 0];   // Bottom-left
+		Vertex& v1 = m_VertexBuffer[vertexIndex + 1];   // Bottom-right
+		Vertex& v2 = m_VertexBuffer[vertexIndex + 2];   // Top-right
+		Vertex& v3 = m_VertexBuffer[vertexIndex + 3];   // Top-left
+
+		// Bottom-left
+		v0.m_Pos = particle.m_Position + (rotation * (-X - Y) * particle.m_fSize) * cameraRotation;
+		v0.m_Tex0 = Vector2(0, 1);
+		v0.m_Diffuse = particle.m_Color;
+
+		// Bottom-right
+		v1.m_Pos = particle.m_Position + (rotation * (X - Y) * particle.m_fSize) * cameraRotation;
+		v1.m_Tex0 = Vector2(1, 1);
+		v1.m_Diffuse = particle.m_Color;
+
+		// Top-right
+		v2.m_Pos = particle.m_Position + (rotation * (X + Y) * particle.m_fSize) * cameraRotation;
+		v2.m_Tex0 = Vector2(1, 0);
+		v2.m_Diffuse = particle.m_Color;
+
+		// Top-left
+		v3.m_Pos = particle.m_Position + (rotation * (-X + Y) * particle.m_fSize) * cameraRotation;
+		v3.m_Tex0 = Vector2(0, 0);
+		v3.m_Diffuse = particle.m_Color;
+	}*/
 }
 
 void ParticleEffect::Render()

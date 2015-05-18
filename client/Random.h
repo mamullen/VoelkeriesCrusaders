@@ -1,7 +1,6 @@
 #pragma once;
 
 #include "core.h"
-#include <algorithm>
 #include <stdlib.h>
 #include "vector3.h"
 

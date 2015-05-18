@@ -135,6 +135,10 @@ public:
 	static Vector3 XAXIS,YAXIS,ZAXIS;
 	static Vector3 ORIGIN;
 
+	Vector3 inRadians() {
+		return Vector3(toRadians(x), toRadians(y), toRadians(z));
+	}
+
 public:
 	float x, y, z;
 };

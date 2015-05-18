@@ -7,6 +7,7 @@
 
 #include "core.h"
 #include "ParticleSystem.h"
+#include "Emitter.h"
 #include "GameState.h"
 #include "Building.h"
 #include "Floor.h"
@@ -44,6 +45,11 @@ private:
 	// Components
 	Camera Cam;
 	Player* player;
+
+	ParticleEffect g_ParticleEffect;
+	SphereEmitter g_ParticleEmitter;
+	CubeEmitter g_CubeEmitter;
+
 	int pid = -1;
 	//player is not stored in this map
 	std::map<int, GameObject*> gameObjects;
