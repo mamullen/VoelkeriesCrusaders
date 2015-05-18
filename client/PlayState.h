@@ -44,7 +44,6 @@ private:
 	// Components
 	Camera Cam;
 	Player* player;
-	Particles* balloons;
 	int pid = -1;
 	//player is not stored in this map
 	std::map<int, GameObject*> gameObjects;

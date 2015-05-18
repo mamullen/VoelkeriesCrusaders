@@ -14,7 +14,6 @@ static PlayState *state;
 ////////////////////////////////////////////////////////////////////////////////
 
 PlayState::PlayState(GLFWwindow* window) {
-	balloons = new Particles();
 	this->window = window;
 	Initialize();
 }
@@ -70,7 +69,6 @@ int PlayState::Initialize() {
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	balloons->Init();
 	InitLights();
 	rotationChanged = false;
 	attacking = false;
@@ -204,8 +202,6 @@ void PlayState::Draw() {
 	{
 		it->second->update(false);
 	}
-
-	balloons->Loop(delta);
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();
