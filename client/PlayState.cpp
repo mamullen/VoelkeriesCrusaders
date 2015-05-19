@@ -122,9 +122,6 @@ void PlayState::Update(ClientGame* client) {
 			memcpy(&yPos, serverEvent + 8, sizeof(float));
 			memcpy(&zPos, serverEvent + 12, sizeof(float));
 
-			//char msgbuf[2048];
-			//sprintf(msgbuf, "pos: with %f, %f, %f\n", xPos, yPos, zPos);
-			//OutputDebugString(msgbuf);
 			if (player && objID == player->getID()){
 				player->setPos(xPos, yPos, zPos);
 			}
@@ -281,6 +278,13 @@ void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods
 	else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
 		attacking = false;
 	}
+
+	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS){
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
+	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
 	/*
 	float playerRotation = -player->getRotation();
 
@@ -313,6 +317,7 @@ void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods
 void PlayState::MouseMotion(GLFWwindow* window, double xpos, double ypos) {
 	if (!player)
 		return;
+
 
 	int dx = xpos - MouseX;
 	int dy = -(ypos - MouseY);

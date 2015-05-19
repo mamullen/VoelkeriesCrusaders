@@ -54,23 +54,19 @@ void ClientGame::update()
 		return;
 	}
 
-	unsigned int i = 0;
-	while (i < (unsigned int)data_length)
+	//going to start at back so that we can keep server events in order
+	int i = data_length - sizeof(Packet);
+	while (i >= 0)
 	{
 		Packet* packet = new Packet;
 		packet->deserialize(&(network_data[i]));
-		i += sizeof(Packet);
+		i -= sizeof(Packet);
 
 		serverEvents.push_back(packet);
 
 		switch (packet->packet_type) {
 
 		case ACTION_EVENT:
-
-			//printf("client received action event packet from server\n");
-			printf(packet->packet_data);
-			printf("\n");
-
 
 			break;
 
