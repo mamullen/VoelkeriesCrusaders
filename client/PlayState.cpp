@@ -218,21 +218,21 @@ void PlayState::Input(ClientGame* client) {
 		return;
 
 	if (glfwGetKey(window, FORWARD)) {
-		client->addEvent(player->getID(),"move_forward;");
+		client->addEvent(player->getID(),"move_forward;",ACTION_EVENT);
 		//Cam.SetAzimuth(playerRotation);
 	}
 
 	if (glfwGetKey(window, STRAFELEFT)) {
-		client->addEvent(player->getID(), "move_left;");
+		client->addEvent(player->getID(), "move_left;", ACTION_EVENT);
 		//Cam.SetAzimuth(playerRotation); // needs some kind of fade effect
 	}
 
 	if (glfwGetKey(window, STRAFERIGHT)) {
-		client->addEvent(player->getID(), "move_right;");
+		client->addEvent(player->getID(), "move_right;", ACTION_EVENT);
 	}
 
 	if (glfwGetKey(window, BACKWARD)) {
-		client->addEvent(player->getID(), "move_backward;");
+		client->addEvent(player->getID(), "move_backward;", ACTION_EVENT);
 	}
 
 	if (rotationChanged){
@@ -249,14 +249,14 @@ void PlayState::Input(ClientGame* client) {
 		data[pointer] = ';';
 		pointer++;
 		data[pointer] = '\0';
-		client->addEvent(player->getID(), data);
+		client->addEvent(player->getID(), data, ACTION_EVENT);
 		//printf("STRING IS %s\n", data);
 		//printf("AZIM %f\n", rotate );
 		//printf("Player: %f\n", player->getRotation());
 	}
 
 	if (attacking){
-		client->addEvent(player->getID(), "attack;");
+		client->addEvent(player->getID(), "attack;", ACTION_EVENT);
 	}
 }
 

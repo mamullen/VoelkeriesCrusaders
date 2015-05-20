@@ -17,8 +17,6 @@ const int FORWARD = GLFW_KEY_W;
 const int BACKWARD = GLFW_KEY_S;
 const int STRAFELEFT = GLFW_KEY_A;
 const int STRAFERIGHT = GLFW_KEY_D;
-const int ROTATELEFT = GLFW_KEY_Q;
-const int ROTATERIGHT = GLFW_KEY_E;
 /////////////////////////////////////////////////////////////////
 
 class GameObject {

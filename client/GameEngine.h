@@ -8,6 +8,7 @@
 #include "core.h"
 #include "GameState.h"
 #include "PlayState.h"
+#include "PrePlayState.h"
 #include "ClientGame.h"
 #include <thread>
 #include <stack>

@@ -18,21 +18,23 @@ void ClientGame::sendActionPackets()
 	// send action packets
 
 	//only send if there are events to send to server
-	std::map<unsigned int, std::string *>::iterator it;
+	std::vector<std::tuple<unsigned int, int, std::string *>>::iterator it;
 	for (it = inputEvents.begin(); it != inputEvents.end(); it++)
 	{
+		std::tuple<unsigned int, int, std::string *> tup = *it;
+
 		const unsigned int packet_size = sizeof(Packet);
 		//char packet_data[PACKET_DATA_LEN];
 		char data[packet_size];
 
 		Packet packet;
-		packet.packet_type = ACTION_EVENT;
+		packet.packet_type = std::get<1>(tup);
 
 		//printf("%s\n", (it->second)->c_str());
 		//printf("SIZE IS SOMETHING HERE %d\n", (it->second)->size());
 
-		memcpy(packet.packet_data, it->second->c_str(), it->second->size() + 1);
-		packet.id = it->first;
+		memcpy(packet.packet_data, std::get<2>(tup)->c_str(), std::get<2>(tup)->size() + 1);
+		packet.id = std::get<0>(tup);
 		packet.serialize(data);
 
 		NetworkServices::sendMessage(network->ConnectSocket, data, packet_size);
@@ -103,15 +105,21 @@ void ClientGame::connectToServer(const char* ip)
 	printf("result of initialization = %d\n", result);
 }
 
-void ClientGame::addEvent(unsigned int id, char * evt)
+void ClientGame::addEvent(unsigned int id, char * evt, int type)
 {
-	//check if an event for this id has already been added
-	if (inputEvents.find(id) == inputEvents.end()){ //not added before
-		inputEvents.insert(std::pair<unsigned int, std::string *>(id, new std::string(evt)));
+	//check if an event for this id and type has already been added
+	bool found = false;
+	for (std::vector<std::tuple<unsigned int, int, std::string *>>::iterator it = inputEvents.begin(); it != inputEvents.end(); it++){
+		std::tuple<unsigned int, int, std::string *> temp = *it;
+		if (std::get<0>(temp) == id && std::get<1>(temp) == type){
+			found = true;
+			std::string * currEvt = std::get<2>(temp);
+			currEvt->append(evt);
+			it = inputEvents.end(); //end loop
+		}
 	}
-	else{
-		std::string* currEvt = inputEvents[id];
-		currEvt->append(evt);
+	if (!found){ //not added before
+		inputEvents.push_back(std::tuple<unsigned int, int, std::string *>(id, type, new std::string(evt)));
 	}
 }
 

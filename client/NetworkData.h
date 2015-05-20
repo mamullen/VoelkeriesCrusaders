@@ -11,6 +11,8 @@ enum PacketTypes {
 	ACTION_EVENT = 1,
 
 	COMMUNICATION = 2,
+
+	JOIN_GAME = 3,
 };
 
 struct Packet {

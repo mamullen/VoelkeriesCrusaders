@@ -21,13 +21,13 @@ public:
 	void processActionPacket(char*);
 	void update();
 	void connectToServer(const char*);
-	void addEvent(unsigned int id, char * evt);
+	void addEvent(unsigned int id, char * evt, int type);
 	Packet * popServerEvent();
 
 private:
 	std::vector<std::string> serverIPList;
 	char user_input[PACKET_DATA_LEN];
-	std::map<unsigned int,std::string *> inputEvents;
+	std::vector<std::tuple<unsigned int, int, std::string *>> inputEvents;
 	std::vector<Packet *> serverEvents;
 };
 
