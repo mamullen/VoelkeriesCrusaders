@@ -4,7 +4,11 @@
 GameLogic::GameLogic()
 {
 	//packetParser = new PacketParser();
-	start = false;
+	crusadersToStart = atoi(ConfigSettings::config->getValue("CrusadersToStart").c_str());
+	vampiresToStart = atoi(ConfigSettings::config->getValue("VampiresToStart").c_str());
+	numCrusaders = 0;
+	numVampires = 0;
+	gameState = WAIT;
 }
 
 
@@ -17,8 +21,15 @@ GameLogic::~GameLogic()
 // 2. create packets for clients when all packets received from clients are processed
 void GameLogic::update()
 {
-	if (gameEnd()){
-		start = false;
+
+	updateState();
+
+
+	/* TEMPORARY BREAK */
+	if (getState() == WAIT)
+		return;
+
+	if (getState() == END){
 		char data[PACKET_DATA_LEN];
 		memcpy_s(data, PACKET_DATA_LEN, "game_over", 10);
 		Packet* p = new Packet;
@@ -156,9 +167,11 @@ void GameLogic::addPlayer(int id)
 	Player* newP = new Player(id);
 	gameObjects.push_back(newP);
 	playerList.push_back(newP);
-	if (playerList.size() >= 2){
-		start = true;
+	/*
+	if (playerList.size() >= numPlayersToStart){
+		gameState == START;
 	}
+	*/
 }
 
 void GameLogic::createNewObjects()
@@ -191,6 +204,42 @@ void GameLogic::createNewObjects()
 	serverPackets.push_back(p);
 }
 
+void GameLogic::setState(stateType state)
+{
+	gameState = state;
+}
+
+GameLogic::stateType GameLogic::getState()
+{
+	return gameState;
+}
+
+void GameLogic::updateState()
+{
+	int count = playerList.size();
+	for (int i = 0; i < playerList.size(); i++){
+		if (playerList[i]->getHP() <= 0){
+			count--;
+		}
+	}
+
+	if (gameState == WAIT)
+	{
+		if (count >= (crusadersToStart + vampiresToStart)){
+			printf("We have %d players, STARTING THE GAME!\n", count);
+			gameState = START;
+		}
+	}
+	else if (gameState == START)
+	{
+		if (count <= 1){
+			printf("We have %d player left, ENDING THE GAME!\n", 1);
+			gameState == END;
+		}
+	}
+}
+
+/*
 bool GameLogic::gameEnd()
 { 
 	if (!start){
@@ -207,3 +256,4 @@ bool GameLogic::gameEnd()
 	}
 	return false;
 }
+*/
