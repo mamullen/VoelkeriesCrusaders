@@ -1,5 +1,6 @@
 #pragma once
 #include "GameState.h"
+#include <GL/glut.h>
 
 //State Constants
 const int CHOOSE_CRUSADER = GLFW_KEY_1;

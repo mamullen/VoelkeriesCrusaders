@@ -60,20 +60,23 @@ void PrePlayState::Update(ClientGame* client) {
 	}
 }
 
-void drawsomeground2() { // deprecate this one day
-	glPushMatrix();
-	//glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
-	//create ground plane
-	glTranslatef(0.f, -1.f, 0.f);
-	glColor3f(0.5f, 0.5f, 0.5f);
-	glBegin(GL_QUADS);
-	glNormal3f(0, 1, 0);
-	glVertex3f(-20, 0, -20);
-	glVertex3f(-20, 0, 20);
-	glVertex3f(20, 0, 20);
-	glVertex3f(20, 0, -20);
-	glEnd();
-	glPopMatrix();
+void drawText(const char *text, int x, int y){
+	glMatrixMode(GL_PROJECTION); // change the current matrix to PROJECTION
+	double matrix[16]; // 16 doubles in stack memory
+	glGetDoublev(GL_PROJECTION_MATRIX, matrix); // get the values from PROJECTION matrix to local variable
+	glLoadIdentity(); // reset PROJECTION matrix to identity matrix
+	glOrtho(0, 800, 0, 600, -5, 5); // orthographic perspective
+	glMatrixMode(GL_MODELVIEW); // change current matrix to MODELVIEW matrix again
+	glLoadIdentity(); // reset it to identity matrix
+	glPushMatrix(); // push current state of MODELVIEW matrix to stack
+	glRasterPos2i(x, y); // raster position in 2D
+	for (int i = 0; i<strlen(text); i++){
+		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, (int)text[i]); // generation of characters in our text with 9 by 15 GLU font
+	}
+	glPopMatrix(); // get MODELVIEW matrix value from stack
+	glMatrixMode(GL_PROJECTION); // change current matrix mode to PROJECTION
+	glLoadMatrixd(matrix); // reset
+	glMatrixMode(GL_MODELVIEW); // change current matrix mode to MODELVIEW
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -91,7 +94,8 @@ void PrePlayState::Draw() {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	drawsomeground2();
+	drawText("Press 1 to be a Crusader", 150, 570);
+	drawText("Press 2 to be a Vampire", 500, 570);
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();

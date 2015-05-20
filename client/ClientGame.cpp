@@ -116,6 +116,7 @@ void ClientGame::addEvent(unsigned int id, char * evt, int type)
 			std::string * currEvt = std::get<2>(temp);
 			currEvt->append(evt);
 			it = inputEvents.end(); //end loop
+			it--;
 		}
 	}
 	if (!found){ //not added before
