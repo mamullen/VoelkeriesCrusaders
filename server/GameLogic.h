@@ -8,6 +8,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include "ConfigSettings.h"
 
 class GameLogic
 {
@@ -22,8 +23,15 @@ public:
 	void clearPackets();
 	void addPlayer(int id);
 	void createNewObjects();
+	enum stateType { WAIT, START, END };
+	int crusadersToStart;
+	int vampiresToStart;
+	int numCrusaders;
+	int numVampires;
 
-	bool gameEnd();
+	stateType getState();
+	void setState(stateType state);
+	void updateState();
 
 private:
 	std::vector<GameObject*> gameObjects;
@@ -33,6 +41,6 @@ private:
 	std::map<int, Player*> players;
 	PacketParser* packetParser;
 
-	bool start;
+	stateType gameState;
 };
 

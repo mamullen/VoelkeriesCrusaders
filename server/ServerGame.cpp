@@ -33,7 +33,10 @@ void ServerGame::update()
 	{
 		printf("client %d has been connected to the server\n", client_id);
 		client_id++;
+
 	}
+
+
 
 	receiveFromClients();
 }
@@ -67,12 +70,20 @@ void ServerGame::receiveFromClients()
 			switch (packet.packet_type) {
 
 			case INIT_CONNECTION:
-
+			
 				printf("server received init packet from client %d\n",iter->first);
 				sendInitPackets(iter->first);
 				gameLogic->addPlayer(iter->first);
 				gameLogic->createNewObjects();
 				//sendActionPackets(iter->first);
+				break;
+
+			case JOIN_GAME:
+				printf("server received join game packet from client %d\n", iter->first);
+				printf("PACKET DATA: %s\n", packet.packet_data);
+				printf(packet.packet_data);
+				printf("\n");
+
 				break;
 
 			case ACTION_EVENT:
