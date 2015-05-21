@@ -55,6 +55,9 @@ void GameObject::update(bool isPlayer, float rot) {
 	
 	//check  model is not null
 	if (model){
+		//GLfloat scl = 0.2;
+		glColor3f(1.0f, 1.0f, 1.0f);
+		//glScalef(scl, scl, scl);
 		model->Render();
 	}
 	else {

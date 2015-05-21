@@ -11,26 +11,23 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <algorithm>
+#include <boost/algorithm/clamp.hpp>
 
 #ifdef _WIN32
-	#define M_PI	3.14159f
-
-	#include <assimp/ai_assert.h>
-	#include <assimp/Importer.hpp>
-	#include <assimp/cimport.h>
-	#include <assimp/scene.h>
-	#include <assimp/postprocess.h>
-	#define GLFW_INCLUDE_GLU
+	#include <SOIL/SOIL.h>
+	#include <GL/glew.h>
 	#include <GLFW/glfw3.h>
 #endif
 
-#ifdef __APPLE__
-	#include <OpenGL/gl.h>
-	#include <OpenGL/glu.h>
-	#include <GLUT/glut.h>
-#endif
-
 #define WINDOWTITLE	"Voelkeries Crusaders"
+
+#define M_PI	3.14159f
+
+float toRadians(float d);
+float toDegrees(float r);
+float lerp(float x, float y, float a);
+float saturate(float x);
 
 void drawAxis(float size);
 void drawWireBox(float xmin,float ymin,float zmin,float xmax,float ymax,float zmax);

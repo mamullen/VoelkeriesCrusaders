@@ -9,22 +9,26 @@ DaeLoader::DaeLoader() {
 
 }
 
-DaeLoader::DaeLoader(const char* filename) {
+DaeLoader::DaeLoader(const std::string& filename) {
 	mAnimator = NULL;
-	std::cout << "daeloader:: loading " << filename << std::endl;
+	printf("DaeLoader:: loading %s\n", filename.c_str());
 	LoadAsset(filename);
-	std::cout << "daeloader:: finished " << std::endl;
 
 	if (scene->HasAnimations()) {
+		printf("DaeLoader:: has animations...\n");
 		mAnimator = new SceneAnimator(scene);
 	}
+
+	printf("DaeLoader:: finished\n");
 }
 
 DaeLoader::~DaeLoader() {
 }
 
-int DaeLoader::LoadAsset(const char* filename) {
-	scene = aiImportFile(filename, aiProcessPreset_TargetRealtime_MaxQuality);
+int DaeLoader::LoadAsset(const std::string& filename) {
+	Assimp::Importer Importer;
+
+	scene = aiImportFile(filename.c_str(), aiProcessPreset_TargetRealtime_MaxQuality);
 
 	if (scene) {
 		get_bounding_box(&scene_min, &scene_max);
@@ -214,6 +218,7 @@ void DaeLoader::Render() {
 	glTranslatef(-scene_center.x, -scene_center.y, -scene_center.z);
 
 	glEnable(GL_LIGHTING);
+
 	RenderNode(scene->mRootNode);
 	glDisable(GL_LIGHTING);
 }

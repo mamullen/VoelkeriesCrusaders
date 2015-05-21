@@ -14,14 +14,12 @@
 #include <iostream>
 #include <vector>
 
-using namespace AssimpView;
-
 class DaeLoader {
 public:
 	DaeLoader();
 	~DaeLoader();
-	DaeLoader(const char* filename);
-	int LoadAsset(const char* filename);
+	DaeLoader(const std::string& filename);
+	int LoadAsset(const std::string& filename);
 	void Render();
 	void RenderNode(const aiNode* node);
 

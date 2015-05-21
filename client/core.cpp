@@ -36,3 +36,19 @@ void drawWireBox(float xmin,float ymin,float zmin,float xmax,float ymax,float zm
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+float toRadians(float d) {
+	return d * M_PI / 180;
+}
+
+float toDegrees(float r) {
+	return r * 180 / M_PI;
+}
+
+float lerp(float x, float y, float a) {
+	return x*(1.0 - a) + y*a;
+}
+
+float saturate(float x) {
+	return boost::algorithm::clamp(x, 0, 1);
+}

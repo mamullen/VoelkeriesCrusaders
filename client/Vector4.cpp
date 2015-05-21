@@ -30,6 +30,11 @@ Vector4::Vector4(double x, double y, double z, double w)
     this->w = w; //pass one array and pass one pointer ver
 }
 
+Vector4 Vector4::operator*(float f) const
+{
+	return Vector4(x * f, y * f, z * f, w);
+}
+
 Vector4 Vector4::operator+(const Vector4& v)
 {
 	return Vector4(x + v.x, y + v.y, z + v.z, w);

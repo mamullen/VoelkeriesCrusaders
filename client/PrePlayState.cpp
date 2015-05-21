@@ -1,8 +1,7 @@
 #include "PrePlayState.h"
 #include "GameEngine.h"
 
-
-void PrePlayState::Initialize()
+int PrePlayState::Initialize()
 {
 	string configWinX;
 	string configWinY;
@@ -28,6 +27,8 @@ void PrePlayState::Initialize()
 
 	//initialize state variables
 	curr_team = 0;
+
+	return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

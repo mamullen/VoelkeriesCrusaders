@@ -12,7 +12,7 @@ class PrePlayState : public GameState
 public:
 	PrePlayState(GLFWwindow* window) :GameState(window){ Initialize(); };
 
-	void Initialize();
+	int Initialize();
 	void Input(ClientGame* Client);
 	void Update(ClientGame* Client);
 	void Draw();

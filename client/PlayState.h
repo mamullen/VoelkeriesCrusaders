@@ -6,6 +6,8 @@
 #define PLAYSTATE_H_
 
 #include "core.h"
+#include "ParticleSystem.h"
+#include "Emitter.h"
 #include "GameState.h"
 #include "Building.h"
 #include "Floor.h"
@@ -16,7 +18,9 @@ class PlayState : public GameState
 {
 public:
 	PlayState(GLFWwindow* window) :GameState(window) { Initialize(); };
-	void Initialize();
+	
+	int Initialize();
+	int InitGL();
 
 	void Input(ClientGame* Client);
 	void Update(ClientGame* Client);
@@ -36,10 +40,15 @@ private:
 	bool LeftDown, MiddleDown, RightDown, LeftDownTwo, BothDown;
 	bool rotationChanged, attacking;
 	double MouseX, MouseY;
+	double lastTime;
 
 	// Components
 	Camera Cam;
 	Player* player;
+
+	SphereEmitter g_ParticleEmitter;
+	CubeEmitter g_CubeEmitter;
+
 	int pid = -1;
 	//player is not stored in this map
 	std::map<int, GameObject*> gameObjects;

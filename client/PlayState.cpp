@@ -11,9 +11,79 @@
 
 static PlayState *state;
 
+ParticleEffect g_ParticleEffect(100000);
+Vector3 g_DefaultCameraTranslate(0, 0, -20);
+Vector3 g_DefaultCameraRotate(40, 0, 0);
+
 ////////////////////////////////////////////////////////////////////////////////
 
-void PlayState::Initialize() {
+void InitLights() {
+	GLfloat light_ambient[] = { 0.0, 0.0, 0.0, 1.0 };
+	GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat light_position[] = { -1.0, -1.0, -1.0, 0.0 };
+
+	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+
+	glEnable(GL_LIGHT0);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+int PlayState::Initialize() {
+	InitGL();
+	double lastTime = glfwGetTime();
+
+	// Camera
+	//Cam.SetViewport(0, 0, WinX, WinY);
+	//Cam.ApplyViewport();
+
+	Cam.SetProjection(60.0f, 1.33f, 0.1f, 100.0f);
+	Cam.ApplyProjectionTransform();
+
+	Cam.SetTranslate(g_DefaultCameraTranslate);
+	Cam.SetRotate(g_DefaultCameraRotate);
+
+	// Particles
+	if (g_ParticleEffect.LoadTexture("./particles/Textures/Particle-Texture.png"))
+	{
+		std::cout << "Successfully loaded particle texture." << std::endl;
+	}
+	else
+	{
+		std::cerr << "Failed to load particle texture!" << std::endl;
+	}
+
+	ParticleEffect::ColorInterpolator colors;
+
+	colors.AddValue(0.0f, Vector4(1, 0, 0, 1));     // red
+	colors.AddValue(0.15f, Vector4(1, 0, 1, 1));     // magenta
+	colors.AddValue(0.33f, Vector4(0, 0, 1, 1));     // blue
+	colors.AddValue(0.5f, Vector4(0, 1, 1, 1));     // cyan
+	colors.AddValue(0.67f, Vector4(0, 1, 0, 0.75));  // green
+	colors.AddValue(0.84f, Vector4(1, 1, 0, 0.5));   // yellow
+	colors.AddValue(1.0f, Vector4(1, 0, 0, 0));     // red
+
+	g_ParticleEffect.SetColorInterplator(colors);
+
+	g_ParticleEffect.SetParticleEmitter(&g_ParticleEmitter);
+	g_ParticleEffect.EmitParticles();
+	g_ParticleEffect.SetCamera(&Cam);
+	// End particles
+
+	InitLights();
+	rotationChanged = false;
+	attacking = false;
+	player = NULL;
+	return 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+int PlayState::InitGL() {
 	string configWinX;
 	string configWinY;
 	ConfigSettings::config->getValue("WinX", configWinX);
@@ -24,32 +94,34 @@ void PlayState::Initialize() {
 	LeftDown = MiddleDown = RightDown = BothDown = 0;
 	MouseX = MouseY = 0;
 
-	glfwMakeContextCurrent(window);
+	glewExperimental = GL_TRUE;
+	if (glewInit() != GLEW_OK) {
+		fprintf(stderr, "Failed to initialize GLEW\n");
+		return -1;
+	}
+
 	glfwSwapInterval(0);	// no vsync
 
 	glfwGetFramebufferSize(window, &WinX, &WinY);
 	ratio = WinX / (float)WinY;
 
 	// Background color
-	glClearColor(0.5, 0., 0., 1.);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
-
-	// Initialize components
-	Cam.SetAspect(float(WinX) / float(WinY));
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	rotationChanged = false;
 	attacking = false;
 	player = NULL;
-
-
-	//gameObjects.insert(std::pair<int, GameObject*>(20, new Building(new Vector3(0, 0, 0), new Vector3(20, 5, 20), 0)));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void PlayState::Update(ClientGame* client) {
+	float delta = glfwGetTime();
+	g_ParticleEffect.Update(delta);
+	
 	Packet * serverPacket = client->popServerEvent();
 	
 	while (serverPacket != NULL){
@@ -176,19 +248,23 @@ void drawsomeground() { // deprecate this one day
 ////////////////////////////////////////////////////////////////////////////////
 
 void PlayState::Draw() {
+	double currentTime = glfwGetTime();
+	double delta = currentTime - lastTime;
+	lastTime = currentTime;
+
+	// Clear the screen
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	if (!player)
 		return;
 
-	// Set up glStuff
-	glViewport(0, 0, WinX, WinY);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glClear(GL_DEPTH_BUFFER_BIT);
-
-	// Draw components
-	Cam.Draw();		// Sets up projection & viewing matrices
-
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+
+	drawAxis(10);
+
+	// Draw components
+	Cam.ApplyViewTransform();
 
 	glTranslatef(player->getPos().x, player->getPos().y, player->getPos().z);
 	glRotatef(180, 0, 1, 0);
@@ -196,11 +272,14 @@ void PlayState::Draw() {
 	player->update(true,Cam.GetAzimuth());
 
 	drawsomeground();
+
 	std::map<int, GameObject*>::iterator it;
 	for (it = gameObjects.begin(); it != gameObjects.end(); it++)
 	{
 		it->second->update(false,Cam.GetAzimuth());
 	}
+
+	g_ParticleEffect.Render();
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();
