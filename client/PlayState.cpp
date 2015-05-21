@@ -135,11 +135,31 @@ void PlayState::Update(ClientGame* client) {
 		//printf("%d\n", objID);
 
 		if (strstr(serverEvent, "new") != NULL){
+			float xPos;
+			float yPos;
+			float zPos;
+			float rot;
+			float hp;
+			memcpy(&xPos, serverEvent + 4, sizeof(float));
+			memcpy(&yPos, serverEvent + 8, sizeof(float));
+			memcpy(&zPos, serverEvent + 12, sizeof(float));
+			memcpy(&rot, serverEvent + 16, sizeof(float));
+			memcpy(&hp, serverEvent + 20, sizeof(float));
+
 			if (!player){
 				player = new Player(objID);
+				player->setPos(xPos, yPos, zPos);
+				player->setRotation(rot);
+				player->setMaxHealth(100);
+				player->setHealth(hp);
 			}
 			else{
-				gameObjects.insert(std::pair<int, GameObject*>(objID, new Player(objID)));
+				GameObject* tmpObj = new Player(objID);
+				tmpObj->setPos(xPos, yPos, zPos);
+				tmpObj->setRotation(rot);
+				tmpObj->setMaxHealth(100);
+				tmpObj->setHealth(hp);
+				gameObjects.insert(std::pair<int, GameObject*>(objID,  tmpObj));
 			}
 		}
 
@@ -149,14 +169,18 @@ void PlayState::Update(ClientGame* client) {
 			float yPos;
 			float zPos;
 			float rot;
+			float hp;
 			memcpy(&xPos, serverEvent + 7, sizeof(float));
 			memcpy(&yPos, serverEvent + 11, sizeof(float));
 			memcpy(&zPos, serverEvent + 15, sizeof(float));
 			memcpy(&rot, serverEvent + 19, sizeof(float));
+			memcpy(&hp, serverEvent + 23, sizeof(float));
 
 			Player* p = new Player(objID);
 			p->setPos(xPos, yPos, zPos);
 			p->setRotation(rot);
+			p->setMaxHealth(100);
+			p->setHealth(hp);
 
 			gameObjects.insert(std::pair<int, GameObject*>(objID, p));
 		}
@@ -192,6 +216,19 @@ void PlayState::Update(ClientGame* client) {
 				o->setRotation(rot);
 			}
 		}
+
+		if (strcmp(serverEvent, "hp") == 0){
+			float hp;
+			memcpy(&hp, serverEvent + 3, sizeof(float));
+			if (player && objID == player->getID()){
+				player->setHealth(hp);
+			}
+			else if (gameObjects.find(objID) != gameObjects.end()){
+				GameObject* o = gameObjects.at(objID);
+				o->setHealth(hp);
+			}
+		}
+
 		delete serverPacket;
 		serverPacket = client->popServerEvent();
 	}
@@ -239,14 +276,14 @@ void PlayState::Draw() {
 	glTranslatef(player->getPos().x, player->getPos().y, player->getPos().z);
 	glRotatef(180, 0, 1, 0);
 
-	player->update(true);
+	player->update(true,Cam.GetAzimuth());
 
 	drawsomeground();
 
 	std::map<int, GameObject*>::iterator it;
 	for (it = gameObjects.begin(); it != gameObjects.end(); it++)
 	{
-		it->second->update(false);
+		it->second->update(false,Cam.GetAzimuth());
 	}
 
 	g_ParticleEffect.Render();

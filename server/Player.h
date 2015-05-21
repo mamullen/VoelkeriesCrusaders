@@ -1,5 +1,7 @@
 #pragma once
 #include "GameObject.h"
+#include "Action.h"
+#include "Basic_Attack.h"
 class Player : public GameObject
 {
 public:
@@ -7,13 +9,19 @@ public:
 	Player(int i);// : GameObject(){ pid = i; };
 	~Player();
 
-	void update(Packet*);
+	
+	virtual void update(Packet*, std::vector<GameObject*>*);
+	virtual void isAttacked(float);
+
 	unsigned int getPID();
 	
-	void basic_attack(GameObject*);
+	bool inRange(GameObject*);
+	void attack(GameObject*);
+	void setAttack(Action*);
 
 private:
 	unsigned int pid; // corresponds to Client ID
-	
+	float ad;	// attack dmg
+	Action* attack_mode;
 };
 

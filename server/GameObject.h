@@ -20,6 +20,7 @@ public:
 	Vector3 getPos();
 	float getRot();
 	int getID();
+	float getHP();
 
 	void moveForward();
 	void moveBackward();
@@ -28,8 +29,9 @@ public:
 	void rotRight();
 	void strafeLeft();
 	void strafeRight();
-
-	virtual void update(Packet*) = 0;
+	
+	virtual void isAttacked(float) = 0;
+	virtual void update(Packet*, std::vector<GameObject*>*) = 0;
 
 	std::map<std::string*, bool> getChanges();
 	void addChange(std::string* change);
@@ -37,21 +39,19 @@ public:
 	//void getStatusPacket();
 
 	static std::list<std::pair<int, std::string*>> changes;
-
-	float hp;
-	float attack_range;
-	float attack_dmg;
-
+	bool isPlayer;
+	Vector3 forward;
 protected:
 	static unsigned int totalId;
 
 	const float ROTATE_LEFT = 1;
 	const float ROTATE_RIGHT = -1;
 	const float PI = 3.14159;
-
+	
+	float hp;
 	float rotation;
 	Matrix34 rotateMx;
-	Vector3 position, forward, right, up;
+	Vector3 position, right, up;
 	Vector3 pPosition, pForward;
 	double speed=.5;
 	unsigned int id;

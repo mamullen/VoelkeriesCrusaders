@@ -4,6 +4,7 @@
 GameLogic::GameLogic()
 {
 	//packetParser = new PacketParser();
+	start = false;
 }
 
 
@@ -16,11 +17,23 @@ GameLogic::~GameLogic()
 // 2. create packets for clients when all packets received from clients are processed
 void GameLogic::update()
 {
+	if (gameEnd()){
+		start = false;
+		char data[PACKET_DATA_LEN];
+		memcpy_s(data, PACKET_DATA_LEN, "game_over", 10);
+		Packet* p = new Packet;
+		p->packet_type = ACTION_EVENT;
+		memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+		p->id = 0;
+		serverPackets.push_back(p);
+		return;
+	}
+
 	// go through packets and update according to its id
 	for (std::list<std::pair<int,Packet*>>::const_iterator iter = packets.begin(); iter != packets.end(); ++iter){
 		if (iter->second->id < gameObjects.size()){
 			printf("gamelogic update\n");
-			gameObjects.at(iter->second->id)->update(iter->second);
+			gameObjects.at(iter->second->id)->update(iter->second,&gameObjects);
 		}
 	}
 	
@@ -65,6 +78,25 @@ void GameLogic::update()
 			int pointer = 0;
 			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "rot", 4);
 			pointer += 4;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &r, sizeof(float));
+			pointer += sizeof(float);
+			data[pointer] = ',';
+			pointer++;
+			///////////////////////////////////////////////////////////////////////////
+			Packet* p = new Packet;
+			p->packet_type = ACTION_EVENT;
+			memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+			p->id = index;
+
+			serverPackets.push_back(p);
+		}
+		else if (key->compare("hp") == 0){
+			float r = gameObjects.at(index)->getHP();
+			///////////////////////////////////////////////////////////////////////////
+			char data[PACKET_DATA_LEN];
+			int pointer = 0;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "hp", 3);
+			pointer += 3;
 			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &r, sizeof(float));
 			pointer += sizeof(float);
 			data[pointer] = ',';
@@ -123,6 +155,10 @@ void GameLogic::addPlayer(int id)
 {
 	Player* newP = new Player(id);
 	gameObjects.push_back(newP);
+	playerList.push_back(newP);
+	if (playerList.size() >= 2){
+		start = true;
+	}
 }
 
 void GameLogic::createNewObjects()
@@ -130,6 +166,44 @@ void GameLogic::createNewObjects()
 	Packet* p = new Packet;
 	p->packet_type = ACTION_EVENT;
 	p->id = gameObjects.size()-1;
-	memcpy_s(p->packet_data, PACKET_DATA_LEN, "new", 3+1);
+
+	float x = gameObjects.at(p->id)->getPos().x;
+	float y = gameObjects.at(p->id)->getPos().y;
+	float z = gameObjects.at(p->id)->getPos().z;
+	float r = gameObjects.at(p->id)->getRot();
+	float hp = gameObjects.at(p->id)->getHP();
+	char data[PACKET_DATA_LEN];
+	int pointer = 0;
+	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "new", 4);
+	pointer += 4;
+	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &x, sizeof(float));
+	pointer += sizeof(float);
+	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
+	pointer += sizeof(float);
+	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
+	pointer += sizeof(float);
+	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &r, sizeof(float));
+	pointer += sizeof(float);
+	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &hp, sizeof(float));
+	pointer += sizeof(float);
+	data[pointer] = ',';
+	memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
 	serverPackets.push_back(p);
+}
+
+bool GameLogic::gameEnd()
+{ 
+	if (!start){
+		return false;
+	}
+	int count = playerList.size();
+	for (int i = 0; i < playerList.size(); i++){
+		if (playerList[i]->getHP() <= 0){
+			count--;
+		}
+	}
+	if (count <= 1){
+		return true;
+	}
+	return false;
 }
