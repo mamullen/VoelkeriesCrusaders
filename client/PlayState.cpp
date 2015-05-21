@@ -42,6 +42,9 @@ void PlayState::Initialize() {
 	rotationChanged = false;
 	attacking = false;
 	player = NULL;
+
+
+	//gameObjects.insert(std::pair<int, GameObject*>(20, new Building(new Vector3(0, 0, 0), new Vector3(20, 5, 20), 0)));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -53,10 +56,10 @@ void PlayState::Update(ClientGame* client) {
 		char * serverEvent = serverPacket->packet_data;
 		unsigned int objID = serverPacket->id;
 
-		//printf("%s\n", serverEvent);
+		printf("%s\n", serverEvent);
 		//printf("%d\n", objID);
 
-		if (strstr(serverEvent, "create") != NULL){
+		if (strcmp(serverEvent, "create") == 0){
 			//get init data
 			float xPos;
 			float yPos;
@@ -68,6 +71,9 @@ void PlayState::Update(ClientGame* client) {
 			memcpy(&zPos, serverEvent + 15, sizeof(float));
 			memcpy(&rot, serverEvent + 19, sizeof(float));
 			memcpy(&hp, serverEvent + 23, sizeof(float));
+
+
+			printf("PERSON: %f,%f,%f,%f,%f\n", xPos, yPos, zPos, rot, hp);
 
 			Player* p = new Player(objID);
 			p->setPos(xPos, yPos, zPos);
@@ -83,7 +89,26 @@ void PlayState::Update(ClientGame* client) {
 			}
 		}
 
-		if (strstr(serverEvent, "pos") != NULL){
+		if (strcmp(serverEvent, "create_building") == 0){
+			float x1, y1, z1, x2, y2, z2, rot;
+			memcpy(&x1, serverEvent + 16, sizeof(float));
+			memcpy(&y1, serverEvent + 20, sizeof(float));
+			memcpy(&z1, serverEvent + 24, sizeof(float));
+			memcpy(&x2, serverEvent + 28, sizeof(float));
+			memcpy(&y2, serverEvent + 32, sizeof(float));
+			memcpy(&z2, serverEvent + 36, sizeof(float));
+			memcpy(&rot, serverEvent + 40, sizeof(float));
+			
+			printf("BUILDING: %f,%f,%f,%f,%f,%f,%f\n", x1, y1, z1, x2, y2, z2, rot);
+
+			Vector3* v1 = new Vector3(x1, y1, z1);
+			Vector3* v2 = new Vector3(x2, y2, z2);
+
+			gameObjects.insert(std::pair<int, GameObject*>(objID, new Building(v1,v2,rot)));
+
+		}
+
+		if (strcmp(serverEvent, "pos") == 0){
 			float xPos;
 			float yPos;
 			float zPos;

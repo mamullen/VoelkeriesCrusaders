@@ -24,7 +24,7 @@ public:
 	//initialize game object with some model.  If there is no model
 	//associated with this GameObject, then just pass in NULL
 	GameObject(DaeLoader* m, unsigned int i);
-	GameObject(DaeLoader* m, Vector3 mn, Vector3 mx, unsigned int i);
+	GameObject(DaeLoader* m, Vector3* mn, Vector3* mx, unsigned int i);
 
 	void rotateLeft();
 	void rotateRight();
@@ -40,8 +40,8 @@ public:
 	bool getShowHP()					{ return showHP; }
 	void setShowHP(bool t)				{ showHP = t; }
 	Vector4 getPos()					{ return position; }
-	Vector3 getMin()					{ return min; }
-	Vector3 getMax()					{ return max; }
+	Vector3* getMin()					{ return min; }
+	Vector3* getMax()					{ return max; }
 	void setPos(double x, double y, double z);
 	float getRotation()					{ return rotation; }
 	void setRotation(float rot);
@@ -53,7 +53,7 @@ private:
 	float rotation = 0;
 	bool showHP = false;
 	float currHP,maxHP;
-	Vector3 min, max;
+	Vector3* min, * max;
 
 	Vector4 position = Vector4(0, 2, 0, 1);
 	Vector4 forward = INIT_FORWARD;

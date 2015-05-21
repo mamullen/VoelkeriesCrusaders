@@ -65,7 +65,8 @@ void ClientGame::update()
 		packet->deserialize(&(network_data[i]));
 		i -= sizeof(Packet);
 
-		
+		//printf(packet->packet_data);
+		//printf("\n");
 
 		switch (packet->packet_type) {
 
