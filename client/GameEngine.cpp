@@ -68,8 +68,8 @@ GameEngine::GameEngine(int argc, char **argv) {
 	}
 
 	// Currently just starts it with the PlayState
-	PlayState *state = new PlayState(window);
-	//PrePlayState *state = new PrePlayState(window);
+	// PlayState *state = new PlayState(window);
+	PrePlayState *state = new PrePlayState(window);
 	PushState(state);
 	ChangeState(state);
 	

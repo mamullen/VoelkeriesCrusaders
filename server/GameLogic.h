@@ -21,8 +21,9 @@ public:
 	std::vector<GameObject*> getGameObjects();
 	void savePacket(int id,Packet* p);
 	void clearPackets();
-	void addPlayer(int id);
-	void createNewObjects();
+	bool addPlayer(int id, char* packet_data);
+	void createNewObject(int id);
+	void sendCreateObjects();
 	enum stateType { WAIT, START, END };
 	int crusadersToStart;
 	int vampiresToStart;
