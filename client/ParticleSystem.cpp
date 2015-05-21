@@ -114,26 +114,26 @@ void ParticleEffect::Update(float fDeltaTime)
 
 void ParticleEffect::BuildVertexBuffer()
 {
-	/*const Vector3 X(0.5, 0, 0);
-	const Vector3 Y(0, 0.5, 0);
-	const Vector3 Z(0, 0, 1.0);
+	Vector3 X(0.5, 0, 0);
+	Vector3 Y(0, 0.5, 0);
+	Vector3 Z(0, 0, 1.0);
 
 	Quaternion cameraRotation;
-	Vector3 v = m_pCamera->GetRotation().inRadians();
 
 	if (m_pCamera != NULL)
 	{
-		cameraRotation = Quaternion(v);
+		cameraRotation = Quaternion(m_pCamera->GetRotation().inRadians());
 	}
 
 	// Make sure the vertex buffer has enough vertices to render the effect
 	// If the vertex buffer is already the correct size, no change is made.
 	m_VertexBuffer.resize(m_Particles.size() * 4, Vertex());
+	Matrix4x4 rotation;
 
 	for (unsigned int i = 0; i < m_Particles.size(); ++i)
 	{
 		Particle& particle = m_Particles[i];
-		Quaternion rotation = angleAxis(particle.m_fRotate, Z);
+		Quaternion rotation = Quaternion(particle.m_fRotate, Z);
 
 		unsigned int vertexIndex = i * 4;
 		Vertex& v0 = m_VertexBuffer[vertexIndex + 0];   // Bottom-left
@@ -160,18 +160,11 @@ void ParticleEffect::BuildVertexBuffer()
 		v3.m_Pos = particle.m_Position + (rotation * (-X + Y) * particle.m_fSize) * cameraRotation;
 		v3.m_Tex0 = Vector2(0, 0);
 		v3.m_Diffuse = particle.m_Color;
-	}*/
+	}
 }
 
 void ParticleEffect::Render()
 {
-	glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-	glDepthMask(GL_FALSE);            // Disable depth writes
-	glEnable(GL_BLEND);                 // Enable Blending
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);   // Type Of Blending To Perform
-	glEnable(GL_TEXTURE_2D);            // Enable textures
-
 	//glPushMatrix();
 	//glMultMatrixf(glm::value_ptr(m_LocalToWorldMatrix));
 

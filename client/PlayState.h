@@ -19,6 +19,7 @@ class PlayState : public GameState
 public:
 	PlayState(GLFWwindow* window);
 	int Initialize();
+	int InitGL();
 
 	void Input(ClientGame* Client);
 	void Update(ClientGame* Client);
@@ -46,7 +47,6 @@ private:
 	Camera Cam;
 	Player* player;
 
-	ParticleEffect g_ParticleEffect;
 	SphereEmitter g_ParticleEmitter;
 	CubeEmitter g_CubeEmitter;
 

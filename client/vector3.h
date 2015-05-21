@@ -6,8 +6,27 @@
 #define CSE169_VECTOR3_H
 
 #include "core.h"
+#include <math.h>
 
 ////////////////////////////////////////////////////////////////////////////////
+
+class Vector3;
+
+class Quaternion {
+public:
+	Quaternion() : x(0.0f), y(0.0f), z(0.0f), w(1.0f) {}
+	Quaternion(const float &w, const float &x, const float &y, const float &z) : x(x), y(y), z(z), w(w) {}
+	Quaternion(const Vector3& eulerAngle);
+	Quaternion(float angle, Vector3& axis);
+	Vector3 operator*(const Vector3& v) const;
+	Quaternion operator/ (float s);
+	Quaternion Inverse(const Quaternion& q);
+	Quaternion Conjugate(const Quaternion& q);
+	float Length(const Quaternion& q);
+	float Dot(const Quaternion& q1, const Quaternion& q2);
+public:
+	float x, y, z, w;
+};
 
 class Vector3 {
 public:
@@ -63,6 +82,13 @@ public:
 	Vector3 operator* (const Vector3& v) const
 	{
 		return Vector3 (x * v.x, y * v.y, z * v.z);
+	}
+
+	Vector3 operator* (const Quaternion& q) const
+	{
+		Quaternion q_inv;
+		q_inv = q_inv.Inverse(q);
+		return q_inv * *this;
 	}
 	
 	//! Scalar multiplication-assignment operator.
@@ -139,6 +165,9 @@ public:
 		return Vector3(toRadians(x), toRadians(y), toRadians(z));
 	}
 
+	Vector3 vCos() {
+		return Vector3(cos(x), cos(y), cos(z));
+	}
 public:
 	float x, y, z;
 };

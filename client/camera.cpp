@@ -10,9 +10,6 @@ Camera::Camera() {
 	m_Rotate = Vector3(0);
 	m_Translate = Vector3(0);
 	Reset();
-    cx=0;
-    cy=-5;
-    cz=0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -138,12 +135,7 @@ void Camera::SetIncline(float i){
 ////////////////////////////////////////////////////////////////////////////////
 
 void Camera::Reset() {
-	FOV=60.0f;
-	Aspect=1.33f;
-	NearClip=0.1f;
-	FarClip=100.0f;
-
-	Distance=20.0f;
+	Distance=0.0f;
 	Azimuth=0.0f;
 	Incline=0.0f;
 } 

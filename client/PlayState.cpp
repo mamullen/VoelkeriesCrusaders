@@ -11,7 +11,8 @@
 
 static PlayState *state;
 
-Vector3 g_DefaultCameraTranslate(0, 0, 100);
+ParticleEffect g_ParticleEffect(100000);
+Vector3 g_DefaultCameraTranslate(0, 0, -20);
 Vector3 g_DefaultCameraRotate(40, 0, 0);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -40,36 +41,16 @@ void InitLights() {
 ////////////////////////////////////////////////////////////////////////////////
 
 int PlayState::Initialize() {
+	InitGL();
 	double lastTime = glfwGetTime();
 
-	string configWinX;
-	string configWinY;
-	ConfigSettings::config->getValue("WinX", configWinX);
-	ConfigSettings::config->getValue("WinY", configWinY);
-	WinX = stoi(configWinX);
-	WinY = stoi(configWinY);
-
-	LeftDown = MiddleDown = RightDown = BothDown = 0;
-	MouseX = MouseY = 0;
-
-	glewExperimental = GL_TRUE;
-	if (glewInit() != GLEW_OK) {
-		fprintf(stderr, "Failed to initialize GLEW\n");
-		return -1;
-	}
-
-	glfwSwapInterval(0);	// no vsync
-
-	glfwGetFramebufferSize(window, &WinX, &WinY);
-	ratio = WinX / (float)WinY;
-
-	// Background color
-	glClearColor(0.5, 0., 0., 1.);
-	glEnable(GL_DEPTH_TEST);
-
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
 	// Camera
+	//Cam.SetViewport(0, 0, WinX, WinY);
+	//Cam.ApplyViewport();
+
+	Cam.SetProjection(60.0f, 1.33f, 0.1f, 100.0f);
+	Cam.ApplyProjectionTransform();
+
 	Cam.SetTranslate(g_DefaultCameraTranslate);
 	Cam.SetRotate(g_DefaultCameraRotate);
 
@@ -109,7 +90,41 @@ int PlayState::Initialize() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+int PlayState::InitGL() {
+	string configWinX;
+	string configWinY;
+	ConfigSettings::config->getValue("WinX", configWinX);
+	ConfigSettings::config->getValue("WinY", configWinY);
+	WinX = stoi(configWinX);
+	WinY = stoi(configWinY);
+
+	LeftDown = MiddleDown = RightDown = BothDown = 0;
+	MouseX = MouseY = 0;
+
+	glewExperimental = GL_TRUE;
+	if (glewInit() != GLEW_OK) {
+		fprintf(stderr, "Failed to initialize GLEW\n");
+		return -1;
+	}
+
+	glfwSwapInterval(0);	// no vsync
+
+	glfwGetFramebufferSize(window, &WinX, &WinY);
+	ratio = WinX / (float)WinY;
+
+	// Background color
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glEnable(GL_DEPTH_TEST);
+
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void PlayState::Update(ClientGame* client) {
+	float delta = glfwGetTime();
+	g_ParticleEffect.Update(delta);
+	
 	Packet * serverPacket = client->popServerEvent();
 	
 	while (serverPacket != NULL){
@@ -203,23 +218,23 @@ void drawsomeground() { // deprecate this one day
 ////////////////////////////////////////////////////////////////////////////////
 
 void PlayState::Draw() {
-	// Clear the screen
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	// Set up glStuff
-	glViewport(0, 0, WinX, WinY);
-
 	double currentTime = glfwGetTime();
 	double delta = currentTime - lastTime;
 	lastTime = currentTime;
 
+	// Clear the screen
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	if (!player)
 		return;
 
-	// Draw components
-	Cam.Draw();		// Sets up projection & viewing matrices
-
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+
+	drawAxis(10);
+
+	// Draw components
+	Cam.ApplyViewTransform();
 
 	glTranslatef(player->getPos().x, player->getPos().y, player->getPos().z);
 	glRotatef(180, 0, 1, 0);

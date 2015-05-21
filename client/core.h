@@ -23,10 +23,11 @@
 #define WINDOWTITLE	"Voelkeries Crusaders"
 
 #define M_PI	3.14159f
-#define toRadians(d) (d * M_PI/180)
-#define toDegrees(r) (r * 180/M_PI)
-#define lerp(x, y, a) (x*(1.0-a)+y*a)
-#define saturate(x) (boost::algorithm::clamp(x, 0, 1))
+
+float toRadians(float d);
+float toDegrees(float r);
+float lerp(float x, float y, float a);
+float saturate(float x);
 
 void drawAxis(float size);
 void drawWireBox(float xmin,float ymin,float zmin,float xmax,float ymax,float zmax);
