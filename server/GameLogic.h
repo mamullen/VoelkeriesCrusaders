@@ -10,6 +10,7 @@
 #include <vector>
 #include <string>
 #include "ConfigSettings.h"
+#include <algorithm>
 
 class GameLogic
 {

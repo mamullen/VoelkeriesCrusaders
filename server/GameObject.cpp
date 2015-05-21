@@ -82,6 +82,10 @@ int GameObject::getID()
 	return id;
 }
 
+void GameObject::setID(int theID){
+	id = theID;
+}
+
 void GameObject::clearChanges()
 {
 	//changeList.clear();

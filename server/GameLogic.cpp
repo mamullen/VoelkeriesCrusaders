@@ -237,7 +237,6 @@ void GameLogic::createNewObject(int id)
 
 void GameLogic::sendCreateObjects()
 {
-
 	for (std::vector<GameObject*>::iterator it = gameObjects.begin(); it != gameObjects.end(); it++){
 		if ((*it)->objectType == 0){ // BUILDING... for now
 			int id = (*it)->getID();
@@ -246,7 +245,7 @@ void GameLogic::sendCreateObjects()
 			p->id = id;
 			//p->id = gameObjects.size() - 1;
 			Building* building = (Building*)(*it);
-
+			//printf("CREATING THIS BUILDING ID: %d\n", id);
 			float minX = building->getMin().x;
 			float minY = building->getMin().y;
 			float minZ = building->getMin().z;
@@ -276,13 +275,13 @@ void GameLogic::sendCreateObjects()
 			memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
 			serverPackets.push_back(p);
 		}
-		else if ( (*it)->isPlayer) { // PLAYER... for now
-			//int id = (*it)->getID();
-			int id = ((Player*)(*it))->getPID();
+		else { // PLAYER... for now
+			int id = (*it)->getID();
+			//printf("CREATING THIS OBJECT ID: %d\n", id);
+			//int id = ((Player*)(*it))->getPID();
 			Packet* p = new Packet;
 			p->packet_type = ACTION_EVENT;
 			p->id = id;
-			//p->id = gameObjects.size() - 1;
 
 			float x = (*it)->getPos().x;
 			float y = (*it)->getPos().y;
@@ -335,6 +334,11 @@ void GameLogic::updateState()
 			printf("We have %d players, STARTING THE GAME!\n", count);
 			gameState = START;
 
+			std::sort(gameObjects.begin(), gameObjects.end(), []( GameObject* a, GameObject* b){ return a->getID() < b->getID(); });
+
+		
+
+
 			char data[PACKET_DATA_LEN];
 			memcpy_s(data, PACKET_DATA_LEN, "game_start", 11);
 			Packet* p = new Packet;
@@ -353,6 +357,12 @@ void GameLogic::updateState()
 			tempBuild2->setMax(18, 12, 14);
 			gameObjects.push_back(tempBuild);
 			gameObjects.push_back(tempBuild2);
+
+
+			printf("PRINTING OUT THE GAMEOBJECTS VECTOR IDS\n");
+			for (std::vector<GameObject*>::iterator it = gameObjects.begin(); it != gameObjects.end(); it++){
+				printf("ObjectID: %d with type: %d\n", (*it)->getID(), (*it)->objectType);
+			}
 
 			sendCreateObjects();
 		}

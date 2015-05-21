@@ -166,7 +166,9 @@ void ServerGame::sendInitPacket(int id)
 {
 	std::vector<GameObject*> gameObjects = gameLogic->getGameObjects();
 	for (std::vector<GameObject*>::iterator it = gameObjects.begin(); it != gameObjects.end(); it++){
-		if ((*it)->isPlayer && ((Player*)(*it))->getPID()){
+		//if ((*it)->isPlayer && ((Player*)(*it))->getPID()){
+		//printf("@@@@@@@@@@@@ ID OF CLIENT: %d, ID OF OBJECT: %d\n", id, (*it)->getID());
+		if ((*it)->getID() == id){
 			const unsigned int packet_size = sizeof(Packet);
 			char packet_data[packet_size];
 			Packet p;

@@ -20,6 +20,7 @@ public:
 	Vector3 getPos();
 	float getRot();
 	int getID();
+	void setID(int theID);
 	float getHP();
 
 	void moveForward();
@@ -29,6 +30,7 @@ public:
 	void rotRight();
 	void strafeLeft();
 	void strafeRight();
+
 	
 	virtual void isAttacked(float) = 0;
 	virtual void update(Packet*, std::vector<GameObject*>*) = 0;
