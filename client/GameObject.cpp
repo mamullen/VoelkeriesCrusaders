@@ -6,6 +6,14 @@ GameObject::GameObject(DaeLoader* m, unsigned int i)
 	id = i;
 }
 
+GameObject::GameObject(DaeLoader* m, Vector3 mn, Vector3 mx, unsigned int i)
+{
+	model = m;
+	min = mn;
+	max = mx;
+	id = i;
+}
+
 void GameObject::update(bool isPlayer, float rot) {
 
 	if (getHealth() <= 0){

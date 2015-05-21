@@ -194,7 +194,7 @@ void Floor::createTile(Building* b, float offsetx, float offsetz)
     
     
   
-    
+/*
     //ceiling
     glVertex3f(b->x1+offsetx, floorsizey+b->maxy, b->z1+offsetz);
     glVertex3f(b->x2+offsetx, floorsizey+b->maxy, b->z1+offsetz);
