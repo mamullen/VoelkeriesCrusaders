@@ -72,17 +72,35 @@ void ServerGame::receiveFromClients()
 			case INIT_CONNECTION:
 			
 				printf("server received init packet from client %d\n",iter->first);
-				sendInitPackets(iter->first);
-				gameLogic->addPlayer(iter->first);
-				gameLogic->createNewObjects();
+				//gameLogic->createNewObject(iter->first);
+				//gameLogic->addPlayer(iter->first);
+				//gameLogic->createNewObjects();
 				//sendActionPackets(iter->first);
 				break;
 
 			case JOIN_GAME:
-				printf("server received join game packet from client %d\n", iter->first);
-				printf("PACKET DATA: %s\n", packet.packet_data);
-				printf(packet.packet_data);
-				printf("\n");
+				//printf("server received join game packet from client %d\n", iter->first);
+				//printf("PACKET DATA: %s\n", packet.packet_data);
+				//printf(packet.packet_data);
+				//printf("\n");
+				if (gameLogic->addPlayer(iter->first, packet.packet_data))
+					sendInitPacket(iter->first);
+				else if (gameLogic->getState() == WAIT)
+				{
+					const unsigned int packet_size = sizeof(Packet);
+					char packet_data[packet_size];
+					Packet p;
+					p.packet_type = JOIN_GAME;
+					p.id = iter->first;
+
+					char data[PACKET_DATA_LEN];
+					int pointer = 0;
+
+					memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "team_full", 10);
+					memcpy_s(p.packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+					p.serialize(packet_data);
+					network->sendToOne(iter->first, packet_data, packet_size);
+				}
 
 				break;
 
@@ -142,6 +160,53 @@ void ServerGame::sendPackets()
 	}
 }
 
+
+void ServerGame::sendInitPacket(unsigned int id)
+{
+	std::vector<GameObject*> gameObjects = gameLogic->getGameObjects();
+
+	for (std::vector<GameObject*>::iterator it = gameObjects.begin(); it != gameObjects.end(); it++){
+		if (id == (*it)->getID()){
+			const unsigned int packet_size = sizeof(Packet);
+			char packet_data[packet_size];
+			Packet p;
+			p.packet_type = JOIN_GAME;
+			p.id = id;
+
+			char data[PACKET_DATA_LEN];
+			int pointer = 0;
+
+			//memcpy_s(p.packet_data, PACKET_DATA_LEN, "create", 6+1);
+			float x = (*it)->getPos().x;
+			float y = (*it)->getPos().y;
+			float z = (*it)->getPos().z;
+			float r = (*it)->getRot();
+			float hp = (*it)->getHP();
+			///////////////////////////////////////////////////////////////////////////
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "new", 4);
+			pointer += 4;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &x, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &r, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &hp, sizeof(float));
+			pointer += sizeof(float);
+			data[pointer] = ',';
+			pointer++;
+
+			memcpy_s(p.packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+
+			p.serialize(packet_data);
+			network->sendToOne(id, packet_data, packet_size);
+		}
+	}
+}
+
+/*
 void ServerGame::sendInitPackets(unsigned int id)
 {
 	std::vector<GameObject*> gameObjects = gameLogic->getGameObjects();
@@ -184,6 +249,8 @@ void ServerGame::sendInitPackets(unsigned int id)
 		network->sendToOne(id, packet_data, packet_size);
 	}
 }
+
+*/
 
 void ServerGame::sendActionPackets(unsigned int id)
 {
