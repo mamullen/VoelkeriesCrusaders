@@ -32,6 +32,7 @@ Player::Player() :GameObject()
 Player::Player(int i) :Player()
 {
 	pid = i;
+
 }
 Player::~Player()
 {

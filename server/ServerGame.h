@@ -32,7 +32,7 @@ private:
 	char network_data[MAX_PACKET_SIZE];
 
 	//void sendInitPackets(unsigned int);
-	void sendInitPacket(unsigned int);
+	void sendInitPacket(int);
 	void sendActionPackets(unsigned int);
 	void sendCommunicationPackets(Packet&);
 };

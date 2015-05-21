@@ -83,8 +83,9 @@ void ServerGame::receiveFromClients()
 				//printf("PACKET DATA: %s\n", packet.packet_data);
 				//printf(packet.packet_data);
 				//printf("\n");
-				if (gameLogic->addPlayer(iter->first, packet.packet_data))
+				if (gameLogic->addPlayer(iter->first, packet.packet_data)){
 					sendInitPacket(iter->first);
+				}
 				else if (gameLogic->getState() == WAIT)
 				{
 					const unsigned int packet_size = sizeof(Packet);
@@ -161,17 +162,16 @@ void ServerGame::sendPackets()
 }
 
 
-void ServerGame::sendInitPacket(unsigned int id)
+void ServerGame::sendInitPacket(int id)
 {
 	std::vector<GameObject*> gameObjects = gameLogic->getGameObjects();
-
 	for (std::vector<GameObject*>::iterator it = gameObjects.begin(); it != gameObjects.end(); it++){
-		if (id == (*it)->getID()){
+		if ((*it)->isPlayer && ((Player*)(*it))->getPID()){
 			const unsigned int packet_size = sizeof(Packet);
 			char packet_data[packet_size];
 			Packet p;
 			p.packet_type = JOIN_GAME;
-			p.id = id;
+			p.id = (int)id;
 
 			char data[PACKET_DATA_LEN];
 			int pointer = 0;
