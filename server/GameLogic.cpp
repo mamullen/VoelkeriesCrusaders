@@ -239,34 +239,74 @@ void GameLogic::sendCreateObjects()
 {
 
 	for (std::vector<GameObject*>::iterator it = gameObjects.begin(); it != gameObjects.end(); it++){
-		int id = (*it)->getID();
-		Packet* p = new Packet;
-		p->packet_type = ACTION_EVENT;
-		p->id = id;
-		//p->id = gameObjects.size() - 1;
+		if ((*it)->objectType == 0){ // BUILDING... for now
+			int id = (*it)->getID();
+			Packet* p = new Packet;
+			p->packet_type = ACTION_EVENT;
+			p->id = id;
+			//p->id = gameObjects.size() - 1;
+			Building* building = (Building*)(*it);
 
-		float x = (*it)->getPos().x;
-		float y = (*it)->getPos().y;
-		float z = (*it)->getPos().z;
-		float r = (*it)->getRot();
-		float hp = (*it)->getHP();
-		char data[PACKET_DATA_LEN];
-		int pointer = 0;
-		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "create", 7);
-		pointer += 7;
-		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &x, sizeof(float));
-		pointer += sizeof(float);
-		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
-		pointer += sizeof(float);
-		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
-		pointer += sizeof(float);
-		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &r, sizeof(float));
-		pointer += sizeof(float);
-		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &hp, sizeof(float));
-		pointer += sizeof(float);
-		data[pointer] = ',';
-		memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
-		serverPackets.push_back(p);
+			float minX = building->getMin().x;
+			float minY = building->getMin().y;
+			float minZ = building->getMin().z;
+			float maxX = building->getMax().x;
+			float maxY = building->getMax().y;
+			float maxZ = building->getMax().z;
+			float r = (*it)->getRot();
+			char data[PACKET_DATA_LEN];
+			int pointer = 0;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "create_building", 16);
+			pointer += 16;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &minX, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &minY, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &minZ, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &maxX, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &maxY, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &maxZ, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &r, sizeof(float));
+			pointer += sizeof(float);
+			data[pointer] = ',';
+			memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+			serverPackets.push_back(p);
+		}
+		else if ( (*it)->isPlayer) { // PLAYER... for now
+			//int id = (*it)->getID();
+			int id = ((Player*)(*it))->getPID();
+			Packet* p = new Packet;
+			p->packet_type = ACTION_EVENT;
+			p->id = id;
+			//p->id = gameObjects.size() - 1;
+
+			float x = (*it)->getPos().x;
+			float y = (*it)->getPos().y;
+			float z = (*it)->getPos().z;
+			float r = (*it)->getRot();
+			float hp = (*it)->getHP();
+			char data[PACKET_DATA_LEN];
+			int pointer = 0;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "create", 7);
+			pointer += 7;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &x, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &r, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &hp, sizeof(float));
+			pointer += sizeof(float);
+			data[pointer] = ',';
+			memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+			serverPackets.push_back(p);
+		}
 	}
 }
 
@@ -302,6 +342,17 @@ void GameLogic::updateState()
 			memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
 			p->id = 0;
 			serverPackets.push_back(p);
+
+
+			// creating two buildings
+			Building * tempBuild = new Building();
+			Building * tempBuild2 = new Building();
+			tempBuild->setMin(0, 0, 0);
+			tempBuild->setMax(2, 6, 2);
+			tempBuild2->setMin(10, 0, 10);
+			tempBuild2->setMax(12, 6, 12);
+			gameObjects.push_back(tempBuild);
+			gameObjects.push_back(tempBuild2);
 
 			sendCreateObjects();
 		}

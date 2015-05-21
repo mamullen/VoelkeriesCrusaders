@@ -40,6 +40,7 @@ public:
 
 	static std::list<std::pair<int, std::string*>> changes;
 	bool isPlayer;
+	int objectType; // 0 = building
 	Vector3 forward;
 protected:
 	static unsigned int totalId;

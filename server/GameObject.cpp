@@ -9,6 +9,7 @@ GameObject::GameObject()
 	id = totalId;
 	totalId++;
 	isPlayer = false;
+	objectType = -1;
 	/*
 	position = Vector3(0, 0, 0);
 	pPosition = Vector3(position.x, position.y, position.z);

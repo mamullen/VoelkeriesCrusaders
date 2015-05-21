@@ -12,6 +12,8 @@ public:
 	void setMax(float,float,float);
 	void setMin(Vector3&);
 	void setMax(Vector3&);
+	Vector3 getMin();
+	Vector3 getMax();
 
 private:
 	Vector3 min, max;

@@ -5,9 +5,10 @@
 Building::Building()
 {
 	// attributes
-	position = Vector3(0, 1.3, 0);
+	position = Vector3(0, 0, 0);
 	rotation = 0;
 	hp = 100;
+	objectType = 0;
 
 	attr_num = 3;
 	isChanged = new bool[attr_num];
@@ -43,6 +44,14 @@ void Building::setMin(Vector3& v)
 void Building::setMax(Vector3& v)
 {
 	max = v;
+}
+
+Vector3 Building::getMin(){
+	return min;
+}
+
+Vector3 Building::getMax(){
+	return max;
 }
 
 void Building::isAttacked(float ad){

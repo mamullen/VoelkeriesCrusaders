@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "Player.h"
+#include "Building.h"
 #include "NetworkData.h"
 #include "PacketParser.h"
 #include <list>
