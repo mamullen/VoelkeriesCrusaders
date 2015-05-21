@@ -104,7 +104,8 @@ void PlayState::Update(ClientGame* client) {
 			Vector3* v1 = new Vector3(x1, y1, z1);
 			Vector3* v2 = new Vector3(x2, y2, z2);
 
-			gameObjects.insert(std::pair<int, GameObject*>(objID, new Building(v1,v2,rot)));
+			gameObjects.insert(std::pair<int, GameObject*>(objID, new Building(v1,v2,rot,objID)));
+
 
 		}
 
