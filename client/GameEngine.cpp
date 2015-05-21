@@ -48,6 +48,14 @@ int main(int argc, char **argv) {
 		//update and render game based off of Server messages
 		Game->Update(Client);
 		Game->Draw();
+
+		//check if client wants to change state
+		if (Client->getStateChange() != NULL){
+			if (strcmp(Client->getStateChange(), "play_state") == 0){
+				Game->ChangeState(new PlayState(Game->Window()));
+			}
+			Client->setStateChange(NULL);
+		}
 	}
 
 	return 0;
@@ -68,8 +76,8 @@ GameEngine::GameEngine(int argc, char **argv) {
 	}
 
 	// Currently just starts it with the PlayState
-	PlayState *state = new PlayState(window);
-	//PrePlayState *state = new PrePlayState(window);
+	//PlayState *state = new PlayState(window);
+	PrePlayState *state = new PrePlayState(window);
 	PushState(state);
 	ChangeState(state);
 	

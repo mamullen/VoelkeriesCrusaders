@@ -15,7 +15,7 @@
 class PlayState : public GameState
 {
 public:
-	PlayState(GLFWwindow* window);
+	PlayState(GLFWwindow* window) :GameState(window) { Initialize(); };
 	void Initialize();
 
 	void Input(ClientGame* Client);
@@ -27,8 +27,6 @@ public:
 	void MouseMotion(GLFWwindow* window, double xpos, double ypos);
 	void MouseScroll(GLFWwindow* window, double xoffset, double yoffset);
 private:
-	GLFWwindow* window;
-
 	// Window management
 	float ratio;
 	int WindowHandle;

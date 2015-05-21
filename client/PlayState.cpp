@@ -13,13 +13,6 @@ static PlayState *state;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-PlayState::PlayState(GLFWwindow* window) {
-	this->window = window;
-	Initialize();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 void PlayState::Initialize() {
 	string configWinX;
 	string configWinY;
@@ -63,35 +56,6 @@ void PlayState::Update(ClientGame* client) {
 		//printf("%s\n", serverEvent);
 		//printf("%d\n", objID);
 
-		if (strstr(serverEvent, "new") != NULL){
-			float xPos;
-			float yPos;
-			float zPos;
-			float rot;
-			float hp;
-			memcpy(&xPos, serverEvent + 4, sizeof(float));
-			memcpy(&yPos, serverEvent + 8, sizeof(float));
-			memcpy(&zPos, serverEvent + 12, sizeof(float));
-			memcpy(&rot, serverEvent + 16, sizeof(float));
-			memcpy(&hp, serverEvent + 20, sizeof(float));
-
-			if (!player){
-				player = new Player(objID);
-				player->setPos(xPos, yPos, zPos);
-				player->setRotation(rot);
-				player->setMaxHealth(100);
-				player->setHealth(hp);
-			}
-			else{
-				GameObject* tmpObj = new Player(objID);
-				tmpObj->setPos(xPos, yPos, zPos);
-				tmpObj->setRotation(rot);
-				tmpObj->setMaxHealth(100);
-				tmpObj->setHealth(hp);
-				gameObjects.insert(std::pair<int, GameObject*>(objID,  tmpObj));
-			}
-		}
-
 		if (strstr(serverEvent, "create") != NULL){
 			//get init data
 			float xPos;
@@ -111,7 +75,12 @@ void PlayState::Update(ClientGame* client) {
 			p->setMaxHealth(100);
 			p->setHealth(hp);
 
-			gameObjects.insert(std::pair<int, GameObject*>(objID, p));
+			if (objID == client->getClientId()){
+				player = p;
+			}
+			else{
+				gameObjects.insert(std::pair<int, GameObject*>(objID, p));
+			}
 		}
 
 		if (strstr(serverEvent, "pos") != NULL){

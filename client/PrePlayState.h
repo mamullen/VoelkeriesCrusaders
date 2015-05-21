@@ -1,4 +1,5 @@
 #pragma once
+
 #include "GameState.h"
 #include <GL/glut.h>
 
@@ -9,8 +10,9 @@ const int CHOOSE_VAMPIRE = GLFW_KEY_2;
 class PrePlayState : public GameState
 {
 public:
-	PrePlayState(GLFWwindow* window);
+	PrePlayState(GLFWwindow* window) :GameState(window){ Initialize(); };
 
+	void Initialize();
 	void Input(ClientGame* Client);
 	void Update(ClientGame* Client);
 	void Draw();
@@ -20,12 +22,14 @@ public:
 	void MouseMotion(GLFWwindow* window, double xpos, double ypos) {};
 	void MouseScroll(GLFWwindow* window, double xoffset, double yoffset) {};
 private:
-	GLFWwindow* window;
 
 	// Window management
 	float ratio;
 	int WindowHandle;
 	int WinX, WinY;
+
+	//PrePlayState variables
+	int curr_team;
 
 	// Components
 	Camera Cam;

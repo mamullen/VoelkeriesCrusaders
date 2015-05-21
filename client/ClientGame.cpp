@@ -6,6 +6,7 @@
 ClientGame::ClientGame()
 {
 	network = new ClientNetwork();
+	stateChange = NULL;
 }
 
 
@@ -64,12 +65,13 @@ void ClientGame::update()
 		packet->deserialize(&(network_data[i]));
 		i -= sizeof(Packet);
 
-		serverEvents.push_back(packet);
+		
 
 		switch (packet->packet_type) {
 
 		case ACTION_EVENT:
 
+			serverEvents.push_back(packet);
 			break;
 
 		case COMMUNICATION:
@@ -79,6 +81,11 @@ void ClientGame::update()
 			printf(packet->packet_data);
 			printf("\n");
 			break;
+
+		case JOIN_GAME:
+			joinGameEvents.push_back(packet);
+			break;
+
 		default:
 
 			printf("error in packet types\n");
@@ -128,6 +135,15 @@ Packet * ClientGame::popServerEvent(){
 	if (!serverEvents.empty()){
 		Packet * ret = serverEvents.back();
 		serverEvents.pop_back();
+		return ret;
+	}
+	return NULL;
+}
+
+Packet * ClientGame::popJoinGameEvent(){
+	if (!joinGameEvents.empty()){
+		Packet * ret = joinGameEvents.back();
+		joinGameEvents.pop_back();
 		return ret;
 	}
 	return NULL;

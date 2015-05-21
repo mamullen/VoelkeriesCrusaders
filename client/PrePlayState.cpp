@@ -1,9 +1,9 @@
 #include "PrePlayState.h"
+#include "GameEngine.h"
 
 
-PrePlayState::PrePlayState(GLFWwindow* window)
+void PrePlayState::Initialize()
 {
-	this->window = window;
 	string configWinX;
 	string configWinY;
 	ConfigSettings::config->getValue("WinX", configWinX);
@@ -25,38 +25,46 @@ PrePlayState::PrePlayState(GLFWwindow* window)
 	Cam.SetAspect(float(WinX) / float(WinY));
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
+	//initialize state variables
+	curr_team = 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void PrePlayState::Update(ClientGame* client) {
-	Packet * serverPacket = client->popServerEvent();
+	Packet * serverPacket = client->popJoinGameEvent();
 
 	while (serverPacket != NULL){
 		char * serverEvent = serverPacket->packet_data;
 		unsigned int objID = serverPacket->id;
 
-		//printf("%s\n", serverEvent);
+		printf("%s\n", serverEvent);
 		//printf("%d\n", objID);
 
+		if (strstr(serverEvent, "new") != NULL){
+			client->setClientId(objID);
+			printf("Setting ID: %d\n", objID);
+		}
+
 		if (strstr(serverEvent, "crusader") != NULL){
-			
+			curr_team = 1;
 		}
 
 		if (strstr(serverEvent, "vampire") != NULL){
-			
+			curr_team = 2;
 		}
 
 		if (strstr(serverEvent, "team_full") != NULL){
-			
+			curr_team = 3;
 		}
 
-		if (strstr(serverEvent, "start_game") != NULL){
-
+		if (strstr(serverEvent, "game_start") != NULL){
+			client->setStateChange("play_state");
 		}
 
 		delete serverPacket;
-		serverPacket = client->popServerEvent();
+		serverPacket = client->popJoinGameEvent();
 	}
 }
 
@@ -96,6 +104,16 @@ void PrePlayState::Draw() {
 
 	drawText("Press 1 to be a Crusader", 150, 570);
 	drawText("Press 2 to be a Vampire", 500, 570);
+
+	if (curr_team == 1){
+		drawText("You are a Crusader!", 345, 500);
+	}
+	else if (curr_team == 2){
+		drawText("You are a Vampire!", 345, 500);
+	}
+	else if (curr_team == 3){
+		drawText("Team is full... join the other team.", 290, 500);
+	}
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();
