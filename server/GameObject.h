@@ -58,5 +58,6 @@ protected:
 	unsigned int attr_num;  // number of attributes
 	//std::list<std::string*, bool> changeList;
 	bool *isChanged;		// array indicating if a attribute such as position has been modified
+	int *change_counter;    // array that counts the # of changes to an attribute
 };
 

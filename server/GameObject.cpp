@@ -86,6 +86,7 @@ void GameObject::clearChanges()
 	//changeList.clear();
 	for (int i = 0; i < attr_num; i++){
 		isChanged[i] = false;
+		change_counter[i] = 0;
 	}
 }
 

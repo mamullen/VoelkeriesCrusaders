@@ -8,6 +8,7 @@ Player::Player() :GameObject()
 	position = Vector3(0, 1.3, 0);
 	rotation = 0;
 	hp = 100;
+	speed = (float)atoi(ConfigSettings::config->getValue("PlayerMoveSpeed").c_str());
 	// actions
 	setAttack(new Basic_Attack());
 	//////////////////////////////////
@@ -21,8 +22,10 @@ Player::Player() :GameObject()
 
 	attr_num = 3;
 	isChanged = new bool[attr_num];
+	change_counter = new int[attr_num];
 	for (int i = 0; i < attr_num; i++){
 		isChanged[i] = false;
+		change_counter[i] = 0;
 	}
 }
 
@@ -42,6 +45,10 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 	int currEnd = in.find(';', currInd);
 	std::cout << "packet update = " << in.c_str() << std::endl;
 
+	if (hp <= 0){
+		return;
+	}
+
 	while (currEnd != std::string::npos){
 		std::string cEvent = in.substr(currInd, currEnd - currInd);
 		currInd = currEnd + 1;
@@ -49,7 +56,7 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 		
 		if (cEvent.compare("move_forward") == 0){
 			if (!isChanged[0]){
-				isChanged[0] = true;
+				change_counter[0]++;
 				std::string* change = new std::string("pos:");
 				changes.push_back(std::pair<int, std::string*>(id, change));
 				this->moveForward();
@@ -57,7 +64,7 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 		}
 		else if (cEvent.compare("move_backward") == 0){
 			if (!isChanged[0]){
-				isChanged[0] = true;
+				change_counter[0]++;
 				std::string* change = new std::string("pos:");
 				changes.push_back(std::pair<int, std::string*>(id, change));
 				this->moveBackward();
@@ -65,7 +72,7 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 		}
 		else if (cEvent.compare("move_left") == 0){
 			if (!isChanged[0]){
-				isChanged[0] = true;
+				change_counter[0]++;
 				std::string* change = new std::string("pos:");
 				changes.push_back(std::pair<int, std::string*>(id, change));
 				this->strafeLeft();
@@ -73,7 +80,7 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 		}
 		else if (cEvent.compare("move_right") == 0){
 			if (!isChanged[0]){
-				isChanged[0] = true;
+				change_counter[0]++;
 				std::string* change = new std::string("pos:");
 				changes.push_back(std::pair<int, std::string*>(id, change));
 				this->strafeRight();
@@ -87,7 +94,7 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 			printf("%s\n", num.c_str());
 
 			if (!isChanged[1]){
-				isChanged[1] = true;
+				change_counter[1]++;
 				std::string* change = new std::string("rot:");
 				changes.push_back(std::pair<int, std::string*>(id, change));
 			}
@@ -97,29 +104,26 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 			ad = attack_mode->getDmg();
 			std::cout << "ATTACK!" << std::endl;
 			std::cout << "AD = " << ad << std::endl;
-			for (int i = 0; i < objects->size(); i++)
-			{	
-				this->attack(objects->at(i));
+			std::cout << "size = " << objects->size() << std::endl;
+			if (attack_mode->getCD() <= 0){
+				attack_mode->maxCD();
+				for (int i = 0; i < objects->size(); i++)
+				{
+					std::cout << "Attacking id =  " << objects->at(i)->getID() << std::endl;
+					if (objects->at(i)->isPlayer){
+						std::cout << "CD =  " << attack_mode->getCD() << std::endl;
+						this->attack(objects->at(i));
+					}
+				}
 			}
+			
 		}
-		/*
-		else if (cEvent.compare("rotate_left") == 0){
-			if (!isChanged[1]){
-				isChanged[1] = true;
-				std::string* change = new std::string("rot:");
-				changes.push_back(std::pair<int, std::string*>(id, change));
-			}
-			this->rotLeft();
+	}
+
+	for (int i = 0; i < attr_num; i++){
+		if (change_counter[i] >0){
+			isChanged[i] = true;
 		}
-		else if (cEvent.compare("rotate_right") == 0){
-			if (!isChanged[1]){
-				isChanged[1] = true;
-				std::string* change = new std::string("rot:");
-				changes.push_back(std::pair<int, std::string*>(id, change));
-			}
-			this->rotRight();
-		}
-		*/
 	}
 }
 
@@ -142,7 +146,7 @@ void Player::attack(GameObject* obj)
 void Player::isAttacked(float ad)
 {
 	if (!isChanged[2] && hp > 0){
-		isChanged[2] = true;
+		change_counter[2]++;
 		std::string* change = new std::string("hp");
 		changes.push_back(std::pair<int, std::string*>(id, change));
 		hp -= ad;
@@ -151,7 +155,12 @@ void Player::isAttacked(float ad)
 
 bool Player::inRange(GameObject* obj)
 {
-	if ((obj->getPos()-this->position).Dot(this->forward) < 0){
+	float dot = (obj->getPos() - this->position).Normalize().Dot(this->forward.Normalize());
+	float distance = (obj->getPos() - this->position).Mag();
+	if ( dot < 0.75){
+		return false;
+	}
+	if (distance > attack_mode->getRange()){
 		return false;
 	}
 	return true;
@@ -160,4 +169,9 @@ bool Player::inRange(GameObject* obj)
 void Player::setAttack(Action* act)
 {
 	attack_mode = act;
+}
+
+void Player::updateCD()
+{
+	attack_mode->update();
 }

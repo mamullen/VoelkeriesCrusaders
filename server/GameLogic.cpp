@@ -125,6 +125,11 @@ void GameLogic::update()
 		// need fix
 		gameObjects.at(index)->clearChanges();
 	}
+
+	// go through each player and update their attack cd
+	for (int i = 0; i < playerList.size(); i++){
+		playerList[i]->updateCD();
+	}
 }
 
 std::list<Packet*> GameLogic::getServerPackets()
