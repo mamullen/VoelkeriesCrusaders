@@ -347,10 +347,10 @@ void GameLogic::updateState()
 			// creating two buildings
 			Building * tempBuild = new Building();
 			Building * tempBuild2 = new Building();
-			tempBuild->setMin(0, 0, 0);
-			tempBuild->setMax(2, 6, 2);
-			tempBuild2->setMin(10, 0, 10);
-			tempBuild2->setMax(12, 6, 12);
+			tempBuild->setMin(-10, -3, -10);
+			tempBuild->setMax(-14, 12, -15);
+			tempBuild2->setMin(10, -3, 10);
+			tempBuild2->setMax(18, 12, 14);
 			gameObjects.push_back(tempBuild);
 			gameObjects.push_back(tempBuild2);
 
