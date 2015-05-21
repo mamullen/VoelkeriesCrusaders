@@ -8,29 +8,61 @@
 #define DAELOAD_H_
 
 #include "core.h"
-#include "Animator.h"
-#include <boost/tuple/tuple.hpp>
+#include <assimp/ai_assert.h>
+#include <assimp/Importer.hpp>
+#include <assimp/cimport.h>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
+#include "Texture.h"
+#include "vector3.h"
 #include <map>
 #include <iostream>
 #include <vector>
+
+struct Vertex {
+	Vector3 position;
+	Vector3 texture;
+	Vector3 normal;
+	Vertex() {}
+
+	Vertex(Vector3& p, Vector3& t, Vector3& n) {
+		position = p;
+		texture = t;
+		normal = n;
+	}
+};
 
 class DaeLoader {
 public:
 	DaeLoader();
 	~DaeLoader();
 	DaeLoader(const std::string& filename);
-	int LoadAsset(const std::string& filename);
+	bool LoadAsset(const std::string& filename);
 	void Render();
 	void RenderNode(const aiNode* node);
 
 private:
-	void get_bounding_box(aiVector3D* min, aiVector3D* max);
-	void get_bounding_box_for_node(const aiNode* nd, aiVector3D* min, aiVector3D* max, aiMatrix4x4* trafo);
-	void apply_material(const aiMaterial *mtl);
+	bool initFromScene(const aiScene* pScene, const std::string& filename);
+	void initMesh(unsigned int index, const aiMesh *paiMesh);
+	bool initMaterials(const aiScene* pScene, const std::string& filename);
+	void clear();
 
-	const aiScene* scene;
-	aiVector3D scene_min, scene_max, scene_center;
-	SceneAnimator* mAnimator;
+	struct MeshEntry {
+		MeshEntry();
+		~MeshEntry();
+		void Init(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices);
+
+		GLuint VB;
+		GLuint IB;
+		unsigned int NumIndices;
+		unsigned int MaterialIndex;
+	};
+
+	std::vector<MeshEntry> m_Entries;
+	std::vector<Texture*> m_Textures;
+
+	const aiScene* pScene;
 };
 
 #endif

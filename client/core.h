@@ -12,7 +12,6 @@
 #include <string.h>
 #include <ctype.h>
 #include <algorithm>
-#include <boost/algorithm/clamp.hpp>
 
 #ifdef _WIN32
 	#include <SOIL/SOIL.h>

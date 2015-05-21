@@ -87,7 +87,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Animator.cpp" />
     <ClCompile Include="Building.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="ClientGame.cpp" />
@@ -113,7 +112,6 @@
     <ClCompile Include="Vector4.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Animator.h" />
     <ClInclude Include="Building.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="ClientGame.h" />

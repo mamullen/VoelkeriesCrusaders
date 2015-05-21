@@ -50,5 +50,11 @@ float lerp(float x, float y, float a) {
 }
 
 float saturate(float x) {
-	return boost::algorithm::clamp(x, 0, 1);
+	if (x < 0) {
+		return 0;
+	} else if (x > 1) {
+		return 1;
+	} else {
+		return x;
+	}
 }
