@@ -6,6 +6,7 @@
 #define PLAYSTATE_H_
 
 #include "core.h"
+#include "ElapsedTime.h"
 #include "ParticleSystem.h"
 #include "Emitter.h"
 #include "GameState.h"
@@ -25,6 +26,9 @@ public:
 	void Input(ClientGame* Client);
 	void Update(ClientGame* Client);
 	void Draw();
+
+	void UpdateParticles();
+	void UpdateClient(ClientGame* Client);
 
 	void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	void MouseButton(GLFWwindow* window, int button, int action, int mods);

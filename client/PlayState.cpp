@@ -6,13 +6,14 @@
 ////////////////////////////////////////
 
 #include "PlayState.h"
+#include <thread>
 
 ////////////////////////////////////////////////////////////////////////////////
 
 static PlayState *state;
 
-ParticleEffect g_ParticleEffect(100000);
-Vector3 g_DefaultCameraTranslate(0, 0, -20);
+ParticleEffect g_ParticleEffect(1000);
+Vector3 g_DefaultCameraTranslate(0, 0, -100);
 Vector3 g_DefaultCameraRotate(40, 0, 0);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -33,15 +34,49 @@ void InitLights() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+int PlayState::InitGL() {
+	glewExperimental = GL_TRUE;
+	if (glewInit() != GLEW_OK) {
+		fprintf(stderr, "Failed to initialize GLEW\n");
+		return -1;
+	}
+
+	glfwSwapInterval(0);	// no vsync
+
+	glfwGetFramebufferSize(window, &WinX, &WinY);
+	ratio = WinX / (float)WinY;
+
+	// Background color
+	glClearColor(0.5f, 0.0f, 0.0f, 1.0f);
+	glEnable(GL_DEPTH_TEST);
+
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+	rotationChanged = false;
+	attacking = false;
+	player = NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 int PlayState::Initialize() {
+	string configWinX;
+	string configWinY;
+	ConfigSettings::config->getValue("WinX", configWinX);
+	ConfigSettings::config->getValue("WinY", configWinY);
+	WinX = stoi(configWinX);
+	WinY = stoi(configWinY);
+
 	InitGL();
-	double lastTime = glfwGetTime();
+
+	LeftDown = MiddleDown = RightDown = BothDown = 0;
+	MouseX = MouseY = 0;
 
 	// Camera
-	//Cam.SetViewport(0, 0, WinX, WinY);
-	//Cam.ApplyViewport();
+	Cam.SetViewport(0, 0, WinX, WinY);
+	Cam.ApplyViewport();
 
-	Cam.SetProjection(60.0f, 1.33f, 0.1f, 100.0f);
+	Cam.SetProjection(60.0f, ratio, 0.1f, 1000.0f);
 	Cam.ApplyProjectionTransform();
 
 	Cam.SetTranslate(g_DefaultCameraTranslate);
@@ -74,56 +109,26 @@ int PlayState::Initialize() {
 	g_ParticleEffect.SetCamera(&Cam);
 	// End particles
 
-	InitLights();
+	//InitLights();
 	rotationChanged = false;
 	attacking = false;
 	player = NULL;
+
 	return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-int PlayState::InitGL() {
-	string configWinX;
-	string configWinY;
-	ConfigSettings::config->getValue("WinX", configWinX);
-	ConfigSettings::config->getValue("WinY", configWinY);
-	WinX = stoi(configWinX);
-	WinY = stoi(configWinY);
+void PlayState::UpdateParticles() {
+	static ElapsedTime elapsedTime;
+	float fDeltaTime = elapsedTime.GetElapsedTime();
 
-	LeftDown = MiddleDown = RightDown = BothDown = 0;
-	MouseX = MouseY = 0;
-
-	glewExperimental = GL_TRUE;
-	if (glewInit() != GLEW_OK) {
-		fprintf(stderr, "Failed to initialize GLEW\n");
-		return -1;
-	}
-
-	glfwSwapInterval(0);	// no vsync
-
-	glfwGetFramebufferSize(window, &WinX, &WinY);
-	ratio = WinX / (float)WinY;
-
-	// Background color
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glEnable(GL_DEPTH_TEST);
-
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-	rotationChanged = false;
-	attacking = false;
-	player = NULL;
+	g_ParticleEffect.Update(fDeltaTime);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-void PlayState::Update(ClientGame* client) {
-	float delta = glfwGetTime();
-	g_ParticleEffect.Update(delta);
-	
+void PlayState::UpdateClient(ClientGame* client) {
 	Packet * serverPacket = client->popServerEvent();
-	
+
 	while (serverPacket != NULL){
 		char * serverEvent = serverPacket->packet_data;
 		unsigned int objID = serverPacket->id;
@@ -170,13 +175,13 @@ void PlayState::Update(ClientGame* client) {
 			memcpy(&y2, serverEvent + 32, sizeof(float));
 			memcpy(&z2, serverEvent + 36, sizeof(float));
 			memcpy(&rot, serverEvent + 40, sizeof(float));
-			
+
 			printf("BUILDING: %f,%f,%f,%f,%f,%f,%f\n", x1, y1, z1, x2, y2, z2, rot);
 
 			Vector3* v1 = new Vector3(x1, y1, z1);
 			Vector3* v2 = new Vector3(x2, y2, z2);
 
-			gameObjects.insert(std::pair<int, GameObject*>(objID, new Building(v1,v2,rot,objID)));
+			gameObjects.insert(std::pair<int, GameObject*>(objID, new Building(v1, v2, rot, objID)));
 
 
 		}
@@ -227,6 +232,16 @@ void PlayState::Update(ClientGame* client) {
 	}
 }
 
+void PlayState::Update(ClientGame* client) {
+	//std::thread particles (&PlayState::UpdateParticles, this);
+	//std::thread packets(&PlayState::UpdateClient, this, client);
+
+	//particles.join();
+	//packets.join();
+	UpdateParticles();
+	UpdateClient(client);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 void drawsomeground() { // deprecate this one day
@@ -248,38 +263,33 @@ void drawsomeground() { // deprecate this one day
 ////////////////////////////////////////////////////////////////////////////////
 
 void PlayState::Draw() {
-	double currentTime = glfwGetTime();
-	double delta = currentTime - lastTime;
-	lastTime = currentTime;
-
 	// Clear the screen
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	if (!player)
-		return;
+	/*if (!player)
+		return;*/
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-
-	drawAxis(10);
-
+	
 	// Draw components
 	Cam.ApplyViewTransform();
+	drawAxis(10);
 
-	glTranslatef(player->getPos().x, player->getPos().y, player->getPos().z);
+	g_ParticleEffect.Render();
+
+	//glTranslatef(player->getPos().x, player->getPos().y, player->getPos().z);
 	glRotatef(180, 0, 1, 0);
 
-	player->update(true,Cam.GetAzimuth());
+	//player->update(true,Cam.GetAzimuth());
 
-	drawsomeground();
-
+	//drawsomeground();
+	
 	std::map<int, GameObject*>::iterator it;
 	for (it = gameObjects.begin(); it != gameObjects.end(); it++)
 	{
 		it->second->update(false,Cam.GetAzimuth());
 	}
-
-	g_ParticleEffect.Render();
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();
@@ -290,7 +300,7 @@ void PlayState::Draw() {
 void PlayState::Input(ClientGame* client) {
 	if (!player)
 		return;
-
+	
 	if (glfwGetKey(window, FORWARD)) {
 		client->addEvent(player->getID(),"move_forward;",ACTION_EVENT);
 		//Cam.SetAzimuth(playerRotation);
@@ -389,12 +399,10 @@ void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods
 ////////////////////////////////////////////////////////////////////////////////
 
 void PlayState::MouseMotion(GLFWwindow* window, double xpos, double ypos) {
-	if (!player)
-		return;
-
-
 	int dx = xpos - MouseX;
 	int dy = -(ypos - MouseY);
+
+	const float rate = 1.0f;
 
 	MouseX = xpos;
 	MouseY = ypos;
@@ -402,19 +410,16 @@ void PlayState::MouseMotion(GLFWwindow* window, double xpos, double ypos) {
 	// Move camera
 	Cam.Update(true, false, dx, dy);
 	rotationChanged = true;
-	//printf("AZIM %f\n", Cam.GetAzimuth());
-	//printf("Player: %f\n", player->getRotation());
-	//player->setRotation(-Cam.GetAzimuth());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void PlayState::MouseScroll(GLFWwindow* window, double xoffset, double yoffset) {
-	const float rate = 0.1f;
+	const float rate = 3.0f;
 	if (yoffset > 0) {
-		Cam.SetDistance(Cam.GetDistance()*(1.0f - rate));
+		Cam.TranslateZ(1.0f*rate);
 	}
 	else if (yoffset < 0) {
-		Cam.SetDistance(Cam.GetDistance()*(1.0f + rate));
+		Cam.TranslateZ(-1.0f*rate);
 	}
 }

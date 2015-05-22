@@ -1,4 +1,5 @@
 #include "ParticleSystem.h"
+#include <iostream>
 #include <assert.h>
 
 ParticleEffect::ParticleEffect(unsigned int numParticles)
@@ -128,7 +129,6 @@ void ParticleEffect::BuildVertexBuffer()
 	// Make sure the vertex buffer has enough vertices to render the effect
 	// If the vertex buffer is already the correct size, no change is made.
 	m_VertexBuffer.resize(m_Particles.size() * 4, Vertex());
-	Matrix4x4 rotation;
 
 	for (unsigned int i = 0; i < m_Particles.size(); ++i)
 	{
@@ -165,8 +165,12 @@ void ParticleEffect::BuildVertexBuffer()
 
 void ParticleEffect::Render()
 {
-	//glPushMatrix();
-	//glMultMatrixf(glm::value_ptr(m_LocalToWorldMatrix));
+	m_pParticleEmitter->DebugRender();
+
+	glDisable(GL_DEPTH_TEST);           // Disables Depth Testing
+	glEnable(GL_BLEND);                 // Enable Blending
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);   // Type Of Blending To Perform
+	glEnable(GL_TEXTURE_2D);            // Enable textures
 
 	glBindTexture(GL_TEXTURE_2D, m_TextureID);
 
@@ -185,18 +189,6 @@ void ParticleEffect::Render()
 	glDisableClientState(GL_COLOR_ARRAY);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glPopAttrib();
-
-#if _DEBUG
-	if (m_pParticleEmitter != NULL)
-	{
-		m_pParticleEmitter->DebugRender();
-	}
-#endif
-
-	//glPopMatrix();
-
 }
 
 void ParticleEffect::Resize(unsigned int numParticles)

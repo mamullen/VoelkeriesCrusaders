@@ -18,10 +18,6 @@
 class Vector4
 {
 public:
-    double x;
-    double y;
-    double z;
-    double w;
 	void Set(float x0, float y0, float z0, float w0)				{ x = x0; y = y0; z = z0; w = w0; }
 	Vector4();
 	Vector4(float f) : x(f), y(f), z(f), w(f) {}
@@ -38,6 +34,9 @@ public:
     Vector4 cross(const Vector4& v1, const Vector4& v2);
     
     Vector4 scale(double s);
+
+public:
+	float x, y, z, w;
     
 };
 
