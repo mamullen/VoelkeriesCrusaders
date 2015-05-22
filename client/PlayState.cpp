@@ -2,8 +2,8 @@
 
 static PlayState *state;
 
-ParticleEffect g_ParticleEffect(10);
-Vector3 g_DefaultCameraTranslate(0, 0, -20);
+ParticleEffect g_ParticleEffect(1000);
+Vector3 g_DefaultCameraTranslate(0, 0, -100);
 Vector3 g_DefaultCameraRotate(40, 0, 0);
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) { state->KeyCallback(window, key, scancode, action, mods); }
@@ -71,6 +71,32 @@ int PlayState::Initialize() {
 	Cam.SetTranslate(g_DefaultCameraTranslate);
 	Cam.SetRotate(g_DefaultCameraRotate);
 
+	// Particles
+	if (g_ParticleEffect.LoadTexture("./particles/Textures/star.png"))
+	{
+		std::cout << "Successfully loaded particle texture." << std::endl;
+	}
+	else
+	{
+		std::cerr << "Failed to load particle texture!" << std::endl;
+	}
+
+	ParticleEffect::ColorInterpolator colors;
+
+	colors.AddValue(0.0f, Vector4(1, 0, 0, 1));     // red
+	colors.AddValue(0.15f, Vector4(1, 0, 1, 1));     // magenta
+	colors.AddValue(0.33f, Vector4(0, 0, 1, 1));     // blue
+	colors.AddValue(0.5f, Vector4(0, 1, 1, 1));     // cyan
+	colors.AddValue(0.67f, Vector4(0, 1, 0, 0.75));  // green
+	colors.AddValue(0.84f, Vector4(1, 1, 0, 0.5));   // yellow
+	colors.AddValue(1.0f, Vector4(1, 0, 0, 0));     // red
+
+	g_ParticleEffect.SetColorInterplator(colors);
+
+	g_ParticleEffect.SetParticleEmitter(&g_ParticleEmitter);
+	g_ParticleEffect.EmitParticles();
+	g_ParticleEffect.SetCamera(&Cam);
+
 	return 0;
 }
 
@@ -116,7 +142,11 @@ void PlayState::Draw() {
 	Cam.ApplyViewTransform();
 	drawAxis(10);
 
+	glPushMatrix();
+	glLoadIdentity();
 	// Begin drawing player and scene
+	g_ParticleEffect.Render();
+	glPopMatrix();
 	
 	glfwSwapBuffers(window);
 	glfwPollEvents();
@@ -210,7 +240,7 @@ void PlayState::MouseMotion(GLFWwindow* window, double xpos, double ypos) {
 	const float rate = 1.0f;
 	// Move camera
 	// NOTE: this should really be part of Camera::Update()
-	if (LeftDown) {
+	/*if (LeftDown) {
 		Cam.SetAzimuth(Cam.GetAzimuth() + dx*rate);
 		Cam.SetIncline(Cam.GetIncline() - dy*rate);
 	}
@@ -218,6 +248,10 @@ void PlayState::MouseMotion(GLFWwindow* window, double xpos, double ypos) {
 		Cam.SetAzimuth(Cam.GetAzimuth() + dx*rate);
 		Cam.SetIncline(Cam.GetIncline() - dy*rate);
 		//player.setRotation(-Cam.GetAzimuth());
+	}*/
+	if (LeftDown || RightDown) {
+		Cam.AddPitch(dy*rate);
+		Cam.AddYaw(dx*rate);
 	}
 }
 
@@ -226,9 +260,9 @@ void PlayState::MouseMotion(GLFWwindow* window, double xpos, double ypos) {
 void PlayState::MouseScroll(GLFWwindow* window, double xoffset, double yoffset) {
 	const float rate = 0.1f;
 	if (yoffset > 0) {
-		Cam.SetDistance(Cam.GetDistance()*(1.0f - rate));
+		Cam.TranslateZ(1.0f*rate);
 	}
 	else if (yoffset < 0) {
-		Cam.SetDistance(Cam.GetDistance()*(1.0f + rate));
+		Cam.TranslateZ(-1.0f*rate);
 	}
 }

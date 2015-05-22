@@ -124,10 +124,6 @@ void ParticleEffect::BuildVertexBuffer()
 	if (m_pCamera != NULL)
 	{
 		cameraRotation = Quaternion(m_pCamera->GetRotation().inRadians());
-		cameraRotation.w = 1;
-		cameraRotation.x = 1;
-		cameraRotation.y = 1;
-		cameraRotation.z = 1;
 	}
 
 	// Make sure the vertex buffer has enough vertices to render the effect
@@ -138,10 +134,6 @@ void ParticleEffect::BuildVertexBuffer()
 	{
 		Particle& particle = m_Particles[i];
 		Quaternion rotation = Quaternion(particle.m_fRotate, Z);
-		rotation.w = 1;
-		rotation.x = 1;
-		rotation.y = 1;
-		rotation.z = 1;
 
 		unsigned int vertexIndex = i * 4;
 		Vertex& v0 = m_VertexBuffer[vertexIndex + 0];   // Bottom-left

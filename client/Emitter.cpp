@@ -130,7 +130,7 @@ void SphereEmitter::DebugRender()
 {
 	glTranslatef(Origin.x, Origin.y, Origin.z);
 
-	//    RenderSphere( glm::vec4(0.0f, 0.0f, 1.0f, 1.0f), MinimumRadius );
+	RenderSphere(Vector4(0.0f, 0.0f, 1.0f, 1.0f), MinimumRadius );
 	RenderSphere(Vector4(1.0f, 0.0f, 0.0f, 1.0f), MaximumRadius);
 
 	glTranslatef(-Origin.x, -Origin.y, -Origin.z);
