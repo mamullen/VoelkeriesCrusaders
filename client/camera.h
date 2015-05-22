@@ -13,10 +13,6 @@
 class Camera {
 public:
 	Camera();
-    float cx,cy,cz;
-	void Update(bool LeftDown, bool RightDown, int dx, int dy);
-	void Reset();
-	void Draw();
 
 	// Set viewport parameters
 	void SetViewport(int x, int y, int width, int height);
@@ -46,17 +42,6 @@ public:
 	void SetRotate(float pitch, float yaw, float roll);
 	void SetRotate(const Vector3& rotate);
 
-	// Access functions
-	void SetPosition(float x, float y, float z)		{ cx = x; cy = y; cz = z; }
-	void SetAspect(float a)		{Aspect=a;}
-	void SetDistance(float d)	{if(d>MIN_CAMERA_DISTANCE && d<MAX_CAMERA_DISTANCE) Distance=d;}
-	void SetAzimuth(float a);
-	void SetIncline(float i);
-
-	float GetDistance()			{return Distance;}
-	float GetAzimuth()			{return Azimuth;}
-	float GetIncline()			{return Incline;}
-
 	Vector3 GetTranslation() const;
 	Vector3 GetRotation() const;
 
@@ -79,11 +64,6 @@ private:
 	float Aspect;	// Aspect Ratio
 	float NearClip;	// Near clipping plane distance
 	float FarClip;	// Far clipping plane distance
-
-	// Polar controls
-	float Distance;	// Distance of the camera eye position to the origin
-	float Azimuth;	// Rotation of the camera eye position around the Y axis
-	float Incline;	// Angle of the camera eye position over the XZ plane
 };
 
 ////////////////////////////////////////////////////////////////////////////////

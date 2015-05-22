@@ -25,7 +25,10 @@ public:
 
 	void Input(ClientGame* Client);
 	void Update(ClientGame* Client);
+
+	// Draw Methods
 	void Draw();
+	void RenderParticles();
 
 	void UpdateParticles();
 	void UpdateClient(ClientGame* Client);

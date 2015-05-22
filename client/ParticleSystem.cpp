@@ -165,8 +165,7 @@ void ParticleEffect::BuildVertexBuffer()
 
 void ParticleEffect::Render()
 {
-	m_pParticleEmitter->DebugRender();
-
+	//m_pParticleEmitter->DebugRender();
 	glDisable(GL_DEPTH_TEST);           // Disables Depth Testing
 	glEnable(GL_BLEND);                 // Enable Blending
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);   // Type Of Blending To Perform

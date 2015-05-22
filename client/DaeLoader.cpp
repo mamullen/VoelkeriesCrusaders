@@ -60,10 +60,6 @@ DaeLoader::DaeLoader(const std::string& filename) {
 	std::cout << "DaeLoader:: loading " << filename << std::endl;
 	LoadAsset(filename);
 	std::cout << "DaeLoader:: finished " << std::endl;
-
-	if (pScene->HasAnimations()) {
-		//mAnimator = new SceneAnimator(pScene);
-	}
 }
 
 bool DaeLoader::LoadAsset(const std::string& filename) {

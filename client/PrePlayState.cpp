@@ -21,7 +21,14 @@ int PrePlayState::Initialize()
 	glEnable(GL_DEPTH_TEST);
 
 	// Initialize components
-	Cam.SetAspect(float(WinX) / float(WinY));
+	Cam.SetViewport(0, 0, WinX, WinY);
+	Cam.ApplyViewport();
+
+	Cam.SetProjection(60.0f, ratio, 0.1f, 1000.0f);
+	Cam.ApplyProjectionTransform();
+
+	Cam.SetTranslate(Vector3::g_DefaultCameraTranslate);
+	Cam.SetRotate(Vector3::g_DefaultCameraRotate);
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
@@ -98,7 +105,7 @@ void PrePlayState::Draw() {
 	glClear(GL_DEPTH_BUFFER_BIT);
 
 	// Draw components
-	Cam.Draw();		// Sets up projection & viewing matrices
+	Cam.ApplyViewTransform();		// Sets up projection & viewing matrices
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();

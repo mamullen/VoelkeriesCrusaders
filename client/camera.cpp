@@ -9,7 +9,6 @@
 Camera::Camera() {
 	m_Rotate = Vector3(0);
 	m_Translate = Vector3(0);
-	Reset();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -93,67 +92,6 @@ void Camera::SetRotate(float pitch, float yaw, float roll)
 void Camera::SetRotate(const Vector3& rotate)
 {
 	m_Rotate = rotate;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void Camera::Update(bool LeftDown, bool RightDown, int dx, int dy) {
-	const float rate = 1.0f;
-
-	if (LeftDown) {
-		SetAzimuth(GetAzimuth() + dx*rate);
-		SetIncline(GetIncline() - dy*rate);
-	}
-	if (RightDown) {
-		SetAzimuth(GetAzimuth() + dx*rate);
-		SetIncline(GetIncline() - dy*rate);
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void Camera::SetAzimuth(float a){
-	while (a < 0){
-		a += 360;
-	}
-	while (a >= 360){
-		a -= 360;
-	}
-	m_Rotate.y = a;
-	Azimuth = a;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void Camera::SetIncline(float i){
-	if (i > MIN_CAMERA_INCLINE && i < MAX_CAMERA_INCLINE) {
-		m_Rotate.x = i;
-		Incline = i;
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void Camera::Reset() {
-	Distance=0.0f;
-	Azimuth=0.0f;
-	Incline=0.0f;
-} 
-
-////////////////////////////////////////////////////////////////////////////////
-
-void Camera::Draw() {
-	// Tell GL we are going to adjust the projection matrix
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-
-	// Set perspective projection
-	gluPerspective(FOV,Aspect,NearClip,FarClip);
-
-	// Place camera
-	glTranslatef(cx, cy, cz - Distance);
-	glRotatef(Incline,1.0f,0.0f,0.0f);
-	glRotatef(Azimuth,0.0f,1.0f,0.0f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

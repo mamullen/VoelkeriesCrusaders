@@ -160,6 +160,7 @@ public:
 	// Static vectors
 	static Vector3 XAXIS,YAXIS,ZAXIS;
 	static Vector3 ORIGIN;
+	static Vector3 g_DefaultCameraTranslate, g_DefaultCameraRotate;
 
 	Vector3 inRadians() {
 		return Vector3(toRadians(x), toRadians(y), toRadians(z));
