@@ -354,8 +354,6 @@ void PlayState::Draw() {
 	glTranslatef(player->getPos().x, player->getPos().y, player->getPos().z);
 	glRotatef(180, 0, 1, 0);
 
-	player->update(true, Cam.GetRotation().y);
-
 	drawsomeground();
 	RenderParticles();
 	
@@ -364,6 +362,8 @@ void PlayState::Draw() {
 	{
 		it->second->update(false,Cam.GetRotation().y);
 	}
+
+	player->update(true, Cam.GetRotation().y);
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();
@@ -482,8 +482,8 @@ void PlayState::MouseMotion(GLFWwindow* window, double xpos, double ypos) {
 	MouseY = ypos;
 
 	// Move camera
-	Cam.AddPitch(-dy*rate);
-	Cam.AddYaw(dx*rate);
+	Cam.AddPitch(-dy);
+	Cam.AddYaw(dx);
 	rotationChanged = true;
 }
 

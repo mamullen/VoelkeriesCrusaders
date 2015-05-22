@@ -35,13 +35,21 @@ void Camera::SetProjection(float fovy, float aspect, float zNear, float zFar)
 
 void Camera::AddPitch(float fPitch)
 {
-	m_Rotate.x += fPitch;
+	if (m_Rotate.x + fPitch > MIN_CAMERA_INCLINE && m_Rotate.x + fPitch < MAX_CAMERA_INCLINE) {
+		m_Rotate.x += fPitch;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Camera::AddYaw(float fYaw)
 {
+	while (fYaw + m_Rotate.y < 0) {
+		m_Rotate.y = 360;
+	}
+	while (fYaw + m_Rotate.y >= 360) {
+		m_Rotate.y = 0;
+	}
 	m_Rotate.y += fYaw;
 }
 
