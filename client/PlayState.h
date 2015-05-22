@@ -2,7 +2,9 @@
 #define PLAYSTATE_H_
 
 #include "core.h"
+#include "ElapsedTime.h"
 #include "ParticleSystem.h"
+#include "Emitter.h"
 #include "GameState.h"
 #include "Building.h"
 #include "Floor.h"
@@ -36,11 +38,13 @@ private:
 	bool LeftDown, MiddleDown, RightDown, LeftDownTwo, BothDown;
 	double MouseX, MouseY;
 	//Building* b1, *b2;
-	Floor field;
+	//Floor field;
 	// Components
 	Camera Cam;
-	Player player;
+	//Player player;
 
+	SphereEmitter g_ParticleEmitter;
+	CubeEmitter g_CubeEmitter;
 };
 
 #endif

@@ -35,6 +35,7 @@ private:
 public:
 	Player();
 	Player(int pn);
+	void MoveForward();
 	void MoveForward(Floor);
 	void MoveForward(float speed, Floor f);
 	void MoveBackward();

@@ -2,6 +2,10 @@
 
 static PlayState *state;
 
+ParticleEffect g_ParticleEffect(10);
+Vector3 g_DefaultCameraTranslate(0, 0, -20);
+Vector3 g_DefaultCameraRotate(40, 0, 0);
+
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) { state->KeyCallback(window, key, scancode, action, mods); }
 static void mouse_motion(GLFWwindow* window, double xpos, double ypos) { state->MouseMotion(window, xpos, ypos); }
 static void mouse_button(GLFWwindow* window, int button, int action, int mods) { state->MouseButton(window, button, action, mods); }
@@ -13,7 +17,7 @@ PlayState::PlayState(GLFWwindow* window) {
 
 	//in order for it to read two different players.  The players must be initialized with 
 	//different numbers
-	player = Player(1);
+	//player = Player(1);
 }
 
 int PlayState::InitGL() {
@@ -52,19 +56,29 @@ int PlayState::Initialize() {
 	glClearColor(0.5, 0., 0., 1.);
 	glEnable(GL_DEPTH_TEST);
 
-	// Initialize components
-	Cam.SetAspect(float(WinX) / float(WinY));
-
 	/*b1 = new Building(25, -20, 10, -40, -18);
 	b2 = new Building(15, 20, 18, 20, 18);
 	field.buildingList.push_back(b1);
 	field.buildingList.push_back(b2);*/
 
+	// Camera
+	Cam.SetViewport(0, 0, WinX, WinY);
+	Cam.ApplyViewport();
+
+	Cam.SetProjection(60.0f, ratio, 0.1f, 1000.0f);
+	Cam.ApplyProjectionTransform();
+
+	Cam.SetTranslate(g_DefaultCameraTranslate);
+	Cam.SetRotate(g_DefaultCameraRotate);
+
 	return 0;
 }
 
 void PlayState::Update() {
-	
+	static ElapsedTime elapsedTime;
+	float fDeltaTime = elapsedTime.GetElapsedTime();
+
+	g_ParticleEffect.Update(fDeltaTime);
 }
 
 void drawsomeground() { // deprecate this one day
@@ -87,19 +101,20 @@ double lastTime = glfwGetTime();
 
 void PlayState::Draw() {
 	if (BothDown) {
-		player.MoveForward(0.01);
+		//player.MoveForward(0.01);
 	}
 
 	// Set up glStuff
 	glViewport(0, 0, WinX, WinY);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glClear(GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Draw components
-	Cam.Draw();		// Sets up projection & viewing matrices
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+
+	Cam.ApplyViewTransform();
+	drawAxis(10);
 
 	// Begin drawing player and scene
 	
@@ -118,11 +133,11 @@ void PlayState::Resume() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void PlayState::Input() {
-	float playerRotation = -player.getRotation();
+	/*float playerRotation = -player.getRotation();
 
 	if (glfwGetKey(window, FORWARD)) {
 		
-		player.MoveForward(field);
+		player.MoveForward();
 		Cam.SetAzimuth(playerRotation);
 	}
 
@@ -145,7 +160,7 @@ void PlayState::Input() {
 
 	if (glfwGetKey(window, ROTATERIGHT)) {
 		player.rotateRight();
-	}
+	}*/
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -158,7 +173,7 @@ void PlayState::KeyCallback(GLFWwindow* window, int key, int scancode, int actio
 ////////////////////////////////////////////////////////////////////////////////
 
 void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods) {
-	float playerRotation = -player.getRotation();
+	//float playerRotation = -player.getRotation();
 
 	if (action == GLFW_PRESS) {
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -176,7 +191,7 @@ void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods
 	}
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
 		if (action == GLFW_PRESS) {
-			Cam.SetAzimuth(playerRotation);
+			//Cam.SetAzimuth(playerRotation);
 		}
 		RightDown = (action == GLFW_PRESS);
 		BothDown = LeftDown && (action == GLFW_PRESS);
@@ -202,7 +217,7 @@ void PlayState::MouseMotion(GLFWwindow* window, double xpos, double ypos) {
 	if (RightDown) {
 		Cam.SetAzimuth(Cam.GetAzimuth() + dx*rate);
 		Cam.SetIncline(Cam.GetIncline() - dy*rate);
-		player.setRotation(-Cam.GetAzimuth());
+		//player.setRotation(-Cam.GetAzimuth());
 	}
 }
 

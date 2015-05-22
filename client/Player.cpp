@@ -111,6 +111,11 @@ void Player::jump() {
 	position = position + forward.scale(speed) + up.scale(speed);
 }
 
+
+void Player::MoveForward() {
+	position = position + forward.scale(speed);
+}
+
 void Player::MoveForward(Floor f) {
 	
 	if (!collide(f))
