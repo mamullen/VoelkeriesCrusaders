@@ -55,10 +55,10 @@ int PlayState::Initialize() {
 	// Initialize components
 	Cam.SetAspect(float(WinX) / float(WinY));
 
-	b1 = new Building(25, -20, 10, -40, -18);
+	/*b1 = new Building(25, -20, 10, -40, -18);
 	b2 = new Building(15, 20, 18, 20, 18);
 	field.buildingList.push_back(b1);
-	field.buildingList.push_back(b2);
+	field.buildingList.push_back(b2);*/
 
 	return 0;
 }
@@ -100,9 +100,6 @@ void PlayState::Draw() {
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	player.update();
-
-	glTranslatef(player.getPos().x, player.getPos().y, player.getPos().z);
 
 	// Begin drawing player and scene
 	

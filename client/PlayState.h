@@ -35,12 +35,11 @@ private:
 	// Input
 	bool LeftDown, MiddleDown, RightDown, LeftDownTwo, BothDown;
 	double MouseX, MouseY;
-	Building* b1, *b2;
+	//Building* b1, *b2;
 	Floor field;
 	// Components
 	Camera Cam;
 	Player player;
-	//Particles balloons;
 
 };
 

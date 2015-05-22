@@ -12,3 +12,56 @@ Vector3 Vector3::ZAXIS(0.0f,0.0f,1.0f);
 Vector3 Vector3::ORIGIN(0.0f,0.0f,0.0f);
 
 ////////////////////////////////////////////////////////////////////////////////
+
+Quaternion::Quaternion(const Vector3& eulerAngle) {
+	Vector3 c = (eulerAngle * 0.5).vCos();
+	Vector3 s = (eulerAngle * 0.5).vCos();
+
+	this->w = c.x * c.y * c.z + s.x * s.y * s.z;
+	this->x = s.x * c.y * c.z - c.x * s.y * s.z;
+	this->y = c.x * s.y * c.z + s.x * c.y * s.z;
+	this->z = c.x * c.y * s.z - s.x * s.y * c.z;
+}
+
+Quaternion::Quaternion(float angle, Vector3& axis) {
+	Vector3 axis_normalize = axis.Normalize();
+
+	float a = toRadians(angle);
+	float s = cos(a*0.5);
+
+	this->w = cos(a*0.5);
+	this->x = axis.x * s;
+	this->y = axis.y * s;
+	this->z = axis.z * s;
+}
+
+Vector3 Quaternion::operator*(const Vector3& v) const {
+	Vector3 uv, uuv;
+	Vector3 q_vec(x, y, z);
+	uv.Cross(q_vec, v);
+	uuv.Cross(q_vec, uv);
+	uv *= (2 * w);
+	uuv *= 2;
+
+	return v + uv + uuv;
+}
+
+Quaternion Quaternion::operator/ (float s) {
+	return Quaternion(w / s, x / s, y / s, z / s);
+}
+
+Quaternion Quaternion::Inverse(const Quaternion& q) {
+	return Conjugate(q) / Length(q);
+}
+
+Quaternion Quaternion::Conjugate(const Quaternion& q) {
+	return Quaternion(q.w, -q.x, -q.y, -q.z);
+}
+
+float Quaternion::Length(const Quaternion& q) {
+	return sqrt(Dot(q, q));
+}
+
+float Quaternion::Dot(const Quaternion& q1, const Quaternion& q2) {
+	return q1.x * q2.x + q1.y * q2.y + q1.z * q2.z + q1.w * q2.w;
+}
