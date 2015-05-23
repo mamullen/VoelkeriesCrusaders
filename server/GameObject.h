@@ -31,6 +31,14 @@ public:
 	void strafeLeft();
 	void strafeRight();
 
+
+	void setMin(float, float, float);
+	void setMax(float, float, float);
+	void setMin(Vector3&);
+	void setMax(Vector3&);
+	Vector3 getMin();
+	Vector3 getMax();
+
 	
 	virtual void isAttacked(float) = 0;
 	virtual void update(Packet*, std::vector<GameObject*>*) = 0;
@@ -51,6 +59,8 @@ protected:
 	const float ROTATE_RIGHT = -1;
 	const float PI = 3.14159;
 	
+	Vector3 min, max;
+
 	float hp;
 	float rotation;
 	Matrix34 rotateMx;

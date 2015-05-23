@@ -101,6 +101,34 @@ float GameObject::getHP()
 }
 
 
+void GameObject::setMin(float x, float y, float z)
+{
+	min.Set(x, y, z);
+}
+
+void GameObject::setMax(float x, float y, float z)
+{
+	max.Set(x, y, z);
+}
+
+void GameObject::setMin(Vector3& v)
+{
+	min = v;
+}
+
+void GameObject::setMax(Vector3& v)
+{
+	max = v;
+}
+
+Vector3 GameObject::getMin(){
+	return min;
+}
+
+Vector3 GameObject::getMax(){
+	return max;
+}
+
 /*
 std::map<std::string*, bool> GameObject::getChanges()
 {

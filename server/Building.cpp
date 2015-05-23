@@ -26,33 +26,6 @@ Building::~Building()
 	delete[] change_counter;
 }
 
-void Building::setMin(float x, float y, float z)
-{
-	min.Set(x, y, z);
-}
-
-void Building::setMax(float x, float y, float z)
-{
-	max.Set(x, y, z);
-}
-
-void Building::setMin(Vector3& v)
-{
-	min = v;
-}
-
-void Building::setMax(Vector3& v)
-{
-	max = v;
-}
-
-Vector3 Building::getMin(){
-	return min;
-}
-
-Vector3 Building::getMax(){
-	return max;
-}
 
 void Building::isAttacked(float ad){
 
