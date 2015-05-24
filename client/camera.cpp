@@ -45,10 +45,10 @@ void Camera::AddPitch(float fPitch)
 void Camera::AddYaw(float fYaw)
 {
 	while (fYaw + m_Rotate.y < 0) {
-		m_Rotate.y = 360;
+		fYaw += 360;
 	}
 	while (fYaw + m_Rotate.y >= 360) {
-		m_Rotate.y = 0;
+		fYaw -= 360;
 	}
 	m_Rotate.y += fYaw;
 }
