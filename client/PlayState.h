@@ -50,7 +50,7 @@ public:
 
 	// Draw Methods
 	void Draw();
-	void RenderParticles();
+	void RenderParticles(float rot);
 
 	void UpdateParticles();
 	void UpdateClient(ClientGame* Client);

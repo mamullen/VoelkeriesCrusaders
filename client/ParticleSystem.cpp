@@ -142,22 +142,22 @@ void ParticleEffect::BuildVertexBuffer()
 		Vertex& v3 = m_VertexBuffer[vertexIndex + 3];   // Top-left
 
 		// Bottom-left
-		v0.m_Pos = particle.m_Position + (rotation * (-X - Y) * particle.m_fSize) * cameraRotation;
+		v0.m_Pos = particle.m_Position + (rotation * (-X - Y) * particle.m_fSize);
 		v0.m_Tex0 = Vector2(0, 1);
 		v0.m_Diffuse = particle.m_Color;
 
 		// Bottom-right
-		v1.m_Pos = particle.m_Position + (rotation * (X - Y) * particle.m_fSize) * cameraRotation;
+		v1.m_Pos = particle.m_Position + (rotation * (X - Y) * particle.m_fSize);
 		v1.m_Tex0 = Vector2(1, 1);
 		v1.m_Diffuse = particle.m_Color;
 
 		// Top-right
-		v2.m_Pos = particle.m_Position + (rotation * (X + Y) * particle.m_fSize) * cameraRotation;
+		v2.m_Pos = particle.m_Position + (rotation * (X + Y) * particle.m_fSize);
 		v2.m_Tex0 = Vector2(1, 0);
 		v2.m_Diffuse = particle.m_Color;
 
 		// Top-left
-		v3.m_Pos = particle.m_Position + (rotation * (-X + Y) * particle.m_fSize) * cameraRotation;
+		v3.m_Pos = particle.m_Position + (rotation * (-X + Y) * particle.m_fSize);
 		v3.m_Tex0 = Vector2(0, 0);
 		v3.m_Diffuse = particle.m_Color;
 	}
@@ -166,7 +166,7 @@ void ParticleEffect::BuildVertexBuffer()
 void ParticleEffect::Render()
 {
 	//m_pParticleEmitter->DebugRender();
-	glDisable(GL_DEPTH_TEST);           // Disables Depth Testing
+	//glDisable(GL_DEPTH_TEST);           // Disables Depth Testing
 	glEnable(GL_BLEND);                 // Enable Blending
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);   // Type Of Blending To Perform
 	glEnable(GL_TEXTURE_2D);            // Enable textures
@@ -188,6 +188,10 @@ void ParticleEffect::Render()
 	glDisableClientState(GL_COLOR_ARRAY);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+	//glEnable(GL_DEPTH_TEST);
 }
 
 void ParticleEffect::Resize(unsigned int numParticles)

@@ -250,9 +250,10 @@ bool Player::collide(std::vector<GameObject*>* obj, Vector3 dir)
 
 
 	}
+	return false;
 	//check to see is within world
 
-	if ((-240 <= playerposition.x && playerposition.x <= 240))// || min.x <= -position.x + mx.x && -position.x + mx.x <= tile.buildingList[i]->max.x)))
+	/*if ((-240 <= playerposition.x && playerposition.x <= 240))// || min.x <= -position.x + mx.x && -position.x + mx.x <= tile.buildingList[i]->max.x)))
 	{
 
 
@@ -269,5 +270,5 @@ bool Player::collide(std::vector<GameObject*>* obj, Vector3 dir)
 	else
 	{
 		return true;
-	}
+	}*/
 }

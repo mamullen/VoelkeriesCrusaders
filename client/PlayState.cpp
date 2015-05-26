@@ -518,37 +518,41 @@ void PlayState::drawsomeground() { // deprecate this one day
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void PlayState::RenderParticles() {
+void PlayState::RenderParticles(float rot) {
 	glPushMatrix();
 	glTranslatef(100.0f, 0.4f, 100.0f);
 	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
-	glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
+	//glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
+	glRotatef(rot, 0, 1, 0);
 	glScalef(0.3f, 0.3f, 0.3f);
-	//g_ParticleEffect1.Render();
+	g_ParticleEffect1.Render();
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(100.0f, 0.4f, -100.0f);
 	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
-	glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
+	//glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
+	glRotatef(rot, 0, 1, 0);
 	glScalef(0.3f, 0.3f, 0.3f);
-	//g_ParticleEffect2.Render();
+	g_ParticleEffect2.Render();
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(-100.0f, 0.4f, 100.0f);
 	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
-	glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
+	//glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
+	glRotatef(rot, 0, 1, 0);
 	glScalef(0.3f, 0.3f, 0.3f);
-	//g_ParticleEffect3.Render();
+	g_ParticleEffect3.Render();
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(-100.0f, 0.4f, -100.0f);
 	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
-	glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
+	//glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
+	glRotatef(rot, 0, 1, 0);
 	glScalef(0.3f, 0.3f, 0.3f);
-	//g_ParticleEffect4.Render();
+	g_ParticleEffect4.Render();
 	glPopMatrix();
 }
 
@@ -574,13 +578,14 @@ void PlayState::Draw() {
 	glRotatef(180, 0, 1, 0);
 
 	drawsomeground();
-	RenderParticles();
 	
 	std::map<int, GameObject*>::iterator it;
 	for (it = gameObjects.begin(); it != gameObjects.end(); it++)
 	{
 		it->second->update(false,Cam.GetRotation().y);
 	}
+
+	//RenderParticles(Cam.GetRotation().y);
 
 	player->update(true, Cam.GetRotation().y);
 

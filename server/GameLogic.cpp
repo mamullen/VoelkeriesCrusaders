@@ -387,8 +387,8 @@ void GameLogic::updateState()
 			Build->setMax(155, 25, 80);
 			gameObjects.push_back(Build);
 			Build = new Building();
-			Build->setMax(-140, -4, 40);
-			Build->setMin(-155, 25, 80);
+			Build->setMin(-155, -4, 40);
+			Build->setMax(-140, 25, 80);
 			gameObjects.push_back(Build);
 
 			
