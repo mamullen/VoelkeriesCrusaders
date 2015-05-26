@@ -115,9 +115,9 @@ void ParticleEffect::Update(float fDeltaTime)
 
 void ParticleEffect::BuildVertexBuffer()
 {
-	Vector3 X(0.5, 0, 0);
-	Vector3 Y(0, 0.5, 0);
-	Vector3 Z(0, 0, 1.0);
+	const Vector3 X(0.5, 0, 0);
+	const Vector3 Y(0, 0.5, 0);
+	const Vector3 Z(0, 0, 1.0);
 
 	Quaternion cameraRotation;
 
@@ -133,6 +133,7 @@ void ParticleEffect::BuildVertexBuffer()
 	for (unsigned int i = 0; i < m_Particles.size(); ++i)
 	{
 		Particle& particle = m_Particles[i];
+
 		Quaternion rotation = Quaternion(particle.m_fRotate, Z);
 
 		unsigned int vertexIndex = i * 4;

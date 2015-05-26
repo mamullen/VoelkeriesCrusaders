@@ -17,7 +17,7 @@ Vector3 Vector3::g_DefaultCameraRotate(40, 0, 0);
 
 Quaternion::Quaternion(const Vector3& eulerAngle) {
 	Vector3 c = (eulerAngle * 0.5).vCos();
-	Vector3 s = (eulerAngle * 0.5).vCos();
+	Vector3 s = (eulerAngle * 0.5).vSin();
 
 	this->w = c.x * c.y * c.z + s.x * s.y * s.z;
 	this->x = s.x * c.y * c.z - c.x * s.y * s.z;
@@ -25,16 +25,16 @@ Quaternion::Quaternion(const Vector3& eulerAngle) {
 	this->z = c.x * c.y * s.z - s.x * s.y * c.z;
 }
 
-Quaternion::Quaternion(float angle, Vector3& axis) {
-	Vector3 axis_normalize = axis.Normalize();
+Quaternion::Quaternion(float angle, const Vector3& axis) {
+	const Vector3 axis1 = axis.Normalize();
 
 	float a = toRadians(angle);
-	float s = cos(a*0.5);
+	float s = sin(a*0.5);
 
 	this->w = cos(a*0.5);
-	this->x = axis.x * s;
-	this->y = axis.y * s;
-	this->z = axis.z * s;
+	this->x = axis1.x * s;
+	this->y = axis1.y * s;
+	this->z = axis1.z * s;
 }
 
 Vector3 Quaternion::operator*(const Vector3& v) const {

@@ -306,7 +306,6 @@ void PlayState::RenderParticles() {
 	glPushMatrix();
 	glTranslatef(100.0f, 0.4f, 100.0f);
 	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
-	glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
 	glScalef(0.3f, 0.3f, 0.3f);
 	g_ParticleEffect1.Render();
 	glPopMatrix();
@@ -314,7 +313,6 @@ void PlayState::RenderParticles() {
 	glPushMatrix();
 	glTranslatef(100.0f, 0.4f, -100.0f);
 	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
-	glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
 	glScalef(0.3f, 0.3f, 0.3f);
 	g_ParticleEffect2.Render();
 	glPopMatrix();
@@ -322,7 +320,6 @@ void PlayState::RenderParticles() {
 	glPushMatrix();
 	glTranslatef(-100.0f, 0.4f, 100.0f);
 	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
-	glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
 	glScalef(0.3f, 0.3f, 0.3f);
 	g_ParticleEffect3.Render();
 	glPopMatrix();
@@ -330,7 +327,6 @@ void PlayState::RenderParticles() {
 	glPushMatrix();
 	glTranslatef(-100.0f, 0.4f, -100.0f);
 	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
-	glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
 	glScalef(0.3f, 0.3f, 0.3f);
 	g_ParticleEffect4.Render();
 	glPopMatrix();
