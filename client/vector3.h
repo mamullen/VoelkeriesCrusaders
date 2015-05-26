@@ -17,7 +17,7 @@ public:
 	Quaternion() : x(0.0f), y(0.0f), z(0.0f), w(1.0f) {}
 	Quaternion(const float &w, const float &x, const float &y, const float &z) : x(x), y(y), z(z), w(w) {}
 	Quaternion(const Vector3& eulerAngle);
-	Quaternion(float angle, const Vector3& axis);
+	Quaternion(float angle, Vector3& axis);
 	Vector3 operator*(const Vector3& v) const;
 	Quaternion operator/ (float s);
 	Quaternion Inverse(const Quaternion& q);
@@ -86,7 +86,8 @@ public:
 
 	Vector3 operator* (const Quaternion& q) const
 	{
-		Quaternion q_inv = q_inv.Inverse(q);
+		Quaternion q_inv;
+		q_inv = q_inv.Inverse(q);
 		return q_inv * *this;
 	}
 	
@@ -143,7 +144,6 @@ public:
 	float Mag2 () const {return x * x + y * y + z * z;}
 	float Mag () const {return sqrtf (Mag2 ());}
 	const Vector3 & Normalize () {return (*this /= Mag ());}
-	const Vector3 & Normalize() const { return (*this / Mag()); }
 	//@}
 
 	float Dot(const Vector3 & a) const					{return x*a.x+y*a.y+z*a.z;}
@@ -164,10 +164,6 @@ public:
 
 	Vector3 inRadians() {
 		return Vector3(toRadians(x), toRadians(y), toRadians(z));
-	}
-
-	Vector3 vSin() {
-		return Vector3(sin(x), sin(y), sin(z));
 	}
 
 	Vector3 vCos() {

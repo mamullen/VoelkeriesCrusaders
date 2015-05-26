@@ -61,15 +61,30 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 				change_counter[0]++;
 				std::string* change = new std::string("pos:");
 				changes.push_back(std::pair<int, std::string*>(id, change));
-				this->moveForward();
+				if (!(collide(objects,forward)))
+				{
+					this->moveForward();
+				}
+				else
+				{
+				//	this->moveBackward();
+				}
 			}
+			
 		}
 		else if (cEvent.compare("move_backward") == 0){
 			if (!isChanged[0]){
 				change_counter[0]++;
 				std::string* change = new std::string("pos:");
 				changes.push_back(std::pair<int, std::string*>(id, change));
-				this->moveBackward();
+				if (!(collide(objects, -forward)))
+				{
+					this->moveBackward();
+				}
+				else
+				{
+					//this->moveForward();
+				}
 			}
 		}
 		else if (cEvent.compare("move_left") == 0){
@@ -77,7 +92,14 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 				change_counter[0]++;
 				std::string* change = new std::string("pos:");
 				changes.push_back(std::pair<int, std::string*>(id, change));
-				this->strafeLeft();
+				if (!(collide(objects,-right)))
+				{
+					this->strafeLeft();
+				}
+				else
+				{
+					//this->strafeRight();
+				}
 			}
 		}
 		else if (cEvent.compare("move_right") == 0){
@@ -85,7 +107,14 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 				change_counter[0]++;
 				std::string* change = new std::string("pos:");
 				changes.push_back(std::pair<int, std::string*>(id, change));
-				this->strafeRight();
+				if (!(collide(objects,right)))
+				{
+					this->strafeRight();
+				}
+				else
+				{
+				//	this->strafeLeft();
+				}
 			}
 		}
 		else if (cEvent.substr(0,6).compare("rotate") == 0){
@@ -176,4 +205,59 @@ void Player::setAttack(Action* act)
 void Player::updateCD()
 {
 	attack_mode->update();
+}
+
+bool Player::collide(std::vector<GameObject*>* obj, Vector3 dir)
+{
+	
+	Vector3 objmin, objmax, playerposition;
+	playerposition = (this->getPos())+dir*speed;
+	printf("Number of objs %d\n\n", obj->size());
+	for (int i = 0; i < obj->size(); i++)
+	{
+		
+		objmin = obj->at(i)->getMin();
+		objmax = obj->at(i)->getMax();
+		
+		
+
+		if ((objmin.x <= playerposition.x && playerposition.x <= objmax.x))// || min.x <= -position.x + mx.x && -position.x + mx.x <= tile.buildingList[i]->max.x)))
+		{
+
+
+			if ((objmin.z <= playerposition.z && playerposition.z <= objmax.z))// || (tile.buildingList[i]->min.z <= -position.z + mx.z && -position.z + mx.z <= tile.buildingList[i]->max.z))
+			{
+
+				if (obj->at(i)->objectType == 0)
+				{
+					
+					return true;
+				}
+
+				
+			}
+		}
+
+
+	}
+	//check to see is within world
+
+	if ((-175 <= playerposition.x && playerposition.x <= 175))// || min.x <= -position.x + mx.x && -position.x + mx.x <= tile.buildingList[i]->max.x)))
+	{
+
+
+		if ((-175 <= playerposition.z && playerposition.z <= 175))// || (tile.buildingList[i]->min.z <= -position.z + mx.z && -position.z + mx.z <= tile.buildingList[i]->max.z))
+		{
+
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+	else
+	{
+		return true;
+	}
 }

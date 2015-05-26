@@ -52,6 +52,7 @@ public:
 	bool isPlayer;
 	int objectType; // 0 = building
 	Vector3 forward;
+	void setType(int t){ objectType = t; }
 protected:
 	static unsigned int totalId;
 

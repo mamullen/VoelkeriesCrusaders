@@ -1,0 +1,14 @@
+# pkg-config source file
+
+prefix=C:\3DEngine\OpenSceneGraph\install
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: openscenegraph-osgSim
+Description: Simulator utility library for Openscenegraph
+Version: 3.2.2
+Requires: openscenegraph-osgText openscenegraph-osgDB openscenegraph-osgUtil openscenegraph-osg openthreads
+Conflicts:
+Libs: -L${libdir} -losgSim
+Cflags: -I${includedir}

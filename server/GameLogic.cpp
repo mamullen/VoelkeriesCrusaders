@@ -198,6 +198,8 @@ bool GameLogic::addPlayer(int id, char* packet_data)
 	// createNewObjects();
 	return true;
 
+	//add shrine here?
+
 
 	printf("Added! We now have %d crusader(s) and %d vampire(s)\n", numCrusaders, numVampires);
 
@@ -346,17 +348,50 @@ void GameLogic::updateState()
 			memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
 			p->id = 0;
 			serverPackets.push_back(p);
+			printf("number of times\n");
+			//MEMORY ISSUE #1 DEADPOOL
+			Building * Build = new Building();
+			Build->setMin(-180, -4, -160);
+			Build->setMax(-150, 30, -110);
+			gameObjects.push_back(Build);
+			Build = new Building();
+			Build->setMin(-150, -4, -160);
+			Build->setMax(-120, 30, -110);
+			gameObjects.push_back(Build);
+			Build = new Building();
+			Build->setMin(-120, -4, -160);
+			Build->setMax(-110, 30, -110);
+			gameObjects.push_back(Build);
+			Build = new Building();
+			Build->setMin(155, -4, -80);
+			Build->setMax(170, 25, -40);
+			gameObjects.push_back(Build);
+			Build = new Building();
+			Build->setMin(155, -4, 40);
+			Build->setMax(170, 25, 80);
+			gameObjects.push_back(Build);
+			Build = new Building();
+			Build->setMin(140, -4, -80);
+			Build->setMax(155, 25, -40);
+			gameObjects.push_back(Build);
+			Build = new Building();
+			Build->setMin(140, -4, -40);
+			Build->setMax(155, 25, 0);
+			gameObjects.push_back(Build);
+			Build = new Building();
+			Build->setMin(140, -4,  0);
+			Build->setMax(155, 25, 40);
+			gameObjects.push_back(Build);
+			Build = new Building();
+			Build->setMin(140, -4, 40);
+			Build->setMax(155, 25, 80);
+			gameObjects.push_back(Build);
+			Build = new Building();
+			Build->setMax(-140, -4, 40);
+			Build->setMin(-155, 25, 80);
+			gameObjects.push_back(Build);
 
-
-			// creating two buildings
-			Building * tempBuild = new Building();
-			Building * tempBuild2 = new Building();
-			tempBuild->setMin(-10, -3, -10);
-			tempBuild->setMax(-14, 12, -15);
-			tempBuild2->setMin(10, -3, 10);
-			tempBuild2->setMax(18, 12, 14);
-			gameObjects.push_back(tempBuild);
-			gameObjects.push_back(tempBuild2);
+			
 
 
 			printf("PRINTING OUT THE GAMEOBJECTS VECTOR IDS\n");
@@ -369,9 +404,11 @@ void GameLogic::updateState()
 	}
 	else if (gameState == START)
 	{
+
 		if (count <= 1){
 			printf("We have %d player left, ENDING THE GAME!\n", 1);
 			gameState == END;
+
 		}
 	}
 }

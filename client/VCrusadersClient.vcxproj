@@ -82,7 +82,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>kernel32.lib;assimp.lib;glew32.lib;SOIL.lib;glfw3.lib;opengl32.lib;glu32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>osg.lib;osgAnimation.lib;osgDB.lib;osgFX.lib;osgGA.lib;OpenThreads.lib;osgManipulator.lib;osgParticle.lib;osgPresentation.lib;osgShadow.lib;osgSim.lib;osgTerrain.lib;osgText.lib;osgUtil.lib;osgViewer.lib;osgVolume.lib;osgWidget.lib;osgUtild.lib;kernel32.lib;assimp.lib;glew32.lib;SOIL.lib;glfw3.lib;opengl32.lib;glu32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
@@ -106,6 +106,7 @@
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="PlayState.cpp" />
     <ClCompile Include="PrePlayState.cpp" />
+    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Shaders.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -137,7 +138,9 @@
     <ClInclude Include="PlayState.h" />
     <ClInclude Include="PrePlayState.h" />
     <ClInclude Include="Random.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="Shaders.h" />
+    <ClInclude Include="Shrine.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Texture.h" />

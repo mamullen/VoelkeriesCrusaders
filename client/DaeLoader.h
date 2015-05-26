@@ -41,6 +41,7 @@ public:
 	bool LoadAsset(const std::string& filename);
 	void Render();
 	void RenderNode(const aiNode* node);
+	bool LoadMesh(const std::string& filename);
 
 private:
 	bool initFromScene(const aiScene* pScene, const std::string& filename);
@@ -48,6 +49,8 @@ private:
 	bool initMaterials(const aiScene* pScene, const std::string& filename);
 	void clear();
 
+
+	
 	struct MeshEntry {
 		MeshEntry();
 		~MeshEntry();
@@ -58,6 +61,8 @@ private:
 		unsigned int NumIndices;
 		unsigned int MaterialIndex;
 	};
+
+
 
 	std::vector<MeshEntry> m_Entries;
 	std::vector<Texture*> m_Textures;

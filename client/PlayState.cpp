@@ -30,6 +30,8 @@ void InitLights() {
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
 	glEnable(GL_LIGHT0);
+
+	
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -51,6 +53,9 @@ int PlayState::InitGL() {
 	glEnable(GL_DEPTH_TEST);
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+	
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -156,7 +161,25 @@ int PlayState::Initialize() {
 	rotationChanged = false;
 	attacking = false;
 	player = NULL;
+	shader.init("shader/bump.vert", "shader/bump.frag");
 
+	text_picture = LoadRAWTexture("ppm/building.ppm", 1024, 1024);
+	text_normalmap = LoadRAWTexture("ppm/building_norm.ppm", 1024, 1024);
+	floor_picture = LoadRAWTexture("ppm/floor.ppm", 1024, 1024);
+	floor_normalmap = LoadRAWTexture("ppm/floor_norm.ppm", 1024, 1024);
+	
+	//osgViewer::Viewer w;
+
+	//osgViewer::Viewer view;
+	glGenTextures(5, photos);
+	t.loadTexture("ppm/c_front.ppm", photos[0]);
+	t.loadTexture("ppm/c_back.ppm", photos[1]);
+	t.loadTexture("ppm/c_right.ppm", photos[2]);
+	t.loadTexture("ppm/c_left.ppm", photos[3]);
+	t.loadTexture("ppm/c_top.ppm", photos[4]);
+
+	//osg::ref_ptr<osg::Node> root = osgDB::readNodeFile("");
+	once = true;
 	return 0;
 }
 
@@ -197,8 +220,10 @@ void PlayState::UpdateClient(ClientGame* client) {
 
 
 			printf("PERSON: %f,%f,%f,%f,%f\n", xPos, yPos, zPos, rot, hp);
-
+			//glScalef(0.01, 0.01, 0.01);
 			Player* p = new Player(objID);
+			//glScalef(10, 10, 10);
+			//add shriner here?
 			p->setPos(xPos, yPos, zPos);
 			p->setRotation(rot);
 			p->setMaxHealth(100);
@@ -209,6 +234,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 			}
 			else{
 				gameObjects.insert(std::pair<int, GameObject*>(objID, p));
+				
 			}
 		}
 
@@ -227,7 +253,11 @@ void PlayState::UpdateClient(ClientGame* client) {
 			Vector3* v1 = new Vector3(x1, y1, z1);
 			Vector3* v2 = new Vector3(x2, y2, z2);
 
-			gameObjects.insert(std::pair<int, GameObject*>(objID, new Building(v1, v2, rot, objID)));
+			b1 = new Building(v1, v2, rot, objID);
+			b1->tex = text_picture;
+			b1->norm = text_normalmap;
+			b1->shade = shader;
+			gameObjects.insert(std::pair<int, GameObject*>(objID,b1));
 
 
 		}
@@ -285,17 +315,113 @@ void PlayState::Update(ClientGame* client) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void drawsomeground() { // deprecate this one day
+void PlayState::drawsomeground() { // deprecate this one day
 	glPushMatrix();
+
+	shader.bind();
+	glActiveTexture(GL_TEXTURE0);
+	glEnable(GL_TEXTURE_2D);
+	int texture_location = glGetUniformLocation(shader.id(), "color_texture");
+	glUniform1i(texture_location, 0);
+	glBindTexture(GL_TEXTURE_2D, floor_picture);
+
+	glActiveTexture(GL_TEXTURE1);
+	glEnable(GL_TEXTURE_2D);
+	int normal_location = glGetUniformLocation(shader.id(), "normal_texture");
+	glUniform1i(normal_location, 1);
+	glBindTexture(GL_TEXTURE_2D, floor_normalmap);
 	//create ground plane
 	glTranslatef(0.f, -1.f, 0.f);
-	glColor3f(0.5f, 0.5f, 0.5f);
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glBegin(GL_QUADS);
-	glNormal3f(0, 1, 0);
-	glVertex3f(-20, 0, -20);
-	glVertex3f(-20, 0, 20);
-	glVertex3f(20, 0, 20);
-	glVertex3f(20, 0, -20);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-180, -1, -180);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(-180, -1, 180);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(180, -1, 180);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(180, -1, -180);
+	glEnd();
+	shader.unbind();
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_TEXTURE_2D);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_TEXTURE_2D);
+
+	glColor3f(1, 1, 1);
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glBindTexture(GL_TEXTURE_2D, photos[0]);
+	glBegin(GL_QUADS);
+	//front
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-180, 158, -180);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(-180, -22, -180);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(180, -22, -180);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(180, 158, -180);
+	glEnd();
+	//back
+	glBindTexture(GL_TEXTURE_2D, photos[1]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(180, 158, 180);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(180, -22, 180);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(-180, -22, 180);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(-180, 158, 180);
+	glEnd();
+
+
+	//right
+	glBindTexture(GL_TEXTURE_2D, photos[2]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(180, 158, -180);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(180, -22, -180);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(180, -22, 180);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(180, 158, 180);
+	glEnd();
+
+	//left
+	glBindTexture(GL_TEXTURE_2D, photos[3]);
+	glBegin(GL_QUADS);
+	glNormal3f(1, 0, 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-180, 158, 180);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(-180, -22, 180);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(-180, -22, -180);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(-180, 158, -180);
+	glEnd();
+
+	//Top
+	glNormal3f(0, -1, 0);
+	glBindTexture(GL_TEXTURE_2D, photos[4]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-180, 158, 180);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(-180, 158, -180);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(180, 158, -180);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(180, 158, 180);
+	//glDisable(GL_TEXTURE_2D);
 	glEnd();
 	glPopMatrix();
 }
@@ -306,29 +432,33 @@ void PlayState::RenderParticles() {
 	glPushMatrix();
 	glTranslatef(100.0f, 0.4f, 100.0f);
 	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
+	glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
 	glScalef(0.3f, 0.3f, 0.3f);
-	g_ParticleEffect1.Render();
+	//g_ParticleEffect1.Render();
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(100.0f, 0.4f, -100.0f);
 	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
+	glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
 	glScalef(0.3f, 0.3f, 0.3f);
-	g_ParticleEffect2.Render();
+	//g_ParticleEffect2.Render();
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(-100.0f, 0.4f, 100.0f);
 	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
+	glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
 	glScalef(0.3f, 0.3f, 0.3f);
-	g_ParticleEffect3.Render();
+	//g_ParticleEffect3.Render();
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(-100.0f, 0.4f, -100.0f);
 	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
+	glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
 	glScalef(0.3f, 0.3f, 0.3f);
-	g_ParticleEffect4.Render();
+	//g_ParticleEffect4.Render();
 	glPopMatrix();
 }
 
@@ -493,4 +623,39 @@ void PlayState::MouseScroll(GLFWwindow* window, double xoffset, double yoffset) 
 	else if (yoffset < 0) {
 		Cam.TranslateZ(-1.0f*rate);
 	}
+}
+
+
+GLuint PlayState::LoadRAWTexture(const char * filename, int width, int height)
+{
+	GLuint texture;
+	unsigned char * data;
+	FILE * file;
+
+	//The following code will read in our RAW file
+	file = fopen(filename, "rb");
+	if (file == NULL) return 0;
+	data = (unsigned char *)malloc(width * height * 3);
+	fread(data, width * height * 3, 1, file);
+	fclose(file);
+
+	glGenTextures(1, &texture); //generate the texture with the loaded data
+	glBindTexture(GL_TEXTURE_2D, texture); //bind the texture to it's array
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE); //set texture environment parameters
+
+	//And if you go and use extensions, you can use Anisotropic filtering textures which are of an
+	//even better quality, but this will do for now.
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	//Here we are setting the parameter to repeat the texture instead of clamping the texture
+	//to the edge of our shape.
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	//Generate the texture
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+	free(data); //free the texture
+
+	return texture; //return whether it was successfull
 }

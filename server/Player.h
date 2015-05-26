@@ -20,6 +20,7 @@ public:
 	bool inRange(GameObject*);
 	void attack(GameObject*);
 	void setAttack(Action*);
+	bool collide(std::vector<GameObject*>* obj, Vector3 dir);
 
 private:
 	unsigned int pid; // corresponds to Client ID
