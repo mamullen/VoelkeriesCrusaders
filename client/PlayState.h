@@ -9,6 +9,32 @@
 #include "Building.h"
 #include "Floor.h"
 
+#include <osg/Node>
+#include <osgDB/ReadFile>
+#include <osgAnimation/BasicAnimationManager>
+#include <osgGA/TrackBallManipulator>
+#include <osgViewer/Viewer>
+
+struct AnimationManagerFinder : public osg::NodeVisitor
+{
+	osg::ref_ptr<osgAnimation::BasicAnimationManager> _am;
+
+	AnimationManagerFinder() { setTraversalMode(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN); }
+
+	void apply(osg::Node& node) {
+
+		if (_am.valid())
+			return;
+
+		if (node.getUpdateCallback()) {
+			_am = dynamic_cast<osgAnimation::BasicAnimationManager*>(node.getUpdateCallback());
+			return;
+		}
+
+		traverse(node);
+	}
+};
+
 class PlayState : public GameState
 {
 public:
@@ -45,6 +71,11 @@ private:
 
 	SphereEmitter g_ParticleEmitter;
 	CubeEmitter g_CubeEmitter;
+
+	osg::ref_ptr<osg::Node> root;
+	osg::ref_ptr<osgViewer::Viewer> viewer;
+	osg::observer_ptr<osgViewer::GraphicsWindow> os_window;
+	AnimationManagerFinder finder;
 };
 
 #endif

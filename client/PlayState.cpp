@@ -31,10 +31,6 @@ int PlayState::InitGL() {
 
 	glfwGetFramebufferSize(window, &WinX, &WinY);
 	ratio = WinX / (float)WinY;
-
-	// Background color
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glEnable(GL_DEPTH_TEST);
 }
 
 int PlayState::Initialize() {
@@ -71,15 +67,29 @@ int PlayState::Initialize() {
 	Cam.SetTranslate(g_DefaultCameraTranslate);
 	Cam.SetRotate(g_DefaultCameraRotate);
 
+	// SunShrine
+	viewer = new osgViewer::Viewer;
+	root = osgDB::readNodeFile("models/RobotAnimation.fbx");
+
+	// Animations
+	root->accept(finder);
+	const osgAnimation::AnimationList& animations = finder._am->getAnimationList();
+	finder._am->playAnimation(animations[0].get());
+
+	os_window = viewer->setUpViewerAsEmbeddedInWindow(100, 100, WinX/2, WinY/2);
+	viewer->setSceneData(root.get());
+	viewer->setCameraManipulator(new osgGA::TrackballManipulator);
+	viewer->realize();
+
 	// Particles
-	if (g_ParticleEffect.LoadTexture("./particles/Textures/star.png"))
+	/*if (g_ParticleEffect.LoadTexture("./particles/Textures/star.png"))
 	{
 		std::cout << "Successfully loaded particle texture." << std::endl;
 	}
 	else
 	{
 		std::cerr << "Failed to load particle texture!" << std::endl;
-	}
+	}*/
 
 	ParticleEffect::ColorInterpolator colors;
 
@@ -101,10 +111,6 @@ int PlayState::Initialize() {
 }
 
 void PlayState::Update() {
-	static ElapsedTime elapsedTime;
-	float fDeltaTime = elapsedTime.GetElapsedTime();
-
-	g_ParticleEffect.Update(fDeltaTime);
 }
 
 void drawsomeground() { // deprecate this one day
@@ -126,12 +132,16 @@ void drawsomeground() { // deprecate this one day
 double lastTime = glfwGetTime();
 
 void PlayState::Draw() {
+	static ElapsedTime elapsedTime;
+	float fDeltaTime = elapsedTime.GetElapsedTime();
+
+	g_ParticleEffect.Update(fDeltaTime);
+
 	if (BothDown) {
 		//player.MoveForward(0.01);
 	}
 
 	// Set up glStuff
-	glViewport(0, 0, WinX, WinY);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Draw components
@@ -141,12 +151,9 @@ void PlayState::Draw() {
 
 	Cam.ApplyViewTransform();
 	drawAxis(10);
+	viewer->frame();
 
-	glPushMatrix();
-	glLoadIdentity();
 	// Begin drawing player and scene
-	g_ParticleEffect.Render();
-	glPopMatrix();
 	
 	glfwSwapBuffers(window);
 	glfwPollEvents();
@@ -258,7 +265,7 @@ void PlayState::MouseMotion(GLFWwindow* window, double xpos, double ypos) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void PlayState::MouseScroll(GLFWwindow* window, double xoffset, double yoffset) {
-	const float rate = 0.1f;
+	const float rate = 1.0f;
 	if (yoffset > 0) {
 		Cam.TranslateZ(1.0f*rate);
 	}
