@@ -31,16 +31,17 @@
 #include <iostream>
 #include <stdlib.h>
 #include "Shrine.h"
-//#include <osg/Node>
-//#include <osg/Group>
-//#include <osg/Geode>
-//#include <osg/Geometry>
-//#include <osg/ValueObject> 
-//#include <osg/Texture2D>
-//#include <osgDB/ReadFile> 
-//#include <osgViewer/Viewer>
-//#include <osg/PositionAttitudeTransform>
-//#include <osgGA/TrackballManipulator>
+#include <osg/Node>
+#include <osg/Group>
+#include <osg/Geode>
+#include <osg/Geometry>
+#include <osgAnimation/BasicAnimationManager>
+#include <osg/ValueObject> 
+#include <osg/Texture2D>
+#include <osgDB/ReadFile> 
+#include <osgViewer/Viewer>
+#include <osg/PositionAttitudeTransform>
+#include <osgGA/TrackballManipulator>
 //#include <fbxsdk/fbxsdk_def.h>
 
 
@@ -103,8 +104,27 @@ private:
 	GLuint floor_picture, floor_normalmap;
 	GLuint skyfront_picture, skyfront_normalmap, skyback_picture, skyback_normalmap, skyleft_picture, skyleft_normalmap, skyright_picture, skyright_normalmap, skytop_picture, skytop_normalmap;
 	bool once;
+	
 };
+struct AnimationManagerFinder : public osg::NodeVisitor
+{
+	osg::ref_ptr<osgAnimation::BasicAnimationManager> _am;
 
+	AnimationManagerFinder() { setTraversalMode(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN); }
+
+	void apply(osg::Node& node) {
+
+		if (_am.valid())
+			return;
+
+		if (node.getUpdateCallback()) {
+			_am = dynamic_cast<osgAnimation::BasicAnimationManager*>(node.getUpdateCallback());
+			return;
+		}
+
+		traverse(node);
+	}
+};
 ////////////////////////////////////////////////////////////////////////////////
 
 #endif

@@ -29,6 +29,15 @@ void GameObject::moveForward()
 	position = position + forward*speed;
 }
 
+void GameObject::jump()
+{
+	if (objectType == 2)
+	{
+
+		position = position + up;
+	}
+}
+
 void GameObject::moveBackward()
 {
 	position = position - forward*speed;

@@ -142,15 +142,15 @@ class OSG_EXPORT State : public Referenced, public Observer
         /** Set the current OpenGL context uniqueID.
          *  The ContextID is used by classes like osg::StateAttribute's and osg::Drawable's to
          *  help manage seperate OpenGL objects, such as display lists, vertex buffer objects
-         *  and texture object for each graphics context. The ContextID simply acts as an index
+         *  and texture object for each graphics context. The ContextID simply acts as an index 
          *  into arrays that these classes maintain for the purpose of storing GL object handles.
-         *
+         * 
          *  Note, osgViewer::GraphicsWindow will automatically set up the ContextID for you,
          *  so you will rearely need to set this yourself.
-         *
+         * 
          *  The exception is when creating your own graphics context, where you should set
          *  the ContextID uniquely for each graphics context.
-         *
+         * 
          *  Typical settings for ContextID are 0,1,2,3... up to the maximum
          *  number of graphics contexts you have set up. By default contextID is 0.
          */
@@ -263,35 +263,14 @@ class OSG_EXPORT State : public Referenced, public Observer
 
         typedef std::vector<VertexAttribAlias> VertexAttribAliasList;
 
-        /** Reset the vertex attribute aliasing to osg's default. This method needs to be called before render anything unless you really know what you're doing !*/
-        void resetVertexAttributeAlias(bool compactAliasing=true);
-
-        /** Set the vertex attribute aliasing for "vertex". This method needs to be called before render anything unless you really know what you're doing !*/
-        void setVertexAlias(const VertexAttribAlias& alias) { _vertexAlias = alias; }
         const VertexAttribAlias& getVertexAlias() { return _vertexAlias; }
-
-        /** Set the vertex attribute aliasing for "normal". This method needs to be called before render anything unless you really know what you're doing !*/
-        void setNormalAlias(const VertexAttribAlias& alias) { _normalAlias = alias; }
         const VertexAttribAlias& getNormalAlias() { return _normalAlias; }
-
-        /** Set the vertex attribute aliasing for "color". This method needs to be called before render anything unless you really know what you're doing !*/
-        void setColorAlias(const VertexAttribAlias& alias) { _colorAlias = alias; }
         const VertexAttribAlias& getColorAlias() { return _colorAlias; }
-
-        /** Set the vertex attribute aliasing for "secondary color". This method needs to be called before render anything unless you really know what you're doing !*/
-        void setSecondaryColorAlias(const VertexAttribAlias& alias) { _secondaryColorAlias = alias; }
         const VertexAttribAlias& getSecondaryColorAlias() { return _secondaryColorAlias; }
-
-        /** Set the vertex attribute aliasing for "fog coord". This method needs to be called before render anything unless you really know what you're doing !*/
-        void setFogCoordAlias(const VertexAttribAlias& alias) { _fogCoordAlias = alias; }
         const VertexAttribAlias& getFogCoordAlias() { return _fogCoordAlias; }
-
-        /** Set the vertex attribute aliasing list for texture coordinates. This method needs to be called before render anything unless you really know what you're doing !*/
-        void setTexCoordAliasList(const VertexAttribAliasList& aliasList) { _texCoordAliasList = aliasList; }
         const VertexAttribAliasList& getTexCoordAliasList() { return _texCoordAliasList; }
 
-        /** Set the vertex attribute binding list. This method needs to be called before render anything unless you really know what you're doing !*/
-        void  setAttributeBindingList(const Program::AttribBindingList& attribBindingList) { _attributeBindingList = attribBindingList; }
+
         const Program::AttribBindingList&  getAttributeBindingList() { return _attributeBindingList; }
 
         bool convertVertexShaderSourceToOsgBuiltIns(std::string& source) const;
@@ -428,8 +407,8 @@ class OSG_EXPORT State : public Referenced, public Observer
         /** Attribute has been applied externally, update state to reflect this setting.*/
         void haveAppliedAttribute(const StateAttribute* attribute);
 
-        /** Attribute has been applied externally,
-          * and therefore this attribute type has been dirtied
+        /** Attribute has been applied externally, 
+          * and therefore this attribute type has been dirtied 
           * and will need to be re-applied on next osg::State.apply(..).
           * note, if you have an osg::StateAttribute which you have applied externally
           * then use the have_applied(attribute) method as this will cause the osg::State to
@@ -635,16 +614,16 @@ class OSG_EXPORT State : public Referenced, public Observer
         {
             if (array)
             {
-                GLBufferObject* vbo = isVertexBufferObjectSupported() ? array->getOrCreateGLBufferObject(_contextID) : 0;
+                GLBufferObject* vbo = array->getOrCreateGLBufferObject(_contextID);
                 if (vbo)
                 {
                     bindVertexBufferObject(vbo);
-                    setVertexPointer(array->getDataSize(),array->getDataType(),0,(const GLvoid *)(vbo->getOffset(array->getBufferIndex())),array->getNormalize());
+                    setVertexPointer(array->getDataSize(),array->getDataType(),0,(const GLvoid *)(vbo->getOffset(array->getBufferIndex())));
                 }
                 else
                 {
                     unbindVertexBufferObject();
-                    setVertexPointer(array->getDataSize(),array->getDataType(),0,array->getDataPointer(),array->getNormalize());
+                    setVertexPointer(array->getDataSize(),array->getDataType(),0,array->getDataPointer());
                 }
             }
         }
@@ -652,12 +631,12 @@ class OSG_EXPORT State : public Referenced, public Observer
         /** wrapper around glEnableClientState(GL_VERTEX_ARRAY);glVertexPointer(..);
           * note, only updates values that change.*/
         inline void setVertexPointer( GLint size, GLenum type,
-                                      GLsizei stride, const GLvoid *ptr, GLboolean normalized=GL_FALSE )
+                                      GLsizei stride, const GLvoid *ptr )
         {
         #ifdef OSG_GL_VERTEX_ARRAY_FUNCS_AVAILABLE
             if (_useVertexAttributeAliasing)
             {
-                setVertexAttribPointer(_vertexAlias._location, size, type, normalized, stride, ptr);
+                setVertexAttribPointer(_vertexAlias._location, size, type, GL_FALSE, stride, ptr);
             }
             else
             {
@@ -673,10 +652,9 @@ class OSG_EXPORT State : public Referenced, public Observer
                 }
                 _vertexArray._lazy_disable = false;
                 _vertexArray._dirty = false;
-                _vertexArray._normalized = normalized;
             }
         #else
-            setVertexAttribPointer(_vertexAlias._location, size, type, normalized, stride, ptr);
+            setVertexAttribPointer(_vertexAlias._location, size, type, GL_FALSE, stride, ptr);
         #endif
         }
 
@@ -727,16 +705,16 @@ class OSG_EXPORT State : public Referenced, public Observer
         {
             if (array)
             {
-                GLBufferObject* vbo = isVertexBufferObjectSupported() ? array->getOrCreateGLBufferObject(_contextID) : 0;
+                GLBufferObject* vbo = array->getOrCreateGLBufferObject(_contextID);
                 if (vbo)
                 {
                     bindVertexBufferObject(vbo);
-                    setNormalPointer(array->getDataType(),0,(const GLvoid *)(vbo->getOffset(array->getBufferIndex())),array->getNormalize());
+                    setNormalPointer(array->getDataType(),0,(const GLvoid *)(vbo->getOffset(array->getBufferIndex())));
                 }
                 else
                 {
                     unbindVertexBufferObject();
-                    setNormalPointer(array->getDataType(),0,array->getDataPointer(),array->getNormalize());
+                    setNormalPointer(array->getDataType(),0,array->getDataPointer());
                 }
             }
         }
@@ -744,12 +722,12 @@ class OSG_EXPORT State : public Referenced, public Observer
         /** wrapper around glEnableClientState(GL_NORMAL_ARRAY);glNormalPointer(..);
           * note, only updates values that change.*/
         inline void setNormalPointer( GLenum type, GLsizei stride,
-                                      const GLvoid *ptr, GLboolean normalized=GL_FALSE )
+                                      const GLvoid *ptr )
         {
         #ifdef OSG_GL_VERTEX_ARRAY_FUNCS_AVAILABLE
             if (_useVertexAttributeAliasing)
             {
-                setVertexAttribPointer(_normalAlias._location, 3, type, normalized, stride, ptr);
+                setVertexAttribPointer(_normalAlias._location, 3, type, GL_FALSE, stride, ptr);
             }
             else
             {
@@ -765,10 +743,9 @@ class OSG_EXPORT State : public Referenced, public Observer
                 }
                 _normalArray._lazy_disable = false;
                 _normalArray._dirty = false;
-                _normalArray._normalized = normalized;
             }
         #else
-            setVertexAttribPointer(_normalAlias._location, 3, type, normalized, stride, ptr);
+            setVertexAttribPointer(_normalAlias._location, 3, type, GL_FALSE, stride, ptr);
         #endif
         }
 
@@ -818,16 +795,16 @@ class OSG_EXPORT State : public Referenced, public Observer
         {
             if (array)
             {
-                GLBufferObject* vbo = isVertexBufferObjectSupported() ? array->getOrCreateGLBufferObject(_contextID) : 0;
+                GLBufferObject* vbo = array->getOrCreateGLBufferObject(_contextID);
                 if (vbo)
                 {
                     bindVertexBufferObject(vbo);
-                    setColorPointer(array->getDataSize(),array->getDataType(),0,(const GLvoid *)(vbo->getOffset(array->getBufferIndex())),array->getNormalize());
+                    setColorPointer(array->getDataSize(),array->getDataType(),0,(const GLvoid *)(vbo->getOffset(array->getBufferIndex())));
                 }
                 else
                 {
                     unbindVertexBufferObject();
-                    setColorPointer(array->getDataSize(),array->getDataType(),0,array->getDataPointer(),array->getNormalize());
+                    setColorPointer(array->getDataSize(),array->getDataType(),0,array->getDataPointer());
                 }
             }
         }
@@ -836,12 +813,12 @@ class OSG_EXPORT State : public Referenced, public Observer
         /** wrapper around glEnableClientState(GL_COLOR_ARRAY);glColorPointer(..);
           * note, only updates values that change.*/
         inline void setColorPointer( GLint size, GLenum type,
-                                     GLsizei stride, const GLvoid *ptr, GLboolean normalized=GL_TRUE )
+                                     GLsizei stride, const GLvoid *ptr )
         {
         #ifdef OSG_GL_VERTEX_ARRAY_FUNCS_AVAILABLE
             if (_useVertexAttributeAliasing)
             {
-                setVertexAttribPointer(_colorAlias._location, size, type, normalized, stride, ptr);
+                setVertexAttribPointer(_colorAlias._location, size, type, GL_FALSE, stride, ptr);
             }
             else
             {
@@ -857,10 +834,9 @@ class OSG_EXPORT State : public Referenced, public Observer
                 }
                 _colorArray._lazy_disable = false;
                 _colorArray._dirty = false;
-                _colorArray._normalized = normalized;
             }
         #else
-            setVertexAttribPointer(_colorAlias._location, size, type, normalized, stride, ptr);
+            setVertexAttribPointer(_colorAlias._location, size, type, GL_FALSE, stride, ptr);
         #endif
         }
 
@@ -914,23 +890,23 @@ class OSG_EXPORT State : public Referenced, public Observer
         {
             if (array)
             {
-                GLBufferObject* vbo = isVertexBufferObjectSupported() ? array->getOrCreateGLBufferObject(_contextID) : 0;
+                GLBufferObject* vbo = array->getOrCreateGLBufferObject(_contextID);
                 if (vbo)
                 {
                     bindVertexBufferObject(vbo);
-                    setSecondaryColorPointer(array->getDataSize(),array->getDataType(),0,(const GLvoid *)(vbo->getOffset(array->getBufferIndex())),array->getNormalize());
+                    setSecondaryColorPointer(array->getDataSize(),array->getDataType(),0,(const GLvoid *)(vbo->getOffset(array->getBufferIndex())));
                 }
                 else
                 {
                     unbindVertexBufferObject();
-                    setSecondaryColorPointer(array->getDataSize(),array->getDataType(),0,array->getDataPointer(),array->getNormalize());
+                    setSecondaryColorPointer(array->getDataSize(),array->getDataType(),0,array->getDataPointer());
                 }
             }
         }
 
         /** wrapper around glEnableClientState(GL_SECONDARY_COLOR_ARRAY);glSecondayColorPointer(..);
           * note, only updates values that change.*/
-        void setSecondaryColorPointer( GLint size, GLenum type, GLsizei stride, const GLvoid *ptr, GLboolean normalized=GL_TRUE );
+        void setSecondaryColorPointer( GLint size, GLenum type, GLsizei stride, const GLvoid *ptr );
 
         /** wrapper around glDisableClientState(GL_SECONDARY_COLOR_ARRAY);
           * note, only updates values that change.*/
@@ -981,16 +957,16 @@ class OSG_EXPORT State : public Referenced, public Observer
         {
             if (array)
             {
-                GLBufferObject* vbo = isVertexBufferObjectSupported() ? array->getOrCreateGLBufferObject(_contextID) : 0;
+                GLBufferObject* vbo = array->getOrCreateGLBufferObject(_contextID);
                 if (vbo)
                 {
                     bindVertexBufferObject(vbo);
-                    setFogCoordPointer(array->getDataType(),0,(const GLvoid *)(vbo->getOffset(array->getBufferIndex())),array->getNormalize());
+                    setFogCoordPointer(array->getDataType(),0,(const GLvoid *)(vbo->getOffset(array->getBufferIndex())));
                 }
                 else
                 {
                     unbindVertexBufferObject();
-                    setFogCoordPointer(array->getDataType(),0,array->getDataPointer(),array->getNormalize());
+                    setFogCoordPointer(array->getDataType(),0,array->getDataPointer());
                 }
             }
         }
@@ -998,7 +974,7 @@ class OSG_EXPORT State : public Referenced, public Observer
 
         /** wrapper around glEnableClientState(GL_FOG_COORDINATE_ARRAY);glFogCoordPointer(..);
           * note, only updates values that change.*/
-        void setFogCoordPointer( GLenum type, GLsizei stride, const GLvoid *ptr, GLboolean normalized=GL_FALSE );
+        void setFogCoordPointer( GLenum type, GLsizei stride, const GLvoid *ptr );
 
         /** wrapper around glDisableClientState(GL_FOG_COORDINATE_ARRAY);
           * note, only updates values that change.*/
@@ -1048,16 +1024,16 @@ class OSG_EXPORT State : public Referenced, public Observer
         {
             if (array)
             {
-                GLBufferObject* vbo = isVertexBufferObjectSupported() ? array->getOrCreateGLBufferObject(_contextID) : 0;
+                GLBufferObject* vbo = array->getOrCreateGLBufferObject(_contextID);
                 if (vbo)
                 {
                     bindVertexBufferObject(vbo);
-                    setTexCoordPointer(unit, array->getDataSize(),array->getDataType(),0, (const GLvoid *)(vbo->getOffset(array->getBufferIndex())),array->getNormalize());
+                    setTexCoordPointer(unit, array->getDataSize(),array->getDataType(),0, (const GLvoid *)(vbo->getOffset(array->getBufferIndex())));
                 }
                 else
                 {
                     unbindVertexBufferObject();
-                    setTexCoordPointer(unit, array->getDataSize(),array->getDataType(),0,array->getDataPointer(),array->getNormalize());
+                    setTexCoordPointer(unit, array->getDataSize(),array->getDataType(),0,array->getDataPointer());
                 }
             }
         }
@@ -1066,12 +1042,12 @@ class OSG_EXPORT State : public Referenced, public Observer
           * note, only updates values that change.*/
         inline void setTexCoordPointer( unsigned int unit,
                                         GLint size, GLenum type,
-                                        GLsizei stride, const GLvoid *ptr, GLboolean normalized=GL_FALSE )
+                                        GLsizei stride, const GLvoid *ptr )
         {
         #ifdef OSG_GL_VERTEX_ARRAY_FUNCS_AVAILABLE
             if (_useVertexAttributeAliasing)
             {
-                setVertexAttribPointer(_texCoordAliasList[unit]._location, size, type, normalized, stride, ptr);
+                setVertexAttribPointer(_texCoordAliasList[unit]._location, size, type, GL_FALSE, stride, ptr);
             }
             else
             {
@@ -1092,11 +1068,10 @@ class OSG_EXPORT State : public Referenced, public Observer
                     }
                     eap._lazy_disable = false;
                     eap._dirty = false;
-                    eap._normalized = normalized;
                 }
             }
         #else
-            setVertexAttribPointer(_texCoordAliasList[unit]._location, size, type, normalized, stride, ptr);
+            setVertexAttribPointer(_texCoordAliasList[unit]._location, size, type, GL_FALSE, stride, ptr);
         #endif
         }
 
@@ -1203,18 +1178,11 @@ class OSG_EXPORT State : public Referenced, public Observer
         }
 
 
-        /// For GL>=2.0 uses GL_MAX_TEXTURE_COORDS, for GL<2 uses GL_MAX_TEXTURE_UNITS
-        inline GLint getMaxTextureCoords() const { return _glMaxTextureCoords; }
-
-        /// For GL>=2.0 uses GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, for GL<2 uses GL_MAX_TEXTURE_UNITS
-        inline GLint getMaxTextureUnits() const { return _glMaxTextureUnits; }
-
-
         /** Set the current texture unit, return true if selected,
           * false if selection failed such as when multi texturing is not supported.
           * note, only updates values that change.*/
         inline bool setActiveTextureUnit( unsigned int unit );
-
+        
         /** Get the current texture unit.*/
         unsigned int getActiveTextureUnit() const { return _currentActiveTextureUnit; }
 
@@ -1227,26 +1195,7 @@ class OSG_EXPORT State : public Referenced, public Observer
         unsigned int getClientActiveTextureUnit() const { return _currentClientActiveTextureUnit; }
 
         /** Set the vertex attrib pointer using an osg::Array, and manage any VBO that are required.*/
-        inline void setVertexAttribPointer(unsigned int unit, const Array* array)
-        {
-            if (array)
-            {
-                GLBufferObject* vbo = isVertexBufferObjectSupported() ? array->getOrCreateGLBufferObject(_contextID) : 0;
-                if (vbo)
-                {
-                    bindVertexBufferObject(vbo);
-                    setVertexAttribPointer(unit, array->getDataSize(),array->getDataType(),array->getNormalize(),0,(const GLvoid *)(vbo->getOffset(array->getBufferIndex())));
-                }
-                else
-                {
-                    unbindVertexBufferObject();
-                    setVertexAttribPointer(unit, array->getDataSize(),array->getDataType(),array->getNormalize(),0,array->getDataPointer());
-                }
-            }
-        }
-
-        /** Set the vertex attrib pointer using an osg::Array, and manage any VBO that are required.*/
-        inline void setVertexAttribLPointer(unsigned int unit, const Array* array)
+        inline void setVertexAttribPointer(unsigned int unit, const Array* array, GLboolean normalized)
         {
             if (array)
             {
@@ -1254,31 +1203,12 @@ class OSG_EXPORT State : public Referenced, public Observer
                 if (vbo)
                 {
                     bindVertexBufferObject(vbo);
-                    setVertexAttribLPointer(unit, array->getDataSize(),array->getDataType(),0,(const GLvoid *)(vbo->getOffset(array->getBufferIndex())));
+                    setVertexAttribPointer(unit, array->getDataSize(),array->getDataType(),normalized,0,(const GLvoid *)(vbo->getOffset(array->getBufferIndex())));
                 }
                 else
                 {
                     unbindVertexBufferObject();
-                    setVertexAttribLPointer(unit, array->getDataSize(),array->getDataType(),0,array->getDataPointer());
-                }
-            }
-        }
-
-        /** Set the vertex attrib pointer using an osg::Array, and manage any VBO that are required.*/
-        inline void setVertexAttribIPointer(unsigned int unit, const Array* array)
-        {
-            if (array)
-            {
-                GLBufferObject* vbo = array->getOrCreateGLBufferObject(_contextID);
-                if (vbo)
-                {
-                    bindVertexBufferObject(vbo);
-                    setVertexAttribIPointer(unit, array->getDataSize(),array->getDataType(),0,(const GLvoid *)(vbo->getOffset(array->getBufferIndex())));
-                }
-                else
-                {
-                    unbindVertexBufferObject();
-                    setVertexAttribIPointer(unit, array->getDataSize(),array->getDataType(),0,array->getDataPointer());
+                    setVertexAttribPointer(unit, array->getDataSize(),array->getDataType(),normalized,0,array->getDataPointer());
                 }
             }
         }
@@ -1288,18 +1218,6 @@ class OSG_EXPORT State : public Referenced, public Observer
         void setVertexAttribPointer( unsigned int index,
                                      GLint size, GLenum type, GLboolean normalized,
                                      GLsizei stride, const GLvoid *ptr );
-
-        /** wrapper around glEnableVertexAttribArrayARB(index);glVertexAttribIPointer(..);
-          * note, only updates values that change.*/
-        void setVertexAttribIPointer( unsigned int index,
-                                      GLint size, GLenum type,
-                                      GLsizei stride, const GLvoid *ptr );
-
-        /** wrapper around glEnableVertexAttribArrayARB(index);glVertexAttribLPointer(..);
-          * note, only updates values that change.*/
-        void setVertexAttribLPointer( unsigned int index,
-                                      GLint size, GLenum type,
-                                      GLsizei stride, const GLvoid *ptr );
 
         /** wrapper around DisableVertexAttribArrayARB(index);
           * note, only updates values that change.*/
@@ -1336,6 +1254,11 @@ class OSG_EXPORT State : public Referenced, public Observer
             if (_lastAppliedProgramObject!=program)
             {
                 _lastAppliedProgramObject = program;
+                if (program && _appliedProgramObjectSet.count(program)==0)
+                {
+                    _appliedProgramObjectSet.insert(program);
+                    program->addObserver(this);
+                }
             }
         }
         inline const Program::PerContextProgram* getLastAppliedProgramObject() const { return _lastAppliedProgramObject; }
@@ -1345,8 +1268,8 @@ class OSG_EXPORT State : public Referenced, public Observer
           * Alternative version of getUniformLocation( unsigned int uniformNameID )
           * retrofited into OSG for backward compatibility with osgCal,
           * after uniform ids were refactored from std::strings to GLints in OSG version 2.9.10.
-          *
-          * Drawbacks: This method is not particularly fast. It has to access mutexed static
+          * 
+          * Drawbacks: This method is not particularly fast. It has to access mutexed static 
           * map of uniform ids. So don't overuse it or your app performance will suffer.
         */
         inline GLint getUniformLocation( const std::string & uniformName ) const { return _lastAppliedProgramObject ? _lastAppliedProgramObject->getUniformLocation(uniformName) : -1; }
@@ -1415,8 +1338,8 @@ class OSG_EXPORT State : public Referenced, public Observer
 
         /** Get the number of dynamic objects that will be rendered in this graphics context this frame.*/
         unsigned int getDynamicObjectCount() const { return _dynamicObjectCount; }
-
-        /** Decrement the number of dynamic objects left to render this frame, and once the count goes to zero call the
+        
+        /** Decrement the number of dynamic objects left to render this frame, and once the count goes to zero call the 
           * DynamicObjectRenderingCompletedCallback to inform of completion.*/
         inline void decrementDynamicObjectCount()
         {
@@ -1587,7 +1510,7 @@ class OSG_EXPORT State : public Referenced, public Observer
                 last_applied_attribute = 0L;
                 last_applied_shadercomponent = 0L;
                 global_default_attribute = 0L;
-
+                
             }
 
             void print(std::ostream& fout) const;
@@ -1891,8 +1814,6 @@ class OSG_EXPORT State : public Referenced, public Observer
         typedef void (GL_APIENTRY * VertexAttrib4fProc)(GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
         typedef void (GL_APIENTRY * VertexAttrib4fvProc)(GLuint index, const GLfloat *v);
         typedef void (GL_APIENTRY * VertexAttribPointerProc) (unsigned int, GLint, GLenum, GLboolean normalized, GLsizei stride, const GLvoid *pointer);
-        typedef void (GL_APIENTRY * VertexAttribIPointerProc) (unsigned int, GLint, GLenum, GLsizei stride, const GLvoid *pointer);
-        typedef void (GL_APIENTRY * VertexAttribLPointerProc) (unsigned int, GLint, GLenum, GLsizei stride, const GLvoid *pointer);
         typedef void (GL_APIENTRY * EnableVertexAttribProc) (unsigned int);
         typedef void (GL_APIENTRY * DisableVertexAttribProc) (unsigned int);
         typedef void (GL_APIENTRY * BindBufferProc) (GLenum target, GLuint buffer);
@@ -1911,8 +1832,6 @@ class OSG_EXPORT State : public Referenced, public Observer
         FogCoordPointerProc         _glFogCoordPointer;
         SecondaryColorPointerProc   _glSecondaryColorPointer;
         VertexAttribPointerProc     _glVertexAttribPointer;
-        VertexAttribIPointerProc    _glVertexAttribIPointer;
-        VertexAttribLPointerProc    _glVertexAttribLPointer;
         EnableVertexAttribProc      _glEnableVertexAttribArray;
         DisableVertexAttribProc     _glDisableVertexAttribArray;
         BindBufferProc              _glBindBuffer;
@@ -1926,7 +1845,7 @@ class OSG_EXPORT State : public Referenced, public Observer
         ArrayDispatchers            _arrayDispatchers;
 
         osg::ref_ptr<GraphicsCostEstimator> _graphicsCostEstimator;
-
+        
         Timer_t                      _startTick;
         Timer_t                      _gpuTick;
         GLuint64EXT                 _gpuTimestamp;

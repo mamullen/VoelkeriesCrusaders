@@ -1,4 +1,4 @@
-/* -*-c++-*- OpenSceneGraph - Copyright (C) 1998-2006 Robert Osfield
+/* -*-c++-*- OpenSceneGraph - Copyright (C) 1998-2006 Robert Osfield 
  * Copyright (C) 2003-2005 3Dlabs Inc. Ltd.
  * Copyright (C) 2004-2005 Nathan Cournia
  * Copyright (C) 2008 Zebra Imaging
@@ -7,7 +7,7 @@
  * This application is open source and may be redistributed and/or modified
  * freely and without restriction, both in commercial and non commercial
  * applications, as long as this copyright notice is maintained.
- *
+ * 
  * This application is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -99,13 +99,12 @@ class OSG_EXPORT Program : public osg::StateAttribute
         void setParameter( GLenum pname, GLint value );
         GLint getParameter( GLenum pname ) const;
 
-        /** Set/get compute shader work groups */
-        void setComputeGroups( GLint numGroupsX, GLint numGroupsY, GLint numGroupsZ );
-        void getComputeGroups( GLint& numGroupsX, GLint& numGroupsY, GLint& numGroupsZ ) const;
+        void setParameterfv( GLenum pname, const GLfloat* value );
+        const GLfloat* getParameterfv( GLenum pname ) const;
 
         /** Add an attribute location binding. */
         void addBindAttribLocation( const std::string& name, GLuint index );
-
+        
         /** Remove an attribute location binding. */
         void removeBindAttribLocation( const std::string& name );
 
@@ -155,7 +154,7 @@ class OSG_EXPORT Program : public osg::StateAttribute
                 GLenum getFormat() const {return _format;}
 
                 /** Get the size of the program binary data.*/
-                unsigned int getSize() const { return static_cast<unsigned int>(_data.size()); }
+                unsigned int getSize() const { return _data.size(); }
 
                 /** Get a ptr to the program binary data.*/
                 unsigned char* getData() { return _data.empty() ? 0 : &(_data.front()); }
@@ -172,13 +171,13 @@ class OSG_EXPORT Program : public osg::StateAttribute
         /** Set the Program using a ProgramBinary. If a ProgramBinary is not yet
          * available then setting an empty one signals that compileProgramBinary
          * will be called later.*/
-        void setProgramBinary(ProgramBinary* programBinary) { _programBinary = programBinary; }
+        void setProgramBinary(ProgramBinary* programBinary) { _programBinary = programBinary; } 
 
         /** Get the Program's ProgramBinary, return NULL if none is assigned. */
-        ProgramBinary* getProgramBinary() { return _programBinary.get(); }
+        ProgramBinary* getProgramBinary() { return _programBinary.get(); } 
 
         /** Get the const Program's ProgramBinary, return NULL if none is assigned. */
-        const ProgramBinary* getProgramBinary() const { return _programBinary.get(); }
+        const ProgramBinary* getProgramBinary() const { return _programBinary.get(); } 
 
         typedef std::map<std::string,GLuint> AttribBindingList;
         typedef std::map<std::string,GLuint> FragDataBindingList;
@@ -243,17 +242,16 @@ class OSG_EXPORT Program : public osg::StateAttribute
         class OSG_EXPORT PerContextProgram : public osg::Referenced
         {
             public:
-                /** Use "0" as programHandle to let the PeContextProgram execute "glCreateProgram"and "glDeleteProgram" */
-                PerContextProgram(const Program* program, unsigned int contextID, GLuint programHandle=0);
+                PerContextProgram(const Program* program, unsigned int contextID);
 
                 GLuint getHandle() const {return _glProgramHandle;}
 
                 void requestLink();
-                virtual void linkProgram(osg::State& state);
-                virtual bool validateProgram();
+                void linkProgram(osg::State& state);
+                bool validateProgram();
                 bool needsLink() const {return _needsLink;}
                 bool isLinked() const {return _isLinked;}
-                virtual bool getInfoLog( std::string& infoLog ) const;
+                bool getInfoLog( std::string& infoLog ) const;
 
                 /** Was glProgramBinary called successfully? */
                 bool loadedBinary() const {return _loadedBinary;}
@@ -264,21 +262,28 @@ class OSG_EXPORT Program : public osg::StateAttribute
                  * compileProgramBinary should be called after the program has been
                  * "exercised" by rendering with it. The ProgramBinary can then be saved
                  * to disk for faster subsequent compiling. */
-                virtual ProgramBinary* compileProgramBinary(osg::State& state);
+                ProgramBinary* compileProgramBinary(osg::State& state);
 
-                virtual void useProgram() const;
+                void useProgram() const;
 
                 void resetAppliedUniforms() const
                 {
-                    _lastAppliedUniformList.clear();
+                    for(LastAppliedUniformList::iterator itr=_lastAppliedUniformList.begin();
+                        itr!=_lastAppliedUniformList.end();
+                        ++itr)
+                    {
+                        (*itr).first = 0;
+                        (*itr).second = 0;
+                    }
                 }
-
-
+                
+                
                 inline void apply(const Uniform& uniform) const
                 {
                     GLint location = getUniformLocation(uniform.getNameID());
                     if (location>=0)
                     {
+                        if ((unsigned int)location>=_lastAppliedUniformList.size()) _lastAppliedUniformList.resize(location+1);
                         const Uniform* lastAppliedUniform = _lastAppliedUniformList[location].first.get();
                         if (lastAppliedUniform != &uniform)
                         {
@@ -306,8 +311,8 @@ class OSG_EXPORT Program : public osg::StateAttribute
                   * Alternative version of getUniformLocation( unsigned int uniformNameID )
                   * retrofited into OSG for backward compatibility with osgCal,
                   * after uniform ids were refactored from std::strings to GLints in OSG version 2.9.10.
-                  *
-                  * Drawbacks: This method is not particularly fast. It has to access mutexed static
+                  * 
+                  * Drawbacks: This method is not particularly fast. It has to access mutexed static 
                   * map of uniform ids. So don't overuse it or your app performance will suffer.
                 */
                 inline GLint getUniformLocation( const std::string & uniformName ) const { return getUniformLocation( Uniform::getNameID( uniformName ) ); }
@@ -323,9 +328,9 @@ class OSG_EXPORT Program : public osg::StateAttribute
                 {
                     _shadersToDetach.push_back(shader);
                 }
-
+      
             protected:        /*methods*/
-                virtual ~PerContextProgram();
+                ~PerContextProgram();
 
             protected:        /*data*/
                 /** Pointer to our parent Program */
@@ -340,20 +345,16 @@ class OSG_EXPORT Program : public osg::StateAttribute
                 bool _isLinked;
                 /** Was glProgramBinary called successfully? */
                 bool _loadedBinary;
-
                 const unsigned int _contextID;
-                
-                /** Does the glProgram handle belongs to this class? */
-                bool _ownsProgramHandle;
 
                 ActiveUniformMap _uniformInfoMap;
                 ActiveVarInfoMap _attribInfoMap;
                 UniformBlockMap _uniformBlockMap;
-
+                
                 typedef std::pair<osg::ref_ptr<const osg::Uniform>, unsigned int> UniformModifiedCountPair;
-                typedef std::map<unsigned int, UniformModifiedCountPair> LastAppliedUniformList;
+                typedef std::vector<UniformModifiedCountPair> LastAppliedUniformList;
                 mutable LastAppliedUniformList _lastAppliedUniformList;
-
+      
                 typedef std::vector< ref_ptr<Shader> > ShaderList;
                 ShaderList _shadersToDetach;
                 ShaderList _shadersToAttach;
@@ -387,11 +388,13 @@ class OSG_EXPORT Program : public osg::StateAttribute
         GLint _geometryInputType;
         GLint _geometryOutputType;
 
+        /** Parameter maintained with glPatchParameteri */
+        GLint _patchVertices;
 
-        /** Parameter maintained with glDispatchCompute */
-        GLint _numGroupsX;
-        GLint _numGroupsY;
-        GLint _numGroupsZ;
+        /** Parameter maintained with glPatchParameterfv */
+        // todo add tessellation default level
+        //GLfloat _patchDefaultInnerLevel[2];
+        //GLfloat _patchDefaultOuterLevel[4];
 
     private:
         Program& operator=(const Program&);        // disallowed

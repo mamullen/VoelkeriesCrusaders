@@ -1,13 +1,13 @@
-/* -*-c++-*- OpenSceneGraph - Copyright (C) 1998-2006 Robert Osfield
+/* -*-c++-*- OpenSceneGraph - Copyright (C) 1998-2006 Robert Osfield 
  *
- * This library is open source and may be redistributed and/or modified under
- * the terms of the OpenSceneGraph Public License (OSGPL) version 0.0 or
+ * This library is open source and may be redistributed and/or modified under  
+ * the terms of the OpenSceneGraph Public License (OSGPL) version 0.0 or 
  * (at your option) any later version.  The full license is in LICENSE file
  * included with this distribution, and on the openscenegraph.org website.
- *
+ * 
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
  * OpenSceneGraph Public License for more details.
 */
 
@@ -38,11 +38,11 @@ class Options;
 class OSGDB_EXPORT ReaderWriter : public osg::Object
 {
     public:
-
-
+    
+    
         ReaderWriter():
             osg::Object(true) {}
-
+            
         ReaderWriter(const ReaderWriter& rw,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY):
             osg::Object(rw,copyop) {}
 
@@ -64,18 +64,16 @@ class OSGDB_EXPORT ReaderWriter : public osg::Object
 
         /** Return true if ReaderWriter accepts specified file extension.*/
         virtual bool acceptsExtension(const std::string& /*extension*/) const;
-        
-        virtual bool acceptsProtocol(const std::string& protocol) const;
 
         /// Bit mask for setting up which feature types are available for read and/or write
         enum Features
         {
             FEATURE_NONE               = 0,
             FEATURE_READ_OBJECT        = 1<<0,
-            FEATURE_READ_IMAGE         = 1<<1,
+            FEATURE_READ_IMAGE         = 1<<1, 
             FEATURE_READ_HEIGHT_FIELD  = 1<<2,
-            FEATURE_READ_NODE          = 1<<3,
-            FEATURE_READ_SHADER        = 1<<4,
+            FEATURE_READ_NODE          = 1<<3, 
+            FEATURE_READ_SHADER        = 1<<4, 
             FEATURE_WRITE_OBJECT       = 1<<5,
             FEATURE_WRITE_IMAGE        = 1<<6,
             FEATURE_WRITE_HEIGHT_FIELD = 1<<7,
@@ -90,8 +88,8 @@ class OSGDB_EXPORT ReaderWriter : public osg::Object
                                          FEATURE_WRITE_IMAGE        |
                                          FEATURE_WRITE_HEIGHT_FIELD |
                                          FEATURE_WRITE_NODE         |
-                                         FEATURE_WRITE_SHADER
-        };
+                                         FEATURE_WRITE_SHADER       
+        };    
         /** Return available features*/
         virtual Features supportedFeatures() const;
 
@@ -109,9 +107,9 @@ class OSGDB_EXPORT ReaderWriter : public osg::Object
                     NOT_IMPLEMENTED, //!< read*() method not implemented in concrete ReaderWriter.
                     FILE_NOT_HANDLED, //!< File is not appropriate for this file reader, due to some incompatibility, but *not* a read error.
                     FILE_NOT_FOUND, //!< File could not be found or could not be read.
-                    ERROR_IN_READING_FILE, //!< File found, loaded, but an error was encountered during processing.
                     FILE_LOADED, //!< File successfully found, loaded, and converted into osg.
                     FILE_LOADED_FROM_CACHE, //!< File found in cache and returned.
+                    ERROR_IN_READING_FILE, //!< File found, loaded, but an error was encountered during processing.
                     FILE_REQUESTED, //!< Asynchronous file read has been requested, but returning immediately, keep polling plugin until file read has been completed.
                     INSUFFICIENT_MEMORY_TO_LOAD //!< File found but not loaded because estimated required memory surpasses available memory.
                 };
@@ -119,11 +117,9 @@ class OSGDB_EXPORT ReaderWriter : public osg::Object
                 ReadResult(ReadStatus status=FILE_NOT_HANDLED):_status(status) {}
                 ReadResult(const std::string& m):_status(ERROR_IN_READING_FILE),_message(m) {}
                 ReadResult(osg::Object* obj, ReadStatus status=FILE_LOADED):_status(status),_object(obj) {}
-
+                
                 ReadResult(const ReadResult& rr):_status(rr._status),_message(rr._message),_object(rr._object) {}
                 ReadResult& operator = (const ReadResult& rr) { if (this==&rr) return *this; _status=rr._status; _message=rr._message;_object=rr._object; return *this; }
-
-                bool operator < (const ReadResult& rhs) const { return _status < rhs._status; }
                 
                 osg::Object* getObject();
                 osg::Image* getImage();
@@ -158,7 +154,7 @@ class OSGDB_EXPORT ReaderWriter : public osg::Object
                 bool notEnoughMemory() const { return _status==INSUFFICIENT_MEMORY_TO_LOAD; }
 
             protected:
-
+            
                 ReadStatus                  _status;
                 std::string                 _message;
                 osg::ref_ptr<osg::Object>   _object;
@@ -173,18 +169,16 @@ class OSGDB_EXPORT ReaderWriter : public osg::Object
                 {
                     NOT_IMPLEMENTED, //!< write*() method not implemented in concrete ReaderWriter.
                     FILE_NOT_HANDLED,
-                    ERROR_IN_WRITING_FILE,
-                    FILE_SAVED
+                    FILE_SAVED,
+                    ERROR_IN_WRITING_FILE
                 };
 
                 WriteResult(WriteStatus status=FILE_NOT_HANDLED):_status(status) {}
                 WriteResult(const std::string& m):_status(ERROR_IN_WRITING_FILE),_message(m) {}
-
+                
                 WriteResult(const WriteResult& rr):_status(rr._status),_message(rr._message) {}
                 WriteResult& operator = (const WriteResult& rr) { if (this==&rr) return *this; _status=rr._status; _message=rr._message; return *this; }
-
-                bool operator < (const WriteResult& rhs) const { return _status < rhs._status; }
-
+                
                 std::string& message() { return _message; }
                 const std::string& message() const { return _message; }
 
@@ -194,7 +188,7 @@ class OSGDB_EXPORT ReaderWriter : public osg::Object
                 bool notHandled() const { return _status==FILE_NOT_HANDLED || _status==NOT_IMPLEMENTED; }
 
             protected:
-
+            
                 WriteStatus                 _status;
                 std::string                 _message;
         };

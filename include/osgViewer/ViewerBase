@@ -107,14 +107,6 @@ class OSGVIEWER_EXPORT ViewerBase : public virtual osg::Object
         /** Get the end barrier position.*/
         BarrierPosition getEndBarrierPosition() const { return _endBarrierPosition; }
 
-        /** Set the end barrier operation. \c op may be one of GL_FLUSH, GL_FINISH,
-         * or NO_OPERATION. NO_OPERATION is the default. Per BarrierOperation::operator()(),
-         * a glFlush() command, glFinish() command, or no additional OpenGL command will be
-         * issued before entering the end barrier. */
-        void setEndBarrierOperation(osg::BarrierOperation::PreBlockOp op);
-
-        /** Get the end barrier operation. */
-        osg::BarrierOperation::PreBlockOp getEndBarrierOperation() const { return _endBarrierOperation; }
 
 
         /** Set the done flag to signal the viewer's work is done and should exit the frame loop.*/
@@ -224,9 +216,6 @@ class OSGVIEWER_EXPORT ViewerBase : public virtual osg::Object
 
         /** check to see if the new frame is required, called by run(..) when FrameScheme is set to ON_DEMAND.*/
         virtual bool checkNeedToDoFrame() = 0;
-        
-        /** check to see if events have been received, return true if events are now available.*/
-        virtual bool checkEvents() = 0;
 
         /** Render a complete new frame.
           * Calls advance(), eventTraversal(), updateTraversal(), renderingTraversals(). */
@@ -320,7 +309,6 @@ class OSGVIEWER_EXPORT ViewerBase : public virtual osg::Object
 
 
         BarrierPosition                                     _endBarrierPosition;
-        osg::BarrierOperation::PreBlockOp                   _endBarrierOperation;
 
         osg::ref_ptr<osg::BarrierOperation>                 _startRenderingBarrier;
         osg::ref_ptr<osg::BarrierOperation>                 _endRenderingDispatchBarrier;

@@ -21,7 +21,8 @@
 namespace osgManipulator {
 
 /**
- * Translate plane dragger consists of a wireframe box representing a plane that can be dragged to translate along the plane.
+ * Tab plane dragger consists of a plane with tabs on it's corners and edges
+ * for scaling. And the plane is used as a 2D translate dragger.
  */
 class OSGMANIPULATOR_EXPORT TranslatePlaneDragger : public CompositeDragger
 {

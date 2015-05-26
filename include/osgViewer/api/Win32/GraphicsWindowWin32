@@ -58,7 +58,7 @@ class OSGVIEWER_EXPORT GraphicsWindowWin32 : public osgViewer::GraphicsWindow, p
         virtual void swapBuffersImplementation();
         
         /** Check to see if any events have been generated.*/
-        virtual bool checkEvents();
+        virtual void checkEvents();
 
         /** Set the window's position and size.*/
         virtual bool setWindowRectangleImplementation(int x, int y, int width, int height);
@@ -182,8 +182,6 @@ class OSGVIEWER_EXPORT GraphicsWindowWin32 : public osgViewer::GraphicsWindow, p
         std::map<MouseCursor,HCURSOR> _mouseCursorMap;
 
         std::map<std::pair<int, int>, bool> _keyMap;
-
-        std::set<int> _capturedMouseButtons;
 
         bool   _applyWorkaroundForMultimonitorMultithreadNVidiaWin32Issues;
 };

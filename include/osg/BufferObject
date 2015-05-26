@@ -1,11 +1,10 @@
 /* -*-c++-*- OpenSceneGraph - Copyright (C) 1998-2006 Robert Osfield
- * Copyright (C) 2012 David Callu
  *
  * This library is open source and may be redistributed and/or modified under
  * the terms of the OpenSceneGraph Public License (OSGPL) version 0.0 or
  * (at your option) any later version.  The full license is in LICENSE file
  * included with this distribution, and on the openscenegraph.org website.
- *
+ * 
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -24,36 +23,21 @@
 #include <list>
 #include <map>
 
-// identify GLES 1.1
-#if (defined(GL_VERSION_ES_CM_1_0) && GL_VERSION_ES_CM_1_0 > 0) || \
-    (defined(GL_VERSION_ES_CM_1_1) && GL_VERSION_ES_CM_1_1 > 0)
-
-    #define OPENGLES_1_1_FOUND 1
-
-#endif
-
-// for compatibility with gl.h headers that don't support VBO,
-//GL_VERSION_1_5 and GL_ARB_vertex_buffer_object provide these types for OpenGL
-//all ES versions except GL_OES_VERSION_1_0 provide these types for OpenGL ES
-#if !defined(GL_VERSION_1_5) && !defined(GL_ARB_vertex_buffer_object) \
-  && !defined(GL_ES_VERSION_2_0) && !defined(OPENGLES_1_1_FOUND)
-    #if defined(_WIN64)
-        typedef __int64 GLintptr;
-        typedef __int64 GLsizeiptr;
-    #elif defined(__ia64__) || defined(__x86_64__) || defined(ANDROID)
-        typedef long int GLintptr;
-        typedef long int GLsizeiptr;
-    #else
-        typedef int GLintptr;
-        typedef int GLsizeiptr;
-    #endif
-#endif
-
 #ifndef GL_ARB_vertex_buffer_object
+
     #define GL_ARB_vertex_buffer_object
 
-    typedef GLintptr GLintptrARB;
-    typedef GLsizeiptr GLsizeiptrARB;
+    // for compatibility with gl.h headers that don't support VBO,
+    #if defined(_WIN64)
+        typedef __int64 GLintptrARB;
+        typedef __int64 GLsizeiptrARB;
+    #elif defined(__ia64__) || defined(__x86_64__)
+        typedef long int GLintptrARB;
+        typedef long int GLsizeiptrARB;
+    #else
+        typedef int GLintptrARB;
+        typedef int GLsizeiptrARB;
+    #endif
 
     #define GL_ARRAY_BUFFER_ARB               0x8892
     #define GL_ELEMENT_ARRAY_BUFFER_ARB       0x8893
@@ -86,9 +70,21 @@
     #define GL_BUFFER_ACCESS_ARB              0x88BB
     #define GL_BUFFER_MAPPED_ARB              0x88BC
     #define GL_BUFFER_MAP_POINTER_ARB         0x88BD
+
 #endif
 
 #ifndef GL_VERSION_1_5
+    #if defined(_WIN64)
+        typedef __int64 GLintptr;
+        typedef __int64 GLsizeiptr;
+    #elif defined(__ia64__) || defined(__x86_64__) || defined(ANDROID)
+        typedef long int GLintptr;
+        typedef long int GLsizeiptr;
+    #else
+        typedef int GLintptr;
+        typedef int GLsizeiptr;
+    #endif
+
     #define GL_STREAM_DRAW                    0x88E0
     #define GL_STREAM_READ                    0x88E1
     #define GL_STREAM_COPY                    0x88E2
@@ -115,7 +111,7 @@
     #define GL_PIXEL_UNPACK_BUFFER_BINDING_ARB  0x88EF
 #endif
 
-namespace osg
+namespace osg 
 {
 
 class State;
@@ -194,10 +190,9 @@ class OSG_EXPORT GLBufferObject : public Referenced
 
         struct BufferEntry
         {
-            BufferEntry(): numRead(0), modifiedCount(0),dataSize(0),offset(0),dataSource(0) {}
+            BufferEntry(): modifiedCount(0),dataSize(0),offset(0),dataSource(0) {}
 
             BufferEntry(const BufferEntry& rhs):
-                numRead(rhs.numRead),
                 modifiedCount(rhs.modifiedCount),
                 dataSize(rhs.dataSize),
                 offset(rhs.offset),
@@ -206,7 +201,6 @@ class OSG_EXPORT GLBufferObject : public Referenced
             BufferEntry& operator = (const BufferEntry& rhs)
             {
                 if (&rhs==this) return *this;
-                numRead = rhs.numRead;
                 modifiedCount = rhs.modifiedCount;
                 dataSize = rhs.dataSize;
                 offset = rhs.offset;
@@ -214,9 +208,6 @@ class OSG_EXPORT GLBufferObject : public Referenced
                 return *this;
             }
 
-            unsigned int getNumClients() const;
-
-            unsigned int        numRead;
             unsigned int        modifiedCount;
             unsigned int        dataSize;
             unsigned int        offset;
@@ -232,7 +223,7 @@ class OSG_EXPORT GLBufferObject : public Referenced
         inline void bindBuffer();
 
         inline void unbindBuffer()
-        {
+        { 
             _extensions->glBindBuffer(_profile._target,0);
         }
 
@@ -276,7 +267,6 @@ class OSG_EXPORT GLBufferObject : public Referenced
             bool isBufferObjectSupported() const { return _glGenBuffers!=0; }
             bool isPBOSupported() const { return _isPBOSupported; }
             bool isUniformBufferObjectSupported() const { return _isUniformBufferObjectSupported; }
-            bool isTBOSupported() const { return _isTBOSupported; }
 
             void glGenBuffers (GLsizei n, GLuint *buffers) const;
             void glBindBuffer (GLenum target, GLuint buffer) const;
@@ -291,7 +281,6 @@ class OSG_EXPORT GLBufferObject : public Referenced
             void glGetBufferPointerv (GLenum target, GLenum pname, GLvoid* *params) const;
             void glBindBufferRange (GLenum target, GLuint index, GLuint buffer, GLintptr offset, GLsizeiptr size);
             void glBindBufferBase (GLenum target, GLuint index, GLuint buffer);
-            void glTexBuffer( GLenum target, GLenum internalFormat, GLuint buffer ) const;
 
         protected:
 
@@ -308,7 +297,6 @@ class OSG_EXPORT GLBufferObject : public Referenced
             typedef void (GL_APIENTRY * GetBufferPointervProc) (GLenum target, GLenum pname, GLvoid* *params);
             typedef void (GL_APIENTRY * BindBufferRangeProc) (GLenum target, GLuint index, GLuint buffer, GLintptr offset, GLsizeiptr size);
             typedef void (GL_APIENTRY * BindBufferBaseProc) (GLenum target, GLuint index, GLuint buffer);
-            typedef void (GL_APIENTRY *TexBufferProc ) ( GLenum target, GLenum internalFormat, GLuint buffer );
 
 
             GenBuffersProc          _glGenBuffers;
@@ -324,17 +312,15 @@ class OSG_EXPORT GLBufferObject : public Referenced
             GetBufferPointervProc   _glGetBufferPointerv;
             BindBufferRangeProc     _glBindBufferRange;
             BindBufferBaseProc      _glBindBufferBase;
-            TexBufferProc           _glTexBuffer;
 
             bool _isPBOSupported;
             bool _isUniformBufferObjectSupported;
-            bool _isTBOSupported;
         };
 
         /** Function to call to get the extension of a specified context.
-        * If the Extension object for that context has not yet been created
+        * If the Extension object for that context has not yet been created  
         * and the 'createIfNotInitalized' flag been set to false then returns NULL.
-        * If 'createIfNotInitalized' is true then the Extensions object is
+        * If 'createIfNotInitalized' is true then the Extensions object is 
         * automatically created.  However, in this case the extension object is
         * only created with the graphics context associated with ContextID..*/
         static Extensions* getExtensions(unsigned int contextID,bool createIfNotInitalized);
@@ -343,10 +329,6 @@ class OSG_EXPORT GLBufferObject : public Referenced
         * typically used when you have different extensions supported across graphics pipes
         * but need to ensure that they all use the same low common denominator extensions.*/
         static void setExtensions(unsigned int contextID,Extensions* extensions);
-
-        bool hasAllBufferDataBeenRead() const;
-
-        void setBufferDataHasBeenRead(const osg::BufferData* bd);
 
     protected:
 
@@ -420,8 +402,8 @@ class OSG_EXPORT GLBufferObjectSet : public Referenced
 
         unsigned int computeNumGLBufferObjectsInList() const;
         unsigned int getNumOfGLBufferObjects() const { return _numOfGLBufferObjects; }
-        unsigned int getNumOrphans() const { return static_cast<unsigned int>(_orphanedGLBufferObjects.size()); }
-        unsigned int getNumPendingOrphans() const { return static_cast<unsigned int>(_pendingOrphanedGLBufferObjects.size()); }
+        unsigned int getNumOrphans() const { return _orphanedGLBufferObjects.size(); }
+        unsigned int getNumPendingOrphans() const { return _pendingOrphanedGLBufferObjects.size(); }
 
 
     protected:
@@ -579,7 +561,7 @@ class OSG_EXPORT BufferObject : public Object
         BufferData* getBufferData(unsigned int index) { return _bufferDataList[index]; }
         const BufferData* getBufferData(unsigned int index) const { return _bufferDataList[index]; }
 
-        unsigned int getNumBufferData() const { return static_cast<unsigned int>(_bufferDataList.size()); }
+        unsigned int getNumBufferData() const { return _bufferDataList.size(); }
 
         void setGLBufferObject(unsigned int contextID, GLBufferObject* glbo) { _glBufferObjects[contextID] = glbo; }
 
@@ -619,16 +601,14 @@ class OSG_EXPORT BufferData : public Object
         BufferData():
             Object(true),
             _modifiedCount(0),
-            _bufferIndex(0),
-            _numClients(0) {}
+            _bufferIndex(0) {}
 
         /** Copy constructor using CopyOp to manage deep vs shallow copy.*/
         BufferData(const BufferData& bd,const CopyOp& copyop=CopyOp::SHALLOW_COPY):
             osg::Object(bd,copyop),
             _modifiedCount(0),
             _bufferIndex(0),
-            _modifiedCallback(bd._modifiedCallback),
-            _numClients(0) {}
+            _modifiedCallback(bd._modifiedCallback) {}
 
         virtual bool isSameKindAs(const Object* obj) const { return dynamic_cast<const BufferData*>(obj)!=NULL; }
         virtual const char* libraryName() const { return "osg"; }
@@ -636,15 +616,6 @@ class OSG_EXPORT BufferData : public Object
 
         virtual const GLvoid*   getDataPointer() const = 0;
         virtual unsigned int    getTotalDataSize() const = 0;
-
-        virtual osg::Array* asArray() { return 0; }
-        virtual const osg::Array* asArray() const { return 0; }
-
-        virtual osg::PrimitiveSet* asPrimitiveSet() { return 0; }
-        virtual const osg::PrimitiveSet* asPrimitiveSet() const { return 0; }
-
-        virtual osg::Image* asImage() { return 0; }
-        virtual const osg::Image* asImage() const { return 0; }
 
         void setBufferObject(BufferObject* bufferObject);
         BufferObject* getBufferObject() { return _bufferObject.get(); }
@@ -694,12 +665,6 @@ class OSG_EXPORT BufferData : public Object
           * for all graphics contexts. */
         void releaseGLObjects(State* state=0) const;
 
-        unsigned int getNumClients() const { return _numClients; }
-
-        void addClient(osg::Object * /*client*/) { ++_numClients; }
-
-        void removeClient(osg::Object * /*client*/) { --_numClients; }
-
 protected:
 
         virtual ~BufferData();
@@ -709,8 +674,6 @@ protected:
         unsigned int                    _bufferIndex;
         osg::ref_ptr<BufferObject>      _bufferObject;
         osg::ref_ptr<ModifiedCallback>  _modifiedCallback;
-
-        unsigned int _numClients;
 };
 
 
@@ -748,7 +711,7 @@ class OSG_EXPORT ElementBufferObject : public BufferObject
         ElementBufferObject(const ElementBufferObject& pbo,const CopyOp& copyop=CopyOp::SHALLOW_COPY);
 
         META_Object(osg,ElementBufferObject);
-
+        
         unsigned int addDrawElements(osg::DrawElements* PrimitiveSet);
         void removeDrawElements(osg::DrawElements* PrimitiveSet);
 
@@ -757,7 +720,7 @@ class OSG_EXPORT ElementBufferObject : public BufferObject
         const DrawElements* getDrawElements(unsigned int i) const;
 
     protected:
-
+    
         virtual ~ElementBufferObject();
 };
 
@@ -781,7 +744,7 @@ class OSG_EXPORT PixelBufferObject : public BufferObject
         bool isPBOSupported(unsigned int contextID) const { return _glBufferObjects[contextID]->isPBOSupported(); }
 
     protected:
-
+    
         virtual ~PixelBufferObject();
 };
 
@@ -802,7 +765,7 @@ class OSG_EXPORT PixelDataBufferObject : public BufferObject
         //! Set new size of the buffer object. This will reallocate the memory on the next compile
         inline void setDataSize(unsigned int size) { _profile._size = size; dirty(); }
 
-        //! Get data size of the used buffer
+        //! Get data size of the used buffer 
         inline unsigned int getDataSize() const { return _profile._size; }
 
         //! Compile the buffer (reallocate the memory if buffer is dirty)
@@ -814,7 +777,7 @@ class OSG_EXPORT PixelDataBufferObject : public BufferObject
         //! Bind the buffer in write mode, which means following OpenGL instructions will write data into the buffer (note: GL_PIXEL_PACK_BUFFER_ARB)
         virtual void bindBufferInWriteMode(State& state);
 
-        //! Unbind the buffer
+        //! Unbind the buffer 
         virtual void unbindBuffer(unsigned int contextID) const;
 
         /** Resize any per context GLObject buffers to specified size. */
@@ -839,9 +802,9 @@ class OSG_EXPORT PixelDataBufferObject : public BufferObject
         virtual ~PixelDataBufferObject();
 
         typedef osg::buffered_value<unsigned int> ModeList;
-
+        
         mutable ModeList _mode;
-
+        
 };
 
 class OSG_EXPORT UniformBufferObject : public BufferObject
@@ -852,17 +815,6 @@ class OSG_EXPORT UniformBufferObject : public BufferObject
     META_Object(osg, UniformBufferObject);
  protected:
     virtual ~UniformBufferObject();
-};
-
-class OSG_EXPORT AtomicCounterBufferObject : public BufferObject
-{
- public:
-    AtomicCounterBufferObject();
-    AtomicCounterBufferObject(const AtomicCounterBufferObject& ubo, const CopyOp& copyop=CopyOp::SHALLOW_COPY);
-    META_Object(osg, AtomicCounterBufferObject);
-
- protected:
-    virtual ~AtomicCounterBufferObject();
 };
 
 inline void GLBufferObject::bindBuffer()

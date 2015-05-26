@@ -10,7 +10,7 @@ Vector3 Vector3::XAXIS(1.0f,0.0f,0.0f);
 Vector3 Vector3::YAXIS(0.0f,1.0f,0.0f);
 Vector3 Vector3::ZAXIS(0.0f,0.0f,1.0f);
 Vector3 Vector3::ORIGIN(0.0f, 0.0f, 0.0f);
-Vector3 Vector3::g_DefaultCameraTranslate(0, 0, -20);
+Vector3 Vector3::g_DefaultCameraTranslate(0, -5, -20);
 Vector3 Vector3::g_DefaultCameraRotate(40, 0, 0);
 
 ////////////////////////////////////////////////////////////////////////////////

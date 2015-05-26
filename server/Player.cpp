@@ -13,12 +13,13 @@ Player::Player() :GameObject()
 	setAttack(new Basic_Attack());
 	//////////////////////////////////
 	isPlayer = true;
-
+	objectType = 2;
 	pPosition = Vector3(position.x, position.y, position.z);
 	forward = Vector3(0, 0, 1);
+	up = Vector3(0, 1, 0);
 	pForward = Vector3(forward.x, forward.y, forward.z);
 	right = Vector3(-1, 0, 0);
-	up = Vector3(0, 1, 0);
+	jumpup = Vector3(0, 1, 0);
 
 	attr_num = 3;
 	isChanged = new bool[attr_num];
@@ -71,6 +72,15 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 				}
 			}
 			
+		}
+		else if (cEvent.compare("move_jump") == 0){
+			if (!isChanged[0]){
+				change_counter[0]++;
+				std::string* change = new std::string("pos:");
+				changes.push_back(std::pair<int, std::string*>(id, change));
+				this->jump();
+			}
+
 		}
 		else if (cEvent.compare("move_backward") == 0){
 			if (!isChanged[0]){
@@ -242,11 +252,11 @@ bool Player::collide(std::vector<GameObject*>* obj, Vector3 dir)
 	}
 	//check to see is within world
 
-	if ((-175 <= playerposition.x && playerposition.x <= 175))// || min.x <= -position.x + mx.x && -position.x + mx.x <= tile.buildingList[i]->max.x)))
+	if ((-240 <= playerposition.x && playerposition.x <= 240))// || min.x <= -position.x + mx.x && -position.x + mx.x <= tile.buildingList[i]->max.x)))
 	{
 
 
-		if ((-175 <= playerposition.z && playerposition.z <= 175))// || (tile.buildingList[i]->min.z <= -position.z + mx.z && -position.z + mx.z <= tile.buildingList[i]->max.z))
+		if ((-240 <= playerposition.z && playerposition.z <= 240))// || (tile.buildingList[i]->min.z <= -position.z + mx.z && -position.z + mx.z <= tile.buildingList[i]->max.z))
 		{
 
 			return false;

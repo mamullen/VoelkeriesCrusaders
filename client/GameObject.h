@@ -13,6 +13,8 @@ static const Vector4 INIT_FORWARD = Vector4(0, 0, 1, 1);
 static const Vector4 INIT_RIGHT = Vector4(-1, 0, 0, 1);
 
 // Player's Controls
+//movement
+const int JUMP = GLFW_KEY_SPACE;
 const int FORWARD = GLFW_KEY_W;
 const int BACKWARD = GLFW_KEY_S;
 const int STRAFELEFT = GLFW_KEY_A;

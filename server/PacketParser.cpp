@@ -42,6 +42,10 @@ void PacketParser::parse(char* input, Player* player)
 			player->strafeRight();
 			duplicates.insert(std::pair<std::string, bool>(std::string("move_right"), true));
 		}
+		if (cEvent == "move_jump" && duplicates.find("move_jump") == duplicates.end()){
+			player->jump();
+			duplicates.insert(std::pair<std::string, bool>(std::string("move_jump"), true));
+		}
 	}
 }
 

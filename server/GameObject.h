@@ -30,7 +30,7 @@ public:
 	void rotRight();
 	void strafeLeft();
 	void strafeRight();
-
+	void jump();
 
 	void setMin(float, float, float);
 	void setMax(float, float, float);
@@ -52,6 +52,7 @@ public:
 	bool isPlayer;
 	int objectType; // 0 = building
 	Vector3 forward;
+	Vector3 jumpup;
 	void setType(int t){ objectType = t; }
 protected:
 	static unsigned int totalId;
