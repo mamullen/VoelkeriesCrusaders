@@ -178,17 +178,7 @@ int PlayState::Initialize() {
 
 
 
-	osg::ref_ptr<osg::Node> root = osgDB::readNodeFile("a.fbx");
-	if (root != NULL)
-	{
-
-		AnimationManagerFinder finder;
-		root->accept(finder);
-		const osgAnimation::AnimationList& animations = finder._am->getAnimationList();
-		finder._am->playAnimation(animations[0].get());
-		//const osgAnimation::AnimationList& animations = finder._am->getAnimationList();
-		//finder._am->playAnimation(animations[1].get());
-	}
+	
 	//osgViewer::Viewer view;
 	glGenTextures(5, photos);
 	t.loadTexture("ppm/c_front.ppm", photos[0]);
