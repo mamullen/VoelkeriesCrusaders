@@ -138,6 +138,10 @@ std::list<Packet*> GameLogic::getServerPackets()
 	return serverPackets;
 }
 
+void GameLogic::pushServerPacket(Packet * p){
+	serverPackets.push_back(p);
+}
+
 std::vector<GameObject*> GameLogic::getGameObjects()
 {
 	return gameObjects;
@@ -183,6 +187,7 @@ int GameLogic::addPlayer(int id, char* packet_data)
 					printf("Crusader team is full, not allowing client to join\n");
 					return 0;
 				}
+				numVampires--;
 				currP->team = 1;
 				return 1;
 			}
@@ -193,6 +198,7 @@ int GameLogic::addPlayer(int id, char* packet_data)
 					printf("Vampire team is full, not allowing client to join\n");
 					return 0;
 				}
+				numCrusaders--;
 				currP->team = 2;
 				return 2;
 			}
@@ -224,6 +230,12 @@ int GameLogic::addPlayer(int id, char* packet_data)
 
 	Player* newP = new Player(id);
 	newP->team = team;
+
+	for (std::list<std::pair<int, string>>::const_iterator nameIter = playerNames.begin(); nameIter != playerNames.end(); nameIter++){
+		if (nameIter->first == id)
+			newP->name = nameIter->second;
+	}
+
 	gameObjects.push_back(newP);
 	playerList.push_back(newP);
 

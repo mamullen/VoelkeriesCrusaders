@@ -67,12 +67,12 @@ void ServerGame::receiveFromClients()
 			Packet* temp = new Packet();
 			temp->deserialize(&(network_data[i]));
 			i += sizeof(Packet);
-			
+
 			switch (packet.packet_type) {
 
 			case INIT_CONNECTION:
-			
-				printf("server received init packet from client %d\n",iter->first);
+
+				printf("server received init packet from client %d\n", iter->first);
 				sendInitialConnection(iter->first);
 				//gameLogic->createNewObject(iter->first);
 				//gameLogic->addPlayer(iter->first);
@@ -85,27 +85,75 @@ void ServerGame::receiveFromClients()
 				//printf("PACKET DATA: %s\n", packet.packet_data);
 				//printf(packet.packet_data);
 				//printf("\n");
-				selection = gameLogic->addPlayer(iter->first, packet.packet_data);
-				if ( selection > 0){
-					sendInitPacket(iter->first, selection);
+
+				//try to add player name!
+				if (!strncmp(packet.packet_data, "player_name", 11)){
+					char * pNamePointer = packet.packet_data;
+					pNamePointer += 11;
+					std::string playerName(pNamePointer);
+					playerName = playerName.substr(0, playerName.size() - 1);
+					printf("Player attemping to select the name: %s\n", playerName.c_str());
+
+
+					//check if name already exists
+					for (std::list<std::pair<int, string>>::const_iterator nameIter = gameLogic->playerNames.begin(); nameIter != gameLogic->playerNames.end(); nameIter++){
+						if (nameIter->second == playerName){
+							const unsigned int packet_size = sizeof(Packet);
+							char packet_data[packet_size];
+							Packet p;
+							p.packet_type = JOIN_GAME;
+							p.id = iter->first;
+
+							char data[PACKET_DATA_LEN];
+							int pointer = 0;
+
+							memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "name_taken", 11);
+							memcpy_s(p.packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+							p.serialize(packet_data);
+							network->sendToOne(iter->first, packet_data, packet_size);
+							break;
+						}
+					}
+					gameLogic->playerNames.push_back(std::make_pair(iter->first, playerName));
+					if (1){
+						const unsigned int packet_size = sizeof(Packet);
+						char packet_data[packet_size];
+						Packet p;
+						p.packet_type = JOIN_GAME;
+						p.id = iter->first;
+
+						char data[PACKET_DATA_LEN];
+						int pointer = 0;
+
+						memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "name_success", 13);
+						memcpy_s(p.packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+						p.serialize(packet_data);
+						network->sendToOne(iter->first, packet_data, packet_size);
+					}
+
 				}
-				else if (gameLogic->getState() == WAIT && selection == 0)
-				{
-					const unsigned int packet_size = sizeof(Packet);
-					char packet_data[packet_size];
-					Packet p;
-					p.packet_type = JOIN_GAME;
-					p.id = iter->first;
+				else{
+					selection = gameLogic->addPlayer(iter->first, packet.packet_data);
+					if (selection > 0){
+						sendInitPacket(iter->first, selection);
+					}
+					else if (gameLogic->getState() == WAIT && selection == 0)
+					{
+						const unsigned int packet_size = sizeof(Packet);
+						char packet_data[packet_size];
+						Packet p;
+						p.packet_type = JOIN_GAME;
+						p.id = iter->first;
 
-					char data[PACKET_DATA_LEN];
-					int pointer = 0;
+						char data[PACKET_DATA_LEN];
+						int pointer = 0;
 
-					memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "team_full", 10);
-					memcpy_s(p.packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
-					p.serialize(packet_data);
-					network->sendToOne(iter->first, packet_data, packet_size);
+						memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "team_full", 10);
+						memcpy_s(p.packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+						p.serialize(packet_data);
+						network->sendToOne(iter->first, packet_data, packet_size);
+					}
 				}
-
 				break;
 
 			case ACTION_EVENT:
@@ -124,7 +172,7 @@ void ServerGame::receiveFromClients()
 				printf(packet.packet_data);
 				printf("\n");
 				//packet.id = iter->first;
-				
+
 				sendCommunicationPackets(packet);
 				break;
 			default:
@@ -144,7 +192,7 @@ void ServerGame::sendPackets()
 	{
 		Packet p = **it;
 		// send action packet
-		printf("Packet Type: %d, Object ID: %d\n",p.packet_type, p.id);
+		printf("Packet Type: %d, Object ID: %d\n", p.packet_type, p.id);
 		printf("\n");
 
 		/*float test1;
@@ -165,7 +213,7 @@ void ServerGame::sendPackets()
 }
 
 void ServerGame::sendInitialConnection(int id) {
-	
+
 	// send init packet detailing max number of crusaders & vampires
 	if (1){
 		const unsigned int packet_size = sizeof(Packet);
@@ -212,14 +260,14 @@ void ServerGame::sendInitialConnection(int id) {
 			pointer += 7;
 			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &team, sizeof(int));
 			pointer += sizeof(int);
-			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, name, strlen(name));
-			pointer += strlen(name);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, name, strlen(name)+1);
+			pointer += strlen(name)+1;
 			memcpy_s(p.packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
 			p.serialize(packet_data);
 			network->sendToOne(id, packet_data, packet_size);
 		}
 	}
-	
+
 }
 
 void ServerGame::sendInitPacket(int id, int selection)
@@ -228,49 +276,51 @@ void ServerGame::sendInitPacket(int id, int selection)
 	/*
 	std::vector<GameObject*> gameObjects = gameLogic->getGameObjects();
 	for (std::vector<GameObject*>::iterator it = gameObjects.begin(); it != gameObjects.end(); it++){
-		//if ((*it)->isPlayer && ((Player*)(*it))->getPID()){
-		//printf("@@@@@@@@@@@@ ID OF CLIENT: %d, ID OF OBJECT: %d\n", id, (*it)->getID());
-		if ((*it)->getID() == id){
-			const unsigned int packet_size = sizeof(Packet);
-			char packet_data[packet_size];
-			Packet p;
-			p.packet_type = JOIN_GAME;
-			p.id = (int)id;
+	//if ((*it)->isPlayer && ((Player*)(*it))->getPID()){
+	//printf("@@@@@@@@@@@@ ID OF CLIENT: %d, ID OF OBJECT: %d\n", id, (*it)->getID());
+	if ((*it)->getID() == id){
+	const unsigned int packet_size = sizeof(Packet);
+	char packet_data[packet_size];
+	Packet p;
+	p.packet_type = JOIN_GAME;
+	p.id = (int)id;
 
-			char data[PACKET_DATA_LEN];
-			int pointer = 0;
+	char data[PACKET_DATA_LEN];
+	int pointer = 0;
 
-			//memcpy_s(p.packet_data, PACKET_DATA_LEN, "create", 6+1);
-			float x = (*it)->getPos().x;
-			float y = (*it)->getPos().y;
-			float z = (*it)->getPos().z;
-			float r = (*it)->getRot();
-			float hp = (*it)->getHP();
-			///////////////////////////////////////////////////////////////////////////
-			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "new", 4);
-			pointer += 4;
-			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &x, sizeof(float));
-			pointer += sizeof(float);
-			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
-			pointer += sizeof(float);
-			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
-			pointer += sizeof(float);
-			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &r, sizeof(float));
-			pointer += sizeof(float);
-			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &hp, sizeof(float));
-			pointer += sizeof(float);
-			data[pointer] = ',';
-			pointer++;
+	//memcpy_s(p.packet_data, PACKET_DATA_LEN, "create", 6+1);
+	float x = (*it)->getPos().x;
+	float y = (*it)->getPos().y;
+	float z = (*it)->getPos().z;
+	float r = (*it)->getRot();
+	float hp = (*it)->getHP();
+	///////////////////////////////////////////////////////////////////////////
+	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "new", 4);
+	pointer += 4;
+	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &x, sizeof(float));
+	pointer += sizeof(float);
+	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
+	pointer += sizeof(float);
+	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
+	pointer += sizeof(float);
+	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &r, sizeof(float));
+	pointer += sizeof(float);
+	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &hp, sizeof(float));
+	pointer += sizeof(float);
+	data[pointer] = ',';
+	pointer++;
 
-			memcpy_s(p.packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+	memcpy_s(p.packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
 
-			p.serialize(packet_data);
-			network->sendToOne(id, packet_data, packet_size);
-		}
+	p.serialize(packet_data);
+	network->sendToOne(id, packet_data, packet_size);
+	}
 	}
 	*/
 
-	if (1){
+	// send whether or not crusader or vampire was successfully chosen
+	// NOT SENDING RIGHT NOW
+	if (0){
 		const unsigned int packet_size = sizeof(Packet);
 		char packet_data[packet_size];
 		Packet p;
@@ -294,50 +344,80 @@ void ServerGame::sendInitPacket(int id, int selection)
 		network->sendToOne(id, packet_data, packet_size);
 	}
 
+	// broadcast to the rest of the clients that this player has joined 
+	std::vector<GameObject*> gameObjects = gameLogic->getGameObjects();
+	for (std::vector<GameObject*>::iterator it = gameObjects.begin(); it != gameObjects.end(); it++){
+		if ((*it)->isPlayer && (*it)->getID() == id){
+			Player * player = (Player*)(*it);
+			const unsigned int packet_size = sizeof(Packet);
+			char packet_data[packet_size];
+			Packet * p = new Packet;
+			p->packet_type = JOIN_GAME;
+			p->id = (*it)->getID();
+
+
+			char data[PACKET_DATA_LEN];
+			int pointer = 0;
+
+			int team = player->team;
+			const char * name = (player->name).c_str();
+
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "player", 7);
+			pointer += 7;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &team, sizeof(int));
+			pointer += sizeof(int);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, name, strlen(name)+1);
+			pointer += strlen(name)+1;
+			memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+			gameLogic->pushServerPacket(p);
+		}
+	}
+
+
 }
 
 /*
 void ServerGame::sendInitPackets(unsigned int id)
 {
-	std::vector<GameObject*> gameObjects = gameLogic->getGameObjects();
+std::vector<GameObject*> gameObjects = gameLogic->getGameObjects();
 
-	for (int i = 0; i < gameObjects.size(); i++){
-		const unsigned int packet_size = sizeof(Packet);
-		char packet_data[packet_size];
-		Packet p;
-		p.packet_type = ACTION_EVENT;
-		p.id = i;
+for (int i = 0; i < gameObjects.size(); i++){
+const unsigned int packet_size = sizeof(Packet);
+char packet_data[packet_size];
+Packet p;
+p.packet_type = ACTION_EVENT;
+p.id = i;
 
-		char data[PACKET_DATA_LEN];
-		int pointer = 0;
+char data[PACKET_DATA_LEN];
+int pointer = 0;
 
-		//memcpy_s(p.packet_data, PACKET_DATA_LEN, "create", 6+1);
-		float x = gameObjects.at(i)->getPos().x;
-		float y = gameObjects.at(i)->getPos().y;
-		float z = gameObjects.at(i)->getPos().z;
-		float r = gameObjects.at(i)->getRot();
-		float hp = gameObjects.at(i)->getHP();
-		///////////////////////////////////////////////////////////////////////////
-		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "create", 7);
-		pointer += 7;
-		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &x, sizeof(float));
-		pointer += sizeof(float);
-		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
-		pointer += sizeof(float);
-		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
-		pointer += sizeof(float);
-		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &r, sizeof(float));
-		pointer += sizeof(float);
-		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &hp, sizeof(float));
-		pointer += sizeof(float);
-		data[pointer] = ',';
-		pointer++;
+//memcpy_s(p.packet_data, PACKET_DATA_LEN, "create", 6+1);
+float x = gameObjects.at(i)->getPos().x;
+float y = gameObjects.at(i)->getPos().y;
+float z = gameObjects.at(i)->getPos().z;
+float r = gameObjects.at(i)->getRot();
+float hp = gameObjects.at(i)->getHP();
+///////////////////////////////////////////////////////////////////////////
+memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "create", 7);
+pointer += 7;
+memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &x, sizeof(float));
+pointer += sizeof(float);
+memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
+pointer += sizeof(float);
+memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
+pointer += sizeof(float);
+memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &r, sizeof(float));
+pointer += sizeof(float);
+memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &hp, sizeof(float));
+pointer += sizeof(float);
+data[pointer] = ',';
+pointer++;
 
-		memcpy_s(p.packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
-		
-		p.serialize(packet_data);
-		network->sendToOne(id, packet_data, packet_size);
-	}
+memcpy_s(p.packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+
+p.serialize(packet_data);
+network->sendToOne(id, packet_data, packet_size);
+}
 }
 
 */
@@ -350,11 +430,11 @@ void ServerGame::sendActionPackets(unsigned int id)
 
 	Packet packet;
 	packet.packet_type = ACTION_EVENT;
-	memcpy(packet.packet_data,"Hello",PACKET_DATA_LEN);
+	memcpy(packet.packet_data, "Hello", PACKET_DATA_LEN);
 
 	packet.serialize(packet_data);
 
-	network->sendToOne(id,packet_data, packet_size);
+	network->sendToOne(id, packet_data, packet_size);
 }
 
 void ServerGame::sendCommunicationPackets(Packet& packet)

@@ -20,6 +20,7 @@ public:
 
 	void update();
 	std::list<Packet*> getServerPackets();
+	void pushServerPacket(Packet *p);
 	std::vector<GameObject*> getGameObjects();
 	void savePacket(int id,Packet* p);
 	void clearPackets();
@@ -35,6 +36,8 @@ public:
 	stateType getState();
 	void setState(stateType state);
 	void updateState();
+	
+	std::list<std::pair<int, string>> playerNames;
 
 private:
 	std::vector<GameObject*> gameObjects;
