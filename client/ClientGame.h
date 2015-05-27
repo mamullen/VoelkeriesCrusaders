@@ -24,6 +24,10 @@ public:
 	void addEvent(unsigned int id, char * evt, int type);
 	unsigned int getClientId()			{ return client_id; };
 	void setClientId(unsigned int id)	{ client_id = id; }
+	void setClientName(char * name)		{ client_name = name; }
+	char * getClientName()				{ return client_name; }
+	void addPlayer(unsigned int id, int team, char* name);
+	std::map<unsigned int, std::pair<int, char*>>* getPlayers(){ return &otherPlayers; }
 	Packet * popServerEvent();
 	Packet * popJoinGameEvent();
 	void setStateChange(char* nextState) { stateChange = nextState; }
@@ -36,7 +40,9 @@ private:
 	std::vector<Packet *> serverEvents;
 	std::vector<Packet *> joinGameEvents;
 	unsigned int client_id;
+	char * client_name;
 	char * stateChange;
+	std::map<unsigned int, std::pair<int, char*> > otherPlayers;
 };
 
 

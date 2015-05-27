@@ -1,4 +1,5 @@
 #include "GameObject.h"
+#include <math.h>
 
 GameObject::GameObject(DaeLoader* m, unsigned int i)
 {
@@ -25,6 +26,26 @@ void GameObject::update(bool isPlayer, float rot) {
 	
 	glTranslatef(getPos().x, getPos().y, getPos().z);
 	glRotatef(rotation, 0, 1, 0);
+
+	if (name != NULL && !isPlayer){
+		glPushMatrix();
+		glRotatef(-rotation+180, 0, 1, 0);
+		glRotatef(-rot, 0, 1, 0);
+		//calculate how much to move name left so to center name
+		float paramDist = 40.0f;
+		float dist = strlen(name) / 2.0f * (paramDist / 34.0f);
+		glTranslatef(-dist, 5, 0);
+		glLineWidth(3);
+		glScalef(paramDist / 3500.0f, paramDist / 3500.0f, paramDist / 3500.0f);
+		glColor3f(1, 1, 1);
+		for (int i = 0; i<strlen(name); i++){
+			//glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, (int)name[i]); // generation of characters in our text with 9 by 15 GLU font
+			glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, (char)name[i]);
+		}
+
+		glEnd();
+		glPopMatrix();
+	}
 
 	if (showHP){
 		glPushMatrix();

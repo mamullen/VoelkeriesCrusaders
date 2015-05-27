@@ -242,8 +242,13 @@ void PlayState::UpdateClient(ClientGame* client) {
 				player = p;
 			}
 			else{
-				gameObjects.insert(std::pair<int, GameObject*>(objID, p));
-				
+				std::map<unsigned int, std::pair<int, char*>>::iterator it = client->getPlayers()->find(objID);
+				if (it != client->getPlayers()->end()){
+					//attach name
+					char* pName = it->second.second;
+					p->setName(pName);
+				}
+				gameObjects.insert(std::pair<int, GameObject*>(objID, p));	
 			}
 		}
 
@@ -558,7 +563,7 @@ void PlayState::RenderParticles(float rot) {
 
 //////////////////////////////////////
 
-void PlayState::Draw() {
+void PlayState::Draw(ClientGame* client) {
 	// Clear the screen
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -582,7 +587,7 @@ void PlayState::Draw() {
 	std::map<int, GameObject*>::iterator it;
 	for (it = gameObjects.begin(); it != gameObjects.end(); it++)
 	{
-		it->second->update(false,Cam.GetRotation().y);
+		it->second->update(false, Cam.GetRotation().y);
 	}
 
 	//RenderParticles(Cam.GetRotation().y);
@@ -651,6 +656,9 @@ void PlayState::Input(ClientGame* client) {
 void PlayState::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) // exit
 		glfwSetWindowShouldClose(window, GL_TRUE);
+}
+
+void PlayState::CharCallback(GLFWwindow* window, unsigned int code) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////

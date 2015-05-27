@@ -44,6 +44,9 @@ public:
 	Vector4 getPos()					{ return position; }
 	Vector3* getMin()					{ return min; }
 	Vector3* getMax()					{ return max; }
+	void setName(char* n)				{ name = n; }
+	char * getName()					{ return name; }
+
 	void setPos(double x, double y, double z);
 	float getRotation()					{ return rotation; }
 	void setRotation(float rot);
@@ -56,6 +59,7 @@ private:
 	bool showHP = false;
 	float currHP,maxHP;
 	Vector3* min, * max;
+	char* name = NULL;
 
 	Vector4 position = Vector4(0, 2, 0, 1);
 	Vector4 forward = INIT_FORWARD;

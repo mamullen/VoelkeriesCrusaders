@@ -15,9 +15,10 @@ public:
 
 	virtual void Input(ClientGame* Client) = 0;
 	virtual void Update(ClientGame* Client) = 0;
-	virtual void Draw() = 0;
+	virtual void Draw(ClientGame* client) = 0;
 
 	virtual void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) = 0;
+	virtual void CharCallback(GLFWwindow* window, unsigned int code) = 0;
 	virtual void MouseButton(GLFWwindow* window, int button, int action, int mods) = 0;
 	virtual void MouseMotion(GLFWwindow* window, double xpos, double ypos) = 0;
 	virtual void MouseScroll(GLFWwindow* window, double xoffset, double yoffset) = 0;

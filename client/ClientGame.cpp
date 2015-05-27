@@ -132,6 +132,20 @@ void ClientGame::addEvent(unsigned int id, char * evt, int type)
 	}
 }
 
+void ClientGame::addPlayer(unsigned int id, int team, char* name)
+{
+	std::map<unsigned int, std::pair<int, char*>>::iterator it = otherPlayers.find(id);
+	if (it == otherPlayers.end()){
+		//doesn't exist yet
+		otherPlayers.insert(std::make_pair(id,std::make_pair(team,name)));
+	}
+	else{
+		//already exists
+		it->second.first = team;
+		it->second.second = name;
+	}
+}
+
 Packet * ClientGame::popServerEvent(){
 	if (!serverEvents.empty()){
 		Packet * ret = serverEvents.back();

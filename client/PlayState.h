@@ -49,7 +49,7 @@ public:
 	void Update(ClientGame* Client);
 
 	// Draw Methods
-	void Draw();
+	void Draw(ClientGame* client);
 	void RenderParticles(float rot);
 
 	void UpdateParticles();
@@ -60,6 +60,7 @@ public:
 	GLuint LoadRAWTexture(const char * filename, int width, int height);
 
 	void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	void CharCallback(GLFWwindow* window, unsigned int code);
 	void MouseButton(GLFWwindow* window, int button, int action, int mods);
 	void MouseMotion(GLFWwindow* window, double xpos, double ypos);
 	void MouseScroll(GLFWwindow* window, double xoffset, double yoffset);

@@ -31,7 +31,7 @@ public:
 
 	void Input(ClientGame* Client);
 	void Update(ClientGame* Client);
-	void Draw();
+	void Draw(ClientGame* client);
 
 	bool Running()	{ return m_running; }
 	void Quit();

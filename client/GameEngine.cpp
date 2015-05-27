@@ -14,6 +14,7 @@ static ClientGame* Client;
 
 // glfw call member hacks
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)		{ State->KeyCallback(window, key, scancode, action, mods); }
+static void character_callback(GLFWwindow* window, unsigned int codepoint)						{ State->CharCallback(window, codepoint); }
 static void mouse_motion(GLFWwindow* window, double xpos, double ypos)							{ State->MouseMotion(window, xpos, ypos); }
 static void mouse_button(GLFWwindow* window, int button, int action, int mods)					{ State->MouseButton(window, button, action, mods); }
 static void mouse_scroll(GLFWwindow* window, double xoffset, double yoffset)					{ State->MouseScroll(window, xoffset, yoffset); }
@@ -53,7 +54,7 @@ int main(int argc, char **argv) {
 		Client->update();
 		//update and render game based off of Server messages
 		Game->Update(Client);
-		Game->Draw();
+		Game->Draw(Client);
 
 		//check if client wants to change state
 		if (Client->getStateChange() != NULL){
@@ -98,6 +99,7 @@ GameEngine::GameEngine(int argc, char **argv) {
 
 	//Callbacks
 	glfwSetKeyCallback(window, key_callback);
+	glfwSetCharCallback(window, character_callback);
 	glfwSetCursorPosCallback(window, mouse_motion);
 	glfwSetMouseButtonCallback(window, mouse_button);
 	glfwSetScrollCallback(window, mouse_scroll);
@@ -135,8 +137,8 @@ void GameEngine::Update(ClientGame* client) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void GameEngine::Draw() {
-	State->Draw();
+void GameEngine::Draw(ClientGame* client) {
+	State->Draw(client);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
