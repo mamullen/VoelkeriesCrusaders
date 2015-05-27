@@ -22,6 +22,9 @@ public:
 	void setAttack(Action*);
 	bool collide(std::vector<GameObject*>* obj, Vector3 dir);
 
+	string name; 
+	int team; // 0: no team, 1: crusader, 2: vampire
+
 private:
 	unsigned int pid; // corresponds to Client ID
 	float ad;	// attack dmg

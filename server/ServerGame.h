@@ -16,6 +16,7 @@ public:
 	void sendPackets();
 	const char* getIP();
 	enum stateType { WAIT, START, END };
+	void sendInitialConnection(int id);
 
 
 
@@ -32,7 +33,7 @@ private:
 	char network_data[MAX_PACKET_SIZE];
 
 	//void sendInitPackets(unsigned int);
-	void sendInitPacket(int);
+	void sendInitPacket(int, int);
 	void sendActionPackets(unsigned int);
 	void sendCommunicationPackets(Packet&);
 };

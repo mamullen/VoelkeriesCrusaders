@@ -60,6 +60,7 @@ void ServerGame::receiveFromClients()
 		}
 
 		int i = 0;
+		int selection;
 		while (i < (unsigned int)data_length)
 		{
 			packet.deserialize(&(network_data[i]));
@@ -72,6 +73,7 @@ void ServerGame::receiveFromClients()
 			case INIT_CONNECTION:
 			
 				printf("server received init packet from client %d\n",iter->first);
+				sendInitialConnection(iter->first);
 				//gameLogic->createNewObject(iter->first);
 				//gameLogic->addPlayer(iter->first);
 				//gameLogic->createNewObjects();
@@ -83,10 +85,11 @@ void ServerGame::receiveFromClients()
 				//printf("PACKET DATA: %s\n", packet.packet_data);
 				//printf(packet.packet_data);
 				//printf("\n");
-				if (gameLogic->addPlayer(iter->first, packet.packet_data)){
-					sendInitPacket(iter->first);
+				selection = gameLogic->addPlayer(iter->first, packet.packet_data);
+				if ( selection > 0){
+					sendInitPacket(iter->first, selection);
 				}
-				else if (gameLogic->getState() == WAIT)
+				else if (gameLogic->getState() == WAIT && selection == 0)
 				{
 					const unsigned int packet_size = sizeof(Packet);
 					char packet_data[packet_size];
@@ -161,9 +164,68 @@ void ServerGame::sendPackets()
 	}
 }
 
+void ServerGame::sendInitialConnection(int id) {
+	
+	// send init packet detailing max number of crusaders & vampires
+	if (1){
+		const unsigned int packet_size = sizeof(Packet);
+		char packet_data[packet_size];
+		Packet p;
+		p.packet_type = JOIN_GAME;
+		p.id = id;
 
-void ServerGame::sendInitPacket(int id)
+		char data[PACKET_DATA_LEN];
+		int pointer = 0;
+		int crus = gameLogic->crusadersToStart;
+		int vamp = gameLogic->vampiresToStart;
+
+		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "init", 5);
+		pointer += 5;
+		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &crus, sizeof(int));
+		pointer += sizeof(int);
+		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &vamp, sizeof(int));
+		pointer += sizeof(int);
+		memcpy_s(p.packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+		p.serialize(packet_data);
+		network->sendToOne(id, packet_data, packet_size);
+	}
+
+	// send names and teams of all players
+	std::vector<GameObject*> gameObjects = gameLogic->getGameObjects();
+	for (std::vector<GameObject*>::iterator it = gameObjects.begin(); it != gameObjects.end(); it++){
+		if ((*it)->isPlayer){
+			Player * player = (Player*)(*it);
+			const unsigned int packet_size = sizeof(Packet);
+			char packet_data[packet_size];
+			Packet p;
+			p.packet_type = JOIN_GAME;
+			p.id = (*it)->getID();
+
+
+			char data[PACKET_DATA_LEN];
+			int pointer = 0;
+
+			int team = player->team;
+			const char * name = (player->name).c_str();
+
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "player", 7);
+			pointer += 7;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &team, sizeof(int));
+			pointer += sizeof(int);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, name, strlen(name));
+			pointer += strlen(name);
+			memcpy_s(p.packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+			p.serialize(packet_data);
+			network->sendToOne(id, packet_data, packet_size);
+		}
+	}
+	
+}
+
+void ServerGame::sendInitPacket(int id, int selection)
 {
+
+	/*
 	std::vector<GameObject*> gameObjects = gameLogic->getGameObjects();
 	for (std::vector<GameObject*>::iterator it = gameObjects.begin(); it != gameObjects.end(); it++){
 		//if ((*it)->isPlayer && ((Player*)(*it))->getPID()){
@@ -206,6 +268,32 @@ void ServerGame::sendInitPacket(int id)
 			network->sendToOne(id, packet_data, packet_size);
 		}
 	}
+	*/
+
+	if (1){
+		const unsigned int packet_size = sizeof(Packet);
+		char packet_data[packet_size];
+		Packet p;
+		p.packet_type = JOIN_GAME;
+		p.id = id;
+
+		char data[PACKET_DATA_LEN];
+		int pointer = 0;
+
+		if (selection == 1){
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "crusader", 9);
+			pointer += 9;
+		}
+		else if (selection == 2){
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "vampire", 8);
+			pointer += 8;
+		}
+
+		memcpy_s(p.packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+		p.serialize(packet_data);
+		network->sendToOne(id, packet_data, packet_size);
+	}
+
 }
 
 /*

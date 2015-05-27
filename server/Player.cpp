@@ -5,6 +5,8 @@
 Player::Player() :GameObject()
 {
 	// attributes
+	name = "anonymous";
+	team = 0;
 	position = Vector3(0, 1.3, 0);
 	rotation = 0;
 	hp = 100;

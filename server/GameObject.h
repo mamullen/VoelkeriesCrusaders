@@ -50,7 +50,7 @@ public:
 
 	static std::list<std::pair<int, std::string*>> changes;
 	bool isPlayer;
-	int objectType; // 0 = building
+	int objectType; // 0: building, 2: player
 	Vector3 forward;
 	Vector3 jumpup;
 	void setType(int t){ objectType = t; }

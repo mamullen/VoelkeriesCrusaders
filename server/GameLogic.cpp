@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "GameLogic.h"
+#include <stdio.h>
 
 GameLogic::GameLogic()
 {
@@ -167,36 +168,68 @@ void GameLogic::clearPackets()
 	GameObject::changes.clear();
 }
 
-bool GameLogic::addPlayer(int id, char* packet_data)
+int GameLogic::addPlayer(int id, char* packet_data)
 {
+
 	for (std::vector<Player*>::iterator it = playerList.begin(); it != playerList.end(); it++){
-		if ((*it)->getPID() == id)
-			return false;
+		if ((*it)->getPID() == id){
+			Player * currP = currP = (Player*)(*it);
+			int currTeam = currP->team;
+
+			if (!strcmp(packet_data, "choose_crusader;")){
+				if (currTeam == 1)
+					return -1;
+				if (numCrusaders >= crusadersToStart){
+					printf("Crusader team is full, not allowing client to join\n");
+					return 0;
+				}
+				currP->team = 1;
+				return 1;
+			}
+			else if (!strcmp(packet_data, "choose_vampire;")){
+				if (currTeam == 2)
+					return -1;
+				if (numVampires >= vampiresToStart){
+					printf("Vampire team is full, not allowing client to join\n");
+					return 0;
+				}
+				currP->team = 2;
+				return 2;
+			}
+		}
+
 	}
 
+	int team = 0;
+
 	printf("Attempting to add player %d with request: %s\n", id, packet_data);
+
 
 	if (!strcmp(packet_data, "choose_crusader;")){
 		if (numCrusaders >= crusadersToStart){
 			printf("Crusader team is full, not allowing client to join\n");
-			return false;
+			return 0;
 		}
 		numCrusaders++;
+		team = 1;
 	}
 	else if (!strcmp(packet_data, "choose_vampire;")){
 		if (numVampires >= vampiresToStart){
 			printf("Vampire team is full, not allowing client to join\n");
-			return false;
+			return 0;
 		}
 		numVampires++;
+		team = 2;
 	}
 
 	Player* newP = new Player(id);
+	newP->team = team;
 	gameObjects.push_back(newP);
 	playerList.push_back(newP);
-	//createNewObject(id);
-	// createNewObjects();
-	return true;
+
+
+
+	return team;
 
 	//add shrine here?
 
@@ -336,9 +369,9 @@ void GameLogic::updateState()
 			printf("We have %d players, STARTING THE GAME!\n", count);
 			gameState = START;
 
-			std::sort(gameObjects.begin(), gameObjects.end(), []( GameObject* a, GameObject* b){ return a->getID() < b->getID(); });
+			std::sort(gameObjects.begin(), gameObjects.end(), [](GameObject* a, GameObject* b){ return a->getID() < b->getID(); });
 
-		
+
 
 
 			char data[PACKET_DATA_LEN];
@@ -379,7 +412,7 @@ void GameLogic::updateState()
 			Build->setMax(155, 25, 0);
 			gameObjects.push_back(Build);
 			Build = new Building();
-			Build->setMin(140, -4,  0);
+			Build->setMin(140, -4, 0);
 			Build->setMax(155, 25, 40);
 			gameObjects.push_back(Build);
 			Build = new Building();
@@ -391,7 +424,7 @@ void GameLogic::updateState()
 			Build->setMax(-140, 25, 80);
 			gameObjects.push_back(Build);
 
-			
+
 
 
 			printf("PRINTING OUT THE GAMEOBJECTS VECTOR IDS\n");
