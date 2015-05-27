@@ -94,6 +94,7 @@ void ServerGame::receiveFromClients()
 					playerName = playerName.substr(0, playerName.size() - 1);
 					printf("Player attemping to select the name: %s\n", playerName.c_str());
 
+					bool nameTaken = false;
 
 					//check if name already exists
 					for (std::list<std::pair<int, string>>::const_iterator nameIter = gameLogic->playerNames.begin(); nameIter != gameLogic->playerNames.end(); nameIter++){
@@ -111,11 +112,13 @@ void ServerGame::receiveFromClients()
 							memcpy_s(p.packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
 							p.serialize(packet_data);
 							network->sendToOne(iter->first, packet_data, packet_size);
+							nameTaken = true;
 							break;
 						}
 					}
-					gameLogic->playerNames.push_back(std::make_pair(iter->first, playerName));
-					if (1){
+
+					if (!nameTaken){
+						gameLogic->playerNames.push_back(std::make_pair(iter->first, playerName));
 						const unsigned int packet_size = sizeof(Packet);
 						char packet_data[packet_size];
 						Packet p;
