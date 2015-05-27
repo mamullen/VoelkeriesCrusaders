@@ -188,6 +188,7 @@ int GameLogic::addPlayer(int id, char* packet_data)
 					return 0;
 				}
 				numVampires--;
+				numCrusaders++;
 				currP->team = 1;
 				return 1;
 			}
@@ -199,6 +200,7 @@ int GameLogic::addPlayer(int id, char* packet_data)
 					return 0;
 				}
 				numCrusaders--;
+				numVampires++;
 				currP->team = 2;
 				return 2;
 			}
