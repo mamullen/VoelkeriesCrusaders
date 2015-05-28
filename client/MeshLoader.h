@@ -13,61 +13,30 @@
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-
-#include "Texture.h"
-#include "vector3.h"
+#include "AnimEvaluator.h"
+#include "SceneAnimator.h"
 #include <map>
 #include <iostream>
 #include <vector>
-
-struct Vertex {
-	Vector3 position;
-	Vector3 texture;
-	Vector3 normal;
-	Vertex() {}
-
-	Vertex(Vector3& p, Vector3& t, Vector3& n) {
-		position = p;
-		texture = t;
-		normal = n;
-	}
-};
 
 class MeshLoader {
 public:
 	MeshLoader();
 	~MeshLoader();
-	MeshLoader(const std::string& filename);
-	bool LoadAsset(const std::string& filename);
+	MeshLoader(const char* filename);
+	int LoadAsset(const char* filename);
 	void Render();
 	void RenderNode(const aiNode* node);
-	bool LoadMesh(const std::string& filename);
 
 private:
-	bool initFromScene(const aiScene* pScene, const std::string& filename);
-	void initMesh(unsigned int index, const aiMesh *paiMesh);
-	bool initMaterials(const aiScene* pScene, const std::string& filename);
-	void clear();
+	void get_bounding_box(aiVector3D* min, aiVector3D* max);
+	void get_bounding_box_for_node(const aiNode* nd, aiVector3D* min, aiVector3D* max, aiMatrix4x4* trafo);
+	void apply_material(const struct aiMaterial *mtl);
 
-
-
-	struct MeshEntry {
-		MeshEntry();
-		~MeshEntry();
-		void Init(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices);
-
-		GLuint VB;
-		GLuint IB;
-		unsigned int NumIndices;
-		unsigned int MaterialIndex;
-	};
-
-
-
-	std::vector<MeshEntry> m_Entries;
-	std::vector<Texture*> m_Textures;
-
-	const aiScene* pScene;
+	const aiScene* scene;
+	aiVector3D scene_min, scene_max, scene_center;
+	SceneAnimator* mAnimator;
+	double currentTime;
 };
 
 #endif

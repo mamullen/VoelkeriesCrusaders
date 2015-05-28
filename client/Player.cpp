@@ -8,10 +8,13 @@
 #include "MeshLoader.h"
 
 ObjParser mech;
-MeshLoader m;
+MeshLoader m1;
+MeshLoader m2;
 Player::Player() {
 	mech = ObjParser("models/MechAnimation.obj");
-	m = MeshLoader("models/MechAnimation.obj");
+	//m1 = MeshLoader("models/VampAnim(No weapons)/VampMechRun.fbx");
+	m1 = MeshLoader("models/RobotAnimation.fbx");
+	m2 = MeshLoader("models/SunShrine/SunShrine.fbx");
 	mn = mech.min;
 	mx = mech.max;
 
@@ -22,7 +25,7 @@ Player::Player() {
 }
 Player::Player(int pn) {
 	mech = ObjParser("models/MechAnimation.obj");
-	m = MeshLoader("models/MechAnimation.obj");
+	m1 = MeshLoader("models/RobotAnimation.fbx");
 	mn = mech.min;
 	mx = mech.max;
 	
@@ -41,15 +44,10 @@ void Player::update() {
 	glRotatef(rotation, 0, 1, 0);
 
 	//mech.Draw();
-	m.Render();
-	
-	glBegin(GL_TRIANGLES);
-	glColor3f(1.f, 1.f, 0.f);
-	glVertex3f(-0.6f, 2.f, -0.4f);
-	glColor3f(0.f, 0.f, 1.f);
-	glVertex3f(0.6f, 2.f, -0.4f);
-	glColor3f(0.f, 1.f, 1.f);
-	glVertex3f(0.f, 2.f, 0.6f);
+	m1.Render();
+
+	glTranslatef(40.0f, 0, 40.0f);
+	//m2.Render();
 
 	glEnd();
 	glPopMatrix();

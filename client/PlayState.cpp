@@ -67,6 +67,18 @@ int PlayState::Initialize() {
 	Cam.SetTranslate(g_DefaultCameraTranslate);
 	Cam.SetRotate(g_DefaultCameraRotate);
 
+	GLfloat light_ambient[] = { 0.0, 0.0, 0.0, 1.0 };
+	GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat light_position[] = { -1.0, -1.0, -1.0, 0.0 };
+
+	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+
+	glEnable(GL_LIGHT0);
+
 	// OSG - SunShrine
 	/*viewer = new osgViewer::Viewer;
 
@@ -150,7 +162,6 @@ void PlayState::Draw() {
 	//viewer->getCamera()->setViewMatrix(i);
 
 	//viewer->frame();
-	player.update();
 
 	glPushMatrix();
 	
@@ -159,8 +170,8 @@ void PlayState::Draw() {
 	Cam.ApplyViewTransform();
 
 	drawAxis(100);
+	player.update();
 
-	drawsomeground();
 	glPopMatrix();
 	// Begin drawing player and scene
 	glPopAttrib();
