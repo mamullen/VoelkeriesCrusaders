@@ -7,6 +7,10 @@ GameLogic::GameLogic()
 	//packetParser = new PacketParser();
 	crusadersToStart = atoi(ConfigSettings::config->getValue("CrusadersToStart").c_str());
 	vampiresToStart = atoi(ConfigSettings::config->getValue("VampiresToStart").c_str());
+	phase1time = atoi(ConfigSettings::config->getValue("Phase1Time").c_str());
+	phase2time = atoi(ConfigSettings::config->getValue("Phase2Time").c_str());
+	phase3time = atoi(ConfigSettings::config->getValue("Phase3Time").c_str());
+
 	numCrusaders = 0;
 	numVampires = 0;
 	gameState = WAIT;

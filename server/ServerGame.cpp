@@ -230,11 +230,21 @@ void ServerGame::sendInitialConnection(int id) {
 		int crus = gameLogic->crusadersToStart;
 		int vamp = gameLogic->vampiresToStart;
 
+		int phase1 = gameLogic->phase1time;
+		int phase2 = gameLogic->phase2time;
+		int phase3 = gameLogic->phase3time;
+
 		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "init", 5);
 		pointer += 5;
 		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &crus, sizeof(int));
 		pointer += sizeof(int);
 		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &vamp, sizeof(int));
+		pointer += sizeof(int);
+		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &phase1, sizeof(int));
+		pointer += sizeof(int);
+		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &phase2, sizeof(int));
+		pointer += sizeof(int);
+		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &phase3, sizeof(int));
 		pointer += sizeof(int);
 		memcpy_s(p.packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
 		p.serialize(packet_data);
