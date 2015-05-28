@@ -345,14 +345,16 @@ void PlayState::UpdateClient(ClientGame* client) {
 			int winner;
 			memcpy(&winner, serverEvent + 10, sizeof(int));
 			//gameResult: -1 = lose, 0 = tie, 1 = win
-			if (winner == 0){//tie game
-				gameResult = 0;
-			}
-			else if (winner == player->getTeam()){
-				gameResult = 1;
-			}
-			else{
-				gameResult = -1;
+			if (player != NULL){
+				if (winner == 0){//tie game
+					gameResult = 0;
+				}
+				else if (winner == player->getTeam()){
+					gameResult = 1;
+				}
+				else{
+					gameResult = -1;
+				}
 			}
 		}
 
@@ -647,11 +649,66 @@ void PlayState::drawHUD(ClientGame* client){
 	glVertex2f(timerX - width / 150, height / 120 + height / 70 + height / 60);
 	glEnd();
 
+	//bottom panel
+	glBegin(GL_QUADS);
+	/*if (player->getTeam() == 1){
+		glColor3f(.4, .4, 1);
+	}
+	else{
+		glColor3f(1, .4, .4);
+	}
+	drawRect(0, height - height / 10, width, height / 10);*/
+	glEnd();
+
+	//healthbar
+	glPushMatrix();
+	std::string s = std::to_string((int)player->getHealth());
+	char * healthString = (char*)s.c_str();
+	glTranslatef(width / 7, height - height / 19, 1);
+	glLineWidth(2);
+	glScalef(150.0f / width, 130.0f / height, 1);
+	glRotatef(180, 1, 0, 0);
+	glColor3f(1, 1, 1);
+	for (int i = 0; i < strlen(healthString); i++){
+		glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, (char)healthString[i]);
+	}
+	glPopMatrix();
+
+	glBegin(GL_QUADS);
+	glColor3f(0, 1, 0);
+	drawRect(width / 15, height - height / 12, (width / 5)*((float)player->getHealth() / player->getMaxHealth()), height / 25);
+	glColor3f(1, 0, 0);
+	drawRect(width/15,height-height/12,width/5, height/25);
+	glEnd();
+	
+	glPushMatrix();
+	char * hp = "HP";
+	glTranslatef(width / 50, height - height / 20, 0);
+	glLineWidth(3);
+	glScalef(204.8f/width,152/height,1);
+	glRotatef(180, 1, 0, 0);
+	glColor3f(1, 1, 1);
+	for (int i = 0; i < strlen(hp); i++){
+		glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, (char)hp[i]);
+	}
+	glPopMatrix();
+
+	//player's name
+	glPushMatrix();
+	char * name = client->getClientName();
+	glTranslatef(width / 50, height - height / 10, 0);
+	glLineWidth(2);
+	glScalef(200.0f / width, 152 / height, 1);
+	glRotatef(180, 1, 0, 0);
+	glColor3f(1, 1, 1);
+	for (int i = 0; i < strlen(name); i++){
+		glutStrokeCharacter(GLUT_STROKE_ROMAN, (char)name[i]);
+	}
+	glPopMatrix();
+
 	if (gameResult == 1){
 		glPushMatrix();
 		char * name = "YOU WIN";
-		float paramDist = 40.0f;
-		float dist = strlen(name) / 2.0f * (paramDist / 34.0f);
 		glTranslatef(width / 7.5, height / 4, 0);
 		glLineWidth(10);
 		//glScalef(paramDist / 3500.0f, paramDist / 3500.0f, paramDist / 3500.0f);
@@ -665,8 +722,6 @@ void PlayState::drawHUD(ClientGame* client){
 	else if (gameResult == -1){
 		glPushMatrix();
 		char * name = "YOU LOSE";
-		float paramDist = 40.0f;
-		float dist = strlen(name) / 2.0f * (paramDist / 34.0f);
 		glTranslatef(width / 10, height / 4, 0);
 		glLineWidth(10);
 		//glScalef(paramDist / 3500.0f, paramDist / 3500.0f, paramDist / 3500.0f);
@@ -680,8 +735,6 @@ void PlayState::drawHUD(ClientGame* client){
 	else if (gameResult == 0){
 		glPushMatrix();
 		char * name = "TIE GAME";
-		float paramDist = 40.0f;
-		float dist = strlen(name) / 2.0f * (paramDist / 34.0f);
 		glTranslatef(width / 10, height / 4, 0);
 		glLineWidth(10);
 		//glScalef(paramDist / 3500.0f, paramDist / 3500.0f, paramDist / 3500.0f);
