@@ -195,8 +195,8 @@ void ServerGame::sendPackets()
 	{
 		Packet p = **it;
 		// send action packet
-		printf("Packet Type: %d, Object ID: %d\n", p.packet_type, p.id);
-		printf("\n");
+		// printf("Packet Type: %d, Object ID: %d\n", p.packet_type, p.id);
+		// printf("\n");
 
 		/*float test1;
 		float test2;

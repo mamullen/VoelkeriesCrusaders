@@ -48,7 +48,7 @@ void GameLogic::update(int time)
 	}
 	timer->update(time);
 	timer->print();
-	
+
 	// go through each player and update their attack cd and status based on time
 	for (int i = 0; i < playerList.size(); i++){
 		playerList[i]->updateCD();
@@ -173,7 +173,7 @@ void GameLogic::update(int time)
 	p->id = 0;
 
 	serverPackets.push_back(p);
-	
+
 }
 
 std::list<Packet*> GameLogic::getServerPackets()
@@ -232,7 +232,8 @@ int GameLogic::addPlayer(int id, char* packet_data)
 				}
 				numVampires--;
 				numCrusaders++;
-				currP->team = 1;
+				Crusader * crus = new Crusader(id);
+				(*it) = crus;
 				return 1;
 			}
 			else if (!strcmp(packet_data, "choose_vampire;")){
@@ -244,7 +245,8 @@ int GameLogic::addPlayer(int id, char* packet_data)
 				}
 				numCrusaders--;
 				numVampires++;
-				currP->team = 2;
+				Vampire * vamp = new Vampire(id);
+				(*it) = vamp;
 				return 2;
 			}
 		}
@@ -275,12 +277,12 @@ int GameLogic::addPlayer(int id, char* packet_data)
 
 	Player* newP = 0;
 	if (team == 1){
-		newP = new Crusader(id);		
+		newP = new Crusader(id);
 	}
 	else if (team == 2){
 		newP = new Vampire(id);
 	}
-	newP->team = team;
+	// newP->team = team;
 	for (std::list<std::pair<int, string>>::const_iterator nameIter = playerNames.begin(); nameIter != playerNames.end(); nameIter++){
 		if (nameIter->first == id)
 			newP->name = nameIter->second;
@@ -333,14 +335,55 @@ void GameLogic::createNewObject(int id)
 void GameLogic::sendCreateObjects()
 {
 	for (std::vector<GameObject*>::iterator it = gameObjects.begin(); it != gameObjects.end(); it++){
+		/*
 		if ((*it)->objectType == 0){ // BUILDING... for now
-			int id = (*it)->getID();
-			Packet* p = new Packet;
-			p->packet_type = ACTION_EVENT;
-			p->id = id;
-			//p->id = gameObjects.size() - 1;
+		int id = (*it)->getID();
+		Packet* p = new Packet;
+		p->packet_type = ACTION_EVENT;
+		p->id = id;
+		//p->id = gameObjects.size() - 1;
+		Building* building = (Building*)(*it);
+		//printf("CREATING THIS BUILDING ID: %d\n", id);
+		float minX = building->getMin().x;
+		float minY = building->getMin().y;
+		float minZ = building->getMin().z;
+		float maxX = building->getMax().x;
+		float maxY = building->getMax().y;
+		float maxZ = building->getMax().z;
+		float r = (*it)->getRot();
+		char data[PACKET_DATA_LEN];
+		int pointer = 0;
+		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "create_building", 16);
+		pointer += 16;
+		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &minX, sizeof(float));
+		pointer += sizeof(float);
+		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &minY, sizeof(float));
+		pointer += sizeof(float);
+		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &minZ, sizeof(float));
+		pointer += sizeof(float);
+		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &maxX, sizeof(float));
+		pointer += sizeof(float);
+		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &maxY, sizeof(float));
+		pointer += sizeof(float);
+		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &maxZ, sizeof(float));
+		pointer += sizeof(float);
+		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &r, sizeof(float));
+		pointer += sizeof(float);
+		data[pointer] = ',';
+		memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+		serverPackets.push_back(p);
+		}
+		else if ((*it)->objectType > 2 && (*it)->objectType < 5) { // 3: human, 4: crusader, 5: vampire
+		*/
+		int id = (*it)->getID();
+		int objType = (*it)->objectType;
+		Packet* p = new Packet;
+		p->packet_type = ACTION_EVENT;
+		p->id = id;
+
+
+		if (objType == 0){
 			Building* building = (Building*)(*it);
-			//printf("CREATING THIS BUILDING ID: %d\n", id);
 			float minX = building->getMin().x;
 			float minY = building->getMin().y;
 			float minZ = building->getMin().z;
@@ -350,8 +393,10 @@ void GameLogic::sendCreateObjects()
 			float r = (*it)->getRot();
 			char data[PACKET_DATA_LEN];
 			int pointer = 0;
-			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "create_building", 16);
-			pointer += 16;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "create", 7);
+			pointer += 7;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &objType, sizeof(int));
+			pointer += sizeof(int);
 			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &minX, sizeof(float));
 			pointer += sizeof(float);
 			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &minY, sizeof(float));
@@ -370,14 +415,7 @@ void GameLogic::sendCreateObjects()
 			memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
 			serverPackets.push_back(p);
 		}
-		else if ((*it)->objectType == 4) { // vampire... for now
-			int id = (*it)->getID();
-			//printf("CREATING THIS OBJECT ID: %d\n", id);
-			//int id = ((Player*)(*it))->getPID();
-			Packet* p = new Packet;
-			p->packet_type = ACTION_EVENT;
-			p->id = id;
-
+		else if (objType >= 3 && objType <= 5){
 			float x = (*it)->getPos().x;
 			float y = (*it)->getPos().y;
 			float z = (*it)->getPos().z;
@@ -385,70 +423,10 @@ void GameLogic::sendCreateObjects()
 			float hp = (*it)->getHP();
 			char data[PACKET_DATA_LEN];
 			int pointer = 0;
-			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "create_vampire", 15);
-			pointer += 15;
-			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &x, sizeof(float));
-			pointer += sizeof(float);
-			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
-			pointer += sizeof(float);
-			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
-			pointer += sizeof(float);
-			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &r, sizeof(float));
-			pointer += sizeof(float);
-			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &hp, sizeof(float));
-			pointer += sizeof(float);
-			data[pointer] = ',';
-			memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
-			serverPackets.push_back(p);
-		}
-		else if ((*it)->objectType == 5) { // vampire... for now
-			int id = (*it)->getID();
-			//printf("CREATING THIS OBJECT ID: %d\n", id);
-			//int id = ((Player*)(*it))->getPID();
-			Packet* p = new Packet;
-			p->packet_type = ACTION_EVENT;
-			p->id = id;
-
-			float x = (*it)->getPos().x;
-			float y = (*it)->getPos().y;
-			float z = (*it)->getPos().z;
-			float r = (*it)->getRot();
-			float hp = (*it)->getHP();
-			char data[PACKET_DATA_LEN];
-			int pointer = 0;
-			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "create_crusader", 16);
-			pointer += 16;
-			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &x, sizeof(float));
-			pointer += sizeof(float);
-			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
-			pointer += sizeof(float);
-			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
-			pointer += sizeof(float);
-			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &r, sizeof(float));
-			pointer += sizeof(float);
-			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &hp, sizeof(float));
-			pointer += sizeof(float);
-			data[pointer] = ',';
-			memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
-			serverPackets.push_back(p);
-		}
-		else if ((*it)->objectType == 3) { // vampire... for now
-			int id = (*it)->getID();
-			//printf("CREATING THIS OBJECT ID: %d\n", id);
-			//int id = ((Player*)(*it))->getPID();
-			Packet* p = new Packet;
-			p->packet_type = ACTION_EVENT;
-			p->id = id;
-
-			float x = (*it)->getPos().x;
-			float y = (*it)->getPos().y;
-			float z = (*it)->getPos().z;
-			float r = (*it)->getRot();
-			float hp = (*it)->getHP();
-			char data[PACKET_DATA_LEN];
-			int pointer = 0;
-			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "create_human", 13);
-			pointer += 13;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "create", 7);
+			pointer += 7;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &objType, sizeof(int));
+			pointer += sizeof(int);
 			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &x, sizeof(float));
 			pointer += sizeof(float);
 			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
@@ -465,6 +443,7 @@ void GameLogic::sendCreateObjects()
 		}
 	}
 }
+
 
 void GameLogic::setState(stateType state)
 {
@@ -547,14 +526,14 @@ void GameLogic::updateState()
 			gameObjects.push_back(Build);
 
 			// generating humans
-			Human* h = new Human();
-			gameObjects.push_back(h);
+			//Human* h = new Human();
+			//gameObjects.push_back(h);
 
 
-			printf("PRINTING OUT THE GAMEOBJECTS VECTOR IDS\n");
-			for (std::vector<GameObject*>::iterator it = gameObjects.begin(); it != gameObjects.end(); it++){
-				printf("ObjectID: %d with type: %d\n", (*it)->getID(), (*it)->objectType);
-			}
+			//printf("PRINTING OUT THE GAMEOBJECTS VECTOR IDS\n");
+			//for (std::vector<GameObject*>::iterator it = gameObjects.begin(); it != gameObjects.end(); it++){
+			//	printf("ObjectID: %d with type: %d\n", (*it)->getID(), (*it)->objectType);
+			//}
 
 			sendCreateObjects();
 		}

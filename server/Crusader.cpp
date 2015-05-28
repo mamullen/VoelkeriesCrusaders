@@ -4,7 +4,7 @@
 
 Crusader::Crusader() :Player()
 {
-	objectType = 5;
+	objectType = 4;
 }
 
 
@@ -14,7 +14,8 @@ Crusader::~Crusader()
 
 Crusader::Crusader(int i) :Player(i)
 {
-	objectType = 5;
+	objectType = 4;
+	team = 1;
 }
 
 void Crusader::updateTime(int time, int delta)

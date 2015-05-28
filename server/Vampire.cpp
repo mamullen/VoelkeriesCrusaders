@@ -4,7 +4,7 @@
 
 Vampire::Vampire() :Player()
 {
-	objectType = 4;
+	objectType = 5;
 }
 
 
@@ -14,7 +14,8 @@ Vampire::~Vampire()
 
 Vampire::Vampire(int i) :Player(i)
 {
-	objectType = 4;
+	objectType = 5;
+	team = 2;
 }
 
 void Vampire::updateTime(int time,int delta)
