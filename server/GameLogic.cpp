@@ -10,9 +10,14 @@ GameLogic::GameLogic()
 	phase1time = atoi(ConfigSettings::config->getValue("Phase1Time").c_str());
 	phase2time = atoi(ConfigSettings::config->getValue("Phase2Time").c_str());
 	phase3time = atoi(ConfigSettings::config->getValue("Phase3Time").c_str());
+	ticksPerTimerSend = atoi(ConfigSettings::config->getValue("TicksPerTimerSend").c_str());
+	ticksSinceSend = ticksPerTimerSend;
 
 	numCrusaders = 0;
 	numVampires = 0;
+	aliveCrusaders = 0;
+	aliveVampires = 0;
+
 	gameState = WAIT;
 	timer = new Timer();
 	timer->setPhase(phase1time, phase2time, phase3time);
@@ -37,17 +42,15 @@ void GameLogic::update(int time)
 		return;
 
 	if (getState() == END){
-		char data[PACKET_DATA_LEN];
+		/*char data[PACKET_DATA_LEN];
 		memcpy_s(data, PACKET_DATA_LEN, "game_over", 10);
 		Packet* p = new Packet;
 		p->packet_type = ACTION_EVENT;
 		memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
 		p->id = 0;
-		serverPackets.push_back(p);
+		serverPackets.push_back(p);*/
 		return;
 	}
-	timer->update(time);
-	timer->print();
 
 	// go through each player and update their attack cd and status based on time
 	for (int i = 0; i < playerList.size(); i++){
@@ -157,22 +160,31 @@ void GameLogic::update(int time)
 		// need fix
 		gameObjects.at(index)->clearChanges();
 	}
-	int r = timer->getTime();
-	char data[PACKET_DATA_LEN];
-	int pointer = 0;
-	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "GameTime", 9);
-	pointer += 9;
-	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &r, sizeof(int));
-	pointer += sizeof(int);
-	data[pointer] = ',';
-	pointer++;
-	///////////////////////////////////////////////////////////////////////////
-	Packet* p = new Packet;
-	p->packet_type = ACTION_EVENT;
-	memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
-	p->id = 0;
 
-	serverPackets.push_back(p);
+
+	timer->update(time);
+	if (ticksSinceSend == ticksPerTimerSend){
+		ticksSinceSend = 0;
+		timer->print();
+
+		int r = timer->getTime();
+		char data[PACKET_DATA_LEN];
+		int pointer = 0;
+		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "game_time", 10);
+		pointer += 10;
+		memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &r, sizeof(int));
+		pointer += sizeof(int);
+		data[pointer] = ',';
+		pointer++;
+		///////////////////////////////////////////////////////////////////////////
+		Packet* p = new Packet;
+		p->packet_type = ACTION_EVENT;
+		memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+		p->id = 0;
+
+		serverPackets.push_back(p);
+	}
+	ticksSinceSend++;
 
 }
 
@@ -458,21 +470,29 @@ GameLogic::stateType GameLogic::getState()
 void GameLogic::updateState()
 {
 	int count = playerList.size();
+	aliveCrusaders = 0;
+	aliveVampires = 0;
 	for (int i = 0; i < playerList.size(); i++){
 		if (playerList[i]->getHP() <= 0){
 			count--;
+		}
+		else{
+			int team = playerList[i]->team;
+			if (team == 1)
+				aliveCrusaders++;
+			else if (team == 2)
+				aliveVampires++;
 		}
 	}
 
 	if (gameState == WAIT)
 	{
 		if (numCrusaders >= crusadersToStart && numVampires >= vampiresToStart){
-			printf("We have %d players, STARTING THE GAME!\n", count);
+			printf("We have %d/%d crusaders and %d/%d vampires, STARTING THE GAME!\n", aliveCrusaders, crusadersToStart, aliveVampires, vampiresToStart);
 			gameState = START;
 
+
 			std::sort(gameObjects.begin(), gameObjects.end(), [](GameObject* a, GameObject* b){ return a->getID() < b->getID(); });
-
-
 
 
 			char data[PACKET_DATA_LEN];
@@ -526,8 +546,8 @@ void GameLogic::updateState()
 			gameObjects.push_back(Build);
 
 			// generating humans
-			//Human* h = new Human();
-			//gameObjects.push_back(h);
+			// Human* h = new Human();
+			// gameObjects.push_back(h);
 
 
 			//printf("PRINTING OUT THE GAMEOBJECTS VECTOR IDS\n");
@@ -541,29 +561,56 @@ void GameLogic::updateState()
 	else if (gameState == START)
 	{
 
-		if (count <= 1){
-			printf("We have %d player left, ENDING THE GAME!\n", 1);
-			gameState == END;
+		if (crusadersToStart == 0 || vampiresToStart == 0){
+			if (ticksSinceSend == ticksPerTimerSend)
+				printf("Dev mode: 0 Crusaders or 0 Vampires to start selected NEVER ENEDING THE GAME...\n");
+			return;
+		}
 
+		int gameover = 0; // 0: draw, 1: crusaders win, 2: vampires win
+		if (aliveCrusaders == 0){
+			printf("We have %d crusaders left, VAMPIRES WIN!\n", aliveCrusaders);
+			gameState = END;
+			gameover = 2;
+		}
+		else if (aliveVampires == 0){
+			printf("We have %d vampires left, CRUSADERS WIN!\n", aliveCrusaders);
+			gameState = END;
+			gameover = 1;
+		}
+		else if (timer->getTime() >= phase3time){
+			printf("Time is up. %d crusaders and %d vampires left. ", aliveCrusaders, aliveVampires);
+			if (aliveCrusaders > aliveVampires){
+				printf("CRUSADERS WIN!\n");
+			}
+			else if (aliveVampires > aliveCrusaders){
+				printf("VAMPIRES WIN!\n");
+			}
+			else{
+				printf("IT'S A DRAW!\n");
+			}
+			gameState = END;
+			gameover = 0;
+		}
+
+
+		if (gameState == END){
+			int pointer = 0;
+			char data[PACKET_DATA_LEN];
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "game_over", 10);
+			pointer += 10;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &gameover, sizeof(int));
+			pointer += sizeof(int);
+			data[pointer] = ',';
+			pointer++;
+			///////////////////////////////////////////////////////////////////////////
+			Packet* p = new Packet;
+			p->packet_type = ACTION_EVENT;
+			memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+			p->id = 0;
+
+			serverPackets.push_back(p);
 		}
 	}
 }
 
-/*
-bool GameLogic::gameEnd()
-{
-if (!start){
-return false;
-}
-int count = playerList.size();
-for (int i = 0; i < playerList.size(); i++){
-if (playerList[i]->getHP() <= 0){
-count--;
-}
-}
-if (count <= 1){
-return true;
-}
-return false;
-}
-*/
