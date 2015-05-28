@@ -570,12 +570,12 @@ void GameLogic::updateState()
 		int gameover = 0; // 0: draw, 1: crusaders win, 2: vampires win
 		if (aliveCrusaders == 0){
 			printf("We have %d crusaders left, VAMPIRES WIN!\n", aliveCrusaders);
-			gameState == END;
+			gameState = END;
 			gameover = 2;
 		}
 		else if (aliveVampires == 0){
 			printf("We have %d vampires left, CRUSADERS WIN!\n", aliveCrusaders);
-			gameState == END;
+			gameState = END;
 			gameover = 1;
 		}
 		else if (timer->getTime() >= phase3time){
@@ -589,7 +589,7 @@ void GameLogic::updateState()
 			else{
 				printf("IT'S A DRAW!\n");
 			}
-			gameState == END;
+			gameState = END;
 			gameover = 0;
 		}
 
