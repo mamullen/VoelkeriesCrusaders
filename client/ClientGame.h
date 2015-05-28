@@ -28,6 +28,11 @@ public:
 	char * getClientName()				{ return client_name; }
 	void addPlayer(unsigned int id, int team, char* name);
 	std::map<unsigned int, std::pair<int, char*>>* getPlayers(){ return &otherPlayers; }
+	void savePhaseTimes(int p1, int p2, int p3)	{ phase1 = p1; phase2 = p2; phase3 = p3; }
+	int getPhase1Time()					{ return phase1; }
+	int getPhase2Time()					{ return phase2; }
+	int getPhase3Time()					{ return phase3; }
+
 	Packet * popServerEvent();
 	Packet * popJoinGameEvent();
 	void setStateChange(char* nextState) { stateChange = nextState; }
@@ -43,6 +48,7 @@ private:
 	char * client_name;
 	char * stateChange;
 	std::map<unsigned int, std::pair<int, char*> > otherPlayers;
+	int phase1, phase2, phase3;
 };
 
 

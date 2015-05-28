@@ -12,8 +12,14 @@
 
 class Player: public GameObject {
 public:
-	Player(unsigned int i) : GameObject(new DaeLoader((char*)ConfigSettings::config->getValue("MechAnimationFilePath").c_str()), i){ setShowHP(true); };
+	Player(unsigned int i, int t) : GameObject(new DaeLoader((char*)ConfigSettings::config->getValue("MechAnimationFilePath").c_str()), i){ setShowHP(true); team = t; };
 	//Player(unsigned int i) : GameObject(NULL, i){ setShowHP(true); };
+
+	int getTeam()		{ return team; }
+
+private:
+	int team;
+
 };
 
 #endif

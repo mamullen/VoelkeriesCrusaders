@@ -211,7 +211,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 		char * serverEvent = serverPacket->packet_data;
 		unsigned int objID = serverPacket->id;
 
-		//printf("%s\n", serverEvent);
+		printf("%s\n", serverEvent);
 		//printf("%d\n", objID);
 
 		if (strcmp(serverEvent, "create") == 0){
@@ -260,7 +260,17 @@ void PlayState::UpdateClient(ClientGame* client) {
 
 				printf("PERSON: %f,%f,%f,%f,%f\n", xPos, yPos, zPos, rot, hp);
 				//glScalef(0.01, 0.01, 0.01);
-				Player* p = new Player(objID);
+				Player* p;
+				if (objectType == 3){
+					p = new Player(objID,0);
+				}
+				else if (objectType == 4){
+					p = new Player(objID, 1);
+				}
+				else{
+					p = new Player(objID, 2);
+				}
+
 				//glScalef(10, 10, 10);
 				//add shriner here?
 				p->setPos(xPos, yPos, zPos);
@@ -283,30 +293,6 @@ void PlayState::UpdateClient(ClientGame* client) {
 				break;
 			}
 		}
-
-		/*if (strcmp(serverEvent, "create_building") == 0){
-			float x1, y1, z1, x2, y2, z2, rot;
-			memcpy(&x1, serverEvent + 16, sizeof(float));
-			memcpy(&y1, serverEvent + 20, sizeof(float));
-			memcpy(&z1, serverEvent + 24, sizeof(float));
-			memcpy(&x2, serverEvent + 28, sizeof(float));
-			memcpy(&y2, serverEvent + 32, sizeof(float));
-			memcpy(&z2, serverEvent + 36, sizeof(float));
-			memcpy(&rot, serverEvent + 40, sizeof(float));
-
-			printf("BUILDING: %f,%f,%f,%f,%f,%f,%f\n", x1, y1, z1, x2, y2, z2, rot);
-
-			Vector3* v1 = new Vector3(x1, y1, z1);
-			Vector3* v2 = new Vector3(x2, y2, z2);
-
-			b1 = new Building(v1, v2, rot, objID);
-			b1->tex = text_picture;
-			b1->norm = text_normalmap;
-			b1->shade = shader;
-			gameObjects.insert(std::pair<int, GameObject*>(objID,b1));
-
-
-		}*/
 
 		if (strcmp(serverEvent, "pos") == 0){
 			float xPos;
@@ -346,6 +332,27 @@ void PlayState::UpdateClient(ClientGame* client) {
 			else if (gameObjects.find(objID) != gameObjects.end()){
 				GameObject* o = gameObjects.at(objID);
 				o->setHealth(hp);
+			}
+		}
+
+		if (strcmp(serverEvent, "game_time") == 0){
+			int time;
+			memcpy(&time, serverEvent + 10, sizeof(int));
+			currGameTime = time;
+		}
+
+		if (strcmp(serverEvent, "game_over") == 0){
+			int winner;
+			memcpy(&winner, serverEvent + 10, sizeof(int));
+			//gameResult: -1 = lose, 0 = tie, 1 = win
+			if (winner == 0){//tie game
+				gameResult = 0;
+			}
+			else if (winner == player->getTeam()){
+				gameResult = 1;
+			}
+			else{
+				gameResult = -1;
 			}
 		}
 
@@ -595,6 +602,105 @@ void PlayState::RenderParticles(float rot) {
 
 //////////////////////////////////////
 
+void drawRect(float x, float y, float w, float h){
+	glVertex2f(x, y);
+	glVertex2f(x + w, y);
+	glVertex2f(x + w, y + h);
+	glVertex2f(x, y + h);
+}
+
+void PlayState::drawHUD(ClientGame* client){
+	GLint m_viewport[4];
+	glGetIntegerv(GL_VIEWPORT, m_viewport);
+	GLdouble width = GLdouble(m_viewport[2]-m_viewport[0]);
+	GLdouble height = GLdouble(m_viewport[3]-m_viewport[1]);
+
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0.0, width, height, 0.0, -1.0, 10.0);
+	glMatrixMode(GL_MODELVIEW);
+	//glPushMatrix();        ----Not sure if I need this
+	glLoadIdentity();
+	glDisable(GL_CULL_FACE);
+
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+	glBegin(GL_QUADS);
+	//draw top bar
+	float p1w = ((float)client->getPhase1Time() / client->getPhase3Time()) * (width / 2);
+	float p2w = ((float)(client->getPhase2Time() - client->getPhase1Time()) / client->getPhase3Time()) * (width / 2);
+	glColor3f(1, 1, 0);
+	drawRect(width / 4, height / 120, p1w, height / 70);
+	glColor3f(1, 0, 0);
+	drawRect(width/4+p1w, height / 120, p2w, height / 70);
+	glColor3f(1, 1, 0);
+	drawRect(width/4 + p1w + p2w, height / 120, width / 8, height / 70);
+	glEnd();
+
+	//timer triangle
+	float timerX = width / 4 + ((float)currGameTime/client->getPhase3Time()) * (width/2);
+	glBegin(GL_TRIANGLES);
+	glColor3f(1.f, 1.f, 1.f);
+	glVertex2f(timerX,height/120+height/70);
+	glVertex2f(timerX + width / 150, height / 120 + height / 70 + height / 60);
+	glVertex2f(timerX - width / 150, height / 120 + height / 70 + height / 60);
+	glEnd();
+
+	if (gameResult == 1){
+		glPushMatrix();
+		char * name = "YOU WIN";
+		float paramDist = 40.0f;
+		float dist = strlen(name) / 2.0f * (paramDist / 34.0f);
+		glTranslatef(width / 7.5, height / 4, 0);
+		glLineWidth(10);
+		//glScalef(paramDist / 3500.0f, paramDist / 3500.0f, paramDist / 3500.0f);
+		glRotatef(180, 1, 0, 0);
+		glColor3f(1, 1, 1);
+		for (int i = 0; i < strlen(name); i++){
+			glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, (char)name[i]);
+		}
+		glPopMatrix();
+	}
+	else if (gameResult == -1){
+		glPushMatrix();
+		char * name = "YOU LOSE";
+		float paramDist = 40.0f;
+		float dist = strlen(name) / 2.0f * (paramDist / 34.0f);
+		glTranslatef(width / 10, height / 4, 0);
+		glLineWidth(10);
+		//glScalef(paramDist / 3500.0f, paramDist / 3500.0f, paramDist / 3500.0f);
+		glRotatef(180, 1, 0, 0);
+		glColor3f(1, 1, 1);
+		for (int i = 0; i < strlen(name); i++){
+			glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, (char)name[i]);
+		}
+		glPopMatrix();
+	}
+	else if (gameResult == 0){
+		glPushMatrix();
+		char * name = "TIE GAME";
+		float paramDist = 40.0f;
+		float dist = strlen(name) / 2.0f * (paramDist / 34.0f);
+		glTranslatef(width / 10, height / 4, 0);
+		glLineWidth(10);
+		//glScalef(paramDist / 3500.0f, paramDist / 3500.0f, paramDist / 3500.0f);
+		glRotatef(180, 1, 0, 0);
+		glColor3f(1, 1, 1);
+		for (int i = 0; i < strlen(name); i++){
+			glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, (char)name[i]);
+		}
+		glPopMatrix();
+	}
+
+	// Making sure we can render 3d again
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+}
+
+//////////////////////////////////////
+
 void PlayState::Draw(ClientGame* client) {
 	// Clear the screen
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -625,6 +731,8 @@ void PlayState::Draw(ClientGame* client) {
 	//RenderParticles(Cam.GetRotation().y);
 
 	player->update(true, Cam.GetRotation().y);
+
+	drawHUD(client); //This includes the game over results
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();

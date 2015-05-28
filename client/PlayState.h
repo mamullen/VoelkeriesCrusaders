@@ -56,6 +56,7 @@ public:
 	void UpdateClient(ClientGame* Client);
 
 	void drawsomeground();
+	void drawHUD(ClientGame* Client);
 
 	GLuint LoadRAWTexture(const char * filename, int width, int height);
 
@@ -86,6 +87,8 @@ private:
 	int pid = -1;
 	//player is not stored in this map
 	std::map<int, GameObject*> gameObjects;
+	int currGameTime = 0, gameResult = -2;
+
 	Building* b1;
 	Texture t;
 	GLuint photos[5];

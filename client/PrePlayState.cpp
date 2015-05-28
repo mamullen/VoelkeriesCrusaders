@@ -51,15 +51,18 @@ void PrePlayState::Update(ClientGame* client) {
 		//printf("%d\n", objID);
 
 		if (strstr(serverEvent, "init") != NULL){
-			int numCrusaders;
-			int numVampires;
+			int numCrusaders,numVampires,phase1,phase2,phase3;
 			memcpy(&numCrusaders, serverEvent + 5, sizeof(int));
 			memcpy(&numVampires, serverEvent + 9, sizeof(int));
+			memcpy(&phase1, serverEvent + 13, sizeof(int));
+			memcpy(&phase2, serverEvent + 17, sizeof(int));
+			memcpy(&phase3, serverEvent + 21, sizeof(int));
 			maxCrusaders = numCrusaders;
 			maxVampires = numVampires;
 			printf("%d,%d\n", maxCrusaders, maxVampires);
 
 			client->setClientId(objID);
+			client->savePhaseTimes(phase1,phase2,phase3);
 			printf("Setting ID: %d\n", objID);
 		}
 
