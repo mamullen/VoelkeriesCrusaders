@@ -10,7 +10,9 @@ public:
 	int getTime() { return time; }
 	int getState();
 	void print() { printf("Time =  %d\n", time); }
+	void setPhase(int, int, int); //set time period for day/night/day
 private:
 	int time;
+	int p1, p2, p3; // time period for day/night/day
 };
 

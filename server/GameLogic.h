@@ -14,6 +14,7 @@
 #include "ConfigSettings.h"
 #include <algorithm>
 #include "Timer.h"
+#include "Human.h"
 
 class GameLogic
 {

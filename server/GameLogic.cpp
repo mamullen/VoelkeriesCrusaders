@@ -15,6 +15,7 @@ GameLogic::GameLogic()
 	numVampires = 0;
 	gameState = WAIT;
 	timer = new Timer();
+	timer->setPhase(phase1time, phase2time, phase3time);
 }
 
 
@@ -30,7 +31,6 @@ void GameLogic::update(int time)
 {
 
 	updateState();
-
 
 	/* TEMPORARY BREAK */
 	if (getState() == WAIT)
@@ -370,7 +370,7 @@ void GameLogic::sendCreateObjects()
 			memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
 			serverPackets.push_back(p);
 		}
-		else { // PLAYER... for now
+		else if ((*it)->objectType == 4) { // vampire... for now
 			int id = (*it)->getID();
 			//printf("CREATING THIS OBJECT ID: %d\n", id);
 			//int id = ((Player*)(*it))->getPID();
@@ -385,8 +385,70 @@ void GameLogic::sendCreateObjects()
 			float hp = (*it)->getHP();
 			char data[PACKET_DATA_LEN];
 			int pointer = 0;
-			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "create", 7);
-			pointer += 7;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "create_vampire", 15);
+			pointer += 15;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &x, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &r, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &hp, sizeof(float));
+			pointer += sizeof(float);
+			data[pointer] = ',';
+			memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+			serverPackets.push_back(p);
+		}
+		else if ((*it)->objectType == 5) { // vampire... for now
+			int id = (*it)->getID();
+			//printf("CREATING THIS OBJECT ID: %d\n", id);
+			//int id = ((Player*)(*it))->getPID();
+			Packet* p = new Packet;
+			p->packet_type = ACTION_EVENT;
+			p->id = id;
+
+			float x = (*it)->getPos().x;
+			float y = (*it)->getPos().y;
+			float z = (*it)->getPos().z;
+			float r = (*it)->getRot();
+			float hp = (*it)->getHP();
+			char data[PACKET_DATA_LEN];
+			int pointer = 0;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "create_crusader", 16);
+			pointer += 16;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &x, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &r, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &hp, sizeof(float));
+			pointer += sizeof(float);
+			data[pointer] = ',';
+			memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+			serverPackets.push_back(p);
+		}
+		else if ((*it)->objectType == 3) { // vampire... for now
+			int id = (*it)->getID();
+			//printf("CREATING THIS OBJECT ID: %d\n", id);
+			//int id = ((Player*)(*it))->getPID();
+			Packet* p = new Packet;
+			p->packet_type = ACTION_EVENT;
+			p->id = id;
+
+			float x = (*it)->getPos().x;
+			float y = (*it)->getPos().y;
+			float z = (*it)->getPos().z;
+			float r = (*it)->getRot();
+			float hp = (*it)->getHP();
+			char data[PACKET_DATA_LEN];
+			int pointer = 0;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "create_human", 13);
+			pointer += 13;
 			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &x, sizeof(float));
 			pointer += sizeof(float);
 			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
@@ -484,7 +546,9 @@ void GameLogic::updateState()
 			Build->setMax(-140, 25, 80);
 			gameObjects.push_back(Build);
 
-
+			// generating humans
+			Human* h = new Human();
+			gameObjects.push_back(h);
 
 
 			printf("PRINTING OUT THE GAMEOBJECTS VECTOR IDS\n");

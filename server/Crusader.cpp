@@ -2,8 +2,9 @@
 #include "Crusader.h"
 
 
-Crusader::Crusader()
+Crusader::Crusader() :Player()
 {
+	objectType = 5;
 }
 
 
@@ -13,6 +14,7 @@ Crusader::~Crusader()
 
 Crusader::Crusader(int i) :Player(i)
 {
+	objectType = 5;
 }
 
 void Crusader::updateTime(int time, int delta)
@@ -24,5 +26,17 @@ void Crusader::updateTime(int time, int delta)
 	else if (time == 1){
 		//night
 		attack_mode->setRange(0.8);
+	}
+}
+
+void Crusader::attack(GameObject* obj)
+{
+	if (this->id == obj->getID()){
+		return;
+	}
+	if (this->inRange(obj)){
+		if (obj->objectType != 3){
+			obj->isAttacked(ad);
+		}
 	}
 }

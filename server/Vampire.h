@@ -11,6 +11,7 @@ public:
 	virtual ~Vampire();
 
 	virtual void updateTime(int,int);
+	virtual void attack(GameObject*);
 private:
 	float HpDropRate = (float)atoi(ConfigSettings::config->getValue("VampireHpDropRate").c_str());
 };

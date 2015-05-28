@@ -2,10 +2,13 @@
 #include "Human.h"
 
 
-Human::Human()
+Human::Human() :Player()
 {
 	hp = 40;
 	isPlayer = false;
+	objectType = 3;
+	position = Vector3(10, 10, 10);
+	rotation = 0;
 }
 
 
