@@ -55,7 +55,6 @@ int main(int argc, char **argv) {
 		//update and render game based off of Server messages
 		Game->Update(Client);
 		Game->Draw(Client);
-
 		//check if client wants to change state
 		if (Client->getStateChange() != NULL){
 			if (strcmp(Client->getStateChange(), "play_state") == 0){

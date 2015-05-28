@@ -211,48 +211,80 @@ void PlayState::UpdateClient(ClientGame* client) {
 		char * serverEvent = serverPacket->packet_data;
 		unsigned int objID = serverPacket->id;
 
-		printf("%s\n", serverEvent);
+		//printf("%s\n", serverEvent);
 		//printf("%d\n", objID);
 
 		if (strcmp(serverEvent, "create") == 0){
-			//get init data
-			float xPos;
-			float yPos;
-			float zPos;
-			float rot;
-			float hp;
-			memcpy(&xPos, serverEvent + 7, sizeof(float));
-			memcpy(&yPos, serverEvent + 11, sizeof(float));
-			memcpy(&zPos, serverEvent + 15, sizeof(float));
-			memcpy(&rot, serverEvent + 19, sizeof(float));
-			memcpy(&hp, serverEvent + 23, sizeof(float));
+			int objectType;
+			memcpy(&objectType, serverEvent + 7, sizeof(int));
 
+			printf("CREATING RECEIVED, %d\n",objectType);
+			switch (objectType){
+			case 0:{//building
+				float x1, y1, z1, x2, y2, z2, rot;
+				memcpy(&x1, serverEvent + 11, sizeof(float));
+				memcpy(&y1, serverEvent + 15, sizeof(float));
+				memcpy(&z1, serverEvent + 19, sizeof(float));
+				memcpy(&x2, serverEvent + 23, sizeof(float));
+				memcpy(&y2, serverEvent + 27, sizeof(float));
+				memcpy(&z2, serverEvent + 31, sizeof(float));
+				memcpy(&rot, serverEvent + 35, sizeof(float));
 
-			printf("PERSON: %f,%f,%f,%f,%f\n", xPos, yPos, zPos, rot, hp);
-			//glScalef(0.01, 0.01, 0.01);
-			Player* p = new Player(objID);
-			//glScalef(10, 10, 10);
-			//add shriner here?
-			p->setPos(xPos, yPos, zPos);
-			p->setRotation(rot);
-			p->setMaxHealth(100);
-			p->setHealth(hp);
+				printf("BUILDING: %f,%f,%f,%f,%f,%f,%f\n", x1, y1, z1, x2, y2, z2, rot);
 
-			if (objID == client->getClientId()){
-				player = p;
+				Vector3* v1 = new Vector3(x1, y1, z1);
+				Vector3* v2 = new Vector3(x2, y2, z2);
+
+				b1 = new Building(v1, v2, rot, objID);
+				b1->tex = text_picture;
+				b1->norm = text_normalmap;
+				b1->shade = shader;
+				gameObjects.insert(std::pair<int, GameObject*>(objID, b1));
+				break;
 			}
-			else{
-				std::map<unsigned int, std::pair<int, char*>>::iterator it = client->getPlayers()->find(objID);
-				if (it != client->getPlayers()->end()){
-					//attach name
-					char* pName = it->second.second;
-					p->setName(pName);
+			case 3://human
+			case 4://crusader
+			case 5://vampire
+				//get init data
+				float xPos;
+				float yPos;
+				float zPos;
+				float rot;
+				float hp;
+				memcpy(&xPos, serverEvent + 11, sizeof(float));
+				memcpy(&yPos, serverEvent + 15, sizeof(float));
+				memcpy(&zPos, serverEvent + 19, sizeof(float));
+				memcpy(&rot, serverEvent + 23, sizeof(float));
+				memcpy(&hp, serverEvent + 27, sizeof(float));
+
+
+				printf("PERSON: %f,%f,%f,%f,%f\n", xPos, yPos, zPos, rot, hp);
+				//glScalef(0.01, 0.01, 0.01);
+				Player* p = new Player(objID);
+				//glScalef(10, 10, 10);
+				//add shriner here?
+				p->setPos(xPos, yPos, zPos);
+				p->setRotation(rot);
+				p->setMaxHealth(100);
+				p->setHealth(hp);
+
+				if (objID == client->getClientId()){
+					player = p;
 				}
-				gameObjects.insert(std::pair<int, GameObject*>(objID, p));	
+				else{
+					std::map<unsigned int, std::pair<int, char*>>::iterator it = client->getPlayers()->find(objID);
+					if (it != client->getPlayers()->end()){
+						//attach name
+						char* pName = it->second.second;
+						p->setName(pName);
+					}
+					gameObjects.insert(std::pair<int, GameObject*>(objID, p));
+				}
+				break;
 			}
 		}
 
-		if (strcmp(serverEvent, "create_building") == 0){
+		/*if (strcmp(serverEvent, "create_building") == 0){
 			float x1, y1, z1, x2, y2, z2, rot;
 			memcpy(&x1, serverEvent + 16, sizeof(float));
 			memcpy(&y1, serverEvent + 20, sizeof(float));
@@ -274,7 +306,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 			gameObjects.insert(std::pair<int, GameObject*>(objID,b1));
 
 
-		}
+		}*/
 
 		if (strcmp(serverEvent, "pos") == 0){
 			float xPos;
