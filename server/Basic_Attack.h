@@ -10,7 +10,7 @@ public:
 
 	virtual float getDmg();
 	virtual float getRange();
-	virtual void maxCD();
+	virtual void setRange(float);
 
 };
 

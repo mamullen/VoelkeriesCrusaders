@@ -68,7 +68,8 @@ protected:
 	Matrix34 rotateMx;
 	Vector3 position, right, up;
 	Vector3 pPosition, pForward;
-	double speed=.5;
+	double default_speed;
+	double speed;
 	unsigned int id;
 	unsigned int attr_num;  // number of attributes
 	//std::list<std::string*, bool> changeList;

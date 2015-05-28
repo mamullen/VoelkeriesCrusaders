@@ -10,10 +10,13 @@ Player::Player() :GameObject()
 	position = Vector3(0, 1.3, 0);
 	rotation = 0;
 	hp = 100;
-	speed = (float)atoi(ConfigSettings::config->getValue("PlayerMoveSpeed").c_str());
+	default_speed = (float)atoi(ConfigSettings::config->getValue("PlayerMoveSpeed").c_str());
+	speed = default_speed;
+	isAlive = true;
 	// actions
 	setAttack(new Basic_Attack());
 	//////////////////////////////////
+	time_ctr = 0;
 	isPlayer = true;
 	objectType = 2;
 	pPosition = Vector3(position.x, position.y, position.z);
@@ -188,11 +191,18 @@ void Player::attack(GameObject* obj)
 
 void Player::isAttacked(float ad)
 {
-	if (!isChanged[2] && hp > 0){
+	if (hp > 0){
 		change_counter[2]++;
 		std::string* change = new std::string("hp");
 		changes.push_back(std::pair<int, std::string*>(id, change));
 		hp -= ad;
+		if (hp <= 0){
+			if (isAlive){
+				std::string* change = new std::string("dead");
+				changes.push_back(std::pair<int, std::string*>(id, change));
+			}
+			isAlive = false;
+		}
 	}
 }
 
@@ -217,6 +227,10 @@ void Player::setAttack(Action* act)
 void Player::updateCD()
 {
 	attack_mode->update();
+}
+
+void Player::updateTime(int time,int delta){
+	// does nothing =[
 }
 
 bool Player::collide(std::vector<GameObject*>* obj, Vector3 dir)

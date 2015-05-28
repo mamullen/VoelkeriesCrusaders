@@ -31,17 +31,31 @@ int main()
 //should most likely move this loop into another class... ServerThread class?
 void serverLoop(void * arg)
 {
+	unsigned int lastTime =
+		std::chrono::duration_cast<std::chrono::milliseconds>
+		(std::chrono::system_clock::now().time_since_epoch()).count();
+	unsigned int currentTime = 0;
+	unsigned int deltaTime = 0;
+
 	while (true)
 	{
 		unsigned long long startTime =
 			std::chrono::duration_cast<std::chrono::milliseconds>
 			(std::chrono::system_clock::now().time_since_epoch()).count();
-
+		////////////////////////////////////////////////////////////////////
+		// time for game logic
+		currentTime =
+			std::chrono::duration_cast<std::chrono::milliseconds>
+			(std::chrono::system_clock::now().time_since_epoch()).count();
+		deltaTime = currentTime - lastTime;
+		lastTime = currentTime;
+		////////////////////////////////////////////////////////////////////
+		
 		// server receive packets and accept connections
 		server->update();
 
 		// gameLogic updates and create packets for sending
-		gameLogic->update();
+		gameLogic->update(deltaTime);
 
 		// server sends udpated packets
 		server->sendPackets();

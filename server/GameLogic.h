@@ -2,6 +2,8 @@
 
 #include "GameObject.h"
 #include "Player.h"
+#include "Vampire.h"
+#include "Crusader.h"
 #include "Building.h"
 #include "NetworkData.h"
 #include "PacketParser.h"
@@ -11,6 +13,7 @@
 #include <string>
 #include "ConfigSettings.h"
 #include <algorithm>
+#include "Timer.h"
 
 class GameLogic
 {
@@ -18,7 +21,7 @@ public:
 	GameLogic();
 	~GameLogic();
 
-	void update();
+	void update(int time);
 	std::list<Packet*> getServerPackets();
 	void pushServerPacket(Packet *p);
 	std::vector<GameObject*> getGameObjects();
@@ -40,6 +43,7 @@ public:
 	std::list<std::pair<int, string>> playerNames;
 
 private:
+	Timer* timer;
 	std::vector<GameObject*> gameObjects;
 	std::vector<Player*> playerList;
 	std::list<std::pair<int,Packet*>> packets;

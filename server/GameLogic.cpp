@@ -10,17 +10,19 @@ GameLogic::GameLogic()
 	numCrusaders = 0;
 	numVampires = 0;
 	gameState = WAIT;
+	timer = new Timer();
 }
 
 
 GameLogic::~GameLogic()
 {
+	delete timer;
 }
 
 // update will do the following
 // 1. updates the game object with the packet it intends to modify
 // 2. create packets for clients when all packets received from clients are processed
-void GameLogic::update()
+void GameLogic::update(int time)
 {
 
 	updateState();
@@ -39,6 +41,14 @@ void GameLogic::update()
 		p->id = 0;
 		serverPackets.push_back(p);
 		return;
+	}
+	timer->update(time);
+	timer->print();
+	
+	// go through each player and update their attack cd and status based on time
+	for (int i = 0; i < playerList.size(); i++){
+		playerList[i]->updateCD();
+		playerList[i]->updateTime(timer->getState(), time);
 	}
 
 	// go through packets and update according to its id
@@ -121,16 +131,45 @@ void GameLogic::update()
 
 			serverPackets.push_back(p);
 		}
+		else if (key->compare("dead") == 0){
+			float r = gameObjects.at(index)->getHP();
+			///////////////////////////////////////////////////////////////////////////
+			char data[PACKET_DATA_LEN];
+			int pointer = 0;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "dead", 5);
+			pointer += 5;
+			data[pointer] = ',';
+			pointer++;
+			///////////////////////////////////////////////////////////////////////////
+			Packet* p = new Packet;
+			p->packet_type = ACTION_EVENT;
+			memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+			p->id = index;
+
+			serverPackets.push_back(p);
+		}
 
 		// clear the change bool array after done processing all the changes 
 		// need fix
 		gameObjects.at(index)->clearChanges();
 	}
+	int r = timer->getTime();
+	char data[PACKET_DATA_LEN];
+	int pointer = 0;
+	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "GameTime", 9);
+	pointer += 9;
+	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &r, sizeof(int));
+	pointer += sizeof(int);
+	data[pointer] = ',';
+	pointer++;
+	///////////////////////////////////////////////////////////////////////////
+	Packet* p = new Packet;
+	p->packet_type = ACTION_EVENT;
+	memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+	p->id = 0;
 
-	// go through each player and update their attack cd
-	for (int i = 0; i < playerList.size(); i++){
-		playerList[i]->updateCD();
-	}
+	serverPackets.push_back(p);
+	
 }
 
 std::list<Packet*> GameLogic::getServerPackets()
@@ -230,9 +269,14 @@ int GameLogic::addPlayer(int id, char* packet_data)
 		team = 2;
 	}
 
-	Player* newP = new Player(id);
+	Player* newP = 0;
+	if (team == 1){
+		newP = new Crusader(id);		
+	}
+	else if (team == 2){
+		newP = new Vampire(id);
+	}
 	newP->team = team;
-
 	for (std::list<std::pair<int, string>>::const_iterator nameIter = playerNames.begin(); nameIter != playerNames.end(); nameIter++){
 		if (nameIter->first == id)
 			newP->name = nameIter->second;
@@ -240,8 +284,6 @@ int GameLogic::addPlayer(int id, char* packet_data)
 
 	gameObjects.push_back(newP);
 	playerList.push_back(newP);
-
-
 
 	return team;
 
