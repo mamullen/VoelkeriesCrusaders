@@ -56,7 +56,7 @@ public:
 private:
 	Timer* timer;
 	std::vector<GameObject*> gameObjects;
-	std::vector<Player*> playerList;
+	//std::vector<Player*> playerList;
 	std::list<std::pair<int,Packet*>> packets;
 	std::list<Packet*> serverPackets;
 	std::map<int, Player*> players;
