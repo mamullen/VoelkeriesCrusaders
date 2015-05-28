@@ -67,8 +67,16 @@ int PlayState::Initialize() {
 	Cam.SetTranslate(g_DefaultCameraTranslate);
 	Cam.SetRotate(g_DefaultCameraRotate);
 
-	// SunShrine
-	viewer = new osgViewer::Viewer;
+	// OSG - SunShrine
+	/*viewer = new osgViewer::Viewer;
+
+	//osg::Camera* os_camera = viewer->getCamera();
+	//os_camera->setViewport(0, 0, WinX, WinY);
+	//os_camera->setProjectionMatrixAsPerspective(60.0f, ratio, 0.1f, 1000.0f);
+	//os_camera->setViewMatrix(osg::Matrix::lookAt(osg::Vec3(g_DefaultCameraTranslate.x, g_DefaultCameraTranslate.y, g_DefaultCameraTranslate.z),
+															//osg::Vec3(0, 0, 0), osg::Vec3(0, 1, 0)));
+	//os_camera->setClearColor(osg::Vec4(0.5, 0.0, 0.0, 0.0));
+
 	root = osgDB::readNodeFile("models/RobotAnimation.fbx");
 
 	// Animations
@@ -76,10 +84,9 @@ int PlayState::Initialize() {
 	const osgAnimation::AnimationList& animations = finder._am->getAnimationList();
 	finder._am->playAnimation(animations[0].get());
 
-	os_window = viewer->setUpViewerAsEmbeddedInWindow(100, 100, WinX/2, WinY/2);
+	os_window = viewer->setUpViewerAsEmbeddedInWindow(0, 0, WinX, WinY);
 	viewer->setSceneData(root.get());
-	viewer->setCameraManipulator(new osgGA::TrackballManipulator);
-	viewer->realize();
+	viewer->realize();*/
 
 	// Particles
 	/*if (g_ParticleEffect.LoadTexture("./particles/Textures/star.png"))
@@ -132,29 +139,32 @@ void drawsomeground() { // deprecate this one day
 double lastTime = glfwGetTime();
 
 void PlayState::Draw() {
-	static ElapsedTime elapsedTime;
-	float fDeltaTime = elapsedTime.GetElapsedTime();
-
-	g_ParticleEffect.Update(fDeltaTime);
-
-	if (BothDown) {
-		//player.MoveForward(0.01);
-	}
-
-	// Set up glStuff
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Draw components
+	// Set up glStuff
 
+	// Draw components
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+
+	//osg::Matrixd i = Cam.GetApplyViewTransform();
+	//viewer->getCamera()->setViewMatrix(i);
+
+	//viewer->frame();
+	player.update();
+
+	glPushMatrix();
+	
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-
 	Cam.ApplyViewTransform();
-	drawAxis(10);
-	viewer->frame();
 
+	drawAxis(100);
+
+	drawsomeground();
+	glPopMatrix();
 	// Begin drawing player and scene
-	
+	glPopAttrib();
+
 	glfwSwapBuffers(window);
 	glfwPollEvents();
 }
@@ -257,7 +267,7 @@ void PlayState::MouseMotion(GLFWwindow* window, double xpos, double ypos) {
 		//player.setRotation(-Cam.GetAzimuth());
 	}*/
 	if (LeftDown || RightDown) {
-		Cam.AddPitch(dy*rate);
+		Cam.AddPitch(-dy*rate);
 		Cam.AddYaw(dx*rate);
 	}
 }
@@ -265,7 +275,7 @@ void PlayState::MouseMotion(GLFWwindow* window, double xpos, double ypos) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void PlayState::MouseScroll(GLFWwindow* window, double xoffset, double yoffset) {
-	const float rate = 1.0f;
+	const float rate = 10.0f;
 	if (yoffset > 0) {
 		Cam.TranslateZ(1.0f*rate);
 	}

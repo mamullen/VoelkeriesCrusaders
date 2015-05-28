@@ -95,14 +95,9 @@ enum aiTextureOp
 	aiTextureOp_SignedAdd = 0x5,
 
 
-	/** @cond never 
-	 *  This value is not used. It forces the compiler to use at least
-	 *  32 Bit integers to represent this enum.
-	 */
 #ifndef SWIG
-	_aiTextureOp_Force32Bit = 0x9fffffff
+	_aiTextureOp_Force32Bit = INT_MAX
 #endif
-	//! @endcond
 };
 
 // ---------------------------------------------------------------------------
@@ -131,14 +126,9 @@ enum aiTextureMapMode
      */
     aiTextureMapMode_Mirror = 0x2,
 
-	 /** @cond never 
-	  *  This value is not used. It forces the compiler to use at least
-	  *  32 Bit integers to represent this enum.
-	  */
 #ifndef SWIG
-	_aiTextureMapMode_Force32Bit = 0x9fffffff
+	_aiTextureMapMode_Force32Bit = INT_MAX
 #endif
-	//! @endcond
 };
 
 // ---------------------------------------------------------------------------
@@ -176,14 +166,9 @@ enum aiTextureMapping
     aiTextureMapping_OTHER = 0x5,
 
 
-	 /** @cond never 
-	  *  This value is not used. It forces the compiler to use at least
-	  *  32 Bit integers to represent this enum.
-	  */
 #ifndef SWIG
-	_aiTextureMapping_Force32Bit = 0x9fffffff
+	_aiTextureMapping_Force32Bit = INT_MAX
 #endif
-	//! @endcond
 };
 
 // ---------------------------------------------------------------------------
@@ -296,14 +281,9 @@ enum aiTextureType
     aiTextureType_UNKNOWN = 0xC,
 
 
-	 /** @cond never 
-	  *  This value is not used. It forces the compiler to use at least
-	  *  32 Bit integers to represent this enum.
-	  */
 #ifndef SWIG
-	_aiTextureType_Force32Bit = 0x9fffffff
+	_aiTextureType_Force32Bit = INT_MAX
 #endif
-	//! @endcond
 };
 
 #define AI_TEXTURE_TYPE_MAX  aiTextureType_UNKNOWN
@@ -374,14 +354,9 @@ enum aiShadingMode
     aiShadingMode_Fresnel = 0xa,
 
 
-	 /** @cond never 
-	  *  This value is not used. It forces the compiler to use at least
-	  *  32 Bit integers to represent this enum.
-	  */
 #ifndef SWIG
-	_aiShadingMode_Force32Bit = 0x9fffffff
+	_aiShadingMode_Force32Bit = INT_MAX
 #endif
-	//! @endcond
 };
 
 
@@ -420,14 +395,9 @@ enum aiTextureFlags
 	 */
 	aiTextureFlags_IgnoreAlpha = 0x4,
 	
-	 /** @cond never 
-	  *  This value is not used. It forces the compiler to use at least
-	  *  32 Bit integers to represent this enum.
-	  */
 #ifndef SWIG
-	  _aiTextureFlags_Force32Bit = 0x9fffffff
+	  _aiTextureFlags_Force32Bit = INT_MAX
 #endif
-	//! @endcond
 };
 
 
@@ -442,8 +412,8 @@ enum aiTextureFlags
  *  @code
  *    SourceColor * SourceBlend + DestColor * DestBlend
  *  @endcode
- *  where <DestColor> is the previous color in the framebuffer at this
- *  position and <SourceColor> is the material colro before the transparency
+ *  where DestColor is the previous color in the framebuffer at this
+ *  position and SourceColor is the material colro before the transparency
  *  calculation.<br>
  *  This corresponds to the #AI_MATKEY_BLEND_FUNC property.
 */
@@ -469,14 +439,9 @@ enum aiBlendMode
 	// we don't need more for the moment, but we might need them
 	// in future versions ...
 
-	 /** @cond never 
-	  *  This value is not used. It forces the compiler to use at least
-	  *  32 Bit integers to represent this enum.
-	  */
 #ifndef SWIG
-	_aiBlendMode_Force32Bit = 0x9fffffff
+	_aiBlendMode_Force32Bit = INT_MAX
 #endif
-	//! @endcond
 };
 
 
@@ -568,7 +533,7 @@ enum aiPropertyTypeInfo
 	 *  compiler to map this enum to a 32 Bit integer.
 	 */
 #ifndef SWIG
-	 _aiPTI_Force32Bit = 0x9fffffff
+	 _aiPTI_Force32Bit = INT_MAX
 #endif
 };
 
@@ -631,9 +596,13 @@ struct aiMaterialProperty
 
 #ifdef __cplusplus
 
-	aiMaterialProperty()	{
-		mData = NULL;
-		mIndex = mSemantic = 0;
+	aiMaterialProperty()
+		: mSemantic( 0 )
+		, mIndex( 0 )
+		, mDataLength( 0 )
+		, mType( aiPTI_Float )
+		, mData( NULL )
+	{
 	}
 
 	~aiMaterialProperty()	{
@@ -657,7 +626,11 @@ struct aiMaterialProperty
 *  have to stick with the aiMaterialGetXXX family of unbound functions.
 *  The library defines a set of standard keys (AI_MATKEY_XXX).
 */
+#ifdef __cplusplus
 struct ASSIMP_API aiMaterial
+#else
+struct aiMaterial
+#endif
 {
 
 #ifdef __cplusplus
@@ -683,6 +656,12 @@ public:
     aiReturn Get(const char* pKey,unsigned int type,
 		unsigned int idx, Type* pOut, unsigned int* pMax) const;
 
+	aiReturn Get(const char* pKey,unsigned int type,
+		unsigned int idx, int* pOut, unsigned int* pMax) const;
+
+	aiReturn Get(const char* pKey,unsigned int type,
+		unsigned int idx, float* pOut, unsigned int* pMax) const;
+
     // -------------------------------------------------------------------
     /** @brief Retrieve a Type value with a specific key 
      *  from the material
@@ -696,6 +675,25 @@ public:
 	template <typename Type>
 	aiReturn Get(const char* pKey,unsigned int type,
 		unsigned int idx,Type& pOut) const;
+
+
+	aiReturn Get(const char* pKey,unsigned int type,
+		unsigned int idx, int& pOut) const;
+
+	aiReturn Get(const char* pKey,unsigned int type,
+		unsigned int idx, float& pOut) const;
+
+	aiReturn Get(const char* pKey,unsigned int type,
+		unsigned int idx, aiString& pOut) const;
+
+	aiReturn Get(const char* pKey,unsigned int type,
+		unsigned int idx, aiColor3D& pOut) const;
+
+	aiReturn Get(const char* pKey,unsigned int type,
+		unsigned int idx, aiColor4D& pOut) const;
+
+	aiReturn Get(const char* pKey,unsigned int type,
+		unsigned int idx, aiUVTransform& pOut) const;
 
 	// -------------------------------------------------------------------
 	/** Get the number of textures for a particular texture type.
@@ -789,11 +787,49 @@ public:
 		unsigned int type  = 0,
 		unsigned int index = 0);
 
+	aiReturn AddProperty (const aiVector3D* pInput,
+		unsigned int pNumValues,
+		const char* pKey,
+		unsigned int type  = 0,
+		unsigned int index = 0);
+
+	aiReturn AddProperty (const aiColor3D* pInput,
+		unsigned int pNumValues,
+		const char* pKey,
+		unsigned int type  = 0,
+		unsigned int index = 0);
+
+	aiReturn AddProperty (const aiColor4D* pInput,
+		unsigned int pNumValues,
+		const char* pKey,
+		unsigned int type  = 0,
+		unsigned int index = 0);
+
+	aiReturn AddProperty (const int* pInput,
+		unsigned int pNumValues,
+		const char* pKey,
+		unsigned int type  = 0,
+		unsigned int index = 0);
+
+	aiReturn AddProperty (const float* pInput,
+		unsigned int pNumValues,
+		const char* pKey,
+		unsigned int type  = 0,
+		unsigned int index = 0);
+
+	aiReturn AddProperty (const aiUVTransform* pInput,
+		unsigned int pNumValues,
+		const char* pKey,
+		unsigned int type  = 0,
+		unsigned int index = 0);
+
 	// ------------------------------------------------------------------------------
 	/** @brief Remove a given key from the list.
 	 *
 	 *  The function fails if the key isn't found
-	 *  @param pKey Key to be deleted */
+	 *  @param pKey Key to be deleted 
+	 *  @param type Set by the AI_MATKEY_XXX macro
+	 *  @param index Set by the AI_MATKEY_XXX macro  */
 	aiReturn RemoveProperty (const char* pKey,
 		unsigned int type  = 0,
 		unsigned int index = 0);
@@ -1261,6 +1297,8 @@ extern "C" {
 #define AI_MATKEY_TEXFLAGS_UNKNOWN(N)	\
 	AI_MATKEY_TEXFLAGS(aiTextureType_UNKNOWN,N)
 
+//! @endcond
+//!
 // ---------------------------------------------------------------------------
 /** @brief Retrieve a material property with a specific key from the material
  *
@@ -1405,6 +1443,18 @@ ASSIMP_API C_ENUM aiReturn aiGetMaterialColor(const C_STRUCT aiMaterial* pMat,
 
 
 // ---------------------------------------------------------------------------
+/** @brief Retrieve a aiUVTransform value from the material property table
+*
+* See the sample for aiGetMaterialFloat for more information*/
+// ---------------------------------------------------------------------------
+ASSIMP_API C_ENUM aiReturn aiGetMaterialUVTransform(const C_STRUCT aiMaterial* pMat, 
+    const char* pKey,
+	 unsigned int type,
+    unsigned int index,
+	 C_STRUCT aiUVTransform* pOut);
+
+
+// ---------------------------------------------------------------------------
 /** @brief Retrieve a string from the material property table
 *
 * See the sample for aiGetMaterialFloat for more information.*/
@@ -1456,6 +1506,7 @@ ASSIMP_API unsigned int aiGetMaterialTextureCount(const C_STRUCT aiMaterial* pMa
  *      Pass NULL if you're not interested in this information. Otherwise,
  *      pass a pointer to an array of two aiTextureMapMode's (one for each
  *      axis, UV order).
+ *  @param[out] flags Receives the the texture flags.
  *  @return AI_SUCCESS on success, otherwise something else. Have fun.*/
 // ---------------------------------------------------------------------------
 #ifdef __cplusplus

@@ -9,12 +9,12 @@
 #include "Building.h"
 #include "Floor.h"
 
-#include <osg/Node>
+/*#include <osg/Node>
 #include <osgDB/ReadFile>
 #include <osgAnimation/BasicAnimationManager>
 #include <osgGA/TrackBallManipulator>
-#include <osgViewer/Viewer>
-
+#include <osgViewer/Viewer>*/
+/*
 struct AnimationManagerFinder : public osg::NodeVisitor
 {
 	osg::ref_ptr<osgAnimation::BasicAnimationManager> _am;
@@ -33,7 +33,7 @@ struct AnimationManagerFinder : public osg::NodeVisitor
 
 		traverse(node);
 	}
-};
+};{*/
 
 class PlayState : public GameState
 {
@@ -67,15 +67,15 @@ private:
 	//Floor field;
 	// Components
 	Camera Cam;
-	//Player player;
+	Player player;
 
 	SphereEmitter g_ParticleEmitter;
 	CubeEmitter g_CubeEmitter;
 
-	osg::ref_ptr<osg::Node> root;
+/*	osg::ref_ptr<osg::Node> root;
 	osg::ref_ptr<osgViewer::Viewer> viewer;
-	osg::observer_ptr<osgViewer::GraphicsWindow> os_window;
-	AnimationManagerFinder finder;
+	osg::observer_ptr<osgViewer::GraphicsWindowEmbedded> os_window;
+	AnimationManagerFinder finder;*/
 };
 
 #endif

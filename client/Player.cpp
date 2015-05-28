@@ -5,10 +5,13 @@
 ////////////////////////////////////////
 
 #include "player.h"
+#include "MeshLoader.h"
 
 ObjParser mech;
+MeshLoader m;
 Player::Player() {
 	mech = ObjParser("models/MechAnimation.obj");
+	m = MeshLoader("models/MechAnimation.obj");
 	mn = mech.min;
 	mx = mech.max;
 
@@ -19,6 +22,7 @@ Player::Player() {
 }
 Player::Player(int pn) {
 	mech = ObjParser("models/MechAnimation.obj");
+	m = MeshLoader("models/MechAnimation.obj");
 	mn = mech.min;
 	mx = mech.max;
 	
@@ -36,7 +40,8 @@ void Player::update() {
 	glRotatef(180, 0, 1, 0);
 	glRotatef(rotation, 0, 1, 0);
 
-	mech.Draw();
+	//mech.Draw();
+	m.Render();
 	
 	glBegin(GL_TRIANGLES);
 	glColor3f(1.f, 1.f, 0.f);

@@ -187,7 +187,23 @@ void Camera::ApplyProjectionTransform()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Camera::ApplyViewTransform()
+osg::Matrixd Camera::GetApplyViewTransform()
+{
+	osg::Matrixd cameraMx;
+	osg::Matrixd cameraRotation;
+	osg::Matrixd cameraTrans;
+	cameraRotation.makeRotate(
+		osg::DegreesToRadians(m_Rotate.x), osg::Vec3(1, 0, 0), // pitch
+		osg::DegreesToRadians(m_Rotate.y), osg::Vec3(0, 1, 0), // roll
+		osg::DegreesToRadians(m_Rotate.z), osg::Vec3(0, 0, 1)); // heading
+
+	cameraTrans.makeTranslate(m_Translate.x, m_Translate.y, m_Translate.z);
+	cameraMx = cameraRotation * cameraTrans;
+
+	return cameraMx.inverse(cameraMx);
+}
+
+void Camera::ApplyViewTransform() 
 {
 	glMatrixMode(GL_MODELVIEW);
 	glTranslatef(m_Translate.x, m_Translate.y, m_Translate.z);

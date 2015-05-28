@@ -27,7 +27,14 @@ public:
 	void loadTexture(const char* name, GLuint id);
 	//void LoadTextureCubeMap(char **FileNames, GLuint id);
 	//GLuint load(vector<const GLchar*> faces);
-	
+
+	Texture(GLenum TextureTarget, const std::string& filename);
+	bool Load();
+	void Bind(GLenum TextureUnit);
+
+private:
+	GLenum m_textureTarget;
+	GLuint m_textureObj;
 
 };
 

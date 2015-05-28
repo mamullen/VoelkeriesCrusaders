@@ -39,7 +39,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------
 */
 
-/** @file  aiColor4D.inl
+/** @file  color4.inl
  *  @brief Inline implementation of aiColor4t<TReal> operators
  */
 #ifndef AI_COLOR4D_INL_INC
@@ -91,6 +91,23 @@ AI_FORCE_INLINE bool aiColor4t<TReal>::operator== (const aiColor4t<TReal>& other
 template <typename TReal>
 AI_FORCE_INLINE bool aiColor4t<TReal>::operator!= (const aiColor4t<TReal>& other) const {
 	return r != other.r || g != other.g || b != other.b || a != other.a;
+}
+// ------------------------------------------------------------------------------------------------
+template <typename TReal>
+AI_FORCE_INLINE bool aiColor4t<TReal>::operator< (const aiColor4t<TReal>& other) const {
+	return r < other.r || (
+		r == other.r && (
+			g < other.g || (
+				g == other.g && (
+					b < other.b || (
+						b == other.b && (
+							a < other.a
+						)
+					)
+				)
+			)
+		)
+	);
 }
 // ------------------------------------------------------------------------------------------------
 template <typename TReal>
@@ -158,7 +175,7 @@ template <typename TReal>
 inline bool aiColor4t<TReal> :: IsBlack() const	{
 	// The alpha component doesn't care here. black is black.
 	static const TReal epsilon = 10e-3f;
-	return fabs( r ) < epsilon && fabs( g ) < epsilon && fabs( b ) < epsilon;
+	return std::fabs( r ) < epsilon && std::fabs( g ) < epsilon && std::fabs( b ) < epsilon;
 }
 
 #endif // __cplusplus
