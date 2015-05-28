@@ -28,5 +28,5 @@ float Basic_Attack::getRange()
 }
 
 void Basic_Attack::setRange(float m){
-	c_range = range *= m;
+	c_range = range * m;
 }

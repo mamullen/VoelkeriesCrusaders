@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "GameLogic.h"
 #include <stdio.h>
+using namespace std;
 
 GameLogic::GameLogic()
 {
@@ -53,9 +54,11 @@ void GameLogic::update(int time)
 	}
 
 	// go through each player and update their attack cd and status based on time
-	for (int i = 0; i < playerList.size(); i++){
-		playerList[i]->updateCD();
-		playerList[i]->updateTime(timer->getState(), time);
+	for (int i = 0; i < gameObjects.size(); i++){
+		if (gameObjects[i]->isPlayer){
+			((Player *)gameObjects[i])->updateCD();
+			((Player *)gameObjects[i])->updateTime(timer->getState(), time);
+		}
 	}
 
 	// go through packets and update according to its id
@@ -230,40 +233,55 @@ void GameLogic::clearPackets()
 int GameLogic::addPlayer(int id, char* packet_data)
 {
 
-	for (std::vector<Player*>::iterator it = playerList.begin(); it != playerList.end(); it++){
-		if ((*it)->getPID() == id){
+	bool playerExists = false;
+	int playerExistsRet = 0;
+	for (std::vector<GameObject*>::iterator it = gameObjects.begin(); it != gameObjects.end(); it++){
+		if ((*it)->getID() == id){
+			playerExists = true;
 			Player * currP = currP = (Player*)(*it);
 			int currTeam = currP->team;
-
 			if (!strcmp(packet_data, "choose_crusader;")){
 				if (currTeam == 1)
 					return -1;
 				if (numCrusaders >= crusadersToStart){
 					printf("Crusader team is full, not allowing client to join\n");
-					return 0;
+					playerExistsRet = 0;
 				}
-				numVampires--;
-				numCrusaders++;
-				Crusader * crus = new Crusader(id);
-				(*it) = crus;
-				return 1;
+				else{
+					numVampires--;
+					numCrusaders++;
+					Crusader * crus = new Crusader(id);
+					crus->name = ((Player*)(*it))->name;
+					it = gameObjects.erase(it);
+					it = gameObjects.insert(it, crus);
+					printf("PLAYER %d SWITCHED TEAMS\n", id);
+					playerExistsRet = 1;
+				}
 			}
 			else if (!strcmp(packet_data, "choose_vampire;")){
 				if (currTeam == 2)
 					return -1;
 				if (numVampires >= vampiresToStart){
 					printf("Vampire team is full, not allowing client to join\n");
-					return 0;
+					playerExistsRet = 0;
 				}
-				numCrusaders--;
-				numVampires++;
-				Vampire * vamp = new Vampire(id);
-				(*it) = vamp;
-				return 2;
+				else{
+					numCrusaders--;
+					numVampires++;
+					Vampire * vamp = new Vampire(id);
+					vamp->name = ((Player*)(*it))->name;
+					it = gameObjects.erase(it);
+					it = gameObjects.insert(it, vamp);
+					printf("PLAYER %d SWITCHED TEAMS\n", id);
+					playerExistsRet = 2;
+				}
 			}
 		}
 
 	}
+
+	if (playerExists)
+		return playerExistsRet;
 
 	int team = 0;
 
@@ -271,6 +289,7 @@ int GameLogic::addPlayer(int id, char* packet_data)
 
 
 	if (!strcmp(packet_data, "choose_crusader;")){
+		printf("NUM CRUSADERS IS %d,, MAX IS %d\n", numCrusaders, crusadersToStart);
 		if (numCrusaders >= crusadersToStart){
 			printf("Crusader team is full, not allowing client to join\n");
 			return 0;
@@ -301,7 +320,7 @@ int GameLogic::addPlayer(int id, char* packet_data)
 	}
 
 	gameObjects.push_back(newP);
-	playerList.push_back(newP);
+	//playerList.push_back(newP);
 
 	return team;
 
@@ -469,19 +488,21 @@ GameLogic::stateType GameLogic::getState()
 
 void GameLogic::updateState()
 {
-	int count = playerList.size();
+	int count = gameObjects.size();
 	aliveCrusaders = 0;
 	aliveVampires = 0;
-	for (int i = 0; i < playerList.size(); i++){
-		if (playerList[i]->getHP() <= 0){
-			count--;
-		}
-		else{
-			int team = playerList[i]->team;
-			if (team == 1)
-				aliveCrusaders++;
-			else if (team == 2)
-				aliveVampires++;
+	for (int i = 0; i < gameObjects.size(); i++){
+		if (gameObjects[i]->isPlayer){
+			if (gameObjects[i]->getHP() <= 0){
+				count--;
+			}
+			else{
+				int team = ((Player *)gameObjects[i])->team;
+				if (team == 1)
+					aliveCrusaders++;
+				else if (team == 2)
+					aliveVampires++;
+			}
 		}
 	}
 

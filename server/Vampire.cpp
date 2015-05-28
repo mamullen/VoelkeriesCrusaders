@@ -5,6 +5,7 @@
 Vampire::Vampire() :Player()
 {
 	objectType = 5;
+	team = 2;
 }
 
 
@@ -27,12 +28,13 @@ void Vampire::updateTime(int time,int delta)
 		time_ctr += delta;
 		if (time_ctr > 1000){
 			time_ctr = 0;
-			isAttacked(1);
+			isAttacked(atof((ConfigSettings::config->getValue("VampireHpDropRate").c_str())));
 		}
 	}
 	else if (time == 1){
 		//night
-		speed = 2 * default_speed;
+		speed = atof((ConfigSettings::config->getValue("VampireMovespeedMultiplier").c_str())) * default_speed;
+		attack_mode->setRange(atof((ConfigSettings::config->getValue("VampireAttackRangeInc").c_str())));
 	}
 }
 

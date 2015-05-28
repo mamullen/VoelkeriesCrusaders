@@ -138,6 +138,7 @@ void ServerGame::receiveFromClients()
 				else{
 					selection = gameLogic->addPlayer(iter->first, packet.packet_data);
 					if (selection > 0){
+						printf("NUM CRUSADERS %d NUM VAMPIRES %d\n", gameLogic->numCrusaders, gameLogic->numVampires);
 						sendInitPacket(iter->first, selection);
 					}
 					else if (gameLogic->getState() == WAIT && selection == 0)
@@ -286,50 +287,6 @@ void ServerGame::sendInitialConnection(int id) {
 void ServerGame::sendInitPacket(int id, int selection)
 {
 
-	/*
-	std::vector<GameObject*> gameObjects = gameLogic->getGameObjects();
-	for (std::vector<GameObject*>::iterator it = gameObjects.begin(); it != gameObjects.end(); it++){
-	//if ((*it)->isPlayer && ((Player*)(*it))->getPID()){
-	//printf("@@@@@@@@@@@@ ID OF CLIENT: %d, ID OF OBJECT: %d\n", id, (*it)->getID());
-	if ((*it)->getID() == id){
-	const unsigned int packet_size = sizeof(Packet);
-	char packet_data[packet_size];
-	Packet p;
-	p.packet_type = JOIN_GAME;
-	p.id = (int)id;
-
-	char data[PACKET_DATA_LEN];
-	int pointer = 0;
-
-	//memcpy_s(p.packet_data, PACKET_DATA_LEN, "create", 6+1);
-	float x = (*it)->getPos().x;
-	float y = (*it)->getPos().y;
-	float z = (*it)->getPos().z;
-	float r = (*it)->getRot();
-	float hp = (*it)->getHP();
-	///////////////////////////////////////////////////////////////////////////
-	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "new", 4);
-	pointer += 4;
-	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &x, sizeof(float));
-	pointer += sizeof(float);
-	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
-	pointer += sizeof(float);
-	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
-	pointer += sizeof(float);
-	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &r, sizeof(float));
-	pointer += sizeof(float);
-	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &hp, sizeof(float));
-	pointer += sizeof(float);
-	data[pointer] = ',';
-	pointer++;
-
-	memcpy_s(p.packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
-
-	p.serialize(packet_data);
-	network->sendToOne(id, packet_data, packet_size);
-	}
-	}
-	*/
 
 	// send whether or not crusader or vampire was successfully chosen
 	// NOT SENDING RIGHT NOW
@@ -346,10 +303,12 @@ void ServerGame::sendInitPacket(int id, int selection)
 		if (selection == 1){
 			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "crusader", 9);
 			pointer += 9;
+			printf("JOINING THE CRUSADER SIDE");
 		}
 		else if (selection == 2){
 			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "vampire", 8);
 			pointer += 8;
+			printf("JOINING THE VAMPIRE SIDE");
 		}
 
 		memcpy_s(p.packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
