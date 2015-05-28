@@ -37,9 +37,15 @@ public:
 	int numCrusaders;
 	int numVampires;
 
+	int aliveCrusaders;
+	int aliveVampires;
+
 	int phase1time;
 	int phase2time;
 	int phase3time;
+
+	int ticksPerTimerSend;
+	int ticksSinceSend;
 
 	stateType getState();
 	void setState(stateType state);

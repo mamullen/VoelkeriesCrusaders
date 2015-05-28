@@ -9,7 +9,7 @@ public:
 	void update(int t) { time += t; }
 	int getTime() { return time; }
 	int getState();
-	void print() { if(time%1000 == 0) printf("Time =  %d\n", time); }
+	void print() { printf("Time =  %d\n", time); }
 	void setPhase(int, int, int); //set time period for day/night/day
 private:
 	int time;
