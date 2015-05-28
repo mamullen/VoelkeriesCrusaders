@@ -53,14 +53,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include;F:\boost_1_58_0</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;C:\Users\w7lau\Downloads\boost_1_58_0</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc120-mtd.lib;glew32.lib;glfw3.lib;glu32.lib;opengl32.lib;SOIL.lib;osg/OpenThreads.lib;osg/osg.lib;osg/osgAnimation.lib;osg/osgDB.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc120-mtd.lib;glew32.lib;glfw3.lib;glu32.lib;opengl32.lib;SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

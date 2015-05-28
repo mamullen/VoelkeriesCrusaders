@@ -1,4 +1,5 @@
 #include "MeshLoader.h"
+#include <string>
 
 #define aisgl_min(x,y) (x<y?x:y)
 #define aisgl_max(x,y) (y>x?y:x)
@@ -12,6 +13,11 @@ MeshLoader::MeshLoader(const char* filename) {
 	std::cout << "MeshLoader:: loading " << filename << std::endl;
 	LoadAsset(filename);
 	std::cout << "\t number of meshes: " << scene->mNumMeshes << std::endl;
+
+	for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
+		//scene->mMeshes[i]->mName = aiString(std::to_string(i));
+		std::cout << "\t\t" << i << ": " << scene->mMeshes[i]->mName.C_Str() << std::endl;
+	}
 	
 	if (scene->HasAnimations()) {
 
@@ -164,7 +170,9 @@ void MeshLoader::apply_material(const struct aiMaterial *mtl)
 }
 
 void MeshLoader::RenderNode(const aiNode* node) {
+	std::cout << node->mName.C_Str() << std::endl;
 	aiMatrix4x4 Mx = mAnimator->GetLocalTransform(node);
+	std::cout << Mx.IsIdentity() << std::endl;
 	Mx.Transpose();
 
 	glPushMatrix();
@@ -207,6 +215,7 @@ void MeshLoader::Render() {
 	currentTime += glfwGetTime() - lastPlaying;
 	double time = currentTime;
 	aiAnimation* mAnim = mAnimator->CurrentAnim();
+	mAnim->mName.C_Str();
 	if (mAnim && mAnim->mDuration > 0.0) {
 		double tps = mAnim->mTicksPerSecond ? mAnim->mTicksPerSecond : 25.f;
 		time = fmod(time, mAnim->mDuration / tps);

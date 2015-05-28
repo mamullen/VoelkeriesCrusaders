@@ -7,7 +7,6 @@
 
 #include "core.h"
 #include "Vector4.h"
-#include <osg/Node>
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -64,7 +63,6 @@ public:
 	void ApplyViewport();
 	void ApplyProjectionTransform();
 
-	osg::Matrixd GetApplyViewTransform();
 	void ApplyViewTransform();
 private:
 	Vector3 m_Rotate;
