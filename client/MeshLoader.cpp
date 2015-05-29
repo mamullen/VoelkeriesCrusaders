@@ -1,90 +1,175 @@
 #include "MeshLoader.h"
+#include <time.h>
 #include <string>
 
-#define aisgl_min(x,y) (x<y?x:y)
-#define aisgl_max(x,y) (y>x?y:x)
+void MeshLoader::VertexBoneData::AddBoneData(unsigned int BoneID, float Weight)
+{
+	for (unsigned int i = 0; i < (sizeof(IDs)/sizeof(IDs[0])); i++) {
+		if (Weights[i] == 0.0) {
+			IDs[i] = BoneID;
+			Weights[i] = Weight;
+			return;
+		}
+	}
+
+	// should never get here - more bones than we have space for
+	//assert(0);
+}
 
 MeshLoader::MeshLoader() {
+	std::cout << "No filename specified" << std::endl;
+	currentTime = 0;
+	r_Skeleton = false;
+	m_Scene = NULL;
 
 }
 
 MeshLoader::MeshLoader(const char* filename) {
 	currentTime = 0;
+	r_Skeleton = true;
+
 	std::cout << "MeshLoader:: loading " << filename << std::endl;
-	LoadAsset(filename);
-	std::cout << "\t number of meshes: " << scene->mNumMeshes << std::endl;
-
-	for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
-		//scene->mMeshes[i]->mName = aiString(std::to_string(i));
-		std::cout << "\t\t" << i << ": " << scene->mMeshes[i]->mName.C_Str() << std::endl;
-	}
-	
-	if (scene->HasAnimations()) {
-
-		std::cout << filename << " has animations:" << std::endl;
-		for (unsigned int i = 0; i < scene->mNumAnimations; i++) {
-			std::cout << "\t" << scene->mAnimations[i]->mName.C_Str() << std::endl;
-		}
-		mAnimator = new SceneAnimator(scene);
-	}
+	if (!LoadAsset(filename)) {
+		std::cout << "Error loading file" << std::endl;
+	};
 	std::cout << "MeshLoader:: finished " << std::endl;
 }
 
 MeshLoader::~MeshLoader() {
 }
 
-int MeshLoader::LoadAsset(const char* filename) {
-	scene = aiImportFile(filename, aiProcessPreset_TargetRealtime_MaxQuality);
+bool MeshLoader::LoadAsset(const char* filename) {
+	bool ret;
+	m_Scene = aiImportFile(filename, aiProcessPreset_TargetRealtime_MaxQuality);
 
-	if (scene) {
-		get_bounding_box(&scene_min, &scene_max);
-		scene_center.x = (scene_min.x + scene_max.x) / 2.0f;
-		scene_center.y = (scene_min.y + scene_max.y) / 2.0f;
-		scene_center.z = (scene_min.z + scene_max.z) / 2.0f;
-		return 0;
+	if (m_Scene) {
+		m_GlobalInverseTransform = m_Scene->mRootNode->mTransformation;
+		m_GlobalInverseTransform;
+		ret = InitFromScene(m_Scene, filename);
+		//ret = true;
 	}
-	return 1;
+
+	std::cout << "\t number of meshes: " << m_Scene->mNumMeshes << std::endl;
+
+	for (unsigned int i = 0; i < m_Scene->mNumMeshes; i++) {
+		std::cout << "\t\t" << i << " mesh name: " << m_Scene->mMeshes[i]->mName.C_Str() << " (" << m_Scene->mMeshes[i]->mNumFaces << ")" << std::endl;
+		std::cout << "\t\t bones: " << m_Scene->mMeshes[i]->mNumBones << std::endl;
+	}
+
+	if (m_Scene->HasAnimations()) {
+		std::cout << filename << " has animations:" << std::endl;
+		for (unsigned int i = 0; i < m_Scene->mNumAnimations; i++) {
+			std::cout << "\t" << m_Scene->mAnimations[i]->mName.C_Str() << std::endl;
+		}
+		mAnimator = new SceneAnimator(m_Scene);
+	}
+	return ret;
 }
 
-void MeshLoader::get_bounding_box(aiVector3D* min, aiVector3D* max) {
-	aiMatrix4x4 trafo;
-	aiIdentityMatrix4(&trafo);
+bool MeshLoader::InitFromScene(const aiScene* pScene, const char* filename) {
+	m_Entries.resize(pScene->mNumMeshes);
+	m_Textures.resize(pScene->mNumMaterials);
 
-	min->x = min->y = min->z = 1e10f;
-	max->x = max->y = max->z = -1e10f;
-	get_bounding_box_for_node(scene->mRootNode, min, max, &trafo);
+	vector<Vector3> Positions;
+	vector<Vector3> Normals;
+	vector<Vector2> TexCoords;
+	vector<VertexBoneData> Bones;
+	vector<unsigned int> Indices;
+
+	unsigned int NumVertices = 0;
+	unsigned int NumIndices = 0;
+
+	// Count the number of vertices and indices
+	for (unsigned int i = 0; i < m_Entries.size(); i++) {
+		m_Entries[i].MaterialIndex = pScene->mMeshes[i]->mMaterialIndex;
+		m_Entries[i].NumIndices = pScene->mMeshes[i]->mNumFaces * 3;
+		m_Entries[i].BaseVertex = NumVertices;
+		m_Entries[i].BaseIndex = NumIndices;
+
+		NumVertices += pScene->mMeshes[i]->mNumVertices;
+		NumIndices += m_Entries[i].NumIndices;
+	}
+
+	// Reserve space in the vectors for the vertex attributes and indices
+	Positions.reserve(NumVertices);
+	Normals.reserve(NumVertices);
+	TexCoords.reserve(NumVertices);
+	Bones.resize(NumVertices);
+	Indices.reserve(NumIndices);
+
+	// InitMesh one by one
+	for (unsigned int i = 0; i < m_Entries.size(); i++) {
+		const aiMesh* paiMesh = pScene->mMeshes[i];
+		InitMesh(i, paiMesh, Positions, Normals, TexCoords, Bones, Indices);
+	}
+
+	/*if (!InitMaterials(pScene, Filename)) {
+		return false;
+	}*/
+
+	return true;
 }
 
-void MeshLoader::get_bounding_box_for_node(const aiNode* nd, aiVector3D* min, aiVector3D* max, aiMatrix4x4* trafo) {
-	aiMatrix4x4 prev;
-	unsigned int n = 0, t;
+void MeshLoader::InitMesh(unsigned int MeshIndex,
+	const aiMesh* paiMesh,
+	vector<Vector3>& Positions,
+	vector<Vector3>& Normals,
+	vector<Vector2>& TexCoords,
+	vector<VertexBoneData>& Bones,
+	vector<unsigned int>& Indices) {
+	const aiVector3D Zero3D(0.0f, 0.0f, 0.0f);
 
-	prev = *trafo;
-	aiMultiplyMatrix4(trafo, &nd->mTransformation);
+	// Populate the vertex attribute vectors
+	for (unsigned int i = 0; i < paiMesh->mNumVertices; i++) {
+		const aiVector3D* pPos = &(paiMesh->mVertices[i]);
+		const aiVector3D* pNormal = &(paiMesh->mNormals[i]);
+		const aiVector3D* pTexCoord = paiMesh->HasTextureCoords(0) ? &(paiMesh->mTextureCoords[0][i]) : &Zero3D;
 
-	for (; n < nd->mNumMeshes; ++n) {
-		const struct aiMesh* mesh = scene->mMeshes[nd->mMeshes[n]];
-		for (t = 0; t < mesh->mNumVertices; ++t) {
-			aiVector3D tmp = mesh->mVertices[t];
-			aiTransformVecByMatrix4(&tmp, trafo);
+		Positions.push_back(Vector3(pPos->x, pPos->y, pPos->z));
+		Normals.push_back(Vector3(pNormal->x, pNormal->y, pNormal->z));
+		TexCoords.push_back(Vector2(pTexCoord->x, pTexCoord->y));
+	}
 
-			min->x = aisgl_min(min->x, tmp.x);
-			min->y = aisgl_min(min->y, tmp.y);
-			min->z = aisgl_min(min->z, tmp.z);
+	//LoadBones(MeshIndex, paiMesh, Bones);
 
-			max->x = aisgl_max(max->x, tmp.x);
-			max->y = aisgl_max(max->y, tmp.y);
-			max->z = aisgl_max(max->z, tmp.z);
+	// Populate the index buffer
+	for (unsigned int i = 0; i < paiMesh->mNumFaces; i++) {
+		const aiFace& Face = paiMesh->mFaces[i];
+		assert(Face.mNumIndices == 2);
+		//if (Face.mNumIndices != 3) {
+			//std::cout << Face.mNumIndices << std::endl;
+		//}
+		Indices.push_back(Face.mIndices[0]);
+		Indices.push_back(Face.mIndices[1]);
+		Indices.push_back(Face.mIndices[2]);
+	}
+}
+
+void MeshLoader::LoadBones(unsigned int MeshIndex, const aiMesh* pMesh, std::vector<VertexBoneData>& Bones) {
+	for (unsigned int i = 0; i < pMesh->mNumBones; i++) {
+		unsigned int BoneIndex = 0;
+		std::string BoneName(pMesh->mBones[i]->mName.data);
+
+		if (m_BoneMapping.find(BoneName) == m_BoneMapping.end()) {
+			// Allocate an index for a new bone
+			BoneIndex = m_NumBones;
+			m_NumBones++;
+			BoneInfo bi;
+			m_BoneInfo.push_back(bi);
+			m_BoneInfo[BoneIndex].BoneOffset = pMesh->mBones[i]->mOffsetMatrix;
+			m_BoneMapping[BoneName] = BoneIndex;
+		}
+		else {
+			BoneIndex = m_BoneMapping[BoneName];
+		}
+
+		for (unsigned int j = 0; j < pMesh->mBones[i]->mNumWeights; j++) {
+			unsigned int VertexID = m_Entries[MeshIndex].BaseVertex + pMesh->mBones[i]->mWeights[j].mVertexId;
+			float Weight = pMesh->mBones[i]->mWeights[j].mWeight;
+			Bones[VertexID].AddBoneData(BoneIndex, Weight);
 		}
 	}
-
-	for (n = 0; n < nd->mNumChildren; ++n) {
-		get_bounding_box_for_node(nd->mChildren[n], min, max, trafo);
-	}
-	*trafo = prev;
 }
-
-////////////////////////////////////////////////////////////////////////////////
 
 void color4_to_float4(const aiColor4D *c, float f[4])
 {
@@ -104,7 +189,7 @@ void set_float4(float f[4], float a, float b, float c, float d)
 	f[3] = d;
 }
 
-void MeshLoader::apply_material(const struct aiMaterial *mtl)
+void MeshLoader::ApplyMaterial(const struct aiMaterial *material)
 {
 	float c[4];
 
@@ -120,30 +205,30 @@ void MeshLoader::apply_material(const struct aiMaterial *mtl)
 	unsigned int max;
 
 	set_float4(c, 0.8f, 0.8f, 0.8f, 1.0f);
-	if (AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_DIFFUSE, &diffuse))
+	if (AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &diffuse))
 		color4_to_float4(&diffuse, c);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, c);
 
 	set_float4(c, 0.0f, 0.0f, 0.0f, 1.0f);
-	if (AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_SPECULAR, &specular))
+	if (AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, &specular))
 		color4_to_float4(&specular, c);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, c);
 
 	set_float4(c, 0.2f, 0.2f, 0.2f, 1.0f);
-	if (AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_AMBIENT, &ambient))
+	if (AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, &ambient))
 		color4_to_float4(&ambient, c);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, c);
 
 	set_float4(c, 0.0f, 0.0f, 0.0f, 1.0f);
-	if (AI_SUCCESS == aiGetMaterialColor(mtl, AI_MATKEY_COLOR_EMISSIVE, &emission))
+	if (AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_EMISSIVE, &emission))
 		color4_to_float4(&emission, c);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, c);
 
 	max = 1;
-	ret1 = aiGetMaterialFloatArray(mtl, AI_MATKEY_SHININESS, &shininess, &max);
+	ret1 = aiGetMaterialFloatArray(material, AI_MATKEY_SHININESS, &shininess, &max);
 	if (ret1 == AI_SUCCESS) {
 		max = 1;
-		ret2 = aiGetMaterialFloatArray(mtl, AI_MATKEY_SHININESS_STRENGTH, &strength, &max);
+		ret2 = aiGetMaterialFloatArray(material, AI_MATKEY_SHININESS_STRENGTH, &strength, &max);
 		if (ret2 == AI_SUCCESS)
 			glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess * strength);
 		else
@@ -156,78 +241,48 @@ void MeshLoader::apply_material(const struct aiMaterial *mtl)
 	}
 
 	max = 1;
-	if (AI_SUCCESS == aiGetMaterialIntegerArray(mtl, AI_MATKEY_ENABLE_WIREFRAME, &wireframe, &max))
+	if (AI_SUCCESS == aiGetMaterialIntegerArray(material, AI_MATKEY_ENABLE_WIREFRAME, &wireframe, &max))
 		fill_mode = wireframe ? GL_LINE : GL_FILL;
 	else
 		fill_mode = GL_FILL;
 	glPolygonMode(GL_FRONT_AND_BACK, fill_mode);
 
 	max = 1;
-	if ((AI_SUCCESS == aiGetMaterialIntegerArray(mtl, AI_MATKEY_TWOSIDED, &two_sided, &max)) && two_sided)
+	if ((AI_SUCCESS == aiGetMaterialIntegerArray(material, AI_MATKEY_TWOSIDED, &two_sided, &max)) && two_sided)
 		glDisable(GL_CULL_FACE);
 	else
 		glEnable(GL_CULL_FACE);
 }
 
-void MeshLoader::RenderNode(const aiNode* node) {
-	std::cout << node->mName.C_Str() << std::endl;
-	aiMatrix4x4 Mx = mAnimator->GetLocalTransform(node);
-	std::cout << Mx.IsIdentity() << std::endl;
-	Mx.Transpose();
-
+void MeshLoader::RenderSkeleton() {
 	glPushMatrix();
-	glMultMatrixf((float*)&Mx);
-
-	for (unsigned int i = 0; i < node->mNumMeshes; ++i) {
-		const aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		apply_material(scene->mMaterials[mesh->mMaterialIndex]);
-
-		for (unsigned j = 0; j < mesh->mNumFaces; ++j) {
-			const aiFace* face = &mesh->mFaces[j];
-
-			glBegin(GL_TRIANGLES);
-
-			for (unsigned int k = 0; k < face->mNumIndices; k++) {
-				int index = face->mIndices[k];
-				if (mesh->mColors[0] != NULL)
-					glColor4fv((GLfloat*)&mesh->mColors[0][index]);
-				if (mesh->mNormals != NULL)
-					glNormal3fv(&mesh->mNormals[index].x);
-				glVertex3fv(&mesh->mVertices[index].x);
-			}
-
-			glEnd();
-		}
-	}
-
-	for (unsigned int i = 0; i < node->mNumChildren; i++) {
-		RenderNode(node->mChildren[i]);
-	}
 	glPopMatrix();
+}
+
+void MeshLoader::RenderNode() {
 }
 
 
 void MeshLoader::Render() {
-	static double lastPlaying = 0.;
+	/*static double lastPlaying = 0.;
 
 	ai_assert(mAnimator);
 
-	currentTime += glfwGetTime() - lastPlaying;
+	currentTime += clock() / double(CLOCKS_PER_SEC) - lastPlaying;
 	double time = currentTime;
 	aiAnimation* mAnim = mAnimator->CurrentAnim();
-	mAnim->mName.C_Str();
 	if (mAnim && mAnim->mDuration > 0.0) {
 		double tps = mAnim->mTicksPerSecond ? mAnim->mTicksPerSecond : 25.f;
 		time = fmod(time, mAnim->mDuration / tps);
 	}
 	mAnimator->Calculate(time);
-	lastPlaying = currentTime;
-
-	glTranslatef(-scene_center.x, -scene_center.y, -scene_center.z);
+	lastPlaying = currentTime;*/
 
 	glEnable(GL_LIGHTING);
-	//opaque:
+	RenderNode();
 
-	RenderNode(scene->mRootNode);
+	if (r_Skeleton) {
+		RenderSkeleton();
+	}
 	glDisable(GL_LIGHTING);
 }

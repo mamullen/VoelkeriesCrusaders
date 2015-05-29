@@ -3,6 +3,7 @@
 
 #include "core.h"
 #include <string>
+#include <assimp/scene.h>
 #include "vector4.h"
 #include "vector3.h"
 
@@ -21,11 +22,14 @@ public:
 		double &y0, double &y1, double &y2, double &y3,
 		double &z0, double &z1, double &z2, double &z3,
 		double w0, double w1, double w2, double w3);
+	void SetZero();
 	Matrix4x4& operator=(const Matrix4x4&);
 	Matrix4x4& operator*(const Matrix4x4&);
 	Vector4& operator*(const Vector4&);
 	double* getPointerByRowMajor();
 	double* getPointerByColMajor();
+	float determinant();
+	Matrix4x4& inverse();
 	void identity();
 	void transpose();
 	void makeRotateX(double);
@@ -34,6 +38,7 @@ public:
 	void makeRotate(double, const Vector3&);
 	void makeScale(double, double, double);
 	void makeTranslate(double, double, double);
+	Matrix4x4(const aiMatrix4x4& AssimpMatrix);
 };
 
 #endif
