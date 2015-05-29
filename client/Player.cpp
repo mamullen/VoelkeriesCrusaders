@@ -12,7 +12,7 @@ MeshLoader m1;
 //MeshLoader m2;
 Player::Player() {
 	mech = ObjParser("models/MechAnimation.obj");
-	m1 = MeshLoader("models/RobotAnimation.fbx");
+	m1 = MeshLoader("models/VampAnim(No weapons)/VampMechIdle.fbx");
 	//m2 = MeshLoader("models/SunShrine/SunShrine.fbx");
 	mn = mech.min;
 	mx = mech.max;
