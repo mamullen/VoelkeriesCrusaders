@@ -158,7 +158,7 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 					std::cout << "Attacking id =  " << objects->at(i)->getID() << std::endl;
 					if (objects->at(i)->isPlayer){
 						std::cout << "CD =  " << attack_mode->getCD() << std::endl;
-						this->attack(objects->at(i));
+						attack_mode->attack(this,objects->at(i));
 					}
 				}
 			}

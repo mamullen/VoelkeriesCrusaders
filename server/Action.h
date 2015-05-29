@@ -1,4 +1,6 @@
 #pragma once
+class GameObject;
+
 class Action
 {
 public:
@@ -8,6 +10,7 @@ public:
 	virtual float getDmg() = 0;    // get attack damage
 	virtual float getRange() = 0;  // get attack range
 	virtual void setRange(float) = 0; // modify attack range 
+	virtual void attack(GameObject*,GameObject*) = 0;
 
 	void maxCD() { cd = maxcd; }
 	void resetRange() { c_range = range; }
