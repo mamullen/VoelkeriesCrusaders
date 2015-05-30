@@ -39,7 +39,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------
 */
 
-/** @file aiDefines.h
+/** @file defs.h
  *  @brief Assimp build configuration setup. See the notes in the comment
  *  blocks to find out how to customize _your_ Assimp build.
  */
@@ -60,9 +60,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	 *
 	 * Other (mixed) configuration switches are listed here:
 	 *    ASSIMP_BUILD_NO_COMPRESSED_X 
-	 *      - Disable support for compressed X files
+	 *      - Disable support for compressed X files (zip)
 	 *    ASSIMP_BUILD_NO_COMPRESSED_BLEND
-	 *      - Disable support for compressed Blender files*/
+	 *      - Disable support for compressed Blender files (zip)
+	 *    ASSIMP_BUILD_NO_COMPRESSED_IFC
+	 *      - Disable support for IFCZIP files (unzip)
+	 */
 	//////////////////////////////////////////////////////////////////////////
 
 #ifndef ASSIMP_BUILD_NO_COMPRESSED_X
@@ -71,6 +74,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #ifndef ASSIMP_BUILD_NO_COMPRESSED_BLEND
 #	define ASSIMP_BUILD_NEED_Z_INFLATE
+#endif
+
+#ifndef ASSIMP_BUILD_NO_COMPRESSED_IFC
+#	define ASSIMP_BUILD_NEED_Z_INFLATE
+#	define ASSIMP_BUILD_NEED_UNZIP
+#endif
+
+#ifndef ASSIMP_BUILD_NO_Q3BSP_IMPORTER
+#	define ASSIMP_BUILD_NEED_Z_INFLATE
+#	define ASSIMP_BUILD_NEED_UNZIP
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
@@ -135,6 +148,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	/* Tells the compiler that a function never returns. Used in code analysis
 	 * to skip dead paths (e.g. after an assertion evaluated to false). */
 #	define AI_WONT_RETURN __declspec(noreturn)
+
+#elif defined(SWIG)
+
+	/* Do nothing, the relevant defines are all in AssimpSwigPort.i */
+
 #else
 	
 #	define AI_WONT_RETURN
@@ -143,6 +161,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #	define ASSIMP_API_WINONLY
 #	define AI_FORCE_INLINE inline
 #endif // (defined _MSC_VER)
+
+#ifdef __GNUC__
+#	define AI_WONT_RETURN_SUFFIX  __attribute__((noreturn))
+#else
+#	define AI_WONT_RETURN_SUFFIX
+#endif // (defined __clang__)
 
 #ifdef __cplusplus
 	/* No explicit 'struct' and 'enum' tags for C++, this keeps showing up
@@ -185,7 +209,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #if (defined(__BORLANDC__) || defined (__BCPLUSPLUS__))
 #error Currently, Borland is unsupported. Feel free to port Assimp.
 
-// "W8059 Packgröße der Struktur geändert"
+// "W8059 Packgrï¿½ï¿½e der Struktur geï¿½ndert"
 
 #endif
 	//////////////////////////////////////////////////////////////////////////
@@ -214,11 +238,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #	define ASSIMP_BUILD_SINGLETHREADED
 #endif
 
-#ifndef ASSIMP_BUILD_SINGLETHREADED
-#	define AI_C_THREADSAFE
-#endif // !! ASSIMP_BUILD_SINGLETHREADED
-
-#ifdef _DEBUG 
+#if defined(_DEBUG) || ! defined(NDEBUG)
 #	define ASSIMP_BUILD_DEBUG
 #endif
 
@@ -237,8 +257,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define AI_MATH_HALF_PI_F	(AI_MATH_PI_F * 0.5f)
 
 /* Tiny macro to convert from radians to degrees and back */
-#define AI_DEG_TO_RAD(x) (x*0.0174532925f)
-#define AI_RAD_TO_DEG(x) (x*57.2957795f)
+#define AI_DEG_TO_RAD(x) ((x)*0.0174532925f)
+#define AI_RAD_TO_DEG(x) ((x)*57.2957795f)
 
 /* Support for big-endian builds */
 #if defined(__BYTE_ORDER__)

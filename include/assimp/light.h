@@ -75,12 +75,19 @@ enum aiLightSourceType
 	//! sport arenas.
 	aiLightSource_SPOT          = 0x3,
 
+	//! The generic light level of the world, including the bounces
+	//! of all other lightsources.
+	//! Typically, there's at most one ambient light in a scene.
+	//! This light type doesn't have a valid position, direction, or
+	//! other properties, just a color. 
+	aiLightSource_AMBIENT       = 0x4,
+
 
 	/** This value is not used. It is just there to force the
 	 *  compiler to map this enum to a 32 Bit integer.
 	 */
 #ifndef SWIG
-	_aiLightSource_Force32Bit = 0x9fffffff
+	_aiLightSource_Force32Bit = INT_MAX
 #endif
 };
 

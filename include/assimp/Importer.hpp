@@ -39,7 +39,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------
 */
 
-/** @file  assimp.hpp
+/** @file  Importer.hpp
  *  @brief Defines the C++-API to the Open Asset Import Library.
  */
 #ifndef INCLUDED_AI_ASSIMP_HPP
@@ -194,16 +194,14 @@ public:
 	 *   are defined in the aiConfig.g header (all constants share the
 	 *   prefix AI_CONFIG_XXX and are simple strings).
 	 * @param iValue New value of the property
-	 * @param bWasExisting Optional pointer to receive true if the
-	 *   property was set before. The new value replaces the previous value
-	 *   in this case.
+	 * @return true if the property was set before. The new value replaces
+	 *   the previous value in this case.
 	 * @note Property of different types (float, int, string ..) are kept
 	 *   on different stacks, so calling SetPropertyInteger() for a 
 	 *   floating-point property has no effect - the loader will call
 	 *   GetPropertyFloat() to read the property, but it won't be there.
 	 */
-	void SetPropertyInteger(const char* szName, int iValue, 
-		bool* bWasExisting = NULL);
+	bool SetPropertyInteger(const char* szName, int iValue);
 
 	// -------------------------------------------------------------------
 	/** Set a boolean configuration property. Boolean properties
@@ -212,23 +210,27 @@ public:
 	 *  #GetPropertyBool and vice versa.
 	 * @see SetPropertyInteger()
 	 */
-	void SetPropertyBool(const char* szName, bool value, bool* bWasExisting = NULL)	{
-		SetPropertyInteger(szName,value,bWasExisting);
+	bool SetPropertyBool(const char* szName, bool value)	{
+		return SetPropertyInteger(szName,value);
 	}
 
 	// -------------------------------------------------------------------
 	/** Set a floating-point configuration property.
 	 * @see SetPropertyInteger()
 	 */
-	void SetPropertyFloat(const char* szName, float fValue, 
-		bool* bWasExisting = NULL);
+	bool SetPropertyFloat(const char* szName, float fValue);
 
 	// -------------------------------------------------------------------
 	/** Set a string configuration property.
 	 * @see SetPropertyInteger()
 	 */
-	void SetPropertyString(const char* szName, const std::string& sValue, 
-		bool* bWasExisting = NULL);
+	bool SetPropertyString(const char* szName, const std::string& sValue);
+
+	// -------------------------------------------------------------------
+	/** Set a matrix configuration property.
+	 * @see SetPropertyInteger()
+	 */
+	bool SetPropertyMatrix(const char* szName, const aiMatrix4x4& sValue);
 
 	// -------------------------------------------------------------------
 	/** Get a configuration property.
@@ -270,8 +272,17 @@ public:
 	 *  The return value remains valid until the property is modified.
 	 * @see GetPropertyInteger()
 	 */
-	const std::string& GetPropertyString(const char* szName,
+	const std::string GetPropertyString(const char* szName,
 		const std::string& sErrorReturn = "") const;
+
+	// -------------------------------------------------------------------
+	/** Get a matrix configuration property
+	 *
+	 *  The return value remains valid until the property is modified.
+	 * @see GetPropertyInteger()
+	 */
+	const aiMatrix4x4 GetPropertyMatrix(const char* szName,
+		const aiMatrix4x4& sErrorReturn = aiMatrix4x4()) const;
 
 	// -------------------------------------------------------------------
 	/** Supplies a custom IO handler to the importer to use to open and
@@ -409,11 +420,12 @@ public:
 	 *   instance. Use GetOrphanedScene() to take ownership of it.
 	 *
 	 * @note This is a straightforward way to decode models from memory
-	 * buffers, but it doesn't handle model formats spreading their 
+	 * buffers, but it doesn't handle model formats that spread their 
 	 * data across multiple files or even directories. Examples include
-	 * OBJ or MD3, which outsource parts of their material stuff into
-	 * external scripts. If you need the full functionality, provide
-	 * a custom IOSystem to make Assimp find these files.
+	 * OBJ or MD3, which outsource parts of their material info into
+	 * external scripts. If you need full functionality, provide
+	 * a custom IOSystem to make Assimp find these files and use
+	 * the regular ReadFile() API.
 	 */
 	const aiScene* ReadFileFromMemory( 
 		const void* pBuffer,
@@ -607,8 +619,8 @@ public:
 
 	// -------------------------------------------------------------------
 	/** Private, do not use. */
-	ImporterPimpl* Pimpl() { return pimpl; };
-	const ImporterPimpl* Pimpl() const { return pimpl; };
+	ImporterPimpl* Pimpl() { return pimpl; }
+	const ImporterPimpl* Pimpl() const { return pimpl; }
 
 protected:
 

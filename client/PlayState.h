@@ -55,7 +55,7 @@ public:
 	void UpdateParticles();
 	void UpdateClient(ClientGame* Client);
 
-	void drawsomeground();
+	void DrawGround();
 	void drawHUD(ClientGame* Client);
 
 	GLuint LoadRAWTexture(const char * filename, int width, int height);

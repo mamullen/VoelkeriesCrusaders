@@ -95,15 +95,21 @@ ASSIMP_API const C_STRUCT aiExportFormatDesc* aiGetExportFormatDescription( size
 
 
 // --------------------------------------------------------------------------------
-/** Create a modifyable copy of a scene.
+/** Create a modifiable copy of a scene.
  *  This is useful to import files via Assimp, change their topology and 
  *  export them again. Since the scene returned by the various importer functions
- *  is const, a modifyable copy is needed.
+ *  is const, a modifiable copy is needed.
  *  @param pIn Valid scene to be copied
- *  @param pOut Receives a modifyable copy of the scene.
+ *  @param pOut Receives a modifyable copy of the scene. Use aiFreeScene() to
+ *    delete it again.
  */
 ASSIMP_API void aiCopyScene(const C_STRUCT aiScene* pIn, 
 	C_STRUCT aiScene** pOut);
+
+
+// --------------------------------------------------------------------------------
+/** Frees a scene copy created using aiCopyScene() */
+ASSIMP_API void aiFreeScene(const C_STRUCT aiScene* pIn);
 
 // --------------------------------------------------------------------------------
 /** Exports the given scene to a chosen file format and writes the result file(s) to disk.
@@ -116,10 +122,7 @@ ASSIMP_API void aiCopyScene(const C_STRUCT aiScene* pIn,
 * @param pFormatId ID string to specify to which format you want to export to. Use 
 * aiGetExportFormatCount() / aiGetExportFormatDescription() to learn which export formats are available.
 * @param pFileName Output file to write
-* @param pIO custom IO implementation to be used. Use this if you use your own storage methods.
-*   If none is supplied, a default implementation using standard file IO is used. Note that
-*   #aiExportSceneToBlob is provided as convenience function to export to memory buffers.
-* @param pPreprocessing Accepts any choice of the #aiPostProcessing enumerated
+* @param pPreprocessing Accepts any choice of the #aiPostProcessSteps enumerated
 *   flags, but in reality only a subset of them makes sense here. Specifying
 *   'preprocessing' flags is useful if the input scene does not conform to 
 *   Assimp's default conventions as specified in the @link data Data Structures Page @endlink. 
@@ -137,7 +140,15 @@ ASSIMP_API void aiCopyScene(const C_STRUCT aiScene* pIn,
 *   is triangulation - whilst you can enforce it by specifying
 *   the #aiProcess_Triangulate flag, most export formats support only
 *   triangulate data so they would run the step anyway.
+*
+*   If assimp detects that the input scene was directly taken from the importer side of 
+*   the library (i.e. not copied using aiCopyScene and potetially modified afterwards), 
+*   any postprocessing steps already applied to the scene will not be applied again, unless
+*   they show non-idempotent behaviour (#aiProcess_MakeLeftHanded, #aiProcess_FlipUVs and 
+*   #aiProcess_FlipWindingOrder).
 * @return a status code indicating the result of the export
+* @note Use aiCopyScene() to get a modifiable copy of a previously
+*   imported scene.
 */
 ASSIMP_API aiReturn aiExportScene( const C_STRUCT aiScene* pScene, 
 	const char* pFormatId, 
@@ -157,6 +168,8 @@ ASSIMP_API aiReturn aiExportScene( const C_STRUCT aiScene* pScene,
 * @param pPreprocessing Please see the documentation for #aiExportScene
 * @return a status code indicating the result of the export
 * @note Include <aiFileIO.h> for the definition of #aiFileIO.
+* @note Use aiCopyScene() to get a modifiable copy of a previously
+*   imported scene.
 */
 ASSIMP_API aiReturn aiExportSceneEx( const C_STRUCT aiScene* pScene, 
 	const char* pFormatId, 
@@ -167,7 +180,7 @@ ASSIMP_API aiReturn aiExportSceneEx( const C_STRUCT aiScene* pScene,
 
 // --------------------------------------------------------------------------------
 /** Describes a blob of exported scene data. Use #aiExportSceneToBlob() to create a blob containing an
-* exported scene. The memory referred by this structure is owned by Assimp. Use #aiReleaseExportedFile()
+* exported scene. The memory referred by this structure is owned by Assimp. 
 * to free its resources. Don't try to free the memory on your side - it will crash for most build configurations
 * due to conflicting heaps.
 *
@@ -195,10 +208,10 @@ struct aiExportDataBlob
 		extension that should be used when writing 
 		the data to disc.
 	 */
-	aiString name;
+    C_STRUCT aiString name;
 
 	/** Pointer to the next blob in the chain or NULL if there is none. */
-	aiExportDataBlob * next;
+	C_STRUCT aiExportDataBlob * next;
 
 #ifdef __cplusplus
 	/// Default constructor
@@ -231,7 +244,7 @@ ASSIMP_API const C_STRUCT aiExportDataBlob* aiExportSceneToBlob( const C_STRUCT 
 * returned by aiExportScene(). 
 * @param pData the data blob returned by #aiExportSceneToBlob
 */
-ASSIMP_API C_STRUCT void aiReleaseExportBlob( const C_STRUCT aiExportDataBlob* pData );
+ASSIMP_API void aiReleaseExportBlob( const C_STRUCT aiExportDataBlob* pData );
 
 #ifdef __cplusplus
 }

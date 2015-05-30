@@ -39,7 +39,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------
 */
 
-/** @file IOSystem.h
+/** @file IOSystem.hpp
  *  @brief File system wrapper for C++. Inherit this class to supply
  *  custom file handling logic to the Import library.
 */
@@ -64,7 +64,10 @@ class IOStream;
  *  supply a custom implementation for IOStream.
  *
  *  @see Importer::SetIOHandler() */
-class ASSIMP_API IOSystem : public Intern::AllocateFromAssimpHeap
+class ASSIMP_API IOSystem
+#ifndef SWIG
+	: public Intern::AllocateFromAssimpHeap
+#endif
 {
 public:
 

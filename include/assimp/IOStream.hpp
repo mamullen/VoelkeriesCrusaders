@@ -38,7 +38,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------
 */
-/** @file IOStream.h
+/** @file IOStream.hpp
  *  @brief File I/O wrappers for C++. 
  */
 
@@ -61,7 +61,10 @@ namespace Assimp	{
  *  to the Importer. If you implement this interface, be sure to also provide an
  *  implementation for IOSystem that creates instances of your custom IO class.
 */
-class ASSIMP_API IOStream : public Intern::AllocateFromAssimpHeap
+class ASSIMP_API IOStream
+#ifndef SWIG
+	: public Intern::AllocateFromAssimpHeap
+#endif
 {
 protected:
 	/** Constructor protected, use IOSystem::Open() to create an instance. */
