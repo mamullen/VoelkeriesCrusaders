@@ -39,12 +39,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------
 */
 
-/** @file  aiVersion.h
+/** @file  version.h
  *  @brief Functions to query the version of the Assimp runtime, check
  *    compile flags, ...
  */
 #ifndef INCLUDED_AI_VERSION_H
 #define INCLUDED_AI_VERSION_H
+
+#include "defs.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -74,10 +76,9 @@ ASSIMP_API unsigned int aiGetVersionMajor (void);
 // ---------------------------------------------------------------------------
 /** @brief Returns the repository revision of the Assimp runtime.
  *  @return SVN Repository revision number of the Assimp runtime the 
- *    application was linked/built against
+ *          application was linked/built against.
  */
 ASSIMP_API unsigned int aiGetVersionRevision (void);
-
 
 //! Assimp was compiled as a shared object (Windows: DLL)
 #define ASSIMP_CFLAGS_SHARED  0x1 

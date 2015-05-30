@@ -38,7 +38,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ----------------------------------------------------------------------
 */
 
-/** @file LogStream.h
+/** @file LogStream.hpp
  *  @brief Abstract base class 'LogStream', representing an output log stream.
  */
 #ifndef INCLUDED_AI_LOGSTREAM_H
@@ -53,8 +53,11 @@ class IOSystem;
  *  Several default implementations are provided, see #aiDefaultLogStream for more
  *  details. Writing your own implementation of LogStream is just necessary if these
  *  are not enough for your purpose. */
-class ASSIMP_API LogStream 
-	: public Intern::AllocateFromAssimpHeap	{
+class ASSIMP_API LogStream
+#ifndef SWIG
+	: public Intern::AllocateFromAssimpHeap
+#endif
+{
 protected:
 	/** @brief	Default constructor	*/
 	LogStream() {

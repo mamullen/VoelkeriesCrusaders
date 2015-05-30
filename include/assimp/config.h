@@ -77,6 +77,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define AI_CONFIG_GLOB_MEASURE_TIME  \
 	"GLOB_MEASURE_TIME"
 
+
+// ---------------------------------------------------------------------------
+/** @brief Global setting to disable generation of skeleton dummy meshes
+ *
+ * Skeleton dummy meshes are generated as a visualization aid in cases which
+ * the input data contains no geometry, but only animation data.
+ * Property data type: bool. Default value: false
+ */
+// ---------------------------------------------------------------------------
+#define AI_CONFIG_IMPORT_NO_SKELETON_MESHES \
+	"IMPORT_NO_SKELETON_MESHES"
+
+
+
 # if 0 // not implemented yet
 // ---------------------------------------------------------------------------
 /** @brief Set Assimp's multithreading policy.
@@ -158,6 +172,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define AI_CONFIG_PP_GSN_MAX_SMOOTHING_ANGLE \
 	"PP_GSN_MAX_SMOOTHING_ANGLE"
 
+
 // ---------------------------------------------------------------------------
 /** @brief Sets the colormap (= palette) to be used to decode embedded
  *         textures in MDL (Quake or 3DGS) files.
@@ -194,7 +209,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	"PP_RRM_EXCLUDE_LIST"
 
 // ---------------------------------------------------------------------------
-/** @brief Configures the #aiProcess_PretransformVertices step to
+/** @brief Configures the #aiProcess_PreTransformVertices step to
  *  keep the scene hierarchy. Meshes are moved to worldspace, but
  *  no optimization is performed (read: meshes with equal materials are not 
  *  joined. The total number of meshes won't change).
@@ -209,7 +224,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	"PP_PTV_KEEP_HIERARCHY"
 
 // ---------------------------------------------------------------------------
-/** @brief Configures the #aiProcess_PretransformVertices step to normalize
+/** @brief Configures the #aiProcess_PreTransformVertices step to normalize
  *  all vertex components into the [-1,1] range. That is, a bounding box
  *  for the whole scene is computed, the maximum component is taken and all
  *  meshes are scaled appropriately (uniformly of course!).
@@ -217,6 +232,25 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *  data*/
 #define AI_CONFIG_PP_PTV_NORMALIZE	\
 	"PP_PTV_NORMALIZE"
+
+// ---------------------------------------------------------------------------
+/** @brief Configures the #aiProcess_PreTransformVertices step to use
+ *  a users defined matrix as the scene root node transformation before
+ *  transforming vertices. 
+ *  Property type: bool. Default value: false.
+ */
+#define AI_CONFIG_PP_PTV_ADD_ROOT_TRANSFORMATION	\
+	"PP_PTV_ADD_ROOT_TRANSFORMATION"
+
+// ---------------------------------------------------------------------------
+/** @brief Configures the #aiProcess_PreTransformVertices step to use
+ *  a users defined matrix as the scene root node transformation before
+ *  transforming vertices. This property correspond to the 'a1' component
+ *  of the transformation matrix.
+ *  Property type: aiMatrix4x4.
+ */
+#define AI_CONFIG_PP_PTV_ROOT_TRANSFORMATION	\
+	"PP_PTV_ROOT_TRANSFORMATION"
 
 // ---------------------------------------------------------------------------
 /** @brief Configures the #aiProcess_FindDegenerates step to
@@ -342,7 +376,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // ---------------------------------------------------------------------------
 /** @brief Enumerates components of the aiScene and aiMesh data structures
- *  that can be excluded from the import using the #aiPrpcess_RemoveComponent step.
+ *  that can be excluded from the import using the #aiProcess_RemoveComponent step.
  *
  *  See the documentation to #aiProcess_RemoveComponent for more details.
  */
@@ -388,7 +422,7 @@ enum aiComponent
 	 * use the #aiProcess_OptimizeGraph step to do this */
 	aiComponent_LIGHTS = 0x100,
 
-	/** Removes all light sources (aiScene::mCameras).
+	/** Removes all cameras (aiScene::mCameras).
 	 * The corresponding scenegraph nodes are NOT removed.
 	 * use the #aiProcess_OptimizeGraph step to do this */
 	aiComponent_CAMERAS = 0x200,
@@ -497,6 +531,100 @@ enum aiComponent
 
 
 // ---------------------------------------------------------------------------
+/** @brief Set whether the fbx importer will merge all geometry layers present
+ *    in the source file or take only the first.
+ *
+ * The default value is true (1)
+ * Property type: bool
+ */
+#define AI_CONFIG_IMPORT_FBX_READ_ALL_GEOMETRY_LAYERS \
+	"IMPORT_FBX_READ_ALL_GEOMETRY_LAYERS"
+
+// ---------------------------------------------------------------------------
+/** @brief Set whether the fbx importer will read all materials present in the
+ *    source file or take only the referenced materials.
+ *
+ * This is void unless IMPORT_FBX_READ_MATERIALS=1.
+ *
+ * The default value is false (0)
+ * Property type: bool
+ */
+#define AI_CONFIG_IMPORT_FBX_READ_ALL_MATERIALS \
+	"IMPORT_FBX_READ_ALL_MATERIALS"
+
+// ---------------------------------------------------------------------------
+/** @brief Set whether the fbx importer will read materials.
+ *
+ * The default value is true (1)
+ * Property type: bool
+ */
+#define AI_CONFIG_IMPORT_FBX_READ_MATERIALS \
+	"IMPORT_FBX_READ_MATERIALS"
+
+// ---------------------------------------------------------------------------
+/** @brief Set whether the fbx importer will read cameras.
+ *
+ * The default value is true (1)
+ * Property type: bool
+ */
+#define AI_CONFIG_IMPORT_FBX_READ_CAMERAS \
+	"IMPORT_FBX_READ_CAMERAS"
+
+// ---------------------------------------------------------------------------
+/** @brief Set whether the fbx importer will read light sources.
+ *
+ * The default value is true (1)
+ * Property type: bool
+ */
+#define AI_CONFIG_IMPORT_FBX_READ_LIGHTS \
+	"IMPORT_FBX_READ_LIGHTS"
+
+// ---------------------------------------------------------------------------
+/** @brief Set whether the fbx importer will read animations.
+ *
+ * The default value is true (1)
+ * Property type: bool
+ */
+#define AI_CONFIG_IMPORT_FBX_READ_ANIMATIONS \
+	"IMPORT_FBX_READ_ANIMATIONS"
+
+// ---------------------------------------------------------------------------
+/** @brief Set whether the fbx importer will act in strict mode in which only
+ *    FBX 2013 is supported and any other sub formats are rejected. FBX 2013
+ *    is the primary target for the importer, so this format is best
+ *    supported and well-tested.
+ *
+ * The default value is false (0)
+ * Property type: bool
+ */
+#define AI_CONFIG_IMPORT_FBX_STRICT_MODE \
+	"IMPORT_FBX_STRICT_MODE"
+
+// ---------------------------------------------------------------------------
+/** @brief Set whether the fbx importer will preserve pivot points for
+ *    transformations (as extra nodes). If set to false, pivots and offsets
+ *    will be evaluated whenever possible.
+ *
+ * The default value is true (1)
+ * Property type: bool
+ */
+#define AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS \
+	"IMPORT_FBX_PRESERVE_PIVOTS"
+
+// ---------------------------------------------------------------------------
+/** @brief Specifies whether the importer will drop empty animation curves or
+ *    animation curves which match the bind pose transformation over their
+ *    entire defined range.
+ *
+ * The default value is true (1)
+ * Property type: bool
+ */
+#define AI_CONFIG_IMPORT_FBX_OPTIMIZE_EMPTY_ANIMATION_CURVES \
+	"IMPORT_FBX_OPTIMIZE_EMPTY_ANIMATION_CURVES"
+
+
+
+// ---------------------------------------------------------------------------
 /** @brief  Set the vertex animation keyframe to be imported
  *
  * ASSIMP does not support vertex keyframes (only bone animation is supported).
@@ -587,7 +715,7 @@ enum aiComponent
 /** @brief  Tells the MD3 loader which skin files to load.
  *
  * When loading MD3 files, Assimp checks whether a file 
- * <md3_file_name>_<skin_name>.skin is existing. These files are used by
+ * [md3_file_name]_[skin_name].skin is existing. These files are used by
  * Quake III to be able to assign different skins (e.g. red and blue team) 
  * to models. 'default', 'red', 'blue' are typical skin names.
  * Property type: String. Default value: "default".
@@ -600,14 +728,14 @@ enum aiComponent
  *  MD3 file. This can also be a search path.
  *
  * By default Assimp's behaviour is as follows: If a MD3 file 
- * <tt><any_path>/models/<any_q3_subdir>/<model_name>/<file_name>.md3</tt> is 
+ * <tt>any_path/models/any_q3_subdir/model_name/file_name.md3</tt> is 
  * loaded, the library tries to locate the corresponding shader file in
- * <tt><any_path>/scripts/<model_name>.shader</tt>. This property overrides this
+ * <tt>any_path/scripts/model_name.shader</tt>. This property overrides this
  * behaviour. It can either specify a full path to the shader to be loaded
  * or alternatively the path (relative or absolute) to the directory where
  * the shaders for all MD3s to be loaded reside. Assimp attempts to open 
- * <tt><dir>/<model_name>.shader</tt> first, <tt><dir>/<file_name>.shader</tt> 
- * is the fallback file. Note that <dir> should have a terminal (back)slash.
+ * <tt>IMPORT_MD3_SHADER_SRC/model_name.shader</tt> first, <tt>IMPORT_MD3_SHADER_SRC/file_name.shader</tt> 
+ * is the fallback file. Note that IMPORT_MD3_SHADER_SRC should have a terminal (back)slash.
  * Property type: String. Default value: n/a.
  */
 #define AI_CONFIG_IMPORT_MD3_SHADER_SRC \
@@ -673,33 +801,39 @@ enum aiComponent
 #define AI_CONFIG_IMPORT_IRR_ANIM_FPS				\
 	"IMPORT_IRR_ANIM_FPS"
 
-
 // ---------------------------------------------------------------------------
-/** @brief Ogre Importer will try to load this Materialfile.
+/** @brief Ogre Importer will try to find referenced materials from this file.
  *
- * Ogre Meshes contain only the MaterialName, not the MaterialFile. If there 
- * is no material file with the same name as the material, Ogre Importer will 
- * try to load this file and search the material in it.
+ * Ogre meshes reference with material names, this does not tell Assimp the file
+ * where it is located in. Assimp will try to find the source file in the following 
+ * order: <material-name>.material, <mesh-filename-base>.material and
+ * lastly the material name defined by this config property.
  * <br>
- * Property type: String. Default value: guessed.
+ * Property type: String. Default value: Scene.material.
  */
-#define AI_CONFIG_IMPORT_OGRE_MATERIAL_FILE "IMPORT_OGRE_MATERIAL_FILE"
-
+#define AI_CONFIG_IMPORT_OGRE_MATERIAL_FILE	\
+	"IMPORT_OGRE_MATERIAL_FILE"
 
 // ---------------------------------------------------------------------------
-/** @brief Ogre Importer detect the texture usage from its filename
+/** @brief Ogre Importer detect the texture usage from its filename.
  *
- * Normally, a texture is loaded as a colormap, if no target is specified in the
- * materialfile. Is this switch is enabled, texture names ending with _n, _l, _s
- * are used as normalmaps, lightmaps or specularmaps. 
+ * Ogre material texture units do not define texture type, the textures usage
+ * depends on the used shader or Ogre's fixed pipeline. If this config property
+ * is true Assimp will try to detect the type from the textures filename postfix:
+ * _n, _nrm, _nrml, _normal, _normals and _normalmap for normal map, _s, _spec,
+ * _specular and _specularmap for specular map, _l, _light, _lightmap, _occ 
+ * and _occlusion for light map, _disp and _displacement for displacement map.
+ * The matching is case insensitive. Post fix is taken between the last 
+ * underscore and the last period.
+ * Default behavior is to detect type from lower cased texture unit name by 
+ * matching against: normalmap, specularmap, lightmap and displacementmap.
+ * For both cases if no match is found aiTextureType_DIFFUSE is used.
  * <br>
  * Property type: Bool. Default value: false.
  */
-#define AI_CONFIG_IMPORT_OGRE_TEXTURETYPE_FROM_FILENAME "IMPORT_OGRE_TEXTURETYPE_FROM_FILENAME"
+#define AI_CONFIG_IMPORT_OGRE_TEXTURETYPE_FROM_FILENAME \
+	"IMPORT_OGRE_TEXTURETYPE_FROM_FILENAME"
 
-
-
-// ---------------------------------------------------------------------------
 /** @brief Specifies whether the IFC loader skips over IfcSpace elements.
  *
  * IfcSpace elements (and their geometric representations) are used to
@@ -707,6 +841,14 @@ enum aiComponent
  * Property type: Bool. Default value: true.
  */
 #define AI_CONFIG_IMPORT_IFC_SKIP_SPACE_REPRESENTATIONS "IMPORT_IFC_SKIP_SPACE_REPRESENTATIONS"
+
+ /** @brief Specifies whether the Android JNI asset extraction is supported.
+  *
+  * Turn on this option if you want to manage assets in native
+  * Android application without having to keep the internal directory and asset
+  * manager pointer.
+  */
+ #define AI_CONFIG_ANDROID_JNI_ASSIMP_MANAGER_SUPPORT "AI_CONFIG_ANDROID_JNI_ASSIMP_MANAGER_SUPPORT"
 
 
 // ---------------------------------------------------------------------------
@@ -734,5 +876,33 @@ enum aiComponent
  * Property type: Bool. Default value: true.
  */
 #define AI_CONFIG_IMPORT_IFC_CUSTOM_TRIANGULATION "IMPORT_IFC_CUSTOM_TRIANGULATION"
+
+// ---------------------------------------------------------------------------
+/** @brief Specifies whether the Collada loader will ignore the provided up direction.
+ *
+ * If this property is set to true, the up direction provided in the file header will
+ * be ignored and the file will be loaded as is.
+ * Property type: Bool. Default value: false.
+ */
+#define AI_CONFIG_IMPORT_COLLADA_IGNORE_UP_DIRECTION "IMPORT_COLLADA_IGNORE_UP_DIRECTION"
+
+// ---------------------------------------------------------------------------
+/** @brief Specifies whether the Collada loader will invert the transparency value.
+ *
+ * If this property is set to true, the transparency value will be interpreted as the
+ * inverse of the usual transparency. This is useful because lots of exporters does
+ * not respect the standard and do the opposite of what is normally expected.
+ * Property type: Bool. Default value: false.
+ */
+#define AI_CONFIG_IMPORT_COLLADA_INVERT_TRANSPARENCY "IMPORT_COLLADA_INVERT_TRANSPARENCY"
+
+// ---------- All the Export defines ------------
+
+/** @brief Specifies the xfile use double for real values of float
+ *
+ * Property type: Bool. Default value: false.
+ */
+
+#define AI_CONFIG_EXPORT_XFILE_64BIT "EXPORT_XFILE_64BIT"
 
 #endif // !! AI_CONFIG_H_INC

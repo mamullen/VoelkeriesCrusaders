@@ -39,7 +39,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------
 */
 
-/** @file aiScene.h
+/** @file scene.h
  *  @brief Defines the data structures in which the imported scene is returned.
  */
 #ifndef __AI_SCENE_H_INC__
@@ -52,10 +52,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "camera.h"
 #include "material.h"
 #include "anim.h"
+#include "metadata.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 
 // -------------------------------------------------------------------------------
 /** A node in the imported hierarchy. 
@@ -71,16 +73,24 @@ struct aiNode
 	/** The name of the node. 
 	 *
 	 * The name might be empty (length of zero) but all nodes which 
-	 * need to be accessed afterwards by bones or anims are usually named.
-	 * Multiple nodes may have the same name, but nodes which are accessed
-	 * by bones (see #aiBone and #aiMesh::mBones) *must* be unique.
+	 * need to be referenced by either bones or animations are named.
+	 * Multiple nodes may have the same name, except for nodes which are referenced
+	 * by bones (see #aiBone and #aiMesh::mBones). Their names *must* be unique.
 	 * 
-	 * Cameras and lights are assigned to a specific node name - if there
-	 * are multiple nodes with this name, they're assigned to each of them.
+	 * Cameras and lights reference a specific node by name - if there
+	 * are multiple nodes with this name, they are assigned to each of them.
 	 * <br>
-	 * There are no limitations regarding the characters contained in
-	 * this text. You should be able to handle stuff like whitespace, tabs,
-	 * linefeeds, quotation marks, ampersands, ... .
+	 * There are no limitations with regard to the characters contained in
+	 * the name string as it is usually taken directly from the source file. 
+	 * 
+	 * Implementations should be able to handle tokens such as whitespace, tabs,
+	 * line feeds, quotation marks, ampersands etc.
+	 *
+	 * Sometimes assimp introduces new nodes not present in the source file
+	 * into the hierarchy (usually out of necessity because sometimes the
+	 * source hierarchy format is simply not compatible). Their names are
+	 * surrounded by @verbatim <> @endverbatim e.g.
+	 *  @verbatim<DummyRootNode> @endverbatim.
 	 */
 	C_STRUCT aiString mName;
 
@@ -102,24 +112,39 @@ struct aiNode
 	/** The meshes of this node. Each entry is an index into the mesh */
 	unsigned int* mMeshes;
 
+	/** Metadata associated with this node or NULL if there is no metadata.
+	  *  Whether any metadata is generated depends on the source file format. See the
+	  * @link importer_notes @endlink page for more information on every source file
+	  * format. Importers that don't document any metadata don't write any. 
+	  */
+	C_STRUCT aiMetadata* mMetaData;
+
 #ifdef __cplusplus
 	/** Constructor */
 	aiNode() 
-	{ 
 		// set all members to zero by default
-		mParent = NULL; 
-		mNumChildren = 0; mChildren = NULL;
-		mNumMeshes = 0; mMeshes = NULL;
+		: mName("")
+		, mParent(NULL)
+		, mNumChildren(0)
+		, mChildren(NULL)
+		, mNumMeshes(0)
+		, mMeshes(NULL)
+		, mMetaData(NULL)
+	{
 	}
+	
 
 	/** Construction from a specific name */
 	aiNode(const std::string& name) 
-	{ 
 		// set all members to zero by default
-		mParent = NULL; 
-		mNumChildren = 0; mChildren = NULL;
-		mNumMeshes = 0; mMeshes = NULL;
-		mName = name;
+		: mName(name)
+		, mParent(NULL)
+		, mNumChildren(0)
+		, mChildren(NULL)
+		, mNumMeshes(0)
+		, mMeshes(NULL)
+		, mMetaData(NULL)
+	{
 	}
 
 	/** Destructor */
@@ -134,7 +159,9 @@ struct aiNode
 		}
 		delete [] mChildren;
 		delete [] mMeshes;
+		delete mMetaData;
 	}
+
 
 	/** Searches for a node with a specific name, beginning at this
 	 *  nodes. Normally you will call this method on the root node
@@ -143,22 +170,43 @@ struct aiNode
 	 *  @param name Name to search for
 	 *  @return NULL or a valid Node if the search was successful.
 	 */
+	inline const aiNode* FindNode(const aiString& name) const
+	{
+		return FindNode(name.data);
+	}
+
+
 	inline aiNode* FindNode(const aiString& name)
 	{
 		return FindNode(name.data);
 	}
 
-	/** @override
-	 */
-	inline aiNode* FindNode(const char* name)
+
+	inline const aiNode* FindNode(const char* name) const
 	{
 		if (!::strcmp( mName.data,name))return this;
 		for (unsigned int i = 0; i < mNumChildren;++i)
 		{
-			aiNode* p = mChildren[i]->FindNode(name);
-			if (p)return p;
+			const aiNode* const p = mChildren[i]->FindNode(name);
+			if (p) {
+				return p;
+			}
 		}
-		// there is definitely no sub node with this name
+		// there is definitely no sub-node with this name
+		return NULL;
+	}
+
+	inline aiNode* FindNode(const char* name) 
+	{
+		if (!::strcmp( mName.data,name))return this;
+		for (unsigned int i = 0; i < mNumChildren;++i)
+		{
+			aiNode* const p = mChildren[i]->FindNode(name);
+			if (p) {
+				return p;
+			}
+		}
+		// there is definitely no sub-node with this name
 		return NULL;
 	}
 
@@ -167,7 +215,7 @@ struct aiNode
 
 
 // -------------------------------------------------------------------------------
-/** @def AI_SCENE_FLAGS_INCOMPLETE
+/**
  * Specifies that the scene data structure that was imported is not complete.
  * This flag bypasses some internal validations and allows the import 
  * of animation skeletons, material libraries or camera animation paths 
@@ -175,14 +223,14 @@ struct aiNode
  */
 #define AI_SCENE_FLAGS_INCOMPLETE	0x1
 
-/** @def AI_SCENE_FLAGS_VALIDATED
+/**
  * This flag is set by the validation postprocess-step (aiPostProcess_ValidateDS)
  * if the validation is successful. In a validated scene you can be sure that
  * any cross references in the data structure (e.g. vertex indices) are valid.
  */
 #define AI_SCENE_FLAGS_VALIDATED	0x2
 
-/** @def AI_SCENE_FLAGS_VALIDATION_WARNING
+/**
  * This flag is set by the validation postprocess-step (aiPostProcess_ValidateDS)
  * if the validation is successful but some issues have been found.
  * This can for example mean that a texture that does not exist is referenced 
@@ -192,7 +240,7 @@ struct aiNode
  */
 #define AI_SCENE_FLAGS_VALIDATION_WARNING  	0x4
 
-/** @def AI_SCENE_FLAGS_NON_VERBOSE_FORMAT
+/**
  * This flag is currently only set by the aiProcess_JoinIdenticalVertices step.
  * It indicates that the vertices of the output meshes aren't in the internal
  * verbose format anymore. In the verbose format all vertices are unique,
@@ -200,7 +248,7 @@ struct aiNode
  */
 #define AI_SCENE_FLAGS_NON_VERBOSE_FORMAT  	0x8
 
- /** @def AI_SCENE_FLAGS_TERRAIN
+ /**
  * Denotes pure height-map terrain data. Pure terrains usually consist of quads, 
  * sometimes triangles, in a regular grid. The x,y coordinates of all vertex 
  * positions refer to the x,y coordinates on the terrain height map, the z-axis
@@ -328,10 +376,10 @@ struct aiScene
 #ifdef __cplusplus
 
 	//! Default constructor - set everything to 0/NULL
-	aiScene();
+	ASSIMP_API aiScene();
 
 	//! Destructor
-	~aiScene();
+	ASSIMP_API ~aiScene();
 
 	//! Check whether the scene contains meshes
 	//! Unless no special scene flags are set this will always be true.

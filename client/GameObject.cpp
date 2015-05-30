@@ -1,13 +1,13 @@
 #include "GameObject.h"
 #include <math.h>
 
-GameObject::GameObject(DaeLoader* m, unsigned int i)
+GameObject::GameObject(MeshLoader* m, unsigned int i)
 {
 	model = m;
 	id = i;
 }
 
-GameObject::GameObject(DaeLoader* m, Vector3* mn, Vector3* mx, unsigned int i)
+GameObject::GameObject(MeshLoader* m, Vector3* mn, Vector3* mx, unsigned int i)
 {
 	model = m;
 	min = mn;

@@ -30,8 +30,6 @@ void InitLights() {
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
 	glEnable(GL_LIGHT0);
-
-	
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -168,18 +166,6 @@ int PlayState::Initialize() {
 	floor_picture = LoadRAWTexture("ppm/floor.ppm", 1024, 1024);
 	floor_normalmap = LoadRAWTexture("ppm/floor_norm.ppm", 1024, 1024);
 	
-	//osgViewer::Viewer w;
-	//osg::Group* root = new osg::Group();
-	//osg::Geode* pyramidGeode = new osg::Geode();
-	//osg::Geometry* pyramidGeometry = new osg::Geometry();
-
-
-
-
-
-
-	
-	//osgViewer::Viewer view;
 	glGenTextures(5, photos);
 	t.loadTexture("ppm/c_front.ppm", photos[0]);
 	t.loadTexture("ppm/c_back.ppm", photos[1]);
@@ -187,7 +173,6 @@ int PlayState::Initialize() {
 	t.loadTexture("ppm/c_left.ppm", photos[3]);
 	t.loadTexture("ppm/c_top.ppm", photos[4]);
 
-	//osg::ref_ptr<osg::Node> root = osgDB::readNodeFile("");
 	once = true;
 	return 0;
 }
@@ -371,7 +356,7 @@ void PlayState::Update(ClientGame* client) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void PlayState::drawsomeground() { // deprecate this one day
+void PlayState::DrawGround() {
 	glPushMatrix();
 
 	shader.bind();
@@ -773,7 +758,7 @@ void PlayState::Draw(ClientGame* client) {
 
 	glRotatef(180, 0, 1, 0);
 
-	drawsomeground();
+	DrawGround();
 	
 	std::map<int, GameObject*>::iterator it;
 	for (it = gameObjects.begin(); it != gameObjects.end(); it++)

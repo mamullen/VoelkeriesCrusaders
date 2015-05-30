@@ -38,7 +38,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------
 */
-/** @file aiColor4D.h
+/** @file color4.h
  *  @brief RGBA color structure, including operators when compiling in C++
  */
 #ifndef AI_COLOR4D_H_INC
@@ -74,6 +74,7 @@ public:
 	// comparison
 	bool operator == (const aiColor4t& other) const;
 	bool operator != (const aiColor4t& other) const;
+	bool operator <  (const aiColor4t& other) const;
 
 	// color tuple access, rgba order
 	inline TReal operator[](unsigned int i) const;
