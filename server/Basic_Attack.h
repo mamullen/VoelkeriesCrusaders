@@ -8,11 +8,13 @@ public:
 	Basic_Attack();
 	virtual ~Basic_Attack();
 
-	virtual float getDmg();
-	virtual float getRange();
-	virtual void setRange(float);
+	virtual void attack();
 	virtual void attack(GameObject*,GameObject*);
+	void setDotAngle(float n) { dotAngle = n; }
+	void resetDotAngle(){ dotAngle = default_dotAngle; }
 private:
 	bool inRange(GameObject*,GameObject*);
+	float dotAngle;
+	float default_dotAngle;
 };
 

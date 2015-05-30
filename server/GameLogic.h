@@ -15,6 +15,7 @@
 #include <algorithm>
 #include "Timer.h"
 #include "Human.h"
+#include "Projectile.h"
 
 class GameLogic
 {
@@ -52,13 +53,15 @@ public:
 	void updateState();
 	
 	std::list<std::pair<int, string>> playerNames;
-
+	static std::vector<Projectile*> projectileList;
+    static std::vector<Player*> playerList;
+	static std::list<Packet*> serverPackets;
 private:
 	Timer* timer;
 	std::vector<GameObject*> gameObjects;
-	//std::vector<Player*> playerList;
+	
 	std::list<std::pair<int,Packet*>> packets;
-	std::list<Packet*> serverPackets;
+	
 	std::map<int, Player*> players;
 	PacketParser* packetParser;
 

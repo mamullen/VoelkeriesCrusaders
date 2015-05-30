@@ -147,22 +147,23 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 			this->setRotation(n);
 		}
 		else if (cEvent.compare("attack") == 0){
-			ad = attack_mode->getDmg();
-			std::cout << "ATTACK!" << std::endl;
-			std::cout << "AD = " << ad << std::endl;
-			std::cout << "size = " << objects->size() << std::endl;
-			if (attack_mode->getCD() <= 0){
-				attack_mode->maxCD();
-				for (int i = 0; i < objects->size(); i++)
-				{
-					std::cout << "Attacking id =  " << objects->at(i)->getID() << std::endl;
-					if (objects->at(i)->isPlayer){
-						std::cout << "CD =  " << attack_mode->getCD() << std::endl;
-						attack_mode->attack(this,objects->at(i));
+			//ad = attack_mode->getDmg();
+			// melee attack
+			if (attack_mode->getType() == 0){
+				if (attack_mode->getCD() <= 0){
+					attack_mode->maxCD();
+					for (int i = 0; i < objects->size(); i++)
+					{
+						if (objects->at(i)->isPlayer){
+							attack_mode->attack(this, objects->at(i));
+						}
 					}
 				}
 			}
-			
+			// range attack
+			else if (attack_mode->getType() == 1){
+				attack_mode->attack(this);
+			}			
 		}
 	}
 

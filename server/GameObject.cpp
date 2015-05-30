@@ -24,6 +24,19 @@ GameObject::~GameObject()
 {
 }
 
+
+void GameObject::setPos(float x, float y, float z)
+{
+	position.x = x;
+	position.y = y;
+	position.z = z;
+}
+
+void GameObject::setPos(Vector3& v)
+{
+	position = v;
+}
+
 void GameObject::moveForward()
 {
 	position = position + forward*speed;

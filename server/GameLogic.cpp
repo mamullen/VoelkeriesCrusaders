@@ -3,6 +3,10 @@
 #include <stdio.h>
 using namespace std;
 
+vector<Projectile*> GameLogic::projectileList;
+vector<Player*> GameLogic::playerList;
+list<Packet*> GameLogic::serverPackets;
+
 GameLogic::GameLogic()
 {
 	//packetParser = new PacketParser();
@@ -189,6 +193,13 @@ void GameLogic::update(int time)
 	}
 	ticksSinceSend++;
 
+	// update projectiles
+	for (std::vector<Projectile*>::iterator it = GameLogic::projectileList.begin(); it != GameLogic::projectileList.end(); it++){
+		if (!(*it)->updateTime(time)){
+			delete(*it);
+			GameLogic::projectileList.erase(it);
+		}
+	}
 }
 
 std::list<Packet*> GameLogic::getServerPackets()
@@ -320,7 +331,7 @@ int GameLogic::addPlayer(int id, char* packet_data)
 	}
 
 	gameObjects.push_back(newP);
-	//playerList.push_back(newP);
+	GameLogic::playerList.push_back(newP);
 
 	return team;
 
