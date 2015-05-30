@@ -6,6 +6,7 @@ Crusader::Crusader() :Player()
 {
 	objectType = 4;
 	team = 1;
+	setAttack(new Basic_Range());
 }
 
 

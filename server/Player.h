@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Action.h"
 #include "Basic_Attack.h"
+#include "Basic_Range.h"
 #include "ConfigSettings.h"
 class Player : public GameObject
 {

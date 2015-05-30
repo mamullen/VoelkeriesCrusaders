@@ -22,7 +22,9 @@ public:
 	int getID();
 	void setID(int theID);
 	float getHP();
-
+	
+	void setPos(float, float, float);
+	void setPos(Vector3&);
 	void moveForward();
 	void moveBackward();
 	void setRotation(float f);
@@ -40,14 +42,14 @@ public:
 	Vector3 getMax();
 
 	
-	virtual void isAttacked(float) = 0;
-	virtual void update(Packet*, std::vector<GameObject*>*) = 0;
+	virtual void isAttacked(float) {}
+	virtual void update(Packet*, std::vector<GameObject*>*){}
 
 	std::map<std::string*, bool> getChanges();
 	void addChange(std::string* change);
 	void clearChanges();
 	//void getStatusPacket();
-
+	float getSpeed() { return speed; }
 	static std::list<std::pair<int, std::string*>> changes;
 	bool isPlayer;
 	int objectType; // 0: building, 1: shrine, 2: player , 3:human, 4: vampire, 5: crusader

@@ -6,6 +6,7 @@ Vampire::Vampire() :Player()
 {
 	objectType = 5;
 	team = 2;
+	setAttack(new Basic_Attack());
 }
 
 
@@ -30,11 +31,17 @@ void Vampire::updateTime(int time,int delta)
 			time_ctr = 0;
 			isAttacked(atof((ConfigSettings::config->getValue("VampireHpDropRate").c_str())));
 		}
+		if (attack_mode->getType() == 0){
+			((Basic_Attack*)attack_mode)->resetDotAngle();
+		}
 	}
 	else if (time == 1){
 		//night
 		speed = atof((ConfigSettings::config->getValue("VampireMovespeedMultiplier").c_str())) * default_speed;
 		attack_mode->setRange(atof((ConfigSettings::config->getValue("VampireAttackRangeInc").c_str())));
+		if (attack_mode->getType() == 0){
+			((Basic_Attack*)attack_mode)->setDotAngle(1);
+		}
 	}
 }
 
