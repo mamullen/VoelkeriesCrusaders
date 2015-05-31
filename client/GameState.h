@@ -2,7 +2,7 @@
 #define GAMESTATE_H_
 
 #include "core.h"
-#include "player.h"
+#include "PlayerType.h"
 #include "camera.h"
 #include "ClientGame.h"
 

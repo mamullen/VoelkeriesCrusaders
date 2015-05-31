@@ -22,26 +22,36 @@
 #include <vector>
 
 class MeshLoader {
+private:
+	bool LoadAsset(const char* filename);
+	void ApplyMaterial(const aiMaterial *material);
+
+	void RenderMesh(const aiNode* node);
+	void RenderBones(const aiNode* node);
 public:
 	MeshLoader();
 	~MeshLoader();
 	MeshLoader(const char* filename);
-	bool LoadAsset(const char* filename);
+	
 	void Render();
 	void UpdateAnimation();
 	void ChangeAnimation(unsigned int index);
 
-	void RenderMesh(const aiNode* node);
-	void RenderBones(const aiNode* node);
+private:/*
+	struct MeshEntry {
+		MeshEntry(std::vector<std::vector<Vector3> > cachedPos, std::vector<std::vector<Vector3> > cachedNorm);
+		std::vector<std::vector<Vector3> > CachedPositions;
+		std::vector<std::vector<Vector3> > CachedNormals;
+	};
 	
-
-private:
-	void ApplyMaterial(const aiMaterial *material);
-
+	std::vector<std::vector<MeshEntry> > MeshEntriesContainer;*/
+	std::vector<std::vector<Vector3> > CachedPositions;
+	std::vector<std::vector<Vector3> > CachedNormals;
 	const aiScene* m_Scene;
 	SceneAnimator* mAnimator;
 
-	double currentTime;
+	double a_CurrentTime;
+	double a_LastPlaying;
 };
 
 #endif

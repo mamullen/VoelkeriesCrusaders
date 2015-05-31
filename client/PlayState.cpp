@@ -174,7 +174,7 @@ int PlayState::Initialize() {
 	// Player attacks
 	rotationChanged = false;
 	attacking = false;
-	player = NULL;
+	Player = NULL;
 	shader.init("shader/bump.vert", "shader/bump.frag");
 
 	text_picture = LoadRAWTexture("ppm/building.ppm", 1024, 1024);
@@ -278,15 +278,15 @@ void PlayState::UpdateClient(ClientGame* client) {
 				printf("PERSON: %f,%f,%f,%f,%f\n", xPos, yPos, zPos, rot, hp);
 				
 				//glScalef(0.01, 0.01, 0.01);
-				Player* p;
-				if (objectType == 3){
-					p = new Player(objID,0);
+				PlayerType* p;
+				if (objectType == 3) {
+					p = new PlayerType(NULL, objID, 0);
 				}
-				else if (objectType == 4){
-					p = new Player(objID, 1);
+				else if (objectType == 4) {
+					p = new CrusaderPlayer(objID, 1);
 				}
-				else{
-					p = new Player(objID, 2);
+				else {
+					p = new VampirePlayer(objID, 2);
 				}
 				//glScalef(100, 100, 100);
 
@@ -298,7 +298,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 				p->setHealth(hp);
 
 				if (objID == client->getClientId()){
-					player = p;
+					Player = p;
 				}
 				else{
 					std::map<unsigned int, std::pair<int, char*>>::iterator it = client->getPlayers()->find(objID);
@@ -321,8 +321,8 @@ void PlayState::UpdateClient(ClientGame* client) {
 			memcpy(&yPos, serverEvent + 8, sizeof(float));
 			memcpy(&zPos, serverEvent + 12, sizeof(float));
 
-			if (player && objID == player->getID()){
-				player->setPos(xPos, yPos, zPos);
+			if (Player && objID == Player->getID()){
+				Player->setPos(xPos, yPos, zPos);
 			}
 			else if (gameObjects.find(objID) != gameObjects.end()){
 				GameObject* o = gameObjects.at(objID);
@@ -333,8 +333,8 @@ void PlayState::UpdateClient(ClientGame* client) {
 		if (strcmp(serverEvent, "rot") == 0){
 			float rot;
 			memcpy(&rot, serverEvent + 4, sizeof(float));
-			if (player && objID == player->getID()){
-				player->setRotation(rot);
+			if (Player && objID == Player->getID()){
+				Player->setRotation(rot);
 			}
 			else if (gameObjects.find(objID) != gameObjects.end()){
 				GameObject* o = gameObjects.at(objID);
@@ -368,8 +368,8 @@ void PlayState::UpdateClient(ClientGame* client) {
 		if (strcmp(serverEvent, "hp") == 0){
 			float hp;
 			memcpy(&hp, serverEvent + 3, sizeof(float));
-			if (player && objID == player->getID()){
-				player->setHealth(hp);
+			if (Player && objID == Player->getID()){
+				Player->setHealth(hp);
 			}
 			else if (gameObjects.find(objID) != gameObjects.end()){
 				GameObject* o = gameObjects.at(objID);
@@ -387,11 +387,11 @@ void PlayState::UpdateClient(ClientGame* client) {
 			int winner;
 			memcpy(&winner, serverEvent + 10, sizeof(int));
 			//gameResult: -1 = lose, 0 = tie, 1 = win
-			if (player != NULL){
+			if (Player != NULL){
 				if (winner == 0){//tie game
 					gameResult = 0;
 				}
-				else if (winner == player->getTeam()){
+				else if (winner == Player->getTeam()){
 					gameResult = 1;
 				}
 				else{
@@ -769,7 +769,7 @@ void PlayState::drawHUD(ClientGame* client){
 
 	//bottom panel
 	glBegin(GL_QUADS);
-	/*if (player->getTeam() == 1){
+	/*if (Player->getTeam() == 1){
 		glColor3f(.4, .4, 1);
 	}
 	else{
@@ -780,7 +780,7 @@ void PlayState::drawHUD(ClientGame* client){
 
 	//healthbar
 	glPushMatrix();
-	std::string s = std::to_string((int)player->getHealth());
+	std::string s = std::to_string((int)Player->getHealth());
 	char * healthString = (char*)s.c_str();
 	glTranslatef(width / 7, height - height / 19, 1);
 	glLineWidth(2);
@@ -794,7 +794,7 @@ void PlayState::drawHUD(ClientGame* client){
 
 	glBegin(GL_QUADS);
 	glColor3f(0, 1, 0);
-	drawRect(width / 15, height - height / 12, (width / 5)*((float)player->getHealth() / player->getMaxHealth()), height / 25);
+	drawRect(width / 15, height - height / 12, (width / 5)*((float)Player->getHealth() / Player->getMaxHealth()), height / 25);
 	glColor3f(1, 0, 0);
 	drawRect(width/15,height-height/12,width/5, height/25);
 	glEnd();
@@ -876,17 +876,16 @@ void PlayState::Draw(ClientGame* client) {
 	// Clear the screen
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	if (!player)
+	if (!Player)
 		return;
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	//Cam.SetTranslate((player->getPos().x, player->getPos().y, player->getPos().z));
 	// Draw components
 	Cam.ApplyViewTransform();
 
-	glTranslatef(player->getPos().x, 0, player->getPos().z);
-	//Cam.SetTranslate(Vector3(0, -player->getPos().y, 0));
+	glTranslatef(Player->getPos().x, 0, Player->getPos().z);
+	//Cam.SetTranslate(Vector3(0, -Player->getPos().y, 0));
 	
 
 	glRotatef(180, 0, 1, 0);
@@ -903,7 +902,7 @@ void PlayState::Draw(ClientGame* client) {
 
 		RenderParti(Cam.GetRotation().y, g_ParticleEffect2, particlepos.x, particlepos.y, particlepos.z);
 	}
-	player->update(true, Cam.GetRotation().y);
+	Player->update(true, Cam.GetRotation().y);
 
 	drawHUD(client); //This includes the game over results
 
@@ -914,7 +913,7 @@ void PlayState::Draw(ClientGame* client) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void PlayState::Input(ClientGame* client) {
-	if (!player)
+	if (!Player)
 		return;
 
 	static int animIndex = 0;
@@ -924,35 +923,29 @@ void PlayState::Input(ClientGame* client) {
 		if (animIndex == 4) {
 			animIndex = 0;
 		}
-		player->setAnimation(animIndex);
+		Player->setAnimation(animIndex);
 	}
 	
 	if (glfwGetKey(window, FORWARD)) {
-		client->addEvent(player->getID(),"move_forward;",ACTION_EVENT);
-		//Cam.SetAzimuth(playerRotation);
+		client->addEvent(Player->getID(), "move_forward;", ACTION_EVENT);
 	}
 	if (glfwGetKey(window, JUMP)) {
-		client->addEvent(player->getID(), "move_jump;", ACTION_EVENT);
-		//Cam.SetAzimuth(playerRotation);
+		client->addEvent(Player->getID(), "move_jump;", ACTION_EVENT);
 	}
 	if (glfwGetKey(window, Q)) {
-
-		client->addEvent(player->getID(), "q;", ACTION_EVENT);
-		//Cam.SetAzimuth(playerRotation);
-
+		client->addEvent(Player->getID(), "q;", ACTION_EVENT);
 	}
 
 	if (glfwGetKey(window, STRAFELEFT)) {
-		client->addEvent(player->getID(), "move_left;", ACTION_EVENT);
-		//Cam.SetAzimuth(playerRotation); // needs some kind of fade effect
+		client->addEvent(Player->getID(), "move_left;", ACTION_EVENT);
 	}
 
 	if (glfwGetKey(window, STRAFERIGHT)) {
-		client->addEvent(player->getID(), "move_right;", ACTION_EVENT);
+		client->addEvent(Player->getID(), "move_right;", ACTION_EVENT);
 	}
 
 	if (glfwGetKey(window, BACKWARD)) {
-		client->addEvent(player->getID(), "move_backward;", ACTION_EVENT);
+		client->addEvent(Player->getID(), "move_backward;", ACTION_EVENT);
 	}
 
 	if (rotationChanged){
@@ -969,14 +962,14 @@ void PlayState::Input(ClientGame* client) {
 		data[pointer] = ';';
 		pointer++;
 		data[pointer] = '\0';
-		client->addEvent(player->getID(), data, ACTION_EVENT);
+		client->addEvent(Player->getID(), data, ACTION_EVENT);
 		//printf("STRING IS %s\n", data);
 		//printf("AZIM %f\n", rotate );
-		//printf("Player: %f\n", player->getRotation());
+		//printf("Player: %f\n", Player->getRotation());
 	}
 
 	if (attacking){
-		client->addEvent(player->getID(), "attack;", ACTION_EVENT);
+		client->addEvent(Player->getID(), "attack;", ACTION_EVENT);
 	}
 }
 
@@ -993,7 +986,7 @@ void PlayState::CharCallback(GLFWwindow* window, unsigned int code) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods) {
-	if (!player)
+	if (!Player)
 		return;
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS){
 		attacking = true;

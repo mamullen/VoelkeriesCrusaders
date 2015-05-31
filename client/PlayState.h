@@ -6,6 +6,9 @@
 #define PLAYSTATE_H_
 
 #include "core.h"
+#include "PlayerType.h"
+#include "CrusaderPlayer.h"
+#include "VampirePlayer.h"
 #include "ElapsedTime.h"
 #include "ParticleSystem.h"
 #include "Emitter.h"
@@ -81,7 +84,7 @@ private:
 
 	// Components
 	Camera Cam;
-	Player* player;
+	PlayerType* Player;
 
 	SphereEmitter g_ParticleEmitter;
 	CubeEmitter g_CubeEmitter;

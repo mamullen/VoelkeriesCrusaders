@@ -8,13 +8,15 @@
 
 MeshLoader::MeshLoader() {
 	std::cout << "No filename specified" << std::endl;
-	currentTime = 0;
+	a_LastPlaying = 0;
+	a_CurrentTime = 0;
 	m_Scene = NULL;
 
 }
 
 MeshLoader::MeshLoader(const char* filename) {
-	currentTime = 0;
+	a_LastPlaying = 0;
+	a_CurrentTime = 0;
 
 	std::cout << "MeshLoader:: loading " << filename << std::endl;
 	if (!LoadAsset(filename)) {
@@ -161,11 +163,16 @@ void MeshLoader::RenderMesh(const aiNode* node) {
 			}
 		}
 
+
+		glPushMatrix();
+
 		ApplyMaterial(m_Scene->mMaterials[mesh->mMaterialIndex]);
 		glScalef(0.05, 0.05, 0.05);
 		for (unsigned int j = 0; j < mesh->mNumFaces; ++j) {
 			const aiFace* face = &mesh->mFaces[j];
 			glBegin(GL_TRIANGLES);
+
+			glScalef(0.1, 0.1, 0.1);
 			for (unsigned int k = 0; k < face->mNumIndices; k++) {
 				int v_index = face->mIndices[k];
 				if (mesh->mColors[0] != NULL)
@@ -176,7 +183,7 @@ void MeshLoader::RenderMesh(const aiNode* node) {
 			}
 			glEnd();
 		}
-		glScalef(20, 20, 20);
+		glPopMatrix();
 	}
 
 	for (unsigned int i = 0; i < node->mNumChildren; i++) {
@@ -187,17 +194,15 @@ void MeshLoader::RenderMesh(const aiNode* node) {
 }
 
 void MeshLoader::UpdateAnimation() {
-	static double lastPlaying = 0.;
-
-	currentTime += clock() / double(CLOCKS_PER_SEC) - lastPlaying;
-	double time = currentTime;
+	a_CurrentTime += clock() / double(CLOCKS_PER_SEC) - a_LastPlaying;
+	double time = a_CurrentTime;
 	aiAnimation* mAnim = mAnimator->CurrentAnim();
 	if (mAnim && mAnim->mDuration > 0.0) {
 		double tps = 25.f;
 		time = fmod(time, mAnim->mDuration / tps);
 	}
 	mAnimator->Calculate(time);
-	lastPlaying = currentTime;
+	a_LastPlaying = a_CurrentTime;
 }
 
 void MeshLoader::Render() {
