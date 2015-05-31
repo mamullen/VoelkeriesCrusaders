@@ -59,6 +59,8 @@ int PlayState::InitGL() {
 ////////////////////////////////////////////////////////////////////////////////
 
 int PlayState::Initialize() {
+	deathbyparticle = false;
+	parti = false;
 	// Configs initialization
 	string configWinX;
 	string configWinY;
@@ -124,6 +126,8 @@ int PlayState::Initialize() {
 
 	ParticleEffect::ColorInterpolator colors;
 
+	ParticleEffect::ColorInterpolator explosion;
+
 	colors.AddValue(0.0f, Vector4(1, 0, 0, 1));     // red
 	colors.AddValue(0.15f, Vector4(1, 0, 1, 1));     // magenta
 	colors.AddValue(0.33f, Vector4(0, 0, 1, 1));     // blue
@@ -132,10 +136,22 @@ int PlayState::Initialize() {
 	colors.AddValue(0.84f, Vector4(1, 1, 0, 0.5));   // yellow
 	colors.AddValue(1.0f, Vector4(1, 0, 0, 0));     // red
 
-	g_ParticleEffect1.SetColorInterplator(colors);
-	g_ParticleEffect2.SetColorInterplator(colors);
-	g_ParticleEffect3.SetColorInterplator(colors);
-	g_ParticleEffect4.SetColorInterplator(colors);
+	explosion.AddValue(0.0f, Vector4(1, 0, 0, 1)); //red
+	explosion.AddValue(0.2f, Vector4(.255, .102, 0, 1)); //orange
+	explosion.AddValue(0.33f, Vector4(.255, .255, 0, .75)); //o
+	explosion.AddValue(0.4f, Vector4(1, 0, 0, 1)); //red
+	explosion.AddValue(0.6f, Vector4(.255, .102, 0, 1)); //orange
+	explosion.AddValue(0.33f, Vector4(.255, .255, 0, .5)); //o
+	explosion.AddValue(0.8f, Vector4(0, 0, 0, 0.75));
+	explosion.AddValue(1.0f, Vector4(0, 0, 0, 0.5));
+	explosion.AddValue(1.1f, Vector4(1, 0, 0, .5)); //red
+	explosion.AddValue(1.2f, Vector4(.255, .102, 0, .5)); //orange
+
+
+	g_ParticleEffect1.SetColorInterplator(explosion);
+	g_ParticleEffect2.SetColorInterplator(explosion);
+	g_ParticleEffect3.SetColorInterplator(explosion);
+	g_ParticleEffect4.SetColorInterplator(explosion);
 
 	g_ParticleEffect1.SetParticleEmitter(&g_ParticleEmitter);
 	g_ParticleEffect2.SetParticleEmitter(&g_ParticleEmitter);
@@ -166,6 +182,22 @@ int PlayState::Initialize() {
 	floor_picture = LoadRAWTexture("ppm/floor.ppm", 1024, 1024);
 	floor_normalmap = LoadRAWTexture("ppm/floor_norm.ppm", 1024, 1024);
 	
+
+
+	colortex.initTexture(GL_TEXTURE_2D, "ppm/bleh_C.png");
+	normaltex.initTexture(GL_TEXTURE_2D, "ppm/bleh_N.png");
+
+	colortex.Load();
+	normaltex.Load();
+
+	colorslant.initTexture(GL_TEXTURE_2D, "ppm/163.png");
+	normalslant.initTexture(GL_TEXTURE_2D, "ppm/163_norm.png");
+
+	colorslant.Load();
+	normalslant.Load();
+
+
+
 	glGenTextures(5, photos);
 	t.loadTexture("ppm/c_front.ppm", photos[0]);
 	t.loadTexture("ppm/c_back.ppm", photos[1]);
@@ -308,6 +340,29 @@ void PlayState::UpdateClient(ClientGame* client) {
 			}
 		}
 
+		if (strcmp(serverEvent, "dead") == 0)
+		{
+			float xPos;
+			float yPos;
+			float zPos;
+			memcpy(&xPos, serverEvent + 5, sizeof(float));
+			memcpy(&yPos, serverEvent + 9, sizeof(float));
+			memcpy(&zPos, serverEvent + 13, sizeof(float));
+			particlepos = Vector3(xPos, yPos, zPos);
+			deathbyparticle = true;
+			parti = true;
+		}
+
+		if (strcmp(serverEvent, "particles") == 0)
+		{
+
+
+			printf("truetruetrue\n\n");
+			parti = true;
+
+		}
+
+
 		if (strcmp(serverEvent, "hp") == 0){
 			float hp;
 			memcpy(&hp, serverEvent + 3, sizeof(float));
@@ -349,7 +404,10 @@ void PlayState::UpdateClient(ClientGame* client) {
 }
 
 void PlayState::Update(ClientGame* client) {
-	UpdateParticles();
+	if (parti)
+	{
+		UpdateParticles();
+	}
 	UpdateClient(client);
 
 }
@@ -358,27 +416,46 @@ void PlayState::Update(ClientGame* client) {
 
 void PlayState::DrawGround() {
 	glPushMatrix();
-
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 	shader.bind();
-	glActiveTexture(GL_TEXTURE0);
+
 	glEnable(GL_TEXTURE_2D);
 	int texture_location = glGetUniformLocation(shader.id(), "color_texture");
 	glUniform1i(texture_location, 0);
-	glBindTexture(GL_TEXTURE_2D, floor_picture);
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D, texture);
+	colortex.Bind(GL_TEXTURE0);
 
-	glActiveTexture(GL_TEXTURE1);
+	//glActiveTexture(GL_TEXTURE1);
 	glEnable(GL_TEXTURE_2D);
 	int normal_location = glGetUniformLocation(shader.id(), "normal_texture");
 	glUniform1i(normal_location, 1);
-	glBindTexture(GL_TEXTURE_2D, floor_normalmap);
-	//create ground plane
-	glTranslatef(0.f, -1.f, 0.f);
-	glColor3f(1.0f, 1.0f, 1.0f);
+	//glActiveTexture(GL_TEXTURE1);
+	//glBindTexture(GL_TEXTURE_2D, normal_texture);
+	normaltex.Bind(GL_TEXTURE1);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(-240, -1, -240);
 	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(-240, -1, -90);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(-80, -1, -90);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(-80, -1, -240);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-80, -1, -240);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(-80, -1, -90);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(80, -1, -90);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(80, -1, -240);
+
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(80, -1, -240);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(80, -1, -90);
 	glTexCoord2f(1.0f, 1.0f);
 	glVertex3f(240, -1, -90);
 	glTexCoord2f(1.0f, 0.0f);
@@ -388,6 +465,24 @@ void PlayState::DrawGround() {
 	glVertex3f(-240, -1, 90);
 	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(-240, -1, 240);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(-90, -1, 240);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(-90, -1, 90);
+
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-90, -1, 90);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(-90, -1, 240);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(90, -1, 240);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(90, -1, 90);
+
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(90, -1, 90);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(90, -1, 240);
 	glTexCoord2f(1.0f, 1.0f);
 	glVertex3f(240, -1, 240);
 	glTexCoord2f(1.0f, 0.0f);
@@ -411,58 +506,16 @@ void PlayState::DrawGround() {
 	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(240, -1, -90);
 
-
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(100, -1, 90);
+	glVertex3f(-75, -8, -60);//
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(75, -15, 60);
+	glVertex3f(-75, -8, 60);//
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(-75, -15, 60);
+	glVertex3f(75, -8, 60);////
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(-100, -1, 90);
-
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(100, -1, -90);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(75, -15, -60);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(-75, -15, -60);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(-100, -1, -90);
-
-
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(75, -15, -60);//
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(75, -15, 60);//
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(-75, -15, 60);////
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(-75, -15, -60);////
-
-	
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(-100, -1, 90);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-75, -15, 60);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(-75, -15, -60);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(-100, -1, -90);
-
-	
-
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(100, -1, -90);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(75, -15, -60);//
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(75, -15, 60);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(100, -1, 90);
+	glVertex3f(75, -8, -60);////
 
 	glEnd();
-	
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
@@ -471,7 +524,74 @@ void PlayState::DrawGround() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	shader.unbind();
 	glDisable(GL_TEXTURE_2D);
-	
+
+	shader.unbind();
+
+	shader.bind();
+
+	glEnable(GL_TEXTURE_2D);
+	texture_location = glGetUniformLocation(shader.id(), "color_texture");
+	glUniform1i(texture_location, 0);
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D, texture);
+	colorslant.Bind(GL_TEXTURE0);
+
+	//glActiveTexture(GL_TEXTURE1);
+	glEnable(GL_TEXTURE_2D);
+	normal_location = glGetUniformLocation(shader.id(), "normal_texture");
+	glUniform1i(normal_location, 1);
+	//glActiveTexture(GL_TEXTURE1);
+	//glBindTexture(GL_TEXTURE_2D, normal_texture);
+	normalslant.Bind(GL_TEXTURE1);
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(100, -1, 90);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(75, -8, 60);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(-75, -8, 60);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(-100, -1, 90);
+
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-100, -1, -90);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(-75, -8, -60);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(75, -8, -60);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(100, -1, -90);
+
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-100, -1, 90);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(-75, -8, 60);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(-75, -8, -60);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(-100, -1, -90);
+
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(100, -1, -90);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(75, -8, -60);//
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(75, -8, 60);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(100, -1, 90);
+
+	glEnd();
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_TEXTURE_2D);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	shader.unbind();
+	glDisable(GL_TEXTURE_2D);
+
 	glColor3f(1, 1, 1);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_CULL_FACE);
@@ -534,30 +654,42 @@ void PlayState::DrawGround() {
 	//glNormal3f(0, -1, 0);
 	glBindTexture(GL_TEXTURE_2D, photos[4]);
 	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(260, 200, 260);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(260, 200, -260);
 	glTexCoord2f(1.0f, 1.0f);
 	glVertex3f(-260, 200, -260);
 	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(260, 200, -260);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(260, 200, 260);
+	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(-260, 200, 260);
 	//glDisable(GL_TEXTURE_2D);
 	glEnd();
+	glPopMatrix();
+}
+////////////////////////////////////////////////////////////////////////
+void PlayState::RenderParti(float rot, ParticleEffect p, float xx, float yy, float zz)
+{
+	glPushMatrix();
+	glTranslatef(xx, yy, zz);
+	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
+	glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
+	glRotatef(rot, 0, 1, 0);
+	glScalef(0.3f, 0.3f, 0.3f);
+	p.Render();
 	glPopMatrix();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void PlayState::RenderParticles(float rot) {
-	glPushMatrix();
+	/*glPushMatrix();
 	glTranslatef(100.0f, 0.4f, 100.0f);
 	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
 	//glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
 	glRotatef(rot, 0, 1, 0);
 	glScalef(0.3f, 0.3f, 0.3f);
 	g_ParticleEffect1.Render();
-	glPopMatrix();
+	glPopMatrix();*/
 
 	glPushMatrix();
 	glTranslatef(100.0f, 0.4f, -100.0f);
@@ -765,9 +897,11 @@ void PlayState::Draw(ClientGame* client) {
 	{
 		it->second->update(false, Cam.GetRotation().y);
 	}
+	if (parti)
+	{
 
-	//RenderParticles(Cam.GetRotation().y);
-
+		RenderParti(Cam.GetRotation().y, g_ParticleEffect2, particlepos.x, particlepos.y, particlepos.z);
+	}
 	player->update(true, Cam.GetRotation().y);
 
 	drawHUD(client); //This includes the game over results
@@ -799,6 +933,12 @@ void PlayState::Input(ClientGame* client) {
 	if (glfwGetKey(window, JUMP)) {
 		client->addEvent(player->getID(), "move_jump;", ACTION_EVENT);
 		//Cam.SetAzimuth(playerRotation);
+	}
+	if (glfwGetKey(window, Q)) {
+
+		client->addEvent(player->getID(), "q;", ACTION_EVENT);
+		//Cam.SetAzimuth(playerRotation);
+
 	}
 
 	if (glfwGetKey(window, STRAFELEFT)) {

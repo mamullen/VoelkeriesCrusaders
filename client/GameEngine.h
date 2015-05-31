@@ -14,6 +14,11 @@
 #include <stack>
 #include "objparser.h"
 #include "ConfigSettings.h"
+// Include file for sound
+#include "mmsystem.h"
+// Link to this library for sound
+#pragma comment( lib, "winmm.lib" ) 
+
 
 using namespace std;
 ////////////////////////////////////////////////////////////////////////////////

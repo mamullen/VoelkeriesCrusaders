@@ -136,3 +136,16 @@ void GameObject::print(std::string str) {
 		<< std::endl;
 }
 
+bool GameObject::shrinecollide(Vector3 min, Vector3 max)
+{
+	if (min.x < position.x && position.x <max.x)
+	{
+		if (min.z < position.z && position.z < max.z)
+		{
+			printf("shrine true\n\n");
+			return true;
+		}
+	}
+	printf("shrine false\n\n");
+	return false;
+}

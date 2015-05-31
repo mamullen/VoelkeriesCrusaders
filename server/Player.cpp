@@ -52,7 +52,7 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 	int currInd = 0;
 	int currEnd = in.find(';', currInd);
 	std::cout << "packet update = " << in.c_str() << std::endl;
-
+	this->gravity();
 	if (hp <= 0){
 		return;
 	}
@@ -84,6 +84,19 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 				std::string* change = new std::string("pos:");
 				changes.push_back(std::pair<int, std::string*>(id, change));
 				this->jump();
+			}
+
+		}
+		else if (cEvent.compare("q") == 0){
+			//
+
+			if (shrinecollide(Vector3(-60, 0, -60), Vector3(60, 0, 60)))
+			{
+				if (!isChanged[3]){
+					change_counter[3]++;
+					std::string* change = new std::string("particles");
+					changes.push_back(std::pair<int, std::string*>(id, change));
+				}
 			}
 
 		}
@@ -288,4 +301,16 @@ bool Player::collide(std::vector<GameObject*>* obj, Vector3 dir)
 	{
 		return true;
 	}*/
+}
+bool Player::shrinecollide(Vector3 min, Vector3 max)
+{
+	if (min.x < position.x && position.x <max.x)
+	{
+		if (min.z < position.z && position.z < max.z)
+		{
+
+			return true;
+		}
+	}
+	return false;
 }

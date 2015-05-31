@@ -33,7 +33,7 @@ public:
 	void strafeLeft();
 	void strafeRight();
 	void jump();
-
+	void gravity();
 	void setMin(float, float, float);
 	void setMax(float, float, float);
 	void setMin(Vector3&);
@@ -62,9 +62,9 @@ protected:
 	const float ROTATE_LEFT = 1;
 	const float ROTATE_RIGHT = -1;
 	const float PI = 3.14159;
-	
+	float ground;
 	Vector3 min, max;
-
+	bool landed;
 	float hp;
 	float rotation;
 	Matrix34 rotateMx;

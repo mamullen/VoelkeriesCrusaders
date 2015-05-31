@@ -19,6 +19,7 @@ const int FORWARD = GLFW_KEY_W;
 const int BACKWARD = GLFW_KEY_S;
 const int STRAFELEFT = GLFW_KEY_A;
 const int STRAFERIGHT = GLFW_KEY_D;
+const int Q = GLFW_KEY_Q;
 /////////////////////////////////////////////////////////////////
 
 class GameObject {
@@ -47,6 +48,7 @@ public:
 	void setName(char* n)				{ name = n; }
 	char * getName()					{ return name; }
 	void setAnimation(int index);
+	bool shrinecollide(Vector3, Vector3);
 
 	void setPos(double x, double y, double z);
 	float getRotation()					{ return rotation; }
