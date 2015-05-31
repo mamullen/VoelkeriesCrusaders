@@ -162,7 +162,7 @@ void MeshLoader::RenderMesh(const aiNode* node) {
 		}
 
 		ApplyMaterial(m_Scene->mMaterials[mesh->mMaterialIndex]);
-
+		glScalef(0.05, 0.05, 0.05);
 		for (unsigned int j = 0; j < mesh->mNumFaces; ++j) {
 			const aiFace* face = &mesh->mFaces[j];
 			glBegin(GL_TRIANGLES);
@@ -176,6 +176,7 @@ void MeshLoader::RenderMesh(const aiNode* node) {
 			}
 			glEnd();
 		}
+		glScalef(20, 20, 20);
 	}
 
 	for (unsigned int i = 0; i < node->mNumChildren; i++) {

@@ -276,6 +276,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 
 
 				printf("PERSON: %f,%f,%f,%f,%f\n", xPos, yPos, zPos, rot, hp);
+				
 				//glScalef(0.01, 0.01, 0.01);
 				Player* p;
 				if (objectType == 3){
@@ -287,6 +288,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 				else{
 					p = new Player(objID, 2);
 				}
+				//glScalef(100, 100, 100);
 
 				//glScalef(10, 10, 10);
 				//add shriner here?
@@ -672,7 +674,6 @@ void PlayState::RenderParti(float rot, ParticleEffect p, float xx, float yy, flo
 	glPushMatrix();
 	glTranslatef(xx, yy, zz);
 	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
-	glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
 	glRotatef(rot, 0, 1, 0);
 	glScalef(0.3f, 0.3f, 0.3f);
 	p.Render();
