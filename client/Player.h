@@ -13,7 +13,7 @@
 class Player: public GameObject {
 public:
 	Player(unsigned int i, int t) : GameObject(new MeshLoader((char*)ConfigSettings::config->getValue("MechAnimationFilePath").c_str()), i){ setShowHP(true); team = t; };
-	//Player(unsigned int i) : GameObject(NULL, i){ setShowHP(true); };
+	//Player(unsigned int i, int t) : GameObject(NULL, i){ setShowHP(true); team = t; };
 
 	int getTeam()		{ return team; }
 

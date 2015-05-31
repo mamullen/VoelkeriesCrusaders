@@ -38,7 +38,8 @@ private:
 	bool name_state = true, name_error = false;
 	std::string name = "";
 	GLuint textureID;
-
+	Texture t;
+	GLuint photos[1];
 	// Components
 	Camera Cam;
 };

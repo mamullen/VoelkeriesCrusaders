@@ -146,12 +146,20 @@ void GameLogic::update(int time)
 			serverPackets.push_back(p);
 		}
 		else if (key->compare("dead") == 0){
-			float r = gameObjects.at(index)->getHP();
+			float x = gameObjects.at(index)->getPos().x;
+			float y = gameObjects.at(index)->getPos().y;
+			float z = gameObjects.at(index)->getPos().z;
 			///////////////////////////////////////////////////////////////////////////
 			char data[PACKET_DATA_LEN];
 			int pointer = 0;
 			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "dead", 5);
 			pointer += 5;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &x, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
+			pointer += sizeof(float);
 			data[pointer] = ',';
 			pointer++;
 			///////////////////////////////////////////////////////////////////////////
@@ -162,7 +170,23 @@ void GameLogic::update(int time)
 
 			serverPackets.push_back(p);
 		}
+		else if (key->compare("particles") == 0){
+			float r = gameObjects.at(index)->getHP();
+			///////////////////////////////////////////////////////////////////////////
+			char data[PACKET_DATA_LEN];
+			int pointer = 0;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "particles", 10);
+			pointer += 10;
+			data[pointer] = ',';
+			pointer++;
+			///////////////////////////////////////////////////////////////////////////
+			Packet* p = new Packet;
+			p->packet_type = ACTION_EVENT;
+			memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+			p->id = index;
 
+			serverPackets.push_back(p);
+		}
 		// clear the change bool array after done processing all the changes 
 		// need fix
 		gameObjects.at(index)->clearChanges();

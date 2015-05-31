@@ -9,6 +9,14 @@ Texture::Texture(GLenum TextureTarget, const std::string& filename)
 	m_textureTarget = TextureTarget;
 	m_filename = filename;
 }
+Texture::Texture(GLenum tt, const char * fn) {
+	m_textureTarget = tt;
+	filename = fn;
+}
+void Texture::initTexture(GLenum tt, const char * fn) {
+	m_textureTarget = tt;
+	filename = fn;
+}
 
 GLuint loadDDS(const char * imagepath){
 
@@ -105,21 +113,40 @@ GLuint loadDDS(const char * imagepath){
 
 bool Texture::Load()
 {
-	/*try {
-	m_image.read(m_fileName);
-	m_image.write(&m_blob, "RGBA");
+	unsigned char * data;
+
+	int x, y, n;
+	int force_channels = 4;
+	data = SOIL_load_image(filename, &x, &y, &n, force_channels);
+
+
+	//data = SOIL_load_OGL_texture(filename, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	if (!data) {
+		fprintf(stderr, "ERROR: could not load %s\n", filename);
+		return false;
 	}
-	catch (Magick::Error& Error) {
-	std::cout << "Error loading texture '" << m_fileName << "': " << Error.what() << std::endl;
-	return false;
+	// non-power-of-2 dimensions check
+	if ((x & (x - 1)) != 0 || (y & (y - 1)) != 0) {
+		fprintf(stderr, "WARNING: image %s is not power-of-2 dimensions\n", filename);
 	}
+
 	glGenTextures(1, &m_textureObj);
 	glBindTexture(m_textureTarget, m_textureObj);
-	glTexImage2D(m_textureTarget, 0, GL_RGBA, m_image.columns(), m_image.rows(), 0, GL_RGBA, GL_UNSIGNED_BYTE, m_blob.data());
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE); //set texture environment parameters
+
+	//And if you go and use extensions, you can use Anisotropic filtering textures which are of an
+	//even better quality, but this will do for now.
 	glTexParameterf(m_textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameterf(m_textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	//Here we are setting the parameter to repeat the texture instead of clamping the texture
+	//to the edge of our shape.
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexImage2D(m_textureTarget, 0, GL_RGBA, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	free(data);
 	glBindTexture(m_textureTarget, 0);
-	*/
 	return true;
 }
 

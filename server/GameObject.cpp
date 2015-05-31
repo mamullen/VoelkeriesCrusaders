@@ -10,6 +10,8 @@ GameObject::GameObject()
 	totalId++;
 	isPlayer = false;
 	objectType = -1;
+	ground = 1;
+	landed = true;
 	/*
 	position = Vector3(0, 0, 0);
 	pPosition = Vector3(position.x, position.y, position.z);
@@ -42,12 +44,49 @@ void GameObject::moveForward()
 	position = position + forward*speed;
 }
 
+void GameObject::gravity()
+{
+	if (position.x > -90 && position.x<90)
+	{
+		if (position.z>-90 && position.z<90)
+		{
+			ground = -6;
+		}
+		else
+		{
+			ground = 1;
+		}
+	}
+	else
+	{
+		ground = 1;
+	}
+	if (position.y > ground)
+	{
+		position = position - 0.05*up;
+
+	}
+}
+
 void GameObject::jump()
 {
-	if (objectType == 2)
+	if (landed)
 	{
 
 		position = position + up;
+	}
+	if (position.y >ground + 4)
+	{
+		landed = false;
+
+	}
+	//if (!landed)
+	//{
+	//gravity();
+	//}
+	if (position.y <= ground)
+	{
+		landed = true;
 	}
 }
 
