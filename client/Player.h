@@ -12,8 +12,8 @@
 
 class Player: public GameObject {
 public:
-	Player(unsigned int i, int t) : GameObject(new MeshLoader((char*)ConfigSettings::config->getValue("VampAnimationFilePath").c_str()), i){ setShowHP(true); team = t; };
-	//Player(unsigned int i, int t) : GameObject(NULL, i){ setShowHP(true); team = t; };
+	//Player(unsigned int i, int t) : GameObject(new MeshLoader((char*)ConfigSettings::config->getValue("VampAnimationFilePath").c_str()), i){ setShowHP(true); team = t; };
+	Player(unsigned int i, int t) : GameObject(NULL, i){ setShowHP(true); team = t; };
 
 	int getTeam()		{ return team; }
 
