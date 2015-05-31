@@ -50,6 +50,10 @@ bool MeshLoader::LoadAsset(const char* filename) {
 	return true;
 }
 
+void MeshLoader::ChangeAnimation(unsigned int index) {
+	mAnimator->SetAnimIndex(index);
+}
+
 void color4_to_float4(const aiColor4D *c, float f[4])
 {
 	f[0] = c->r;
@@ -133,12 +137,7 @@ void MeshLoader::ApplyMaterial(const struct aiMaterial *material)
 
 void MeshLoader::RenderMesh(const aiNode* node) {
 	// naive, put into VBO
-	aiMatrix4x4 Mx = mAnimator->GetLocalTransform(node);
-	Mx.Transpose();
-
 	glPushMatrix();
-	glMultMatrixf((float*)&Mx);
-
 	for (unsigned int i = 0; i < node->mNumMeshes; i++) {
 		const aiMesh* mesh = m_Scene->mMeshes[node->mMeshes[i]];
 		std::vector<aiVector3D> CachedPosition(mesh->mNumVertices);
@@ -186,21 +185,22 @@ void MeshLoader::RenderMesh(const aiNode* node) {
 
 }
 
-void MeshLoader::Render() {
+void MeshLoader::UpdateAnimation() {
 	static double lastPlaying = 0.;
 
 	currentTime += clock() / double(CLOCKS_PER_SEC) - lastPlaying;
 	double time = currentTime;
 	aiAnimation* mAnim = mAnimator->CurrentAnim();
 	if (mAnim && mAnim->mDuration > 0.0) {
-		double tps = 5.f;
+		double tps = 25.f;
 		time = fmod(time, mAnim->mDuration / tps);
 	}
 	mAnimator->Calculate(time);
 	lastPlaying = currentTime;
+}
 
+void MeshLoader::Render() {
 	glEnable(GL_LIGHTING);
 	RenderMesh(m_Scene->mRootNode);
-
 	glDisable(GL_LIGHTING);
 }

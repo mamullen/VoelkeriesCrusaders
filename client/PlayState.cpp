@@ -781,6 +781,16 @@ void PlayState::Draw(ClientGame* client) {
 void PlayState::Input(ClientGame* client) {
 	if (!player)
 		return;
+
+	static int animIndex = 0;
+
+	if (glfwGetKey(window, GLFW_KEY_L)) {
+		++animIndex;
+		if (animIndex == 4) {
+			animIndex = 0;
+		}
+		player->setAnimation(animIndex);
+	}
 	
 	if (glfwGetKey(window, FORWARD)) {
 		client->addEvent(player->getID(),"move_forward;",ACTION_EVENT);

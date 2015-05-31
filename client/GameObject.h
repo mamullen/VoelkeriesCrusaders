@@ -46,6 +46,7 @@ public:
 	Vector3* getMax()					{ return max; }
 	void setName(char* n)				{ name = n; }
 	char * getName()					{ return name; }
+	void setAnimation(int index);
 
 	void setPos(double x, double y, double z);
 	float getRotation()					{ return rotation; }

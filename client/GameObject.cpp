@@ -76,9 +76,7 @@ void GameObject::update(bool isPlayer, float rot) {
 	
 	//check  model is not null
 	if (model){
-		GLfloat scl = 0.2;
-		glColor3f(1.0f, 1.0f, 1.0f);
-		glScalef(scl, scl, scl);
+		model->UpdateAnimation();
 		model->Render();
 	}
 	else {
@@ -122,6 +120,10 @@ void GameObject::setHealth(float h){
 		currHP = 0;
 	}
 	printf("NEW HEALTH VAL: %f\n", currHP);
+}
+
+void GameObject::setAnimation(int index) {
+	model->ChangeAnimation(index);
 }
 
 void GameObject::print(std::string str) {

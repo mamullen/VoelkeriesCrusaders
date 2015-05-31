@@ -28,6 +28,8 @@ public:
 	MeshLoader(const char* filename);
 	bool LoadAsset(const char* filename);
 	void Render();
+	void UpdateAnimation();
+	void ChangeAnimation(unsigned int index);
 
 	void RenderMesh(const aiNode* node);
 	void RenderBones(const aiNode* node);
@@ -38,6 +40,7 @@ private:
 
 	const aiScene* m_Scene;
 	SceneAnimator* mAnimator;
+
 	double currentTime;
 };
 
