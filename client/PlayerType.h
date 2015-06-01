@@ -10,12 +10,18 @@
 #include <iostream>
 #include "ConfigSettings.h"
 
+enum PlayerClass { Human, Vampire, Crusader };
+
 class PlayerType: public GameObject {
 public:
-	PlayerType(MeshLoader* model, unsigned int i, int t) : GameObject(model, i){ setShowHP(true); team = t; };
+	PlayerType(MeshLoader* model, unsigned int i, int t) : GameObject(model, i) { setShowHP(true); team = t; p_Class = Human; };
 	//Player(unsigned int i, int t) : GameObject(NULL, i){ setShowHP(true); team = t; };
+	PlayerClass getClass() { return p_Class; }
 
 	int getTeam()		{ return team; }
+
+protected:
+	PlayerClass p_Class;
 
 private:
 	int team;

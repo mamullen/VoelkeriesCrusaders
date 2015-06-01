@@ -37,18 +37,14 @@ public:
 	void UpdateAnimation();
 	void ChangeAnimation(unsigned int index);
 
-private:/*
-	struct MeshEntry {
-		MeshEntry(std::vector<std::vector<Vector3> > cachedPos, std::vector<std::vector<Vector3> > cachedNorm);
-		std::vector<std::vector<Vector3> > CachedPositions;
-		std::vector<std::vector<Vector3> > CachedNormals;
-	};
-	
-	std::vector<std::vector<MeshEntry> > MeshEntriesContainer;*/
-	std::vector<std::vector<Vector3> > CachedPositions;
-	std::vector<std::vector<Vector3> > CachedNormals;
+private:
 	const aiScene* m_Scene;
 	SceneAnimator* mAnimator;
+
+
+	aiVector3D sceneCenter, sceneMin, sceneMax;
+	void getBoundingBox(aiVector3D* min, aiVector3D* max);
+	void getBoundingBoxForNode(const aiNode* node, aiVector3D* min, aiVector3D* max, aiMatrix4x4* trafo);
 
 	double a_CurrentTime;
 	double a_LastPlaying;
