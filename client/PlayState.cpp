@@ -59,6 +59,8 @@ int PlayState::InitGL() {
 ////////////////////////////////////////////////////////////////////////////////
 
 int PlayState::Initialize() {
+	deathbyparticle = false;
+	parti = false;
 	// Configs initialization
 	string configWinX;
 	string configWinY;
@@ -124,6 +126,8 @@ int PlayState::Initialize() {
 
 	ParticleEffect::ColorInterpolator colors;
 
+	ParticleEffect::ColorInterpolator explosion;
+
 	colors.AddValue(0.0f, Vector4(1, 0, 0, 1));     // red
 	colors.AddValue(0.15f, Vector4(1, 0, 1, 1));     // magenta
 	colors.AddValue(0.33f, Vector4(0, 0, 1, 1));     // blue
@@ -132,10 +136,22 @@ int PlayState::Initialize() {
 	colors.AddValue(0.84f, Vector4(1, 1, 0, 0.5));   // yellow
 	colors.AddValue(1.0f, Vector4(1, 0, 0, 0));     // red
 
-	g_ParticleEffect1.SetColorInterplator(colors);
-	g_ParticleEffect2.SetColorInterplator(colors);
-	g_ParticleEffect3.SetColorInterplator(colors);
-	g_ParticleEffect4.SetColorInterplator(colors);
+	explosion.AddValue(0.0f, Vector4(1, 0, 0, 1)); //red
+	explosion.AddValue(0.2f, Vector4(.255, .102, 0, 1)); //orange
+	explosion.AddValue(0.33f, Vector4(.255, .255, 0, .75)); //o
+	explosion.AddValue(0.4f, Vector4(1, 0, 0, 1)); //red
+	explosion.AddValue(0.6f, Vector4(.255, .102, 0, 1)); //orange
+	explosion.AddValue(0.33f, Vector4(.255, .255, 0, .5)); //o
+	explosion.AddValue(0.8f, Vector4(0, 0, 0, 0.75));
+	explosion.AddValue(1.0f, Vector4(0, 0, 0, 0.5));
+	explosion.AddValue(1.1f, Vector4(1, 0, 0, .5)); //red
+	explosion.AddValue(1.2f, Vector4(.255, .102, 0, .5)); //orange
+
+
+	g_ParticleEffect1.SetColorInterplator(explosion);
+	g_ParticleEffect2.SetColorInterplator(explosion);
+	g_ParticleEffect3.SetColorInterplator(explosion);
+	g_ParticleEffect4.SetColorInterplator(explosion);
 
 	g_ParticleEffect1.SetParticleEmitter(&g_ParticleEmitter);
 	g_ParticleEffect2.SetParticleEmitter(&g_ParticleEmitter);
@@ -158,7 +174,7 @@ int PlayState::Initialize() {
 	// Player attacks
 	rotationChanged = false;
 	attacking = false;
-	player = NULL;
+	Player = NULL;
 	shader.init("shader/bump.vert", "shader/bump.frag");
 
 	text_picture = LoadRAWTexture("ppm/building.ppm", 1024, 1024);
@@ -166,6 +182,22 @@ int PlayState::Initialize() {
 	floor_picture = LoadRAWTexture("ppm/floor.ppm", 1024, 1024);
 	floor_normalmap = LoadRAWTexture("ppm/floor_norm.ppm", 1024, 1024);
 	
+
+
+	colortex.initTexture(GL_TEXTURE_2D, "ppm/bleh_C.png");
+	normaltex.initTexture(GL_TEXTURE_2D, "ppm/bleh_N.png");
+
+	colortex.Load();
+	normaltex.Load();
+
+	colorslant.initTexture(GL_TEXTURE_2D, "ppm/163.png");
+	normalslant.initTexture(GL_TEXTURE_2D, "ppm/163_norm.png");
+
+	colorslant.Load();
+	normalslant.Load();
+
+
+
 	glGenTextures(5, photos);
 	t.loadTexture("ppm/c_front.ppm", photos[0]);
 	t.loadTexture("ppm/c_back.ppm", photos[1]);
@@ -244,17 +276,19 @@ void PlayState::UpdateClient(ClientGame* client) {
 
 
 				printf("PERSON: %f,%f,%f,%f,%f\n", xPos, yPos, zPos, rot, hp);
+				
 				//glScalef(0.01, 0.01, 0.01);
-				Player* p;
-				if (objectType == 3){
-					p = new Player(objID,0);
+				PlayerType* p;
+				if (objectType == 3) {
+					p = new PlayerType(NULL, objID, 0);
 				}
-				else if (objectType == 4){
-					p = new Player(objID, 1);
+				else if (objectType == 4) {
+					p = new CrusaderPlayer(objID, 1);
 				}
-				else{
-					p = new Player(objID, 2);
+				else {
+					p = new VampirePlayer(objID, 2);
 				}
+				//glScalef(100, 100, 100);
 
 				//glScalef(10, 10, 10);
 				//add shriner here?
@@ -264,7 +298,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 				p->setHealth(hp);
 
 				if (objID == client->getClientId()){
-					player = p;
+					Player = p;
 				}
 				else{
 					std::map<unsigned int, std::pair<int, char*>>::iterator it = client->getPlayers()->find(objID);
@@ -287,8 +321,8 @@ void PlayState::UpdateClient(ClientGame* client) {
 			memcpy(&yPos, serverEvent + 8, sizeof(float));
 			memcpy(&zPos, serverEvent + 12, sizeof(float));
 
-			if (player && objID == player->getID()){
-				player->setPos(xPos, yPos, zPos);
+			if (Player && objID == Player->getID()){
+				Player->setPos(xPos, yPos, zPos);
 			}
 			else if (gameObjects.find(objID) != gameObjects.end()){
 				GameObject* o = gameObjects.at(objID);
@@ -299,8 +333,8 @@ void PlayState::UpdateClient(ClientGame* client) {
 		if (strcmp(serverEvent, "rot") == 0){
 			float rot;
 			memcpy(&rot, serverEvent + 4, sizeof(float));
-			if (player && objID == player->getID()){
-				player->setRotation(rot);
+			if (Player && objID == Player->getID()){
+				Player->setRotation(rot);
 			}
 			else if (gameObjects.find(objID) != gameObjects.end()){
 				GameObject* o = gameObjects.at(objID);
@@ -308,11 +342,34 @@ void PlayState::UpdateClient(ClientGame* client) {
 			}
 		}
 
+		if (strcmp(serverEvent, "dead") == 0)
+		{
+			float xPos;
+			float yPos;
+			float zPos;
+			memcpy(&xPos, serverEvent + 5, sizeof(float));
+			memcpy(&yPos, serverEvent + 9, sizeof(float));
+			memcpy(&zPos, serverEvent + 13, sizeof(float));
+			particlepos = Vector3(xPos, yPos, zPos);
+			deathbyparticle = true;
+			parti = true;
+		}
+
+		if (strcmp(serverEvent, "particles") == 0)
+		{
+
+
+			printf("truetruetrue\n\n");
+			parti = true;
+
+		}
+
+
 		if (strcmp(serverEvent, "hp") == 0){
 			float hp;
 			memcpy(&hp, serverEvent + 3, sizeof(float));
-			if (player && objID == player->getID()){
-				player->setHealth(hp);
+			if (Player && objID == Player->getID()){
+				Player->setHealth(hp);
 			}
 			else if (gameObjects.find(objID) != gameObjects.end()){
 				GameObject* o = gameObjects.at(objID);
@@ -330,11 +387,11 @@ void PlayState::UpdateClient(ClientGame* client) {
 			int winner;
 			memcpy(&winner, serverEvent + 10, sizeof(int));
 			//gameResult: -1 = lose, 0 = tie, 1 = win
-			if (player != NULL){
+			if (Player != NULL){
 				if (winner == 0){//tie game
 					gameResult = 0;
 				}
-				else if (winner == player->getTeam()){
+				else if (winner == Player->getTeam()){
 					gameResult = 1;
 				}
 				else{
@@ -349,7 +406,10 @@ void PlayState::UpdateClient(ClientGame* client) {
 }
 
 void PlayState::Update(ClientGame* client) {
-	UpdateParticles();
+	if (parti)
+	{
+		UpdateParticles();
+	}
 	UpdateClient(client);
 
 }
@@ -358,27 +418,46 @@ void PlayState::Update(ClientGame* client) {
 
 void PlayState::DrawGround() {
 	glPushMatrix();
-
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 	shader.bind();
-	glActiveTexture(GL_TEXTURE0);
+
 	glEnable(GL_TEXTURE_2D);
 	int texture_location = glGetUniformLocation(shader.id(), "color_texture");
 	glUniform1i(texture_location, 0);
-	glBindTexture(GL_TEXTURE_2D, floor_picture);
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D, texture);
+	colortex.Bind(GL_TEXTURE0);
 
-	glActiveTexture(GL_TEXTURE1);
+	//glActiveTexture(GL_TEXTURE1);
 	glEnable(GL_TEXTURE_2D);
 	int normal_location = glGetUniformLocation(shader.id(), "normal_texture");
 	glUniform1i(normal_location, 1);
-	glBindTexture(GL_TEXTURE_2D, floor_normalmap);
-	//create ground plane
-	glTranslatef(0.f, -1.f, 0.f);
-	glColor3f(1.0f, 1.0f, 1.0f);
+	//glActiveTexture(GL_TEXTURE1);
+	//glBindTexture(GL_TEXTURE_2D, normal_texture);
+	normaltex.Bind(GL_TEXTURE1);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(-240, -1, -240);
 	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(-240, -1, -90);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(-80, -1, -90);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(-80, -1, -240);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-80, -1, -240);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(-80, -1, -90);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(80, -1, -90);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(80, -1, -240);
+
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(80, -1, -240);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(80, -1, -90);
 	glTexCoord2f(1.0f, 1.0f);
 	glVertex3f(240, -1, -90);
 	glTexCoord2f(1.0f, 0.0f);
@@ -388,6 +467,24 @@ void PlayState::DrawGround() {
 	glVertex3f(-240, -1, 90);
 	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(-240, -1, 240);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(-90, -1, 240);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(-90, -1, 90);
+
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-90, -1, 90);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(-90, -1, 240);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(90, -1, 240);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(90, -1, 90);
+
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(90, -1, 90);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(90, -1, 240);
 	glTexCoord2f(1.0f, 1.0f);
 	glVertex3f(240, -1, 240);
 	glTexCoord2f(1.0f, 0.0f);
@@ -411,58 +508,16 @@ void PlayState::DrawGround() {
 	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(240, -1, -90);
 
-
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(100, -1, 90);
+	glVertex3f(-75, -8, -60);//
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(75, -15, 60);
+	glVertex3f(-75, -8, 60);//
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(-75, -15, 60);
+	glVertex3f(75, -8, 60);////
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(-100, -1, 90);
-
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(100, -1, -90);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(75, -15, -60);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(-75, -15, -60);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(-100, -1, -90);
-
-
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(75, -15, -60);//
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(75, -15, 60);//
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(-75, -15, 60);////
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(-75, -15, -60);////
-
-	
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(-100, -1, 90);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-75, -15, 60);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(-75, -15, -60);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(-100, -1, -90);
-
-	
-
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(100, -1, -90);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(75, -15, -60);//
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(75, -15, 60);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(100, -1, 90);
+	glVertex3f(75, -8, -60);////
 
 	glEnd();
-	
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
@@ -471,7 +526,74 @@ void PlayState::DrawGround() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	shader.unbind();
 	glDisable(GL_TEXTURE_2D);
-	
+
+	shader.unbind();
+
+	shader.bind();
+
+	glEnable(GL_TEXTURE_2D);
+	texture_location = glGetUniformLocation(shader.id(), "color_texture");
+	glUniform1i(texture_location, 0);
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D, texture);
+	colorslant.Bind(GL_TEXTURE0);
+
+	//glActiveTexture(GL_TEXTURE1);
+	glEnable(GL_TEXTURE_2D);
+	normal_location = glGetUniformLocation(shader.id(), "normal_texture");
+	glUniform1i(normal_location, 1);
+	//glActiveTexture(GL_TEXTURE1);
+	//glBindTexture(GL_TEXTURE_2D, normal_texture);
+	normalslant.Bind(GL_TEXTURE1);
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(100, -1, 90);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(75, -8, 60);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(-75, -8, 60);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(-100, -1, 90);
+
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-100, -1, -90);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(-75, -8, -60);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(75, -8, -60);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(100, -1, -90);
+
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-100, -1, 90);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(-75, -8, 60);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(-75, -8, -60);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(-100, -1, -90);
+
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(100, -1, -90);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(75, -8, -60);//
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(75, -8, 60);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(100, -1, 90);
+
+	glEnd();
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_TEXTURE_2D);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	shader.unbind();
+	glDisable(GL_TEXTURE_2D);
+
 	glColor3f(1, 1, 1);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_CULL_FACE);
@@ -534,30 +656,41 @@ void PlayState::DrawGround() {
 	//glNormal3f(0, -1, 0);
 	glBindTexture(GL_TEXTURE_2D, photos[4]);
 	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(260, 200, 260);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(260, 200, -260);
 	glTexCoord2f(1.0f, 1.0f);
 	glVertex3f(-260, 200, -260);
 	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(260, 200, -260);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(260, 200, 260);
+	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(-260, 200, 260);
 	//glDisable(GL_TEXTURE_2D);
 	glEnd();
+	glPopMatrix();
+}
+////////////////////////////////////////////////////////////////////////
+void PlayState::RenderParti(float rot, ParticleEffect p, float xx, float yy, float zz)
+{
+	glPushMatrix();
+	glTranslatef(xx, yy, zz);
+	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
+	glRotatef(rot, 0, 1, 0);
+	glScalef(0.3f, 0.3f, 0.3f);
+	p.Render();
 	glPopMatrix();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void PlayState::RenderParticles(float rot) {
-	glPushMatrix();
+	/*glPushMatrix();
 	glTranslatef(100.0f, 0.4f, 100.0f);
 	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
 	//glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
 	glRotatef(rot, 0, 1, 0);
 	glScalef(0.3f, 0.3f, 0.3f);
 	g_ParticleEffect1.Render();
-	glPopMatrix();
+	glPopMatrix();*/
 
 	glPushMatrix();
 	glTranslatef(100.0f, 0.4f, -100.0f);
@@ -636,7 +769,7 @@ void PlayState::drawHUD(ClientGame* client){
 
 	//bottom panel
 	glBegin(GL_QUADS);
-	/*if (player->getTeam() == 1){
+	/*if (Player->getTeam() == 1){
 		glColor3f(.4, .4, 1);
 	}
 	else{
@@ -647,7 +780,7 @@ void PlayState::drawHUD(ClientGame* client){
 
 	//healthbar
 	glPushMatrix();
-	std::string s = std::to_string((int)player->getHealth());
+	std::string s = std::to_string((int)Player->getHealth());
 	char * healthString = (char*)s.c_str();
 	glTranslatef(width / 7, height - height / 19, 1);
 	glLineWidth(2);
@@ -661,7 +794,7 @@ void PlayState::drawHUD(ClientGame* client){
 
 	glBegin(GL_QUADS);
 	glColor3f(0, 1, 0);
-	drawRect(width / 15, height - height / 12, (width / 5)*((float)player->getHealth() / player->getMaxHealth()), height / 25);
+	drawRect(width / 15, height - height / 12, (width / 5)*((float)Player->getHealth() / Player->getMaxHealth()), height / 25);
 	glColor3f(1, 0, 0);
 	drawRect(width/15,height-height/12,width/5, height/25);
 	glEnd();
@@ -743,17 +876,16 @@ void PlayState::Draw(ClientGame* client) {
 	// Clear the screen
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	if (!player)
+	if (!Player)
 		return;
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	//Cam.SetTranslate((player->getPos().x, player->getPos().y, player->getPos().z));
 	// Draw components
 	Cam.ApplyViewTransform();
 
-	glTranslatef(player->getPos().x, 0, player->getPos().z);
-	//Cam.SetTranslate(Vector3(0, -player->getPos().y, 0));
+	glTranslatef(Player->getPos().x, 0, Player->getPos().z);
+	//Cam.SetTranslate(Vector3(0, -Player->getPos().y, 0));
 	
 
 	glRotatef(180, 0, 1, 0);
@@ -765,10 +897,12 @@ void PlayState::Draw(ClientGame* client) {
 	{
 		it->second->update(false, Cam.GetRotation().y);
 	}
+	if (parti)
+	{
 
-	//RenderParticles(Cam.GetRotation().y);
-
-	player->update(true, Cam.GetRotation().y);
+		RenderParti(Cam.GetRotation().y, g_ParticleEffect2, particlepos.x, particlepos.y, particlepos.z);
+	}
+	Player->update(true, Cam.GetRotation().y);
 
 	drawHUD(client); //This includes the game over results
 
@@ -778,30 +912,51 @@ void PlayState::Draw(ClientGame* client) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+enum Animation {RUNSTART, RUN, RUNEND, IDLE, MELEE};
+
 void PlayState::Input(ClientGame* client) {
-	if (!player)
+	if (!Player)
 		return;
+
+	// animation tests for now
+	static int animIndex = 0;
+
+	if (glfwGetKey(window, GLFW_KEY_L)) {
+		++animIndex;
+		if (animIndex == 4) {
+			animIndex = 0;
+		}
+		Player->setAnimation(animIndex);
+	}
 	
 	if (glfwGetKey(window, FORWARD)) {
-		client->addEvent(player->getID(),"move_forward;",ACTION_EVENT);
-		//Cam.SetAzimuth(playerRotation);
+		Player->setAnimation(RUN);
+		client->addEvent(Player->getID(), "move_forward;", ACTION_EVENT);
+	} else {
+		Player->setAnimation(IDLE);
 	}
+
 	if (glfwGetKey(window, JUMP)) {
-		client->addEvent(player->getID(), "move_jump;", ACTION_EVENT);
-		//Cam.SetAzimuth(playerRotation);
+		Player->setAnimation(RUN);
+		client->addEvent(Player->getID(), "move_jump;", ACTION_EVENT);
+	}
+
+
+	if (glfwGetKey(window, Q)) {
+		client->addEvent(Player->getID(), "q;", ACTION_EVENT);
 	}
 
 	if (glfwGetKey(window, STRAFELEFT)) {
-		client->addEvent(player->getID(), "move_left;", ACTION_EVENT);
-		//Cam.SetAzimuth(playerRotation); // needs some kind of fade effect
+		Player->setAnimation(RUN);
+		client->addEvent(Player->getID(), "move_left;", ACTION_EVENT);
 	}
-
 	if (glfwGetKey(window, STRAFERIGHT)) {
-		client->addEvent(player->getID(), "move_right;", ACTION_EVENT);
+		Player->setAnimation(RUN);
+		client->addEvent(Player->getID(), "move_right;", ACTION_EVENT);
 	}
 
 	if (glfwGetKey(window, BACKWARD)) {
-		client->addEvent(player->getID(), "move_backward;", ACTION_EVENT);
+		client->addEvent(Player->getID(), "move_backward;", ACTION_EVENT);
 	}
 
 	if (rotationChanged){
@@ -818,14 +973,14 @@ void PlayState::Input(ClientGame* client) {
 		data[pointer] = ';';
 		pointer++;
 		data[pointer] = '\0';
-		client->addEvent(player->getID(), data, ACTION_EVENT);
+		client->addEvent(Player->getID(), data, ACTION_EVENT);
 		//printf("STRING IS %s\n", data);
 		//printf("AZIM %f\n", rotate );
-		//printf("Player: %f\n", player->getRotation());
+		//printf("Player: %f\n", Player->getRotation());
 	}
 
 	if (attacking){
-		client->addEvent(player->getID(), "attack;", ACTION_EVENT);
+		client->addEvent(Player->getID(), "attack;", ACTION_EVENT);
 	}
 }
 
@@ -842,46 +997,25 @@ void PlayState::CharCallback(GLFWwindow* window, unsigned int code) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods) {
-	if (!player)
+	if (!Player)
 		return;
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS){
+		Player->setAnimation(MELEE);
 		attacking = true;
 	}
 	else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
+		Player->setAnimation(IDLE);
 		attacking = false;
 	}
 
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS){
+		Player->setAnimation(MELEE);
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
+		Player->setAnimation(IDLE);
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
-	/*
-	float playerRotation = -player->getRotation();
-
-	if (action == GLFW_PRESS) {
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	}
-	else if (action == GLFW_RELEASE) {
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-	}
-
-	if (button == GLFW_MOUSE_BUTTON_LEFT) {
-		LeftDown = (action == GLFW_PRESS);
-		BothDown = RightDown && (action == GLFW_PRESS);
-	}
-	else if (button == GLFW_MOUSE_BUTTON_MIDDLE) {
-		MiddleDown = (action == GLFW_PRESS);
-	}
-	else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-		if (action == GLFW_PRESS) {
-			Cam.SetAzimuth(playerRotation);
-		}
-		RightDown = (action == GLFW_PRESS);
-		BothDown = LeftDown && (action == GLFW_PRESS);
-	}
-	*/
 }
 
 ////////////////////////////////////////////////////////////////////////////////

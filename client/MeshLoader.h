@@ -22,23 +22,32 @@
 #include <vector>
 
 class MeshLoader {
+private:
+	bool LoadAsset(const char* filename);
+	void ApplyMaterial(const aiMaterial *material);
+
+	void RenderMesh(const aiNode* node);
+	void RenderBones(const aiNode* node);
 public:
 	MeshLoader();
 	~MeshLoader();
 	MeshLoader(const char* filename);
-	bool LoadAsset(const char* filename);
-	void Render();
-
-	void RenderMesh(const aiNode* node);
-	void RenderBones(const aiNode* node);
 	
+	void Render();
+	void UpdateAnimation();
+	void ChangeAnimation(unsigned int index);
 
 private:
-	void ApplyMaterial(const aiMaterial *material);
-
 	const aiScene* m_Scene;
 	SceneAnimator* mAnimator;
-	double currentTime;
+
+
+	aiVector3D sceneCenter, sceneMin, sceneMax;
+	void getBoundingBox(aiVector3D* min, aiVector3D* max);
+	void getBoundingBoxForNode(const aiNode* node, aiVector3D* min, aiVector3D* max, aiMatrix4x4* trafo);
+
+	double a_CurrentTime;
+	double a_LastPlaying;
 };
 
 #endif

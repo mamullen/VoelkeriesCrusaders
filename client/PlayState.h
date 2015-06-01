@@ -6,6 +6,9 @@
 #define PLAYSTATE_H_
 
 #include "core.h"
+#include "PlayerType.h"
+#include "CrusaderPlayer.h"
+#include "VampirePlayer.h"
 #include "ElapsedTime.h"
 #include "ParticleSystem.h"
 #include "Emitter.h"
@@ -51,9 +54,11 @@ public:
 	// Draw Methods
 	void Draw(ClientGame* client);
 	void RenderParticles(float rot);
-
+	void RenderShrineParticles(float rot);
 	void UpdateParticles();
 	void UpdateClient(ClientGame* Client);
+
+	void RenderParti(float rot, ParticleEffect p, float xx, float yy, float zz);
 
 	void DrawGround();
 	void drawHUD(ClientGame* Client);
@@ -79,7 +84,7 @@ private:
 
 	// Components
 	Camera Cam;
-	Player* player;
+	PlayerType* Player;
 
 	SphereEmitter g_ParticleEmitter;
 	CubeEmitter g_CubeEmitter;
@@ -94,11 +99,17 @@ private:
 	GLuint photos[5];
 	Shader shader;
 	//Shader floorshader;
+	Texture colortex;
+	Texture normaltex;
+	Texture colorslant;
+	Texture normalslant;
 	GLuint text_picture, text_normalmap;
 	GLuint floor_picture, floor_normalmap;
 	GLuint skyfront_picture, skyfront_normalmap, skyback_picture, skyback_normalmap, skyleft_picture, skyleft_normalmap, skyright_picture, skyright_normalmap, skytop_picture, skytop_normalmap;
 	bool once;
-	
+	bool parti;
+	Vector3 particlepos;
+	bool deathbyparticle;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

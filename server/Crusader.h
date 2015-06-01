@@ -8,6 +8,6 @@ public:
 	Crusader(int i);
 	virtual ~Crusader();
 	virtual void updateTime(int,int);
-	virtual void attack(GameObject*);
+	//virtual void attack(GameObject*);
 };
 

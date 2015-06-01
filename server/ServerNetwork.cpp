@@ -225,9 +225,9 @@ int ServerNetwork::respondToFind()
 
 	iResult = recvfrom(UDPSocket, recvbuff, recvbufflen, 0, (sockaddr*)&Sender_addr, &len);
 	if (iResult > 0){
-		printf("Server received message is ");
-		printf(recvbuff);
-		printf("\n");
+		//printf("Server received message is ");
+		//printf(recvbuff);
+		//printf("\n");
 
 		if (strcmp(recvbuff, "I'm looking for a server") == 0){
 			for (int i = 0; i < 1; i++){

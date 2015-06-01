@@ -101,7 +101,7 @@ void ParticleEffect::Update(float fDeltaTime)
 			if (m_pParticleEmitter != NULL) EmitParticle(particle);
 			else RandomizeParticle(particle);
 		}
-
+		//Wider and Slower
 		float lifeRatio = saturate(particle.m_fAge / particle.m_fLifeTime);
 		particle.m_Velocity += (m_Force * fDeltaTime);
 		particle.m_Position += (particle.m_Velocity * fDeltaTime);

@@ -76,9 +76,7 @@ void GameObject::update(bool isPlayer, float rot) {
 	
 	//check  model is not null
 	if (model){
-		GLfloat scl = 0.2;
-		glColor3f(1.0f, 1.0f, 1.0f);
-		glScalef(scl, scl, scl);
+		model->UpdateAnimation();
 		model->Render();
 	}
 	else {
@@ -124,6 +122,10 @@ void GameObject::setHealth(float h){
 	printf("NEW HEALTH VAL: %f\n", currHP);
 }
 
+void GameObject::setAnimation(int index) {
+	model->ChangeAnimation(index);
+}
+
 void GameObject::print(std::string str) {
 	std::cout << str << " position: " << "x: " << position.x
 		<< ", y: " << position.y
@@ -134,3 +136,16 @@ void GameObject::print(std::string str) {
 		<< std::endl;
 }
 
+bool GameObject::shrinecollide(Vector3 min, Vector3 max)
+{
+	if (min.x < position.x && position.x <max.x)
+	{
+		if (min.z < position.z && position.z < max.z)
+		{
+			printf("shrine true\n\n");
+			return true;
+		}
+	}
+	printf("shrine false\n\n");
+	return false;
+}

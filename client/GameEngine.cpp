@@ -23,6 +23,7 @@ static void error_callback(int error, const char* description)									{ fputs(d
 ////////////////////////////////////////////////////////////////////////////////
 
 int main(int argc, char **argv) {
+	//sndPlaySound("sound/NightRaid.wav", SND_ASYNC | SND_LOOP);
 	glfwSetErrorCallback(error_callback);
 
 	if (!glfwInit()) {

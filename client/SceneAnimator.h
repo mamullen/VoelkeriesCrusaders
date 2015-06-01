@@ -68,7 +68,7 @@ public:
 	* @param pAnimIndex [optional] Index of the animation to play. Assumed to
 	*  be 0 if not given.
 	*/
-	SceneAnimator(const aiScene* pScene, size_t pAnimIndex = 0);
+	SceneAnimator(const aiScene* pScene, size_t pAnimIndex = 3);
 
 	/** Destructor */
 	~SceneAnimator();

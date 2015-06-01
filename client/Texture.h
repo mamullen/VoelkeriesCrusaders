@@ -26,16 +26,17 @@ public:
 	bool Load();
 	void Bind(GLenum TextureUnit);
 	Texture();
-
+	Texture(GLenum tt, const char * fn);
 	unsigned char* loadPPM(const char* filename, int& width, int& height);
 	//void initGL();
 	void loadTexture(const char* name, GLuint id);
 	GLuint loadDDS(const char * imagepath);
-
+	void initTexture(GLenum tt, const char * fn);
 private:
 	std::string m_filename;
 	GLenum m_textureTarget;
 	GLuint m_textureObj;
+	const char* filename;
 };
 
 #endif

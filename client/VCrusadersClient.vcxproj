@@ -75,7 +75,7 @@
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)\include</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -124,6 +124,7 @@
     <ClInclude Include="ClientNetwork.h" />
     <ClInclude Include="ConfigSettings.h" />
     <ClInclude Include="core.h" />
+    <ClInclude Include="CrusaderPlayer.h" />
     <ClInclude Include="ElapsedTime.h" />
     <ClInclude Include="Emitter.h" />
     <ClInclude Include="Floor.h" />
@@ -138,7 +139,7 @@
     <ClInclude Include="NetworkServices.h" />
     <ClInclude Include="objparser.h" />
     <ClInclude Include="ParticleSystem.h" />
-    <ClInclude Include="player.h" />
+    <ClInclude Include="PlayerType.h" />
     <ClInclude Include="PlayState.h" />
     <ClInclude Include="PrePlayState.h" />
     <ClInclude Include="Random.h" />
@@ -149,6 +150,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="VampirePlayer.h" />
     <ClInclude Include="vector2.h" />
     <ClInclude Include="vector3.h" />
     <ClInclude Include="Vector4.h" />

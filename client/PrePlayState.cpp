@@ -33,7 +33,8 @@ int PrePlayState::Initialize()
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
-	textureID = LoadRAWTexture("ppm/VCLogo.ppm", 1000, 1000);
+	glGenTextures(1, photos);
+	t.loadTexture("ppm/VC.ppm", photos[0]);
 
 	return 0;
 }
@@ -188,29 +189,29 @@ void drawRect(float r, float g, float b, float x, float y, float w, float h){
 void PrePlayState::drawTitleImage(){
 	glEnable(GL_TEXTURE_2D);            // Enable textures
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_BLEND);
-	glBindTexture(GL_TEXTURE_2D, textureID);
+	//glBindTexture(GL_TEXTURE_2D, textureID);
 
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
-	glLoadIdentity();
-	glOrtho(0.0, 800, 600, 0.0, -1.0, 10.0);
+	//glLoadIdentity();
+	glOrtho(-300.0, 600, 525, 0.0, 10.0, 6000.0);
 	glMatrixMode(GL_MODELVIEW);
 	//glPushMatrix();        ----Not sure if I need this
 	glLoadIdentity();
 	glDisable(GL_CULL_FACE);
 
 	glClear(GL_DEPTH_BUFFER_BIT);
-
+	glBindTexture(GL_TEXTURE_2D, photos[0]);
 	glBegin(GL_QUADS);
 	glColor3f(1, 1, 1);
 	glTexCoord2f(0, 0);
-	glVertex2f(0, 0);
+	glVertex3f(-200, 0, 0);
 	glTexCoord2f(1, 0);
-	glVertex2f(800, 0);
+	glVertex3f(500, 0, 0);
 	glTexCoord2f(1, 1);
-	glVertex2f(800, 500);
+	glVertex3f(500, 500, 0);
 	glTexCoord2f(0, 1);
-	glVertex2f(0, 500);
+	glVertex3f(-200, 500, 0);
 	glEnd();
 
 	// Making sure we can render 3d again
@@ -295,7 +296,7 @@ void PrePlayState::Draw(ClientGame* client) {
 		}
 	}
 	else{
-		//drawTitleImage();
+		drawTitleImage();
 		drawText("Username:", 230, 316, 1, 1, 1);
 		drawRect(.2, .2, .2, 300, 300, 245, 25);
 		drawText(name.c_str(), 315, 316, 0, 1, 0);
