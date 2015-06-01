@@ -21,6 +21,12 @@
 #include <iostream>
 #include <vector>
 
+struct CachedVertex {
+	CachedVertex() : vec(), cached(false) {}
+	aiVector3D vec;
+	bool cached;
+};
+
 class MeshLoader {
 private:
 	bool LoadAsset(const char* filename);

@@ -940,23 +940,26 @@ void PlayState::Draw(ClientGame* client) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+enum Animation { a_IDLE, a_RUNFORWARD, a_RUNMELEE, a_STRAFELEFT, a_STRAFEFORWARDLEFT, a_STRAFERIGHT, a_STRAFEFORWARDRIGHT, a_WALKBACK};
+
 void PlayState::Input(ClientGame* client) {
 	if (!Player)
 		return;
-
-	static int animIndex = 0;
-
-	if (glfwGetKey(window, GLFW_KEY_L)) {
-		++animIndex;
-		if (animIndex == 4) {
-			animIndex = 0;
-		}
-		Player->setAnimation(animIndex);
-	}
 	
 	if (glfwGetKey(window, FORWARD)) {
+		Player->setAnimation(a_RUNFORWARD);
 		client->addEvent(Player->getID(), "move_forward;", ACTION_EVENT);
+
+		if (glfwGetKey(window, STRAFELEFT)) {
+			Player->setAnimation(a_STRAFEFORWARDLEFT);
+		}
+		if (glfwGetKey(window, STRAFERIGHT)) {
+			Player->setAnimation(a_STRAFEFORWARDRIGHT);
+		}
+	} else {
+		Player->setAnimation(a_IDLE);
 	}
+
 	if (glfwGetKey(window, JUMP)) {
 		client->addEvent(Player->getID(), "move_jump;", ACTION_EVENT);
 	}
@@ -965,14 +968,17 @@ void PlayState::Input(ClientGame* client) {
 	}
 
 	if (glfwGetKey(window, STRAFELEFT)) {
+		Player->setAnimation(a_STRAFELEFT);
 		client->addEvent(Player->getID(), "move_left;", ACTION_EVENT);
 	}
 
 	if (glfwGetKey(window, STRAFERIGHT)) {
+		Player->setAnimation(a_STRAFERIGHT);
 		client->addEvent(Player->getID(), "move_right;", ACTION_EVENT);
 	}
 
 	if (glfwGetKey(window, BACKWARD)) {
+		Player->setAnimation(a_WALKBACK);
 		client->addEvent(Player->getID(), "move_backward;", ACTION_EVENT);
 	}
 
@@ -1017,43 +1023,22 @@ void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods
 	if (!Player)
 		return;
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS){
+		Player->setAnimation(a_RUNMELEE);
 		attacking = true;
 	}
 	else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
 		attacking = false;
+		Player->setAnimation(a_IDLE);
 	}
 
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS){
+		Player->setAnimation(a_RUNMELEE);
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		Player->setAnimation(a_IDLE);
 	}
-	/*
-	float playerRotation = -player->getRotation();
-
-	if (action == GLFW_PRESS) {
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	}
-	else if (action == GLFW_RELEASE) {
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-	}
-
-	if (button == GLFW_MOUSE_BUTTON_LEFT) {
-		LeftDown = (action == GLFW_PRESS);
-		BothDown = RightDown && (action == GLFW_PRESS);
-	}
-	else if (button == GLFW_MOUSE_BUTTON_MIDDLE) {
-		MiddleDown = (action == GLFW_PRESS);
-	}
-	else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-		if (action == GLFW_PRESS) {
-			Cam.SetAzimuth(playerRotation);
-		}
-		RightDown = (action == GLFW_PRESS);
-		BothDown = LeftDown && (action == GLFW_PRESS);
-	}
-	*/
 }
 
 ////////////////////////////////////////////////////////////////////////////////

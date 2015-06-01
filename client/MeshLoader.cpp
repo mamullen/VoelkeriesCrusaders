@@ -191,8 +191,8 @@ void MeshLoader::RenderMesh(const aiNode* node) {
 	glPushMatrix();
 	for (unsigned int i = 0; i < node->mNumMeshes; i++) {
 		const aiMesh* mesh = m_Scene->mMeshes[node->mMeshes[i]];
-		std::vector<aiVector3D> CachedPosition(mesh->mNumVertices);
-		std::vector<aiVector3D> CachedNormal(mesh->mNumVertices);
+		std::vector<CachedVertex> CachedPosition(mesh->mNumVertices);
+		std::vector<CachedVertex> CachedNormal(mesh->mNumVertices);
 		if (mesh->HasBones()) {
 			const std::vector<aiMatrix4x4>& boneMatrices = mAnimator->GetBoneMatrices(node, i);
 
@@ -206,12 +206,13 @@ void MeshLoader::RenderMesh(const aiNode* node) {
 					unsigned int vertexId = weight.mVertexId;
 					const aiVector3D& srcPos = mesh->mVertices[vertexId];
 					const aiVector3D& srcNorm = mesh->mNormals[vertexId];
-					CachedPosition[vertexId] += weight.mWeight * (posTrafo * srcPos);
-					CachedNormal[vertexId] += weight.mWeight * (normTrafo * srcNorm);
+					CachedPosition[vertexId].vec += weight.mWeight * (posTrafo * srcPos);
+					CachedPosition[vertexId].cached = true;
+					CachedNormal[vertexId].vec += weight.mWeight * (normTrafo * srcNorm);
+					CachedNormal[vertexId].cached = true;
 				}
 			}
 		}
-
 
 		glPushMatrix();
 
@@ -227,9 +228,19 @@ void MeshLoader::RenderMesh(const aiNode* node) {
 				int v_index = face->mIndices[k];
 				if (mesh->mColors[0] != NULL)
 					glColor4fv((GLfloat*)&mesh->mColors[0][v_index]);
-				if (mesh->mNormals != NULL)
-					glNormal3fv(&CachedNormal[v_index].x);
-				glVertex3fv(&CachedPosition[v_index].x);
+				if (mesh->mNormals != NULL) {
+					if (&CachedNormal[v_index].cached) {
+						glNormal3fv(&CachedNormal[v_index].vec.x);
+					} else {
+						glNormal3fv(&mesh->mNormals[v_index].x);	
+					}
+				}
+
+				if (&CachedPosition[v_index].cached) {
+					glVertex3fv(&CachedPosition[v_index].vec.x);
+				} else {
+					glVertex3fv(&mesh->mVertices[v_index].x);
+				}
 			}
 			glEnd();
 		}
