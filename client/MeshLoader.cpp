@@ -168,6 +168,7 @@ void MeshLoader::RenderMesh(const aiNode* node) {
 
 		ApplyMaterial(m_Scene->mMaterials[mesh->mMaterialIndex]);
 		glScalef(0.05, 0.05, 0.05);
+		glEnable(GL_NORMALIZE);
 		for (unsigned int j = 0; j < mesh->mNumFaces; ++j) {
 			const aiFace* face = &mesh->mFaces[j];
 			glBegin(GL_TRIANGLES);
@@ -183,6 +184,7 @@ void MeshLoader::RenderMesh(const aiNode* node) {
 			}
 			glEnd();
 		}
+
 		glPopMatrix();
 	}
 
