@@ -20,7 +20,7 @@ public:
 	unsigned int getPID();
 	
 	bool inRange(GameObject*);
-	virtual void attack(GameObject*);
+	//virtual void attack(GameObject*);
 	void setAttack(Action*);
 	bool collide(std::vector<GameObject*>* obj, Vector3 dir);
 	bool shrinecollide(Vector3, Vector3);

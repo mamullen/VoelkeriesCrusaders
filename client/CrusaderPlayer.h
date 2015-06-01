@@ -13,7 +13,11 @@
 
 class CrusaderPlayer : public PlayerType {
 public:
-	CrusaderPlayer(unsigned int i, int t) : PlayerType(new MeshLoader((char*)ConfigSettings::config->getValue("CrusaderFilePath").c_str()), i, t){ setShowHP(true); team = t; }
+	CrusaderPlayer(unsigned int i, int t) : PlayerType(new MeshLoader((char*)ConfigSettings::config->getValue("CrusaderFilePath").c_str()), i, t) { 
+		setShowHP(true); 
+		p_Class = Crusader;
+		team = t; 
+	}
 	int getTeam()		{ return team; }
 
 private:

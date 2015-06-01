@@ -23,10 +23,12 @@ Basic_Attack::~Basic_Attack()
 
 void Basic_Attack::attack(GameObject* obj,GameObject* target)
 {
+	printf("obj type = %d\n",obj->objectType);
 	if (obj->getID() == target->getID()){
 		return;
 	}
 	if (inRange(obj,target)){
+		printf("basic attack in range!!!\n");
 		target->isAttacked(getDmg());
 	}
 }
@@ -41,6 +43,8 @@ bool Basic_Attack::inRange(GameObject* obj,GameObject* target)
 	float distance = (target->getPos() - obj->getPos()).Mag();
 	printf("dot = %f\n", dot);
 	printf("dotAngle = %f\n", dotAngle);
+	printf("distance = %f\n", distance);
+	printf("range = %f\n", getRange());
 	if (dot < dotAngle){
 		return false;
 	}

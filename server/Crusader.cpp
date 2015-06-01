@@ -18,6 +18,7 @@ Crusader::Crusader(int i) :Player(i)
 {
 	objectType = 4;
 	team = 1;
+	setAttack(new Basic_Range());
 }
 
 void Crusader::updateTime(int time, int delta)
@@ -32,14 +33,14 @@ void Crusader::updateTime(int time, int delta)
 	}
 }
 
-void Crusader::attack(GameObject* obj)
-{
-	if (this->id == obj->getID()){
-		return;
-	}
-	if (this->inRange(obj)){
-		if (obj->objectType != 3){
-			obj->isAttacked(ad);
-		}
-	}
-}
+//void Crusader::attack(GameObject* obj) // does nothing right now
+//{
+//	if (this->id == obj->getID()){
+//		return;
+//	}
+//	if (this->inRange(obj)){
+//		if (obj->objectType != 3){
+//			obj->isAttacked(ad);
+//		}
+//	}
+//}

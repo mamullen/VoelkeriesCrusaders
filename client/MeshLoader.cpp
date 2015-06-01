@@ -6,6 +6,9 @@
 #include <time.h>
 #include <string>
 
+#define aisgl_min(x,y) (x<y?x:y)
+#define aisgl_max(x,y) (y>x?y:x)
+
 MeshLoader::MeshLoader() {
 	std::cout << "No filename specified" << std::endl;
 	a_LastPlaying = 0;
@@ -28,13 +31,59 @@ MeshLoader::MeshLoader(const char* filename) {
 MeshLoader::~MeshLoader() {
 }
 
+
+void MeshLoader::getBoundingBox(aiVector3D* min, aiVector3D* max) {
+	aiMatrix4x4 trafo;
+	aiIdentityMatrix4(&trafo);
+
+	min->x = min->y = min->z = 1e10f;
+	max->x = max->y = max->z = -1e10f;
+	getBoundingBoxForNode(m_Scene->mRootNode, min, max, &trafo);
+}
+
+void MeshLoader::getBoundingBoxForNode(const aiNode* node, aiVector3D* min, aiVector3D* max, aiMatrix4x4* trafo) {
+	aiMatrix4x4 prev;
+	unsigned int n = 0, t;
+
+	prev = *trafo;
+	aiMultiplyMatrix4(trafo, &node->mTransformation);
+
+	for (; n < node->mNumMeshes; ++n) {
+		aiMesh* mesh = m_Scene->mMeshes[node->mMeshes[n]];
+		for (t = 0; t < mesh->mNumVertices; ++t) {
+			aiVector3D tmp = mesh->mVertices[t];
+			aiTransformVecByMatrix4(&tmp, trafo);
+
+			min->x = aisgl_min(min->x, tmp.x);
+			min->y = aisgl_min(min->y, tmp.y);
+			min->z = aisgl_min(min->z, tmp.z);
+
+			max->x = aisgl_max(max->x, tmp.x);
+			max->y = aisgl_max(max->y, tmp.y);
+			max->z = aisgl_max(max->z, tmp.z);
+		}
+	}
+
+	for (n = 0; n < node->mNumChildren; ++n) {
+		getBoundingBoxForNode(node->mChildren[n], min, max, trafo);
+	}
+	*trafo = prev;
+}
+
+
 bool MeshLoader::LoadAsset(const char* filename) {
 	m_Scene = aiImportFile(filename, aiProcessPreset_TargetRealtime_MaxQuality);
 
 	if (!m_Scene) {
 		std::cout << "Model was not loaded correctly." << std::endl;
 		exit(-1);
+	} else {
+		getBoundingBox(&sceneMin, &sceneMax);
+		sceneCenter.x = (sceneMin.x + sceneMax.x) / 2.0f;
+		sceneCenter.y = (sceneMin.y + sceneMax.y) / 2.0f;
+		sceneCenter.z = (sceneMin.z + sceneMax.z) / 2.0f;
 	}
+
 #if DEBUG
 	for (unsigned int i = 0; i < m_Scene->mNumMeshes; i++) {
 		std::cout << "\t\t" << i << " mesh name: " << m_Scene->mMeshes[i]->mName.C_Str() << " (" << m_Scene->mMeshes[i]->mNumFaces << ")" << std::endl;
@@ -192,7 +241,6 @@ void MeshLoader::RenderMesh(const aiNode* node) {
 		RenderMesh(node->mChildren[i]);
 	}
 	glPopMatrix();
-
 }
 
 void MeshLoader::UpdateAnimation() {
@@ -208,6 +256,7 @@ void MeshLoader::UpdateAnimation() {
 }
 
 void MeshLoader::Render() {
+	//std::cout << sceneCenter.x << " " << sceneCenter.y << " " << sceneCenter.z << std::endl;
 	glEnable(GL_LIGHTING);
 	RenderMesh(m_Scene->mRootNode);
 	glDisable(GL_LIGHTING);

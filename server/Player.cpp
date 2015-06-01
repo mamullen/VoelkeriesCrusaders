@@ -51,7 +51,7 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 	int pid = packet->id;
 	int currInd = 0;
 	int currEnd = in.find(';', currInd);
-	std::cout << "packet update = " << in.c_str() << std::endl;
+	//std::cout << "packet update = " << in.c_str() << std::endl;
 	this->gravity();
 	if (hp <= 0){
 		return;
@@ -150,7 +150,7 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 			std::string num = cEvent.substr(6, currEnd);
 			num = num.substr(num.find_last_of(' ') + 1);
 			int n = atoi(num.c_str());
-			printf("%s\n", num.c_str());
+			//printf("%s\n", num.c_str());
 
 			if (!isChanged[1]){
 				change_counter[1]++;
@@ -163,6 +163,7 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 			//ad = attack_mode->getDmg();
 			// melee attack
 			if (attack_mode->getType() == 0){
+				printf("melee!\n");
 				if (attack_mode->getCD() <= 0){
 					attack_mode->maxCD();
 					for (int i = 0; i < objects->size(); i++)
@@ -175,6 +176,7 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 			}
 			// range attack
 			else if (attack_mode->getType() == 1){
+				printf("range\n");
 				attack_mode->attack(this);
 			}			
 		}
@@ -192,16 +194,15 @@ unsigned int Player::getPID()
 	return pid;
 }
 
-void Player::attack(GameObject* obj)
-{
-
-	if (this->id == obj->getID()){
-		return;
-	}
-	if (this->inRange(obj)){
-		obj->isAttacked(ad);
-	}
-}
+//void Player::attack(GameObject* obj)
+//{
+//	if (this->id == obj->getID()){
+//		return;
+//	}
+//	if (this->inRange(obj)){
+//		obj->isAttacked(ad);
+//	}
+//}
 
 void Player::isAttacked(float ad)
 {
@@ -252,7 +253,7 @@ bool Player::collide(std::vector<GameObject*>* obj, Vector3 dir)
 	
 	Vector3 objmin, objmax, playerposition;
 	playerposition = (this->getPos())+dir*speed;
-	printf("Number of objs %d\n\n", obj->size());
+	//printf("Number of objs %d\n\n", obj->size());
 	for (int i = 0; i < obj->size(); i++)
 	{
 		

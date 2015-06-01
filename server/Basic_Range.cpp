@@ -29,7 +29,7 @@ void Basic_Range::attack(GameObject* obj)
 	p->setPos(obj->getPos());
 	p->forward = obj->forward;
 	p->setRange(c_range);
-	
+	p->setDmg(c_ad);
 	Packet* packet = new Packet;
 	packet->packet_type = ACTION_EVENT;
 	packet->id = 0;

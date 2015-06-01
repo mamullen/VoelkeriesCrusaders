@@ -68,14 +68,14 @@ void GameLogic::update(int time)
 	// go through packets and update according to its id
 	for (std::list<std::pair<int, Packet*>>::const_iterator iter = packets.begin(); iter != packets.end(); ++iter){
 		if (iter->second->id < gameObjects.size()){
-			printf("gamelogic update\n");
+			//printf("gamelogic update\n");
 			gameObjects.at(iter->second->id)->update(iter->second, &gameObjects);
 		}
 	}
 
 	// go through GameObject changes, update each entry, and then create packets
 	for (std::list<std::pair<int, std::string*>>::iterator it = GameObject::changes.begin(); it != GameObject::changes.end(); it++){
-		printf("gamelogic update 2\n");
+		//printf("gamelogic update 2\n");
 		std::string* key = it->second;
 		int index = it->first;
 
@@ -196,7 +196,7 @@ void GameLogic::update(int time)
 	timer->update(time);
 	if (ticksSinceSend == ticksPerTimerSend){
 		ticksSinceSend = 0;
-		timer->print();
+		//timer->print();
 
 		int r = timer->getTime();
 		char data[PACKET_DATA_LEN];
@@ -220,8 +220,8 @@ void GameLogic::update(int time)
 	// update projectiles
 	for (std::vector<Projectile*>::iterator it = GameLogic::projectileList.begin(); it != GameLogic::projectileList.end(); it++){
 		if (!(*it)->updateTime(time)){
-			delete(*it);
 			GameLogic::projectileList.erase(it);
+			it--;
 		}
 	}
 }
