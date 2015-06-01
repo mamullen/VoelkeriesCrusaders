@@ -784,7 +784,7 @@ void PlayState::drawHUD(ClientGame* client){
 	char * healthString = (char*)s.c_str();
 	glTranslatef(width / 7, height - height / 19, 1);
 	glLineWidth(2);
-	glScalef(150.0f / width, 130.0f / height, 1);
+	glScalef(width/6990.0f, height/4443.07f, 1);
 	glRotatef(180, 1, 0, 0);
 	glColor3f(1, 1, 1);
 	for (int i = 0; i < strlen(healthString); i++){
@@ -803,7 +803,7 @@ void PlayState::drawHUD(ClientGame* client){
 	char * hp = "HP";
 	glTranslatef(width / 50, height - height / 20, 0);
 	glLineWidth(3);
-	glScalef(204.8f/width,152/height,1);
+	glScalef(width/5120.0f,height/3800.0f,1);
 	glRotatef(180, 1, 0, 0);
 	glColor3f(1, 1, 1);
 	for (int i = 0; i < strlen(hp); i++){
@@ -816,7 +816,7 @@ void PlayState::drawHUD(ClientGame* client){
 	char * name = client->getClientName();
 	glTranslatef(width / 50, height - height / 10, 0);
 	glLineWidth(2);
-	glScalef(200.0f / width, 152 / height, 1);
+	glScalef(width/5242.88, height/3800.0f, 1);
 	glRotatef(180, 1, 0, 0);
 	glColor3f(1, 1, 1);
 	for (int i = 0; i < strlen(name); i++){
@@ -829,7 +829,7 @@ void PlayState::drawHUD(ClientGame* client){
 		char * name = "YOU WIN";
 		glTranslatef(width / 7.5, height / 4, 0);
 		glLineWidth(10);
-		//glScalef(paramDist / 3500.0f, paramDist / 3500.0f, paramDist / 3500.0f);
+		glScalef(width / 1024.0f, height / 768.0f, 1);
 		glRotatef(180, 1, 0, 0);
 		glColor3f(1, 1, 1);
 		for (int i = 0; i < strlen(name); i++){
@@ -842,7 +842,7 @@ void PlayState::drawHUD(ClientGame* client){
 		char * name = "YOU LOSE";
 		glTranslatef(width / 10, height / 4, 0);
 		glLineWidth(10);
-		//glScalef(paramDist / 3500.0f, paramDist / 3500.0f, paramDist / 3500.0f);
+		glScalef(width / 1024.0f, height / 768.0f, 1);
 		glRotatef(180, 1, 0, 0);
 		glColor3f(1, 1, 1);
 		for (int i = 0; i < strlen(name); i++){
@@ -855,7 +855,7 @@ void PlayState::drawHUD(ClientGame* client){
 		char * name = "TIE GAME";
 		glTranslatef(width / 10, height / 4, 0);
 		glLineWidth(10);
-		//glScalef(paramDist / 3500.0f, paramDist / 3500.0f, paramDist / 3500.0f);
+		glScalef(width / 1024.0f, height / 768.0f, 1);
 		glRotatef(180, 1, 0, 0);
 		glColor3f(1, 1, 1);
 		for (int i = 0; i < strlen(name); i++){

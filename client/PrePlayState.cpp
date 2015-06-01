@@ -112,22 +112,34 @@ void PrePlayState::Update(ClientGame* client) {
 	}
 }
 
-void drawText(const char *text, int x, int y, float r, float g, float b){
+void drawText(const char *text, float x, float y, float w, float h, float r, float g, float b){
+	GLint m_viewport[4];
+	glGetIntegerv(GL_VIEWPORT, m_viewport);
+	GLdouble width = GLdouble(m_viewport[2] - m_viewport[0]);
+	GLdouble height = GLdouble(m_viewport[3] - m_viewport[1]);
+
+	//printf("%f\n", width);
+
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
-	glOrtho(0.0, 800, 600, 0.0, -1.0, 10.0);
+	glOrtho(0.0, width, height, 0.0, -1.0, 10.0); //800 600
 	glMatrixMode(GL_MODELVIEW);
 	//glPushMatrix();        ----Not sure if I need this
 	glLoadIdentity();
 	glDisable(GL_CULL_FACE);
 
 	glClear(GL_DEPTH_BUFFER_BIT);
-	glColor3f(r,g,b);
-	glRasterPos2i(x, y); // raster position in 2D
-	for (int i = 0; i<strlen(text); i++){
-		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, (int)text[i]); // generation of characters in our text with 9 by 15 GLU font
+	glPushMatrix();
+	glTranslatef(width*x, height*y, 0);
+	glLineWidth(1);
+	glScalef(width/w, height/h, 1);
+	glRotatef(180, 1, 0, 0);
+	glColor3f(r, g, b);
+	for (int i = 0; i < strlen(text); i++){
+		glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, (char)text[i]);
 	}
+	glPopMatrix();
 	// Making sure we can render 3d again
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
@@ -135,10 +147,15 @@ void drawText(const char *text, int x, int y, float r, float g, float b){
 }
 
 void drawSquare(float r, float g, float b, float x, float y, float size){
+	GLint m_viewport[4];
+	glGetIntegerv(GL_VIEWPORT, m_viewport);
+	GLdouble width = GLdouble(m_viewport[2] - m_viewport[0]);
+	GLdouble height = GLdouble(m_viewport[3] - m_viewport[1]);
+
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
-	glOrtho(0.0, 800, 600, 0.0, -1.0, 10.0);
+	glOrtho(0.0, width, height, 0.0, -1.0, 10.0);
 	glMatrixMode(GL_MODELVIEW);
 	//glPushMatrix();        ----Not sure if I need this
 	glLoadIdentity();
@@ -148,10 +165,10 @@ void drawSquare(float r, float g, float b, float x, float y, float size){
 
 	glBegin(GL_QUADS);
 	glColor3f(r, g, b);
-	glVertex2f(x, y);
-	glVertex2f(x+size, y);
-	glVertex2f(x+size, y+size);
-	glVertex2f(x, y+size);
+	glVertex2f(x*width, y*height);
+	glVertex2f(x*width+size*width, y*height);
+	glVertex2f(x*width+size*width, y*height+size*width);
+	glVertex2f(x*width, y*height+size*width);
 	glEnd();
 
 	// Making sure we can render 3d again
@@ -161,10 +178,15 @@ void drawSquare(float r, float g, float b, float x, float y, float size){
 }
 
 void drawRect(float r, float g, float b, float x, float y, float w, float h){
+	GLint m_viewport[4];
+	glGetIntegerv(GL_VIEWPORT, m_viewport);
+	GLdouble width = GLdouble(m_viewport[2] - m_viewport[0]);
+	GLdouble height = GLdouble(m_viewport[3] - m_viewport[1]);
+
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
-	glOrtho(0.0, 800, 600, 0.0, -1.0, 10.0);
+	glOrtho(0.0, width, height, 0.0, -1.0, 10.0);
 	glMatrixMode(GL_MODELVIEW);
 	//glPushMatrix();        ----Not sure if I need this
 	glLoadIdentity();
@@ -174,10 +196,10 @@ void drawRect(float r, float g, float b, float x, float y, float w, float h){
 
 	glBegin(GL_QUADS);
 	glColor3f(r, g, b);
-	glVertex2f(x, y);
-	glVertex2f(x + w, y);
-	glVertex2f(x + w, y + h);
-	glVertex2f(x, y + h);
+	glVertex2f(x*width, y*height);
+	glVertex2f(x*width + w*width, y*height);
+	glVertex2f(x*width + w*width, y*height + h*height);
+	glVertex2f(x*width, y*height + h*height);
 	glEnd();
 
 	// Making sure we can render 3d again
@@ -187,16 +209,20 @@ void drawRect(float r, float g, float b, float x, float y, float w, float h){
 }
 
 void PrePlayState::drawTitleImage(){
+	GLint m_viewport[4];
+	glGetIntegerv(GL_VIEWPORT, m_viewport);
+	GLdouble width = GLdouble(m_viewport[2] - m_viewport[0]);
+	GLdouble height = GLdouble(m_viewport[3] - m_viewport[1]);
+
 	glEnable(GL_TEXTURE_2D);            // Enable textures
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_BLEND);
 	//glBindTexture(GL_TEXTURE_2D, textureID);
 
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
-	//glLoadIdentity();
-	glOrtho(-300.0, 600, 525, 0.0, 10.0, 6000.0);
+	glLoadIdentity();
+	glOrtho(0, width, height, 0.0, -1, 10.0);
 	glMatrixMode(GL_MODELVIEW);
-	//glPushMatrix();        ----Not sure if I need this
 	glLoadIdentity();
 	glDisable(GL_CULL_FACE);
 
@@ -205,13 +231,13 @@ void PrePlayState::drawTitleImage(){
 	glBegin(GL_QUADS);
 	glColor3f(1, 1, 1);
 	glTexCoord2f(0, 0);
-	glVertex3f(-200, 0, 0);
+	glVertex2f(0, -height/4);
 	glTexCoord2f(1, 0);
-	glVertex3f(500, 0, 0);
+	glVertex2f(width, -height/4);
 	glTexCoord2f(1, 1);
-	glVertex3f(500, 500, 0);
+	glVertex2f(width, height * 1.25);
 	glTexCoord2f(0, 1);
-	glVertex3f(-200, 500, 0);
+	glVertex2f(0, height * 1.25);
 	glEnd();
 
 	// Making sure we can render 3d again
@@ -228,7 +254,7 @@ void PrePlayState::drawTitleImage(){
 void PrePlayState::Draw(ClientGame* client) {
 
 	// Set up glStuff
-	glViewport(0, 0, WinX, WinY);
+	//glViewport(0, 0, WinX, WinY);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -239,26 +265,26 @@ void PrePlayState::Draw(ClientGame* client) {
 	glLoadIdentity();
 
 	if (!name_state){
-		drawText("Press 1 to be a Crusader", 100, 20, 1, 1, 1);
-		drawText("Press 2 to be a Vampire", 550, 20, 1, 1, 1);
+		drawText("Press 1 to be a Crusader", .13f, .033f, 11000,5500, 1, 1, 1);
+		drawText("Press 2 to be a Vampire", .65f, .033f, 11000, 5500, 1, 1, 1);
 
 		if (curr_team == 1){
-			drawText("You are a Crusader!", 345, 20, 1, 1, 1);
+			drawText("You are a Crusader!", .42f, .033f, 11000, 5500, 1, 1, 1);
 		}
 		else if (curr_team == 2){
-			drawText("You are a Vampire!", 345, 20, 1, 1, 1);
+			drawText("You are a Vampire!", .42f, .033f, 11000, 5500, 1, 1, 1);
 		}
 
 		if (team_full){
-			drawText("Can't join. Team is full.", 325, 50, 1, 1, 1);
+			drawText("Can't join. Team is full.", .39f, .0833f, 11000, 5500, 1, 1, 1);
 		}
 
 		//draw slots
 		for (int i = 0; i < maxCrusaders; i++){
-			drawRect(.2, .2, .2, 60, 34 + i * 30, 245, 25);
+			drawRect(.2, .2, .2, .12f, .05667f + i * .05f, .25f, .041667f);
 		}
 		for (int i = 0; i < maxVampires; i++){
-			drawRect(.2, .2, .2, 510, 34 + i * 30, 245, 25);
+			drawRect(.2, .2, .2, .64f, .05667f + i * .05f, .25f, .041667f);
 		}
 
 		//draw other players
@@ -271,37 +297,37 @@ void PrePlayState::Draw(ClientGame* client) {
 			int teamNum = it->second.first;
 			char* pName = it->second.second;
 			if (teamNum == 1){
-				drawSquare(0, 0, 1, 65, 39 + 30 * crusaderCount, 15);
-				drawText(pName, 100, 50 + 30 * crusaderCount, 1, 1, 1);
+				drawRect(0, 0, 1, .13f, .062f + .05f * crusaderCount, .016f,.03);
+				drawText(pName, .15f, .085f + .05f * crusaderCount, 11000, 5500, 1, 1, 1);
 				crusaderCount++;
 			}
 			else if (teamNum == 2){
-				drawSquare(1, 0, 0, 515, 39 + 30 * vampireCount, 15);
-				drawText(pName, 550, 50 + 30 * vampireCount, 1, 1, 1);
+				drawRect(1, 0, 0, .65f, .062f + .05f * vampireCount, .016f, .03);
+				drawText(pName, .67f, .085f + .05f * vampireCount, 11000, 5500, 1, 1, 1);
 				vampireCount++;
 			}
 		}
 
 		if (curr_team == 0){
-			drawRect(.2, .2, .2, 300, 545, 245, 25);
-			drawText(client->getClientName(), 315, 561, 0, 1, 0);
+			drawRect(.2, .2, .2, .375f, .90833f, .25, .041667f);
+			drawText(client->getClientName(), .39375f, .94f, 11000, 5500, 0, 1, 0);
 		}
 		else if (curr_team == 1){
-			drawSquare(0, 0, 1, 65, 39 + 30 * crusaderCount, 15);
-			drawText(client->getClientName(), 100, 50 + 30 * crusaderCount, 0, 1, 0);
+			drawRect(0, 0, 1, .13f, .062f + .05f * crusaderCount, .016f, .03);
+			drawText(client->getClientName(), .15f, .085f + .05f * crusaderCount, 11000, 5500, 0, 1, 0);
 		}
 		else if (curr_team == 2){
-			drawSquare(1, 0, 0, 515, 39 + 30 * vampireCount, 15);
-			drawText(client->getClientName(), 550, 50 + 30 * vampireCount, 0, 1, 0);
+			drawRect(1, 0, 0, .65f, .062f + .05f * vampireCount, .016f, .03);
+			drawText(client->getClientName(), .67f, .085f + .05f * vampireCount, 11000, 5500, 0, 1, 0);
 		}
 	}
 	else{
 		drawTitleImage();
-		drawText("Username:", 230, 316, 1, 1, 1);
-		drawRect(.2, .2, .2, 300, 300, 245, 25);
-		drawText(name.c_str(), 315, 316, 0, 1, 0);
+		drawText("Username:", .2875f, .59667f, 11000, 5500, 1, 1, 1);
+		drawRect(.2, .2, .2, .375, .57, .25, .041667);
+		drawText(name.c_str(), .385, .6, 11000, 5500, 0, 1, 0);
 		if (name_error){
-			drawText("Name already taken!  Choose another name.",280, 250,1,1,1);
+			drawText("Name already taken!  Choose another name.", .27, .65, 11000, 5500, 1, 1, 1);
 		}
 		
 	}

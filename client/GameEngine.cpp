@@ -18,6 +18,7 @@ static void character_callback(GLFWwindow* window, unsigned int codepoint)						
 static void mouse_motion(GLFWwindow* window, double xpos, double ypos)							{ State->MouseMotion(window, xpos, ypos); }
 static void mouse_button(GLFWwindow* window, int button, int action, int mods)					{ State->MouseButton(window, button, action, mods); }
 static void mouse_scroll(GLFWwindow* window, double xoffset, double yoffset)					{ State->MouseScroll(window, xoffset, yoffset); }
+static void framebuffer_size_callback(GLFWwindow* window, int width, int height)				{ glViewport(0, 0, width, height); printf("CALLING\n"); }
 static void error_callback(int error, const char* description)									{ fputs(description, stderr); }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -103,6 +104,7 @@ GameEngine::GameEngine(int argc, char **argv) {
 	glfwSetCursorPosCallback(window, mouse_motion);
 	glfwSetMouseButtonCallback(window, mouse_button);
 	glfwSetScrollCallback(window, mouse_scroll);
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
