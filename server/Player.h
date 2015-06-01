@@ -17,7 +17,11 @@ public:
 	virtual void updateTime(int,int); // first int is day/night, second int is time elapsed
 
 	void updateCD();
+	void resetDir()			{ hDir = 0; vDir = 0; }
+	void checkChangedDir();
 	unsigned int getPID();
+	int getHDir()			{ return hDir; }
+	int getVDir()			{ return vDir; }
 	
 	bool inRange(GameObject*);
 	//virtual void attack(GameObject*);
@@ -33,5 +37,6 @@ protected:
 	Action* attack_mode; // determined by the weapon u picked
 	bool isAlive;
 	int time_ctr;
+	int hDir, vDir, hDirPrev, vDirPrev; //Let other players know which way this player is trying to move
 };
 

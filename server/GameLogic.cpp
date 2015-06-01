@@ -62,6 +62,7 @@ void GameLogic::update(int time)
 		if (gameObjects[i]->isPlayer){
 			((Player *)gameObjects[i])->updateCD();
 			((Player *)gameObjects[i])->updateTime(timer->getState(), time);
+			((Player *)gameObjects[i])->resetDir();
 		}
 	}
 
@@ -70,6 +71,13 @@ void GameLogic::update(int time)
 		if (iter->second->id < gameObjects.size()){
 			//printf("gamelogic update\n");
 			gameObjects.at(iter->second->id)->update(iter->second, &gameObjects);
+		}
+	}
+
+	// go through each player and check if their dir has changed
+	for (int i = 0; i < gameObjects.size(); i++){
+		if (gameObjects[i]->isPlayer){
+			((Player *)gameObjects[i])->checkChangedDir();
 		}
 	}
 
@@ -186,6 +194,52 @@ void GameLogic::update(int time)
 			p->id = index;
 
 			serverPackets.push_back(p);
+		}
+		else if (key->compare("hDir") == 0){
+			if (gameObjects.at(index)->isPlayer){
+				Player* player = (Player *)gameObjects.at(index);
+				int hDir = player->getHDir();
+
+				///////////////////////////////////////////////////////////////////////////
+				char data[PACKET_DATA_LEN];
+				int pointer = 0;
+				memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "hdir", 5);
+				pointer += 5;
+				memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &hDir, sizeof(int));
+				pointer += sizeof(int);
+				data[pointer] = ',';
+				pointer++;
+				///////////////////////////////////////////////////////////////////////////
+				Packet* p = new Packet;
+				p->packet_type = ACTION_EVENT;
+				memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+				p->id = index;
+
+				serverPackets.push_back(p);
+			}
+		}
+		else if (key->compare("vDir") == 0){
+			if (gameObjects.at(index)->isPlayer){
+				Player* player = (Player *)gameObjects.at(index);
+				int vDir = player->getVDir();
+
+				///////////////////////////////////////////////////////////////////////////
+				char data[PACKET_DATA_LEN];
+				int pointer = 0;
+				memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "vdir", 5);
+				pointer += 5;
+				memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &vDir, sizeof(int));
+				pointer += sizeof(int);
+				data[pointer] = ',';
+				pointer++;
+				///////////////////////////////////////////////////////////////////////////
+				Packet* p = new Packet;
+				p->packet_type = ACTION_EVENT;
+				memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+				p->id = index;
+
+				serverPackets.push_back(p);
+			}
 		}
 		// clear the change bool array after done processing all the changes 
 		// need fix

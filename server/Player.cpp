@@ -45,6 +45,19 @@ Player::~Player()
 {
 }
 
+void Player::checkChangedDir(){
+	if (vDir != vDirPrev){
+		vDirPrev = vDir;
+		std::string* change = new std::string("vDir");
+		changes.push_back(std::pair<int, std::string*>(id, change));
+	}
+	if (hDir != hDirPrev){
+		hDirPrev = hDir;
+		std::string* change = new std::string("hDir");
+		changes.push_back(std::pair<int, std::string*>(id, change));
+	}
+}
+
 void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 {
 	std::string in = std::string(packet->packet_data);
@@ -71,10 +84,7 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 				{
 					this->moveForward();
 				}
-				else
-				{
-				//	this->moveBackward();
-				}
+				vDir++;
 			}
 			
 		}
@@ -109,10 +119,7 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 				{
 					this->moveBackward();
 				}
-				else
-				{
-					//this->moveForward();
-				}
+				vDir--;
 			}
 		}
 		else if (cEvent.compare("move_left") == 0){
@@ -124,10 +131,7 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 				{
 					this->strafeLeft();
 				}
-				else
-				{
-					//this->strafeRight();
-				}
+				hDir--;
 			}
 		}
 		else if (cEvent.compare("move_right") == 0){
@@ -139,10 +143,7 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 				{
 					this->strafeRight();
 				}
-				else
-				{
-				//	this->strafeLeft();
-				}
+				hDir++;
 			}
 		}
 		else if (cEvent.substr(0,6).compare("rotate") == 0){

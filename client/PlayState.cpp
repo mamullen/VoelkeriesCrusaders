@@ -355,10 +355,38 @@ void PlayState::UpdateClient(ClientGame* client) {
 			parti = true;
 		}
 
+		if (strcmp(serverEvent, "hdir") == 0)
+		{
+			int hDir;
+			memcpy(&hDir, serverEvent + 5, sizeof(int));
+
+			if (Player && objID == Player->getID()){
+				Player->setHDir(hDir);
+			}
+			else if (gameObjects.find(objID) != gameObjects.end()){
+				GameObject* o = gameObjects.at(objID);
+				PlayerType* p = (PlayerType*)o;
+				p->setHDir(hDir);
+			}
+		}
+
+		if (strcmp(serverEvent, "vdir") == 0)
+		{
+			int vDir;
+			memcpy(&vDir, serverEvent + 5, sizeof(int));
+
+			if (Player && objID == Player->getID()){
+				Player->setVDir(vDir);
+			}
+			else if (gameObjects.find(objID) != gameObjects.end()){
+				GameObject* o = gameObjects.at(objID);
+				PlayerType* p = (PlayerType*)o;
+				p->setVDir(vDir);
+			}
+		}
+
 		if (strcmp(serverEvent, "particles") == 0)
 		{
-
-
 			printf("truetruetrue\n\n");
 			parti = true;
 
@@ -912,13 +940,10 @@ void PlayState::Draw(ClientGame* client) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-enum Animation {RUNSTART, RUN, RUNEND, IDLE, MELEE};
-
 void PlayState::Input(ClientGame* client) {
 	if (!Player)
 		return;
 
-	// animation tests for now
 	static int animIndex = 0;
 
 	if (glfwGetKey(window, GLFW_KEY_L)) {
@@ -930,28 +955,20 @@ void PlayState::Input(ClientGame* client) {
 	}
 	
 	if (glfwGetKey(window, FORWARD)) {
-		Player->setAnimation(RUN);
 		client->addEvent(Player->getID(), "move_forward;", ACTION_EVENT);
-	} else {
-		Player->setAnimation(IDLE);
 	}
-
 	if (glfwGetKey(window, JUMP)) {
-		Player->setAnimation(RUN);
 		client->addEvent(Player->getID(), "move_jump;", ACTION_EVENT);
 	}
-
-
 	if (glfwGetKey(window, Q)) {
 		client->addEvent(Player->getID(), "q;", ACTION_EVENT);
 	}
 
 	if (glfwGetKey(window, STRAFELEFT)) {
-		Player->setAnimation(RUN);
 		client->addEvent(Player->getID(), "move_left;", ACTION_EVENT);
 	}
+
 	if (glfwGetKey(window, STRAFERIGHT)) {
-		Player->setAnimation(RUN);
 		client->addEvent(Player->getID(), "move_right;", ACTION_EVENT);
 	}
 
@@ -1000,22 +1017,43 @@ void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods
 	if (!Player)
 		return;
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS){
-		Player->setAnimation(MELEE);
 		attacking = true;
 	}
 	else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
-		Player->setAnimation(IDLE);
 		attacking = false;
 	}
 
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS){
-		Player->setAnimation(MELEE);
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
-		Player->setAnimation(IDLE);
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
+	/*
+	float playerRotation = -player->getRotation();
+
+	if (action == GLFW_PRESS) {
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
+	else if (action == GLFW_RELEASE) {
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
+
+	if (button == GLFW_MOUSE_BUTTON_LEFT) {
+		LeftDown = (action == GLFW_PRESS);
+		BothDown = RightDown && (action == GLFW_PRESS);
+	}
+	else if (button == GLFW_MOUSE_BUTTON_MIDDLE) {
+		MiddleDown = (action == GLFW_PRESS);
+	}
+	else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+		if (action == GLFW_PRESS) {
+			Cam.SetAzimuth(playerRotation);
+		}
+		RightDown = (action == GLFW_PRESS);
+		BothDown = LeftDown && (action == GLFW_PRESS);
+	}
+	*/
 }
 
 ////////////////////////////////////////////////////////////////////////////////
