@@ -26,8 +26,8 @@ class GameObject {
 public:
 	//initialize game object with some model.  If there is no model
 	//associated with this GameObject, then just pass in NULL
-	GameObject(MeshLoader* m, unsigned int i);
-	GameObject(MeshLoader* m, Vector3* mn, Vector3* mx, unsigned int i);
+	GameObject(MeshLoader* m, unsigned int id);
+	GameObject(MeshLoader* m, Vector3* mn, Vector3* mx, unsigned int id);
 
 	void rotateLeft();
 	void rotateRight();

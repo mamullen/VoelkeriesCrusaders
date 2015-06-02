@@ -14,12 +14,14 @@ MeshLoader::MeshLoader() {
 	a_LastPlaying = 0;
 	a_CurrentTime = 0;
 	m_Scene = NULL;
+	m_EnforceNoBones = false;
 
 }
 
 MeshLoader::MeshLoader(const char* filename) {
 	a_LastPlaying = 0;
 	a_CurrentTime = 0;
+	m_EnforceNoBones = false;
 
 	std::cout << "MeshLoader:: loading " << filename << std::endl;
 	if (!LoadAsset(filename)) {
@@ -193,7 +195,7 @@ void MeshLoader::RenderMesh(const aiNode* node) {
 		const aiMesh* mesh = m_Scene->mMeshes[node->mMeshes[i]];
 		std::vector<CachedVertex> CachedPosition(mesh->mNumVertices);
 		std::vector<CachedVertex> CachedNormal(mesh->mNumVertices);
-		if (mesh->HasBones()) {
+		if (mesh->HasBones() && !m_EnforceNoBones) {
 			const std::vector<aiMatrix4x4>& boneMatrices = mAnimator->GetBoneMatrices(node, i);
 
 			for (unsigned int a = 0; a < mesh->mNumBones; a++) {
@@ -214,7 +216,11 @@ void MeshLoader::RenderMesh(const aiNode* node) {
 			}
 		}
 
+		aiMatrix4x4 Mx = mAnimator->GetLocalTransform(node);
+		Mx.Transpose();
+
 		glPushMatrix();
+		glMultMatrixf((float*)&Mx);
 
 		ApplyMaterial(m_Scene->mMaterials[mesh->mMaterialIndex]);
 		glScalef(0.05, 0.05, 0.05);
@@ -229,14 +235,14 @@ void MeshLoader::RenderMesh(const aiNode* node) {
 				if (mesh->mColors[0] != NULL)
 					glColor4fv((GLfloat*)&mesh->mColors[0][v_index]);
 				if (mesh->mNormals != NULL) {
-					if (&CachedNormal[v_index].cached) {
+					if (&CachedNormal[v_index].cached && !m_EnforceNoBones) {
 						glNormal3fv(&CachedNormal[v_index].vec.x);
 					} else {
 						glNormal3fv(&mesh->mNormals[v_index].x);	
 					}
 				}
 
-				if (&CachedPosition[v_index].cached) {
+				if (&CachedPosition[v_index].cached && !m_EnforceNoBones) {
 					glVertex3fv(&CachedPosition[v_index].vec.x);
 				} else {
 					glVertex3fv(&mesh->mVertices[v_index].x);

@@ -22,13 +22,15 @@
 #include <vector>
 
 struct CachedVertex {
-	CachedVertex() : vec(), cached(false) {}
+	CachedVertex() { cached = false; }
 	aiVector3D vec;
 	bool cached;
 };
 
 class MeshLoader {
 private:
+	bool m_EnforceNoBones;
+
 	bool LoadAsset(const char* filename);
 	void ApplyMaterial(const aiMaterial *material);
 
@@ -40,6 +42,7 @@ public:
 	MeshLoader(const char* filename);
 	
 	void Render();
+	void DisableBones()		{ m_EnforceNoBones = true; }
 	void UpdateAnimation();
 	void ChangeAnimation(unsigned int index);
 

@@ -146,6 +146,7 @@
     <ClInclude Include="PlayerType.h" />
     <ClInclude Include="PlayState.h" />
     <ClInclude Include="PrePlayState.h" />
+    <ClInclude Include="Projectile.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="SceneAnimator.h" />
     <ClInclude Include="Shader.h" />
