@@ -799,10 +799,22 @@ void PlayState::MouseMotion(GLFWwindow* window, double xpos, double ypos) {
 
 	MouseX = xpos;
 	MouseY = ypos;
+	int sign = 1;
+	if (dx < 0){
+		sign = -1;
+	}
+
+	float newDx = abs(dx)/4.0f;
+	if (newDx < .1){
+		newDx = .1;
+	}
+	else if (newDx > 10){
+		newDx = 10;
+	}
 
 	// Move camera
 	Cam.AddPitch(-dy);
-	Cam.AddYaw(dx/4.0f);
+	Cam.AddYaw(sign*newDx);
 	rotationChanged = true;
 }
 

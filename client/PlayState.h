@@ -5,6 +5,7 @@
 #ifndef PLAYSTATE_H_
 #define PLAYSTATE_H_
 
+#include <stdlib.h>
 #include "core.h"
 #include "Weapon.h"
 #include "Shrine.h"
