@@ -28,8 +28,8 @@ void Basic_Range::attack(GameObject* obj)
 	Projectile* p = new Projectile();
 	obj->forward.Normalize();
 	//p->setID(obj->getID());
-	p->setPos(obj->getPos());
-	p->setInitPos(obj->getPos());
+	p->setPos(obj->getPos()+obj->forward*2);
+	p->setInitPos(obj->getPos() + obj->forward * 2);
 	p->forward = obj->forward;
 	p->setRange(c_range);
 	p->setDmg(c_ad);
