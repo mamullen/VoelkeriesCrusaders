@@ -56,13 +56,20 @@ void ClientGame::update()
 		//no data recieved
 		return;
 	}
-
 	//going to start at back so that we can keep server events in order
-	int i = data_length - sizeof(Packet);
+	int i = 0;// data_length - sizeof(Packet);
+	while (i < data_length){
+		i += sizeof(Packet);
+	}
+	i -= sizeof(Packet);
+
+	//printf("%d\n", data_length);
+
+	//printf("%d\n", i);
 	while (i >= 0)
 	{
 		Packet* packet = new Packet;
-		packet->deserialize(&(network_data[i]));
+		packet->deserialize(network_data+i);
 		i -= sizeof(Packet);
 
 		//printf(packet->packet_data);
@@ -89,7 +96,11 @@ void ClientGame::update()
 
 		default:
 
-			printf("error in packet types\n");
+			//char* c = new char[sizeof(Packet)];
+			//packet->serialize(c);
+			printf("error in packet types\n\n");
+			//std::cout.write(c,sizeof(Packet));
+			//printf("\n\n");
 
 			break;
 		}
