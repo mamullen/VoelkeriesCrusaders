@@ -5,6 +5,8 @@
 #include "Basic_Range.h"
 #include "ConfigSettings.h"
 #include "Score.h"
+#include <stdlib.h>
+#include <time.h>
 class Player : public GameObject
 {
 public:
@@ -32,6 +34,8 @@ public:
 	bool weaponcollide(Vector3);
 	string name; 
 	int team; // 0: no team, 1: crusader, 2: vampire
+
+	void respawnLocation(std::vector<GameObject*>*);
 
 protected:
 	Score score;

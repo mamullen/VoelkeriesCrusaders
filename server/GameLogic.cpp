@@ -1147,6 +1147,15 @@ void GameLogic::updateState()
 			//	printf("ObjectID: %d with type: %d\n", (*it)->getID(), (*it)->objectType);
 			//}
 
+
+			for (std::vector<GameObject*>::iterator it = gameObjects.begin(); it != gameObjects.end(); it++){
+				if ((*it)->isPlayer){
+					Player * player = (Player *)(*it);
+					player->respawnLocation(&gameObjects);
+				}
+			}
+
+
 			sendCreateObjects();
 		}
 	}
