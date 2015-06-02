@@ -10,23 +10,21 @@
 #include <iostream>
 #include "ConfigSettings.h"
 
-//TODO: plz make gameobject
-class Shrine {
-private:
-	MeshLoader *s_Model;
+//TODO: plz add to server as gameobject
+class Shrine : GameObject {
 public:
-	Shrine()  {
-		s_Model = new MeshLoader((char*)ConfigSettings::config->getValue("ShrineAnimationFilePath").c_str());
-		s_Model->DisableBones();
+	Shrine(unsigned int id) : GameObject(id) {
+		g_Model = new MeshLoader((char*)ConfigSettings::config->getValue("ShrineAnimationFilePath").c_str());
+		g_Model->DisableBones();
 	}
 
 	void Draw() {
-		s_Model->UpdateAnimation();
+		g_Model->UpdateAnimation();
 		glPushMatrix();
 		glEnable(GL_LIGHTING);
 		glTranslatef(100.0f, 0.0f, 100.0f);
 		glScalef(50.0f, 50.0f, 50.0f);
-		s_Model->Render();
+		g_Model->Render();
 		glDisable(GL_LIGHTING);
 		glPopMatrix();
 	}

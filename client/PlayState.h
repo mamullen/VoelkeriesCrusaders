@@ -6,6 +6,7 @@
 #define PLAYSTATE_H_
 
 #include "core.h"
+#include "Weapon.h"
 #include "Shrine.h"
 #include "Map.h"
 #include "Light.h"
@@ -95,7 +96,6 @@ private:
 	Building* b1;
 	Texture t;
 	GLuint photos[5];
-	Shader shader;
 	//Shader floorshader;
 	Texture colortex;
 	Texture normaltex;
@@ -106,15 +106,20 @@ private:
 	GLuint skyfront_picture, skyfront_normalmap, skyback_picture, skyback_normalmap, skyleft_picture, skyleft_normalmap, skyright_picture, skyright_normalmap, skytop_picture, skytop_normalmap;
 	bool once;
 	bool parti;
+	bool weap1;
 	Vector3 particlepos;
 	bool deathbyparticle;
 
+	SunMace *p_SunMace;
 	Texture m_pTrivialNormalMap;
 	ParticleEffect* p_DeathByBlood;
 	Light* p_Light;
 	Map* p_Map;
 	Shrine* p_Shrine;
 	bool isNight;
+
+	Shader* p_regShade;
+	Shader* p_bumpShade;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

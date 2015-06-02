@@ -104,7 +104,9 @@ bool MeshLoader::LoadAsset(const char* filename) {
 }
 
 void MeshLoader::ChangeAnimation(unsigned int index) {
-	mAnimator->SetAnimIndex(index);
+	if (m_Scene->HasAnimations()) {
+		mAnimator->SetAnimIndex(index);
+	}
 }
 
 void color4_to_float4(const aiColor4D *c, float f[4])
@@ -215,8 +217,13 @@ void MeshLoader::RenderMesh(const aiNode* node) {
 				}
 			}
 		}
-
-		aiMatrix4x4 Mx = mAnimator->GetLocalTransform(node);
+		aiMatrix4x4 Mx;
+		if (m_Scene->HasAnimations()) {
+			Mx = mAnimator->GetLocalTransform(node);
+		}
+		else {
+			Mx = node->mTransformation;
+		}
 		Mx.Transpose();
 
 		glPushMatrix();
@@ -261,15 +268,17 @@ void MeshLoader::RenderMesh(const aiNode* node) {
 }
 
 void MeshLoader::UpdateAnimation() {
-	a_CurrentTime += clock() / double(CLOCKS_PER_SEC) - a_LastPlaying;
-	double time = a_CurrentTime;
-	aiAnimation* mAnim = mAnimator->CurrentAnim();
-	if (mAnim && mAnim->mDuration > 0.0) {
-		double tps = 25.f;
-		time = fmod(time, mAnim->mDuration / tps);
+	if (m_Scene->HasAnimations()) {
+		a_CurrentTime += clock() / double(CLOCKS_PER_SEC) - a_LastPlaying;
+		double time = a_CurrentTime;
+		aiAnimation* mAnim = mAnimator->CurrentAnim();
+		if (mAnim && mAnim->mDuration > 0.0) {
+			double tps = 25.f;
+			time = fmod(time, mAnim->mDuration / tps);
+		}
+		mAnimator->Calculate(time);
+		a_LastPlaying = a_CurrentTime;
 	}
-	mAnimator->Calculate(time);
-	a_LastPlaying = a_CurrentTime;
 }
 
 void MeshLoader::Render() {

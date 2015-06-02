@@ -7,7 +7,7 @@
 
 class Map {
 public:
-	void Draw(Shader& shader, Texture& colortex, Texture& normaltex, Texture& colorslant, Texture& normalslant, Texture& m_pTrivialNormalMap, GLuint* photos);
+	void Draw(Shader* shader, Texture& colortex, Texture& normaltex, Texture& colorslant, Texture& normalslant, Texture& m_pTrivialNormalMap, GLuint* photos);
 };
 
 #endif

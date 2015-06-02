@@ -1,20 +1,20 @@
 #include "Building.h"
 
 void Building::drawObj(){
-	shade.bind();
+	shade->bind();
 	Vector3 min = *getMin();
 	Vector3 max = *getMax();
 	//glDisable(GL_CULL_FACE);
 	//glColor3f(4.0f, 1.f, 1.f);
 	glActiveTexture(GL_TEXTURE0);
 //	glEnable(GL_TEXTURE_2D);
-    int texture_location = glGetUniformLocation(shade.id(), "color_texture");
+    int texture_location = glGetUniformLocation(shade->id(), "color_texture");
 	glUniform1i(texture_location, 0);
 	glBindTexture(GL_TEXTURE_2D, tex);
 
 	glActiveTexture(GL_TEXTURE1);
 	glEnable(GL_TEXTURE_2D);
-	int normal_location = glGetUniformLocation(shade.id(), "normal_texture");
+	int normal_location = glGetUniformLocation(shade->id(), "normal_texture");
 	glUniform1i(normal_location, 1);
 	glBindTexture(GL_TEXTURE_2D, norm);
 	
@@ -83,7 +83,7 @@ void Building::drawObj(){
 	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(min.x, min.y, max.z);
 	glEnd();
-	shade.unbind();
+	shade->unbind();
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);

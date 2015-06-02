@@ -5,6 +5,7 @@
 #include "matrix34.h"
 #include "Vector4.h"
 #include "objparser.h"
+#include "Shader.h"
 #include <iostream>
 
 //should these fields go somewhere else?
@@ -26,8 +27,8 @@ class GameObject {
 public:
 	//initialize game object with some model.  If there is no model
 	//associated with this GameObject, then just pass in NULL
-	GameObject(MeshLoader* m, unsigned int id);
-	GameObject(MeshLoader* m, Vector3* mn, Vector3* mx, unsigned int id);
+	GameObject(unsigned int id);
+	GameObject(Vector3* mn, Vector3* mx, unsigned int id);
 
 	void rotateLeft();
 	void rotateRight();
@@ -56,6 +57,10 @@ public:
 	void setForward(Matrix34 rotate)	{ rotate.Transform(forward, forward); rotate.Transform(right, right); }
 	void resetForward(Matrix34 rotate)	{ rotate.Transform(Vector4(0, 0, 1, 1), forward); rotate.Transform(Vector4(-1, 0, 0, 1), right); }
 
+	void loadShader(Shader* reg) { 
+		p_regShade = reg;
+	}
+
 private:
 	unsigned int id;
 	float rotation = 0;
@@ -70,6 +75,10 @@ private:
 	Vector4 up = Vector4(0, 1, 0, 1);
 
 	//the model of the object
-	MeshLoader* model;
+
+	Shader* p_regShade;
+
+protected:
+	MeshLoader* g_Model;
 };
 

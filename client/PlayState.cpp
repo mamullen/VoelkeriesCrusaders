@@ -18,7 +18,11 @@ PlayState::PlayState(GLFWwindow* window) : GameState(window) {
 	isNight = false;
 	p_Light = new Light();
 	p_Map = new Map();
-	p_Shrine = new Shrine();
+	p_Shrine = new Shrine(0); // 0 id is temp for gameobj
+	p_SunMace = new SunMace(0); // 0 id is temp for gameobj
+	p_regShade = new Shader("shader/shader.vert", "shader/shader.frag");
+	p_bumpShade = new Shader("shader/bump.vert", "shader/bump.frag");
+	weap1 = true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -46,6 +50,8 @@ int PlayState::InitGL() {
 ////////////////////////////////////////////////////////////////////////////////
 
 int PlayState::Initialize() {
+	//p_bumpShade->init("shader/bump.vert", "shader/bump.frag");
+
 	deathbyparticle = false;
 	parti = false;
 	// Configs initialization
@@ -80,7 +86,7 @@ int PlayState::Initialize() {
 
 	// Particles
 	p_DeathByBlood = new ParticleEffect(100);
-	p_DeathByBlood->LoadTexture("./particles/textures/glitter.png");
+	p_DeathByBlood->LoadTexture("./particles/textures/circle.png");
 
 	ParticleEffect::ColorInterpolator explosion;
 	explosion.AddValue(0.0f, Vector4(1, 0, 0, 1)); //red
@@ -104,12 +110,11 @@ int PlayState::Initialize() {
 	rotationChanged = false;
 	attacking = false;
 	Player = NULL;
-	shader.init("shader/bump.vert", "shader/bump.frag");
 
 	text_picture = LoadRAWTexture("ppm/building.ppm", 1024, 1024);
 	text_normalmap = LoadRAWTexture("ppm/building_norm.ppm", 1024, 1024);
-	floor_picture = LoadRAWTexture("ppm/floor.ppm", 1024, 1024);
-	floor_normalmap = LoadRAWTexture("ppm/floor_norm.ppm", 1024, 1024);
+	//floor_picture = LoadRAWTexture("ppm/floor.ppm", 1024, 1024);
+	//floor_normalmap = LoadRAWTexture("ppm/floor_norm.ppm", 1024, 1024);
 
 	colortex.initTexture(GL_TEXTURE_2D, "ppm/bleh_C.png");
 	normaltex.initTexture(GL_TEXTURE_2D, "ppm/bleh_N.png");
@@ -131,6 +136,7 @@ int PlayState::Initialize() {
 	t.loadTexture("ppm/c_top.ppm", photos[4]);
 
 	once = true;
+
 	return 0;
 }
 
@@ -142,6 +148,8 @@ void PlayState::UpdateParticles() {
 
 	p_DeathByBlood->Update(fDeltaTime);
 }
+
+enum ObjectTypes {BUILDING, none1, none2, HUMAN, CRUSADER, VAMPIRE, SUNMACE};
 
 void PlayState::UpdateClient(ClientGame* client) {
 	Packet * serverPacket = client->popServerEvent();
@@ -159,7 +167,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 
 			printf("CREATING RECEIVED, %d\n",objectType);
 			switch (objectType){
-			case 0:{//building
+			case BUILDING:{//building
 				float x1, y1, z1, x2, y2, z2, rot;
 				memcpy(&x1, serverEvent + 11, sizeof(float));
 				memcpy(&y1, serverEvent + 15, sizeof(float));
@@ -177,13 +185,13 @@ void PlayState::UpdateClient(ClientGame* client) {
 				b1 = new Building(v1, v2, rot, objID);
 				b1->tex = text_picture;
 				b1->norm = text_normalmap;
-				b1->shade = shader;
+				b1->shade = p_bumpShade;
 				gameObjects.insert(std::pair<int, GameObject*>(objID, b1));
 				break;
 			}
-			case 3://human
-			case 4://crusader
-			case 5://vampire
+			case HUMAN://human
+			case CRUSADER://crusader
+			case VAMPIRE://vampire
 				//get init data
 				float xPos;
 				float yPos;
@@ -202,7 +210,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 				//glScalef(0.01, 0.01, 0.01);
 				PlayerType* p;
 				if (objectType == 3) {
-					p = new PlayerType(NULL, objID, 0);
+					p = new PlayerType(objID, 0);
 				}
 				else if (objectType == 4) {
 					p = new CrusaderPlayer(objID, 1);
@@ -218,6 +226,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 				p->setRotation(rot);
 				p->setMaxHealth(100);
 				p->setHealth(hp);
+				p->loadShader(p_regShade);
 
 				if (objID == client->getClientId()){
 					Player = p;
@@ -275,6 +284,47 @@ void PlayState::UpdateClient(ClientGame* client) {
 			particlepos = Vector3(xPos, yPos, zPos);
 			deathbyparticle = true;
 			parti = true;
+		}
+
+		if (strcmp(serverEvent, "weapon1") == 0)
+		{
+			float xPos;
+			float yPos;
+			float zPos;
+			memcpy(&xPos, serverEvent + 8, sizeof(float));
+			memcpy(&yPos, serverEvent + 12, sizeof(float));
+			memcpy(&zPos, serverEvent + 16, sizeof(float));
+			weap1 = false;
+		}
+		
+		if (strcmp(serverEvent, "weapon2") == 0)
+		{
+			float xPos;
+			float yPos;
+			float zPos;
+			memcpy(&xPos, serverEvent + 8, sizeof(float));
+			memcpy(&yPos, serverEvent + 12, sizeof(float));
+			memcpy(&zPos, serverEvent + 16, sizeof(float));
+		}
+		
+		if (strcmp(serverEvent, "weapon3") == 0)
+		{
+			float xPos;
+			float yPos;
+			float zPos;
+			memcpy(&xPos, serverEvent + 8, sizeof(float));
+			memcpy(&yPos, serverEvent + 12, sizeof(float));
+			memcpy(&zPos, serverEvent + 16, sizeof(float));
+		}
+		
+		if (strcmp(serverEvent, "weapon4") == 0)
+		{
+			float xPos;
+			float yPos;
+			float zPos;
+			memcpy(&xPos, serverEvent + 8, sizeof(float));
+			memcpy(&yPos, serverEvent + 12, sizeof(float));
+			memcpy(&zPos, serverEvent + 16, sizeof(float));
 		}
 
 		if (strcmp(serverEvent, "hdir") == 0)
@@ -446,7 +496,7 @@ void PlayState::drawHUD(ClientGame* client){
 	glScalef(width/6990.0f, height/4443.07f, 1);
 	glRotatef(180, 1, 0, 0);
 	glColor3f(1, 1, 1);
-	for (int i = 0; i < strlen(healthString); i++){
+	for (unsigned int i = 0; i < strlen(healthString); i++){
 		glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, (char)healthString[i]);
 	}
 	glPopMatrix();
@@ -465,7 +515,7 @@ void PlayState::drawHUD(ClientGame* client){
 	glScalef(width/5120.0f,height/3800.0f,1);
 	glRotatef(180, 1, 0, 0);
 	glColor3f(1, 1, 1);
-	for (int i = 0; i < strlen(hp); i++){
+	for (unsigned int i = 0; i < strlen(hp); i++){
 		glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, (char)hp[i]);
 	}
 	glPopMatrix();
@@ -478,7 +528,7 @@ void PlayState::drawHUD(ClientGame* client){
 	glScalef(width/5242.88, height/3800.0f, 1);
 	glRotatef(180, 1, 0, 0);
 	glColor3f(1, 1, 1);
-	for (int i = 0; i < strlen(name); i++){
+	for (unsigned int i = 0; i < strlen(name); i++){
 		glutStrokeCharacter(GLUT_STROKE_ROMAN, (char)name[i]);
 	}
 	glPopMatrix();
@@ -491,7 +541,7 @@ void PlayState::drawHUD(ClientGame* client){
 		glScalef(width / 1024.0f, height / 768.0f, 1);
 		glRotatef(180, 1, 0, 0);
 		glColor3f(1, 1, 1);
-		for (int i = 0; i < strlen(name); i++){
+		for (unsigned int i = 0; i < strlen(name); i++){
 			glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, (char)name[i]);
 		}
 		glPopMatrix();
@@ -504,7 +554,7 @@ void PlayState::drawHUD(ClientGame* client){
 		glScalef(width / 1024.0f, height / 768.0f, 1);
 		glRotatef(180, 1, 0, 0);
 		glColor3f(1, 1, 1);
-		for (int i = 0; i < strlen(name); i++){
+		for (unsigned int i = 0; i < strlen(name); i++){
 			glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, (char)name[i]);
 		}
 		glPopMatrix();
@@ -517,7 +567,7 @@ void PlayState::drawHUD(ClientGame* client){
 		glScalef(width / 1024.0f, height / 768.0f, 1);
 		glRotatef(180, 1, 0, 0);
 		glColor3f(1, 1, 1);
-		for (int i = 0; i < strlen(name); i++){
+		for (unsigned int i = 0; i < strlen(name); i++){
 			glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, (char)name[i]);
 		}
 		glPopMatrix();
@@ -546,19 +596,30 @@ void PlayState::Draw(ClientGame* client) {
 	glRotatef(180, 0, 1, 0);
 
 	p_Light->Draw(client, currGameTime);
-	p_Map->Draw(shader, colortex, normaltex, colorslant, normalslant, m_pTrivialNormalMap, photos);
+	p_bumpShade->bind();
+	p_Map->Draw(p_bumpShade, colortex, normaltex, colorslant, normalslant, m_pTrivialNormalMap, photos);
+	p_bumpShade->unbind();
+
+	p_regShade->bind();
 	p_Shrine->Draw();
-	
+
+	//Player->update(true, Cam.GetRotation().y);
 	std::map<int, GameObject*>::iterator it;
 	for (it = gameObjects.begin(); it != gameObjects.end(); it++)
 	{
-		it->second->update(false, Cam.GetRotation().y);
+		((PlayerType*)(it->second))->update(false, Cam.GetRotation().y);
 	}
+	Player->update(true, Cam.GetRotation().y);
+	if (weap1) {
+		p_SunMace->Draw();
+	}
+
+	p_regShade->unbind();
+
 	if (parti)
 	{
 		RenderParticle(Cam.GetRotation().y, p_DeathByBlood, particlepos.x, particlepos.y, particlepos.z);
 	}
-	Player->update(true, Cam.GetRotation().y);
 
 	drawHUD(client); //This includes the game over results
 
@@ -568,7 +629,7 @@ void PlayState::Draw(ClientGame* client) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-enum AnimationIndices { a_IDLE, a_RUNFORWARD, a_RUNMELEE, a_STRAFELEFT, a_STRAFEFORWARDLEFT, a_STRAFERIGHT, a_STRAFEFORWARDRIGHT, a_WALKBACK};
+enum AnimationIndices { a_IDLE, a_RUNFORWARD, a_COMBOATTACK, a_STRAFELEFT, a_STRAFEFORWARDLEFT, a_STRAFERIGHT, a_STRAFEFORWARDRIGHT, a_WALKBACK, a_RUNMELEE};
 
 void PlayState::Input(ClientGame* client) {
 	if (!Player)
@@ -577,29 +638,41 @@ void PlayState::Input(ClientGame* client) {
 	if (glfwGetKey(window, FORWARD) || glfwGetKey(window, BACKWARD))
 	{
 		if (glfwGetKey(window, FORWARD)) {
-			Player->setAnimation(a_RUNFORWARD);
+			if (!attacking) {
+				Player->setAnimation(a_RUNMELEE);
+			}
 			client->addEvent(Player->getID(), "move_forward;", ACTION_EVENT);
 		}
 		if (glfwGetKey(window, BACKWARD)) {
-			Player->setAnimation(a_WALKBACK);
+			if (!attacking) {
+				Player->setAnimation(a_WALKBACK);
+			}
 			client->addEvent(Player->getID(), "move_backward;", ACTION_EVENT);
 		}
 
 		if (glfwGetKey(window, STRAFELEFT)) {
-			Player->setAnimation(a_STRAFEFORWARDLEFT);
+			if (!attacking) {
+				Player->setAnimation(a_STRAFEFORWARDLEFT);
+			}
 			client->addEvent(Player->getID(), "move_left;", ACTION_EVENT);
 		}
 		if (glfwGetKey(window, STRAFERIGHT)) {
-			Player->setAnimation(a_STRAFEFORWARDRIGHT);
+			if (!attacking) {
+				Player->setAnimation(a_STRAFEFORWARDRIGHT);
+			}
 			client->addEvent(Player->getID(), "move_right;", ACTION_EVENT);
 		}
 	}
 	else if (glfwGetKey(window, STRAFELEFT)) {
-		Player->setAnimation(a_STRAFELEFT);
+		if (!attacking) {
+			Player->setAnimation(a_STRAFELEFT);
+		}
 		client->addEvent(Player->getID(), "move_left;", ACTION_EVENT);
 	}
 	else if (glfwGetKey(window, STRAFERIGHT)) {
-		Player->setAnimation(a_STRAFERIGHT);
+		if (!attacking) {
+			Player->setAnimation(a_STRAFERIGHT);
+		}
 		client->addEvent(Player->getID(), "move_right;", ACTION_EVENT);
 	}
 	else {
@@ -611,6 +684,9 @@ void PlayState::Input(ClientGame* client) {
 	}
 	if (glfwGetKey(window, Q)) {
 		client->addEvent(Player->getID(), "q;", ACTION_EVENT);
+	}
+	if (glfwGetKey(window, GLFW_KEY_B)) {
+		client->addEvent(Player->getID(), "b;", ACTION_EVENT);
 	}
 
 	if (rotationChanged){
@@ -656,7 +732,6 @@ void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods
 	}
 	else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
 		attacking = false;
-		Player->setAnimation(a_IDLE);
 	}
 
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS){
@@ -665,7 +740,6 @@ void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods
 	}
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		Player->setAnimation(a_IDLE);
 	}
 }
 

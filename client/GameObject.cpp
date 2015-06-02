@@ -1,15 +1,13 @@
 #include "GameObject.h"
 #include <math.h>
 
-GameObject::GameObject(MeshLoader* m, unsigned int i)
+GameObject::GameObject(unsigned int id)
 {
-	model = m;
-	id = i;
+	id = id;
 }
 
-GameObject::GameObject(MeshLoader* m, Vector3* mn, Vector3* mx, unsigned int i)
+GameObject::GameObject(Vector3* mn, Vector3* mx, unsigned int i)
 {
-	model = m;
 	min = mn;
 	max = mx;
 	id = i;
@@ -48,6 +46,7 @@ void GameObject::update(bool isPlayer, float rot) {
 	}
 
 	if (showHP){
+		p_regShade->unbind();
 		glPushMatrix();
 		if (!isPlayer){
 			glRotatef(-rotation, 0, 1, 0);
@@ -72,18 +71,19 @@ void GameObject::update(bool isPlayer, float rot) {
 		
 		glEnd();
 		glPopMatrix();
+		p_regShade->bind();
 	}
-	
+
 	//check  model is not null
-	if (model){
-		model->UpdateAnimation();
-		model->Render();
+	if (g_Model){
+		g_Model->UpdateAnimation();
+		g_Model->Render();
 	}
 	else {
 		//no model, so use draw method to draw object
 		drawObj();
 	}
-	
+
 	glEnd();
 	glPopMatrix();
 }
@@ -123,7 +123,7 @@ void GameObject::setHealth(float h){
 }
 
 void GameObject::setAnimation(int index) {
-	model->ChangeAnimation(index);
+	g_Model->ChangeAnimation(index);
 }
 
 void GameObject::print(std::string str) {

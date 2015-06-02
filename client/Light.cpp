@@ -8,7 +8,7 @@ void Light::Init() {
 	Set();
 
 	GLfloat light_diffuse[] = { r, g, b };
-	GLfloat light_position[] = { 200.0, 200.0, 200.0 };
+	GLfloat light_position[] = { 200.0, 180.0, 200.0 };
 	glEnable(GL_LIGHT0);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
