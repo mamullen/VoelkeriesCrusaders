@@ -18,6 +18,7 @@
 #include "Emitter.h"
 #include "GameState.h"
 #include "Building.h"
+#include "Projectile.h"
 #include "Floor.h"
 #include "ClientGame.h"
 #include <map>
@@ -91,6 +92,7 @@ private:
 	int pid = -1;
 	//player is not stored in this map
 	std::map<int, GameObject*> gameObjects;
+	std::map<int, Projectile*> projectiles;
 	int currGameTime = 0, gameResult = -2;
 
 	Building* b1;

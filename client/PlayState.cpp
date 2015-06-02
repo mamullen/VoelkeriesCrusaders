@@ -44,7 +44,6 @@ int PlayState::InitGL() {
 	glEnable(GL_DEPTH_TEST);
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);	
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -244,6 +243,22 @@ void PlayState::UpdateClient(ClientGame* client) {
 			}
 		}
 
+		if (strcmp(serverEvent, "projectile") == 0){
+			float xPos;
+			float yPos;
+			float zPos;
+			memcpy(&xPos, serverEvent + 11, sizeof(float));
+			memcpy(&yPos, serverEvent + 15, sizeof(float));
+			memcpy(&zPos, serverEvent + 19, sizeof(float));
+
+			Projectile* p = new Projectile(objID);
+			p->setPos(xPos, yPos, zPos);
+
+			printf("Projectile ID: %d\n", objID);
+
+			projectiles.insert(std::pair<int, Projectile*>(objID, p));
+		}
+
 		if (strcmp(serverEvent, "pos") == 0){
 			float xPos;
 			float yPos;
@@ -257,6 +272,22 @@ void PlayState::UpdateClient(ClientGame* client) {
 			}
 			else if (gameObjects.find(objID) != gameObjects.end()){
 				GameObject* o = gameObjects.at(objID);
+				o->setPos(xPos, yPos, zPos);
+			}
+		}
+
+		if (strcmp(serverEvent, "p_pos") == 0){
+			float xPos;
+			float yPos;
+			float zPos;
+			memcpy(&xPos, serverEvent + 6, sizeof(float));
+			memcpy(&yPos, serverEvent + 10, sizeof(float));
+			memcpy(&zPos, serverEvent + 14, sizeof(float));
+
+			printf("p_pos: %f, %f, %f\n", xPos, yPos, zPos);
+
+			if (projectiles.find(objID) != projectiles.end()){
+				Projectile* o = projectiles.at(objID);
 				o->setPos(xPos, yPos, zPos);
 			}
 		}
@@ -284,6 +315,14 @@ void PlayState::UpdateClient(ClientGame* client) {
 			particlepos = Vector3(xPos, yPos, zPos);
 			deathbyparticle = true;
 			parti = true;
+		}
+
+		if (strcmp(serverEvent, "p_die") == 0){
+			if (projectiles.find(objID) != projectiles.end()){
+				std::map<int, Projectile*>::iterator it2;
+				it2 = projectiles.find(objID);
+				projectiles.erase(it2);
+			}
 		}
 
 		if (strcmp(serverEvent, "weapon1") == 0)
@@ -609,6 +648,13 @@ void PlayState::Draw(ClientGame* client) {
 	{
 		((PlayerType*)(it->second))->update(false, Cam.GetRotation().y);
 	}
+
+	std::map<int, Projectile*>::iterator it2;
+	for (it2 = projectiles.begin(); it2 != projectiles.end(); it2++)
+	{
+		((PlayerType*)(it2->second))->update(false, Cam.GetRotation().y);
+	}
+
 	Player->update(true, Cam.GetRotation().y);
 	if (weap1) {
 		p_SunMace->Draw();
@@ -756,20 +802,20 @@ void PlayState::MouseMotion(GLFWwindow* window, double xpos, double ypos) {
 
 	// Move camera
 	Cam.AddPitch(-dy);
-	Cam.AddYaw(dx);
+	Cam.AddYaw(dx/4.0f);
 	rotationChanged = true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void PlayState::MouseScroll(GLFWwindow* window, double xoffset, double yoffset) {
-	const float rate = 3.0f;
+	/*const float rate = 3.0f;
 	if (yoffset > 0) {
 		Cam.TranslateZ(1.0f*rate);
 	}
 	else if (yoffset < 0) {
 		Cam.TranslateZ(-1.0f*rate);
-	}
+	}*/
 }
 
 

@@ -10,12 +10,9 @@
 #include "MeshLoader.h"
 
 class Projectile : public GameObject {
-	Projectile(MeshLoader* model, unsigned int id) : GameObject(model, id) { 
-		// implement me
-	};
-
-private:
-	Vector3 p_Position;
+public:
+	Projectile(unsigned int id) : GameObject(id) { setMaxHealth(1); setHealth(1); };
+	void drawObj();
 };
 
 #endif
