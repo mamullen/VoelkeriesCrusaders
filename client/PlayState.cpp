@@ -19,7 +19,7 @@ PlayState::PlayState(GLFWwindow* window) : GameState(window) {
 	p_Light = new Light();
 	p_Map = new Map();
 	p_Shrine = new Shrine(0); // 0 id is temp for gameobj
-	p_SunMace = new SunMace(0); // 0 id is temp for gameobj
+	p_SunMace = new SunMace(0, Vector3(-75.f, -1.f, -60.f)); // 0 id is temp for gameobj
 	p_regShade = new Shader("shader/shader.vert", "shader/shader.frag");
 	p_bumpShade = new Shader("shader/bump.vert", "shader/bump.frag");
 	weap1 = true;
@@ -659,6 +659,10 @@ void PlayState::Draw(ClientGame* client) {
 	if (weap1) {
 		p_SunMace->Draw();
 	}
+	else {
+		Player->EquipWeapon((Weapon*)p_SunMace);
+		p_SunMace->Draw();
+	}
 
 	p_regShade->unbind();
 
@@ -773,7 +777,7 @@ void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods
 	if (!Player)
 		return;
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS){
-		Player->setAnimation(a_RUNMELEE);
+		Player->setAnimation(a_COMBOATTACK);
 		attacking = true;
 	}
 	else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
@@ -781,7 +785,7 @@ void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods
 	}
 
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS){
-		Player->setAnimation(a_RUNMELEE);
+		Player->setAnimation(a_COMBOATTACK);
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
