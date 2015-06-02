@@ -761,309 +761,193 @@ void GameLogic::updateState()
 			Build->setMax(-140, 25, 80);
 			gameObjects.push_back(Build);*/
 			Build = new Building();
-			Build->setMin(-240, -4, -240);
-			Build->setMax(-200, 6, -225);
+			Build->setMin(-240, -3, -240);
+			Build->setMax(-160, 22, -225);
 			gameObjects.push_back(Build);
 			Build = new Building();
-			Build->setMin(-200, -4, -240);
-			Build->setMax(-160, 6, -225);
+			Build->setMin(-160, -3, -240);
+			Build->setMax(-80, 22, -225);
 			gameObjects.push_back(Build);
 			Build = new Building();
-			Build->setMin(-160, -4, -240);
-			Build->setMax(-120, 6, -225);
+			Build->setMin(-80, -3, -240);
+			Build->setMax(0, 22, -225);
 			gameObjects.push_back(Build);
 			Build = new Building();
-			Build->setMin(-120, -4, -240);
-			Build->setMax(-80, 6, -225);
+			Build->setMin(0, -3, -240);
+			Build->setMax(80, 22, -225);
 			gameObjects.push_back(Build);
 			Build = new Building();
-			Build->setMin(-80, -4, -240);
-			Build->setMax(-40, 6, -225);
+			Build->setMin(80, -3, -240);
+			Build->setMax(160, 22, -225);
 			gameObjects.push_back(Build);
 			Build = new Building();
-			Build->setMin(-40, -4, -240);
-			Build->setMax(0, 6, -225);
-			gameObjects.push_back(Build);
-			Build = new Building();
-			Build->setMin(0, -4, -240);
-			Build->setMax(40, 6, -225);
-			gameObjects.push_back(Build);
-			Build = new Building();
-			Build->setMin(40, -4, -240);
-			Build->setMax(80, 6, -225);
-			gameObjects.push_back(Build);
-			Build = new Building();
-			Build->setMin(80, -4, -240);
-			Build->setMax(120, 6, -225);
-			gameObjects.push_back(Build);
-			Build = new Building();
-			Build->setMin(120, -4, -240);
-			Build->setMax(160, 6, -225);
-			gameObjects.push_back(Build);
-			Build = new Building();
-			Build->setMin(160, -4, -240);
-			Build->setMax(200, 6, -225);
-			gameObjects.push_back(Build);
-			Build = new Building();
-			Build->setMin(200, -4, -240);
-			Build->setMax(240, 6, -225);
+			Build->setMin(160, -3, -240);
+			Build->setMax(240, 22, -225);
 			gameObjects.push_back(Build);
 
 			Build = new Building();
-			Build->setMin(-240, -4, 225);
-			Build->setMax(-200, 6, 240);
+			Build->setMin(-240, -3, 225);
+			Build->setMax(-160, 22, 240);
 			gameObjects.push_back(Build);
 			Build = new Building();
-			Build->setMin(-200, -4, 225);
-			Build->setMax(-160, 6, 240);
+			Build->setMin(-160, -3, 225);
+			Build->setMax(-80, 22, 240);
 			gameObjects.push_back(Build);
 			Build = new Building();
-			Build->setMin(-160, -4, 225);
-			Build->setMax(-120, 6, 240);
+			Build->setMin(-80, -3, 225);
+			Build->setMax(-0, 22, 240);
 			gameObjects.push_back(Build);
 			Build = new Building();
-			Build->setMin(-120, -4, 225);
-			Build->setMax(-80, 6, 240);
+			Build->setMin(0, -3, 225);
+			Build->setMax(80, 22, 240);
 			gameObjects.push_back(Build);
 			Build = new Building();
-			Build->setMin(-80, -4, 225);
-			Build->setMax(-40, 6, 240);
+			Build->setMin(80, -3, 225);
+			Build->setMax(160, 22, 240);
 			gameObjects.push_back(Build);
 			Build = new Building();
-			Build->setMin(-40, -4, 225);
-			Build->setMax(0, 6, 240);
+			Build->setMin(160, -3, 225);
+			Build->setMax(240, 22, 240);
 			gameObjects.push_back(Build);
-			Build = new Building();
-			Build->setMin(0, -4, 225);
-			Build->setMax(40, 6, 240);
-			gameObjects.push_back(Build);
-			Build = new Building();
-			Build->setMin(40, -4, 225);
-			Build->setMax(80, 6, 240);
-			gameObjects.push_back(Build);
-			Build = new Building();
-			Build->setMin(80, -4, 225);
-			Build->setMax(120, 6, 240);
-			gameObjects.push_back(Build);
-			Build = new Building();
-			Build->setMin(120, -4, 225);
-			Build->setMax(160, 6, 240);
-			gameObjects.push_back(Build);
-			Build = new Building();
-			Build->setMin(160, -4, 225);
-			Build->setMax(200, 6, 240);
-			gameObjects.push_back(Build);
-			Build = new Building();
-			Build->setMin(200, -4, 225);
-			Build->setMax(240, 6, 240);
-			gameObjects.push_back(Build);
-			
+
+
 			///
 			Build = new Building();
-			Build->setMin(225, -4, -240);
-			Build->setMax(240, 6, -200);
+			Build->setMin(225, -3, -240);
+			Build->setMax(240, 22, -160);
 			gameObjects.push_back(Build);
 			Build = new Building();
-			Build->setMin(225, -4, -200);
-			Build->setMax(240, 6, -160);
+			Build->setMin(225, -3, -160);
+			Build->setMax(240, 22, -80);
 			gameObjects.push_back(Build);
 			Build = new Building();
-			Build->setMin(225, -4, -160);
-			Build->setMax(240, 6, -120);
+			Build->setMin(225, -3, -80);
+			Build->setMax(240, 22, 0);
 			gameObjects.push_back(Build);
 			Build = new Building();
-			Build->setMin(225, -4, -120);
-			Build->setMax(240, 6, -80);
+			Build->setMin(225, -3, 0);
+			Build->setMax(240, 22, 80);
 			gameObjects.push_back(Build);
 			Build = new Building();
-			Build->setMin(225, -4, -80);
-			Build->setMax(240, 6, -40);
+			Build->setMin(225, -3, 80);
+			Build->setMax(240, 22, 160);
 			gameObjects.push_back(Build);
 			Build = new Building();
-			Build->setMin(225, -4, -40);
-			Build->setMax(240, 6, 0);
-			gameObjects.push_back(Build);
-			Build = new Building();
-			Build->setMin(225, -4, 0);
-			Build->setMax(240, 6, 40);
-			gameObjects.push_back(Build);
-			Build = new Building();
-			Build->setMin(225, -4, 40);
-			Build->setMax(240, 6, 80);
-			gameObjects.push_back(Build);
-			Build = new Building();
-			Build->setMin(225, -4, 80);
-			Build->setMax(240, 6, 120);
-			gameObjects.push_back(Build);
-			Build = new Building();
-			Build->setMin(225, -4, 120);
-			Build->setMax(240, 6, 160);
-			gameObjects.push_back(Build);
-			Build = new Building();
-			Build->setMin(225, -4, 160);
-			Build->setMax(240, 6, 200);
-			gameObjects.push_back(Build);
-			Build = new Building();
-			Build->setMin(225, -4, 200);
-			Build->setMax(240, 6, 240);
+			Build->setMin(225, -3, 160);
+			Build->setMax(240, 22, 240);
 			gameObjects.push_back(Build);
 
+
 			Build = new Building();
-			Build->setMin(-240, -4, -240);
-			Build->setMax(-225, 6, -200);
+			Build->setMin(-240, -3, -240);
+			Build->setMax(-225, 22, -160);
 			gameObjects.push_back(Build);
 			Build = new Building();
-			Build->setMin(-240, -4, -200);
-			Build->setMax(-225, 6, -160);
+			Build->setMin(-240, -3, -160);
+			Build->setMax(-225, 22, -80);
 			gameObjects.push_back(Build);
 			Build = new Building();
-			Build->setMin(-240, -4, -160);
-			Build->setMax(-225, 6, -120);
+			Build->setMin(-240, -3, -80);
+			Build->setMax(-225, 22, 0);
 			gameObjects.push_back(Build);
 			Build = new Building();
-			Build->setMin(-240, -4, -120);
-			Build->setMax(-225, 6, -80);
+			Build->setMin(-240, -3, 0);
+			Build->setMax(-225, 22, 80);
 			gameObjects.push_back(Build);
 			Build = new Building();
-			Build->setMin(-240, -4, -80);
-			Build->setMax(-225, 6, -40);
+			Build->setMin(-240, -3, 80);
+			Build->setMax(-225, 22, 160);
 			gameObjects.push_back(Build);
 			Build = new Building();
-			Build->setMin(-240, -4, -40);
-			Build->setMax(-225, 6, 0);
-			gameObjects.push_back(Build);
-			Build = new Building();
-			Build->setMin(-240, -4, 0);
-			Build->setMax(-225, 6, 40);
-			gameObjects.push_back(Build);
-			Build = new Building();
-			Build->setMin(-240, -4, 40);
-			Build->setMax(-225, 6, 80);
-			gameObjects.push_back(Build);
-			Build = new Building();
-			Build->setMin(-240, -4, 80);
-			Build->setMax(-225, 6, 120);
-			gameObjects.push_back(Build);
-			Build = new Building();
-			Build->setMin(-240, -4, 120);
-			Build->setMax(-225, 6, 160);
-			gameObjects.push_back(Build);
-			Build = new Building();
-			Build->setMin(-240, -4, 160);
-			Build->setMax(-225, 6, 200);
-			gameObjects.push_back(Build);
-			Build = new Building();
-			Build->setMin(-240, -4, 200);
-			Build->setMax(-225, 6, 240);
+			Build->setMin(-240, -3, 160);
+			Build->setMax(-225, 22, 240);
 			gameObjects.push_back(Build);
 
 
 			//BuildingsVVV
 
+
+			//Tile 1
 			Build = new Building();
-			Build->setMin(-225, -4, -180);
-			Build->setMax(-190, 9, -140);
+			Build->setMin(-225, -3, -190);
+			Build->setMax(-160, 22, -140);
 			gameObjects.push_back(Build);
 
 			Build = new Building();
-			Build->setMin(-190, -4, -180);
-			Build->setMax(-140, 9, -140);
+			Build->setMin(-160, -3, -190);
+			Build->setMax(-110, 22, -140);
 			gameObjects.push_back(Build);
 
 			Build = new Building();
-			Build->setMin(-160, -4, -140);
-			Build->setMax(-140, 11, -80);
+			Build->setMin(-160, -3, -140);
+			Build->setMax(-110, 22, -90);
+			gameObjects.push_back(Build);
+
+
+			//Tile 2
+			Build = new Building();
+			Build->setMin(-225, -3, -100);
+			Build->setMax(-185, 22, -50);
 			gameObjects.push_back(Build);
 
 			Build = new Building();
-			Build->setMin(-225, -4, -100);
-			Build->setMax(-185, 11, -50);
+			Build->setMin(-225, -3, -50);
+			Build->setMax(-185, 22, 0);
 			gameObjects.push_back(Build);
 
 			Build = new Building();
-			Build->setMin(-225, -4, -50);
-			Build->setMax(-185, 11, 0);
+			Build->setMin(-225, -3, 0);
+			Build->setMax(-185, 22, 50);
+			gameObjects.push_back(Build);
+
+
+			Build = new Building();
+			Build->setMin(-150, -3, 80);
+			Build->setMax(-100, 22, 100);
 			gameObjects.push_back(Build);
 
 			Build = new Building();
-			Build->setMin(-225, -4, 0);
-			Build->setMax(-185, 11, 50);
-			gameObjects.push_back(Build);
-
-			
-			Build = new Building();
-			Build->setMin(-125, -4, 80);
-			Build->setMax(-100, 11, 100);
+			Build->setMin(-150, -3, 100);
+			Build->setMax(-100, 22, 120);
 			gameObjects.push_back(Build);
 
 			Build = new Building();
-			Build->setMin(-125, -4, 100);
-			Build->setMax(-100, 11, 120);
+			Build->setMin(-150, -3, 60);
+			Build->setMax(-100, 22, 80);
 			gameObjects.push_back(Build);
 
 			Build = new Building();
-			Build->setMin(-125, -4, 60);
-			Build->setMax(-100, 11, 80);
+			Build->setMin(-150, -3, 40);
+			Build->setMax(-100, 22, 60);
 			gameObjects.push_back(Build);
 
 			Build = new Building();
-			Build->setMin(-125, -4, 40);
-			Build->setMax(-100, 11, 60);
+			Build->setMin(-150, -3, 20);
+			Build->setMax(-100, 22, 40);
 			gameObjects.push_back(Build);
 
 			Build = new Building();
-			Build->setMin(-125, -4, 20);
-			Build->setMax(-100, 11, 40);
+			Build->setMin(-150, -3, 0);
+			Build->setMax(-100, 22, 20);
 			gameObjects.push_back(Build);
 
 			Build = new Building();
-			Build->setMin(-125, -4, 0);
-			Build->setMax(-100, 11, 20);
+			Build->setMin(-150, -3, -20);
+			Build->setMax(-100, 22, 0);
 			gameObjects.push_back(Build);
 
-			Build = new Building();
-			Build->setMin(-125, -4, -20);
-			Build->setMax(-100, 11, 0);
-			gameObjects.push_back(Build);
 
-			Build = new Building();
-			Build->setMin(-150, -4, 60);
-			Build->setMax(-125, 11, 80);
-			gameObjects.push_back(Build);
 
-			Build = new Building();
-			Build->setMin(-150, -4, 40);
-			Build->setMax(-125, 11, 60);
-			gameObjects.push_back(Build);
 
-			Build = new Building();
-			Build->setMin(-150, -4, 20);
-			Build->setMax(-125, 11, 40);
-			gameObjects.push_back(Build);
-
-			Build = new Building();
-			Build->setMin(-150, -4, 0);
-			Build->setMax(-125, 11, 20);
-			gameObjects.push_back(Build);
-
-			Build = new Building();
-			Build->setMin(-150, -4, -20);
-			Build->setMax(-125, 11, 0);
-			gameObjects.push_back(Build);
-
-			Build = new Building();
-			Build->setMin(-150, -4, 80);
-			Build->setMax(-125, 11, 100);
-			gameObjects.push_back(Build);
-
-			Build = new Building();
-			Build->setMin(-150, -4, 100);
-			Build->setMax(-125, 11, 120);
-			gameObjects.push_back(Build);
-
+			//Tile 3
 			Build = new Building();
 			Build->setMin(-125, -4, 120);
 			Build->setMax(-100, 11, 140);
+			gameObjects.push_back(Build);
+
+			Build = new Building();
+			Build->setMin(-150, -4, 120);
+			Build->setMax(-125, 4, 140);
 			gameObjects.push_back(Build);
 
 			Build = new Building();
@@ -1137,6 +1021,50 @@ void GameLogic::updateState()
 			Build->setMax(170, 15, 170);
 			gameObjects.push_back(Build);
 
+			Build = new Building();
+			Build->setMin(150, -4, -50);
+			Build->setMax(215, 25, -15);
+			gameObjects.push_back(Build);
+
+			Build = new Building();
+			Build->setMin(150, -4, 15);
+			Build->setMax(215, 25, 50);
+			gameObjects.push_back(Build);
+
+			Build = new Building();
+			Build->setMin(150, -4, -15);
+			Build->setMax(190, 25, 15);
+			gameObjects.push_back(Build);
+
+			Build = new Building();
+			Build->setMin(140, -4, -190);
+			Build->setMax(195, 25, -140);
+			gameObjects.push_back(Build);
+
+			Build = new Building();
+			Build->setMin(100, -4, -190);
+			Build->setMax(140, 25, -160);
+			gameObjects.push_back(Build);
+
+			Build = new Building();
+			Build->setMin(90, -4, -130);
+			Build->setMax(110, 20, -90);
+			gameObjects.push_back(Build);
+
+			Build = new Building();
+			Build->setMin(-20, -4, -225);
+			Build->setMax(20, 20, -180);
+			gameObjects.push_back(Build);
+
+			Build = new Building();
+			Build->setMin(-80, -4, -180);
+			Build->setMax(-40, 20, -145);
+			gameObjects.push_back(Build);
+
+			Build = new Building();
+			Build->setMin(40, -4, -180);
+			Build->setMax(80, 20, -145);
+			gameObjects.push_back(Build);
 			// generating humans
 			// Human* h = new Human();
 			// gameObjects.push_back(h);

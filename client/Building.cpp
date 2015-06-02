@@ -6,18 +6,19 @@ void Building::drawObj(){
 	Vector3 max = *getMax();
 	//glDisable(GL_CULL_FACE);
 	//glColor3f(4.0f, 1.f, 1.f);
-	glActiveTexture(GL_TEXTURE0);
-//	glEnable(GL_TEXTURE_2D);
-    int texture_location = glGetUniformLocation(shade->id(), "color_texture");
+	int texture_location = glGetUniformLocation(shade->id(), "color_texture");
 	glUniform1i(texture_location, 0);
-	glBindTexture(GL_TEXTURE_2D, tex);
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D, texture);
+	tex.Bind(GL_TEXTURE0);
 
-	glActiveTexture(GL_TEXTURE1);
-	glEnable(GL_TEXTURE_2D);
+	//glActiveTexture(GL_TEXTURE1);
+
 	int normal_location = glGetUniformLocation(shade->id(), "normal_texture");
 	glUniform1i(normal_location, 1);
-	glBindTexture(GL_TEXTURE_2D, norm);
-	
+	//glActiveTexture(GL_TEXTURE1);
+	//glBindTexture(GL_TEXTURE_2D, normal_texture);
+	norm.Bind(GL_TEXTURE1);
 	glBegin(GL_QUADS);
 	//draw ceiling
 	glNormal3f(0, 1, 0);
@@ -83,13 +84,13 @@ void Building::drawObj(){
 	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(min.x, min.y, max.z);
 	glEnd();
-	shade->unbind();
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, 0);
-	glDisable(GL_TEXTURE_2D);
+
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, 0);
-	glDisable(GL_TEXTURE_2D);
+	shade->unbind();
+	
 	
 }

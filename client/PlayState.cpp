@@ -115,24 +115,22 @@ int PlayState::Initialize() {
 	//floor_picture = LoadRAWTexture("ppm/floor.ppm", 1024, 1024);
 	//floor_normalmap = LoadRAWTexture("ppm/floor_norm.ppm", 1024, 1024);
 
-	colortex.initTexture(GL_TEXTURE_2D, "ppm/bleh_C.png");
-	normaltex.initTexture(GL_TEXTURE_2D, "ppm/bleh_N.png");
+	colorbuild.initTexture(GL_TEXTURE_2D, "ppm/building.png");
+	normalbuild.initTexture(GL_TEXTURE_2D, "ppm/building_norm.png");
 
-	colortex.Load();
-	normaltex.Load();
+	colorbuild.Load();
+	normalbuild.Load();
 
-	colorslant.initTexture(GL_TEXTURE_2D, "ppm/163.png");
-	normalslant.initTexture(GL_TEXTURE_2D, "ppm/163_norm.png");
 
-	colorslant.Load();
-	normalslant.Load();
+
+	
 
 	glGenTextures(5, photos);
-	t.loadTexture("ppm/c_front.ppm", photos[0]);
-	t.loadTexture("ppm/c_back.ppm", photos[1]);
-	t.loadTexture("ppm/c_right.ppm", photos[2]);
-	t.loadTexture("ppm/c_left.ppm", photos[3]);
-	t.loadTexture("ppm/c_top.ppm", photos[4]);
+	t.loadTexture("ppm/i_ft.ppm", photos[0]);
+	t.loadTexture("ppm/i_bk.ppm", photos[1]);
+	t.loadTexture("ppm/i_lf.ppm", photos[2]);
+	t.loadTexture("ppm/i_rt.ppm", photos[3]);
+	t.loadTexture("ppm/i_top.ppm", photos[4]);
 
 	once = true;
 
@@ -182,8 +180,8 @@ void PlayState::UpdateClient(ClientGame* client) {
 				Vector3* v2 = new Vector3(x2, y2, z2);
 
 				b1 = new Building(v1, v2, rot, objID);
-				b1->tex = text_picture;
-				b1->norm = text_normalmap;
+				b1->tex = colorbuild;
+				b1->norm = normalbuild;
 				b1->shade = p_bumpShade;
 				gameObjects.insert(std::pair<int, GameObject*>(objID, b1));
 				break;
@@ -636,7 +634,7 @@ void PlayState::Draw(ClientGame* client) {
 
 	p_Light->Draw(client, currGameTime);
 	p_bumpShade->bind();
-	p_Map->Draw(p_bumpShade, colortex, normaltex, colorslant, normalslant, m_pTrivialNormalMap, photos);
+	p_Map->Draw(p_bumpShade, m_pTrivialNormalMap, photos);
 	p_bumpShade->unbind();
 
 	p_regShade->bind();

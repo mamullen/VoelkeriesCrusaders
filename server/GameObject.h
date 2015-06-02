@@ -50,6 +50,7 @@ public:
 	void clearChanges();
 	//void getStatusPacket();
 	float getSpeed() { return speed; }
+	void setSpeed(float s) { speed=s; }
 	static std::list<std::pair<int, std::string*>> changes;
 	bool isPlayer;
 	int objectType; // 0: building, 1: shrine, 2: player , 3:human, 4: vampire, 5: crusader

@@ -93,7 +93,11 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 				change_counter[0]++;
 				std::string* change = new std::string("pos:");
 				changes.push_back(std::pair<int, std::string*>(id, change));
-				this->jump();
+				if (!(collide(objects, forward/2)))
+				{
+
+					this->jump();
+				}
 			}
 
 		}
@@ -117,6 +121,8 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 					change_counter[4]++;
 					std::string* change = new std::string("weapon1");
 					changes.push_back(std::pair<int, std::string*>(id, change));
+					attack_mode->addDmg(2);
+					this->setSpeed((7 * this->getSpeed()) / 8);
 				}
 			}
 			if (weaponcollide(Vector3(-75, -1, 60)))
@@ -125,6 +131,8 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 					change_counter[4]++;
 					std::string* change = new std::string("weapon2");
 					changes.push_back(std::pair<int, std::string*>(id, change));
+					attack_mode->addDmg(2);
+					this->setSpeed((7 * this->getSpeed()) / 8);
 				}
 			}	
 			if (weaponcollide(Vector3(75, -1, -60)))
@@ -133,6 +141,8 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 					change_counter[4]++;
 					std::string* change = new std::string("weapon3");
 					changes.push_back(std::pair<int, std::string*>(id, change));
+					attack_mode->addDmg(2);
+					this->setSpeed((7*this->getSpeed())/8);
 				}
 			}	
 			if (weaponcollide(Vector3(75, -1, 60)))
@@ -141,6 +151,8 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 					change_counter[4]++;
 					std::string* change = new std::string("weapon4");
 					changes.push_back(std::pair<int, std::string*>(id, change));
+					attack_mode->addDmg(2);
+					this->setSpeed((2 * this->getSpeed()) / 3);
 				}
 			}
 		}
@@ -285,7 +297,7 @@ void Player::updateTime(int time,int delta){
 
 bool Player::collide(std::vector<GameObject*>* obj, Vector3 dir)
 {
-	
+	ground = -1;
 	Vector3 objmin, objmax, playerposition;
 	playerposition = (this->getPos())+dir*speed;
 	//printf("Number of objs %d\n\n", obj->size());
@@ -299,18 +311,21 @@ bool Player::collide(std::vector<GameObject*>* obj, Vector3 dir)
 
 		if ((objmin.x <= playerposition.x && playerposition.x <= objmax.x))// || min.x <= -position.x + mx.x && -position.x + mx.x <= tile.buildingList[i]->max.x)))
 		{
-
-
 			if ((objmin.z <= playerposition.z && playerposition.z <= objmax.z))// || (tile.buildingList[i]->min.z <= -position.z + mx.z && -position.z + mx.z <= tile.buildingList[i]->max.z))
 			{
-
-				if (obj->at(i)->objectType == 0)
+				ground = objmax.y;
+				if (playerposition.y > ground - 1)
 				{
-					
+					return false;
+				}
+				if ((objmin.y <= playerposition.y && playerposition.y <= objmax.y))// || (tile.buildingList[i]->min.z <= -position.z + mx.z && -position.z + mx.z <= tile.buildingList[i]->max.z))
+				{
+
 					return true;
+
+
 				}
 
-				
 			}
 		}
 

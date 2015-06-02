@@ -22,7 +22,7 @@ public:
 		g_Model->UpdateAnimation();
 		glPushMatrix();
 		glEnable(GL_LIGHTING);
-		glTranslatef(100.0f, 0.0f, 100.0f);
+		glTranslatef(0.0f, -1.0f, 0.0f);
 		glScalef(50.0f, 50.0f, 50.0f);
 		g_Model->Render();
 		glDisable(GL_LIGHTING);
