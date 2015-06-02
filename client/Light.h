@@ -10,11 +10,14 @@
 
 class Light {
 public:
-	Light() : r(1), g(1), b(1) {}
+	Light();
 	Light(float R, float G, float B) : r(R), g(G), b(B) {}
 	void Set();
 	void Init();
 	void Draw(ClientGame* client, int currGameTime);
+
+	float MIN_LIGHT;
+	float START_LIGHT;
 
 private:
 	float r, g, b;

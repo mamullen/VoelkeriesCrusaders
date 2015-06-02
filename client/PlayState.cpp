@@ -11,6 +11,9 @@
 
 static PlayState *state;
 
+bool testLight = false;
+
+
 ////////////////////////////////////////////////////////////////////////////////
 
 PlayState::PlayState(GLFWwindow* window) : GameState(window) {
@@ -250,7 +253,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 			memcpy(&zPos, serverEvent + 19, sizeof(float));
 
 			Projectile* p = new Projectile(objID);
-			p->setPos(xPos, yPos, zPos);
+			p->setPos(xPos, yPos+7.3, zPos);
 
 			printf("Projectile ID: %d\n", objID);
 
@@ -286,7 +289,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 
 			if (projectiles.find(objID) != projectiles.end()){
 				Projectile* o = projectiles.at(objID);
-				o->setPos(xPos, yPos, zPos);
+				o->setPos(xPos, yPos+7.3, zPos);
 			}
 		}
 
