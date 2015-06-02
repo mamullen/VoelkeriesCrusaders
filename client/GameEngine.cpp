@@ -65,9 +65,12 @@ int main(int argc, char **argv) {
 
 GameEngine::GameEngine(int argc, char **argv) {
 	m_running = true;
+	
+	float wx = atof((ConfigSettings::config->getValue("WinX").c_str()));
+	float wy = atof((ConfigSettings::config->getValue("WinY").c_str()));
 
 	// pass in glfwGetPrimaryMonitor() to first null for fullscreen
-	window = glfwCreateWindow(1920, 1080, WINDOWTITLE, NULL, NULL);
+	window = glfwCreateWindow(wx, wy, WINDOWTITLE, NULL, NULL);
 	//window = glfwCreateWindow(1920, 1080, WINDOWTITLE, glfwGetPrimaryMonitor(), NULL);
 
 	if (!window)

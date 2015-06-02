@@ -177,7 +177,7 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 			}
 			// range attack
 			else if (attack_mode->getType() == 1){
-				printf("range\n");
+				//printf("range\n");
 				attack_mode->attack(this);
 			}			
 		}
