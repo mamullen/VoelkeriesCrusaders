@@ -10,16 +10,25 @@
 #include <iostream>
 #include "ConfigSettings.h"
 
+//TODO: plz make gameobject
 class Shrine {
 private:
 	MeshLoader *s_Model;
 public:
-	Shrine() {
+	Shrine()  {
 		s_Model = new MeshLoader((char*)ConfigSettings::config->getValue("ShrineAnimationFilePath").c_str());
+		s_Model->DisableBones();
 	}
 
 	void Draw() {
+		s_Model->UpdateAnimation();
+		glPushMatrix();
+		glEnable(GL_LIGHTING);
+		glTranslatef(100.0f, 0.0f, 100.0f);
+		glScalef(50.0f, 50.0f, 50.0f);
 		s_Model->Render();
+		glDisable(GL_LIGHTING);
+		glPopMatrix();
 	}
 };
 
