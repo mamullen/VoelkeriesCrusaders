@@ -1,9 +1,9 @@
 #include "GameObject.h"
 #include <math.h>
 
-GameObject::GameObject(unsigned int id)
+GameObject::GameObject(unsigned int i)
 {
-	id = id;
+	id = i;
 }
 
 GameObject::GameObject(Vector3* mn, Vector3* mx, unsigned int i)
