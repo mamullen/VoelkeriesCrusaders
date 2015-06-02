@@ -9,6 +9,7 @@
 #include "GameObject.h"
 #include <iostream>
 #include "ConfigSettings.h"
+#include "Weapon.h"
 
 class PlayerType: public GameObject {
 public:
@@ -21,6 +22,10 @@ public:
 	void setVDir(int v) { printf("%d\n", v); vDir = v; }
 	int getHDir()		{ return hDir; }
 	int getVDir()		{ return vDir; }
+	void EquipWeapon(Weapon* weapon) {
+		equippedWeapon = weapon;
+		weapon->SetPosition(Vector3(getPos().x, getPos().y, getPos().z));
+	}
 
 private:
 	int team;
@@ -28,6 +33,7 @@ private:
 	//hDir: 1 = right, -1 = left, 0 = neither
 	int vDir=0, hDir=0;
 
+	Weapon* equippedWeapon;
 };
 
 #endif

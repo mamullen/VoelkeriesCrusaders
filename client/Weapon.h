@@ -13,26 +13,33 @@ protected:
 
 public:
 	Weapon(unsigned int id) : GameObject(id) {}
-	virtual Vector3 GetPosition() { return w_Position; }
+	Weapon(unsigned int id, Vector3 pos) : GameObject(id) {
+		SetPosition(pos);
+	}
+	std::string GetName() { return w_Name; }
+	Vector3 GetPosition() { return w_Position; }
+	void SetPosition(Vector3 pos) {
+		w_Position = pos;
+	}
 
 protected:
+	std::string w_Name;
 	Vector3 w_Position;
 	float w_Damage;
 	float w_Range;
 	float w_Ammo;
-	float w_MaxAmmo;
 };
 
 class SunMace : Weapon {
 public:
-	SunMace(unsigned int id) : Weapon(id) {
+	SunMace(unsigned int id, Vector3 pos) : Weapon(id, pos) {
 		g_Model = new MeshLoader((char*)ConfigSettings::config->getValue("SunMace").c_str());
 		g_Model->DisableBones();
 	}
 
 	void Draw() {
 		glPushMatrix();
-		glTranslatef(-75.f, -1.f, -60.f);
+		glTranslatef(w_Position.x, w_Position.y, w_Position.z);
 		glScalef(5.f, 5.f, 5.f);
 		g_Model->Render();
 		glPopMatrix();
