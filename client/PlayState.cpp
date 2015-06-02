@@ -19,6 +19,7 @@ PlayState::PlayState(GLFWwindow* window) : GameState(window) {
 	p_Light = new Light();
 	p_Map = new Map();
 	p_Shrine = new Shrine();
+	p_regShade = new Shader("shader/shader.vert", "shader/shader.frag");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -218,6 +219,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 				p->setRotation(rot);
 				p->setMaxHealth(100);
 				p->setHealth(hp);
+				p->loadShader(p_regShade);
 
 				if (objID == client->getClientId()){
 					Player = p;
@@ -545,11 +547,9 @@ void PlayState::Draw(ClientGame* client) {
 	glTranslatef(Player->getPos().x, 0, Player->getPos().z);
 	glRotatef(180, 0, 1, 0);
 
-	Shader regShade = Shader("shader/shader.vert", "shader/shader.frag");
-
 	p_Light->Draw(client, currGameTime);
 	p_Map->Draw(shader, colortex, normaltex, colorslant, normalslant, m_pTrivialNormalMap, photos);
-	regShade.bind();
+	p_regShade->bind();
 	p_Shrine->Draw();
 
 	//Player->update(true, Cam.GetRotation().y);
@@ -559,7 +559,7 @@ void PlayState::Draw(ClientGame* client) {
 		((PlayerType*)(it->second))->update(false, Cam.GetRotation().y);
 	}
 	Player->update(true, Cam.GetRotation().y);
-	regShade.unbind();
+	p_regShade->unbind();
 
 	if (parti)
 	{

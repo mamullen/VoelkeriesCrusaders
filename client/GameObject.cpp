@@ -48,6 +48,7 @@ void GameObject::update(bool isPlayer, float rot) {
 	}
 
 	if (showHP){
+		p_regShade->unbind();
 		glPushMatrix();
 		if (!isPlayer){
 			glRotatef(-rotation, 0, 1, 0);
@@ -72,6 +73,7 @@ void GameObject::update(bool isPlayer, float rot) {
 		
 		glEnd();
 		glPopMatrix();
+		p_regShade->bind();
 	}
 	
 	//check  model is not null
