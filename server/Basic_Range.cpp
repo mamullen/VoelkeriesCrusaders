@@ -6,7 +6,7 @@ Basic_Range::Basic_Range()
 {
 	type = 1;
 	cd = 0;
-	maxcd = 0.5;
+	maxcd = 2;
 	ad = 10;
 	range = 200;
 	c_ad = ad;
@@ -26,7 +26,10 @@ void Basic_Range::attack(GameObject* obj)
 	maxCD();
 
 	Projectile* p = new Projectile();
+	obj->forward.Normalize();
+	p->setID(obj->getID());
 	p->setPos(obj->getPos());
+	p->setInitPos(obj->getPos());
 	p->forward = obj->forward;
 	p->setRange(c_range);
 	p->setDmg(c_ad);

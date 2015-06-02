@@ -57,6 +57,18 @@ void GameLogic::update(int time)
 		return;
 	}
 
+	// update projectiles
+	float p_update_freq = 15; // update frequency
+	for (int i = 0; i < p_update_freq; i++){
+		for (std::vector<Projectile*>::iterator it = GameLogic::projectileList.begin(); it != GameLogic::projectileList.end(); it++){
+			if (!(*it)->updateTime(time/p_update_freq)){
+				GameLogic::projectileList.erase(it);
+				it--;
+			}
+		}
+	}
+	
+
 	// go through each player and update their attack cd and status based on time
 	for (int i = 0; i < gameObjects.size(); i++){
 		if (gameObjects[i]->isPlayer){
@@ -371,13 +383,7 @@ void GameLogic::update(int time)
 	}
 	ticksSinceSend++;
 
-	// update projectiles
-	for (std::vector<Projectile*>::iterator it = GameLogic::projectileList.begin(); it != GameLogic::projectileList.end(); it++){
-		if (!(*it)->updateTime(time)){
-			GameLogic::projectileList.erase(it);
-			it--;
-		}
-	}
+
 }
 
 std::list<Packet*> GameLogic::getServerPackets()
