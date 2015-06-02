@@ -188,6 +188,8 @@ void MeshLoader::ApplyMaterial(const struct aiMaterial *material)
 		glDisable(GL_CULL_FACE);
 	else
 		glEnable(GL_CULL_FACE);
+
+	glDisable(GL_CULL_FACE);
 }
 
 void MeshLoader::RenderMesh(const aiNode* node) {

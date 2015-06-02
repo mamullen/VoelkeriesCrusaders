@@ -1,9 +1,17 @@
 #include "Light.h"
 
+Light::Light(){
+	MIN_LIGHT = atof(ConfigSettings::config->getValue("MinLight").c_str());
+	START_LIGHT = atof(ConfigSettings::config->getValue("StartLight").c_str());
+	r = g = b = START_LIGHT;
+}
+
 void Light::Init() {
 	glEnable(GL_LIGHTING);
 
-	r = g = b = 0.6;
+
+
+	r = g = b = START_LIGHT;
 
 	Set();
 
@@ -31,18 +39,18 @@ void Light::Draw(ClientGame* client, int currGameTime) {
 
 	if (currGameTime < p1t)
 	{
-		float_t dif = ((float_t)currGameTime / p1t) * 0.7;
+		float_t dif = ((float_t)currGameTime / p1t) * (1 - MIN_LIGHT);
 		r = g = b = 1 - dif;
 	}
 	else if (currGameTime < p2t)
 	{
 		//float_t dif = ((float_t)(currGlight_meTime - p1t) / (p2t - p1t)) / 2;
-		r = g = b = 0.3;
+		r = g = b = MIN_LIGHT;
 	}
 	else if (currGameTime < p3t)
 	{
 		float_t dif = ((float_t)(currGameTime - p2t) / (p3t - p2t)) * 0.7;
-		r = g = b = 0.3 + dif;
+		r = g = b = MIN_LIGHT + dif;
 
 		//std::cout << "color: " << r << std::endl;
 	}
