@@ -10,13 +10,10 @@
 #include <iostream>
 #include "ConfigSettings.h"
 
-enum PlayerClass { Human, Vampire, Crusader };
-
 class PlayerType: public GameObject {
 public:
-	PlayerType(MeshLoader* model, unsigned int i, int t) : GameObject(model, i) { setShowHP(true); team = t; p_Class = Human; };
+	PlayerType(unsigned int id, int t) : GameObject(id) { setShowHP(true); team = t; };
 	//Player(unsigned int i, int t) : GameObject(NULL, i){ setShowHP(true); team = t; };
-	PlayerClass getClass() { return p_Class; }
 
 	int getTeam()		{ return team; }
 
@@ -24,9 +21,6 @@ public:
 	void setVDir(int v) { printf("%d\n", v); vDir = v; }
 	int getHDir()		{ return hDir; }
 	int getVDir()		{ return vDir; }
-
-protected:
-	PlayerClass p_Class;
 
 private:
 	int team;
