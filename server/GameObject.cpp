@@ -96,6 +96,8 @@ void GameObject::moveBackward()
 	position = position - forward*speed;
 }
 
+
+
 void GameObject::strafeLeft()
 {
 	position = position - right*speed;

@@ -37,14 +37,10 @@ void Basic_Range::attack(GameObject* obj)
 	packet->packet_type = ACTION_EVENT;
 	packet->id = 0;
 
-	float x, y, z, xd, yd, zd, speed; // position, forward direction and speed
+	float x, y, z; // position, forward direction and speed
 	x = p->getPos().x;
 	y = p->getPos().y;
 	z = p->getPos().z;
-	xd = p->forward.x;
-	yd = p->forward.y;
-	zd = p->forward.z;
-	speed = p->getSpeed();
 
 	char data[PACKET_DATA_LEN];
 	int pointer = 0;
@@ -55,14 +51,6 @@ void Basic_Range::attack(GameObject* obj)
 	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
 	pointer += sizeof(float);
 	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
-	pointer += sizeof(float);
-	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &xd, sizeof(float));
-	pointer += sizeof(float);
-	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &yd, sizeof(float));
-	pointer += sizeof(float);
-	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &zd, sizeof(float));
-	pointer += sizeof(float);
-	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &speed, sizeof(float));
 	pointer += sizeof(float);
 	data[pointer] = ',';
 	pointer++;

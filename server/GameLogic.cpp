@@ -62,6 +62,7 @@ void GameLogic::update(int time)
 	for (int i = 0; i < p_update_freq; i++){
 		for (std::vector<Projectile*>::iterator it = GameLogic::projectileList.begin(); it != GameLogic::projectileList.end(); it++){
 			if (!(*it)->updateTime(time/p_update_freq)){
+				(*it)->sendDeathPacket();
 				GameLogic::projectileList.erase(it);
 				it--;
 			}
@@ -123,7 +124,6 @@ void GameLogic::update(int time)
 			p->packet_type = ACTION_EVENT;
 			memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
 			p->id = index;
-
 			serverPackets.push_back(p);
 		}
 		else if (key->compare("rot:") == 0){

@@ -4,10 +4,11 @@
 
 Projectile::Projectile()
 {
-	speed =50;
+	speed =150;
 	range = 200;
 	modifier = 1;
 	hitRadius = 6;
+	isRecoil = true;
 }
 
 
@@ -19,12 +20,19 @@ bool Projectile::updateTime(int time)
 {
 	position = position + speed*time/1000*(forward.Normalize());
 	distance += speed*time/1000;
-	
+	sendPosPacket();
 	int hit = 0;
 	for (int i = 0; i < GameLogic::playerList.size(); i++){
 		if (collide(GameLogic::playerList[i])){
 			printf("target hit!\n");
-			GameLogic::playerList[i]->isAttacked(dmg * modifier);
+			Player* p = GameLogic::playerList[i];
+			p->isAttacked(dmg * modifier);
+			if (isRecoil){
+				forward.Normalize();
+				p->setPos(p->getPos() + forward*20);
+				std::string* change = new std::string("pos:");
+				changes.push_back(std::pair<int, std::string*>(p->getID(), change));
+			}
 			hit++;
 		}
 	}
@@ -70,4 +78,48 @@ bool Projectile::collide(GameObject* obj)
 		return true;
 	}
 	return false;
+}
+
+void Projectile::sendPosPacket(){
+	float x = position.x;
+	float y = position.y;
+	float z = position.z;
+	///////////////////////////////////////////////////////////////////////////
+	char data[PACKET_DATA_LEN];
+	int pointer = 0;
+	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "p_pos", 6);
+	pointer += 6;
+	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &x, sizeof(float));
+	pointer += sizeof(float);
+	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
+	pointer += sizeof(float);
+	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
+	pointer += sizeof(float);
+	data[pointer] = ',';
+	pointer++;
+	///////////////////////////////////////////////////////////////////////////
+	Packet* p = new Packet;
+	p->packet_type = ACTION_EVENT;
+	memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+	p->id = this->id;
+
+	GameLogic::serverPackets.push_back(p);
+}
+
+void Projectile::sendDeathPacket()
+{
+	///////////////////////////////////////////////////////////////////////////
+	char data[PACKET_DATA_LEN];
+	int pointer = 0;
+	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "p_die", 6);
+	pointer += 6;
+	data[pointer] = ',';
+	pointer++;
+	///////////////////////////////////////////////////////////////////////////
+	Packet* p = new Packet;
+	p->packet_type = ACTION_EVENT;
+	memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+	p->id = this->id;
+
+	GameLogic::serverPackets.push_back(p);
 }
