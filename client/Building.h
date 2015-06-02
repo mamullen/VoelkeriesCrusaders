@@ -11,5 +11,5 @@ public:
 	void drawObj();
 	GLuint norm;
 	GLuint tex;
-	Shader shade;
+	Shader* shade;
 };

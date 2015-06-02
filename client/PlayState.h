@@ -95,7 +95,6 @@ private:
 	Building* b1;
 	Texture t;
 	GLuint photos[5];
-	Shader shader;
 	//Shader floorshader;
 	Texture colortex;
 	Texture normaltex;
@@ -117,6 +116,7 @@ private:
 	bool isNight;
 
 	Shader* p_regShade;
+	Shader* p_bumpShade;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

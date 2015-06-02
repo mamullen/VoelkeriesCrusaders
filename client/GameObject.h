@@ -57,7 +57,9 @@ public:
 	void setForward(Matrix34 rotate)	{ rotate.Transform(forward, forward); rotate.Transform(right, right); }
 	void resetForward(Matrix34 rotate)	{ rotate.Transform(Vector4(0, 0, 1, 1), forward); rotate.Transform(Vector4(-1, 0, 0, 1), right); }
 
-	void loadShader(Shader* s) { p_regShade = s; }
+	void loadShader(Shader* reg) { 
+		p_regShade = reg;
+	}
 
 private:
 	unsigned int id;

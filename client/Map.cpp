@@ -1,13 +1,15 @@
 #include "Map.h"
 
-void Map::Draw(Shader& shader, Texture& colortex, Texture& normaltex, Texture& colorslant, Texture& normalslant, Texture& m_pTrivialNormalMap, GLuint* photos) {
-	glPushMatrix();
+void Map::Draw(Shader* p_bumpShade, Texture& colortex, Texture& normaltex, Texture& colorslant, Texture& normalslant, Texture& m_pTrivialNormalMap, GLuint* photos) {
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	shader.bind();
+	//p_bumpShade->bind();
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
 
 	glEnable(GL_TEXTURE_2D);
-	int texture_location = glGetUniformLocation(shader.id(), "color_texture");
+	int texture_location = glGetUniformLocation(p_bumpShade->id(), "color_texture");
 	glUniform1i(texture_location, 0);
 	//glActiveTexture(GL_TEXTURE0);
 	//glBindTexture(GL_TEXTURE_2D, texture);
@@ -15,7 +17,7 @@ void Map::Draw(Shader& shader, Texture& colortex, Texture& normaltex, Texture& c
 
 	//glActiveTexture(GL_TEXTURE1);
 	glEnable(GL_TEXTURE_2D);
-	int normal_location = glGetUniformLocation(shader.id(), "normal_texture");
+	int normal_location = glGetUniformLocation(p_bumpShade->id(), "normal_texture");
 	glUniform1i(normal_location, 1);
 	//glActiveTexture(GL_TEXTURE1);
 	//glBindTexture(GL_TEXTURE_2D, normal_texture);
@@ -108,23 +110,21 @@ void Map::Draw(Shader& shader, Texture& colortex, Texture& normaltex, Texture& c
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, 0);
-	shader.unbind();
 	glDisable(GL_TEXTURE_2D);
 
-	shader.unbind();
+	//p_bumpShade->unbind();
 
-	shader.bind();
+	//p_bumpShade->bind();
 
 	glEnable(GL_TEXTURE_2D);
-	texture_location = glGetUniformLocation(shader.id(), "color_texture");
+	texture_location = glGetUniformLocation(p_bumpShade->id(), "color_texture");
 	glUniform1i(texture_location, 0);
 	//glActiveTexture(GL_TEXTURE0);
 	//glBindTexture(GL_TEXTURE_2D, texture);
 	colorslant.Bind(GL_TEXTURE0);
 
-	//glActiveTexture(GL_TEXTURE1);
 	glEnable(GL_TEXTURE_2D);
-	normal_location = glGetUniformLocation(shader.id(), "normal_texture");
+	normal_location = glGetUniformLocation(p_bumpShade->id(), "normal_texture");
 	glUniform1i(normal_location, 1);
 	//glActiveTexture(GL_TEXTURE1);
 	//glBindTexture(GL_TEXTURE_2D, normal_texture);
@@ -161,7 +161,7 @@ void Map::Draw(Shader& shader, Texture& colortex, Texture& normaltex, Texture& c
 	glTexCoord2f(0.0f, 0.0f);
 	glVertex3f(100, -1, -90);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(75, -8, -60);//
+	glVertex3f(75, -8, -60);
 	glTexCoord2f(1.0f, 1.0f);
 	glVertex3f(75, -8, 60);
 	glTexCoord2f(1.0f, 0.0f);
@@ -176,20 +176,20 @@ void Map::Draw(Shader& shader, Texture& colortex, Texture& normaltex, Texture& c
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
-	shader.unbind();
+	//p_bumpShade->unbind();
 
-	shader.bind();
+	//p_bumpShade->bind();
 
 	//glActiveTexture(GL_TEXTURE1);
 	glEnable(GL_TEXTURE_2D);
-	normal_location = glGetUniformLocation(shader.id(), "normal_texture");
+	normal_location = glGetUniformLocation(p_bumpShade->id(), "normal_texture");
 	glUniform1i(normal_location, 1);
 	//glActiveTexture(GL_TEXTURE1);
 	//glBindTexture(GL_TEXTURE_2D, normal_texture);
 	m_pTrivialNormalMap.Bind(GL_TEXTURE1);
 
 	glEnable(GL_TEXTURE_2D);
-	texture_location = glGetUniformLocation(shader.id(), "color_texture");
+	texture_location = glGetUniformLocation(p_bumpShade->id(), "color_texture");
 	glUniform1i(texture_location, 0);
 	//glActiveTexture(GL_TEXTURE0);
 	//glBindTexture(GL_TEXTURE_2D, texture);
@@ -255,7 +255,7 @@ void Map::Draw(Shader& shader, Texture& colortex, Texture& normaltex, Texture& c
 	glTexCoord2f(1.0f, 0.0f);
 	glVertex3f(-260, 200, -260);
 	glEnd();
-	shader.unbind();
+	//shader.unbind();
 
 	//Top
 	//glDisable(GL_CULL_FACE);
@@ -273,5 +273,14 @@ void Map::Draw(Shader& shader, Texture& colortex, Texture& normaltex, Texture& c
 	glVertex3f(-260, 200, 260);
 	//glDisable(GL_TEXTURE_2D);
 	glEnd();
-	glPopMatrix();
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_TEXTURE_2D);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_TEXTURE_2D);
+
+	//p_bumpShade->unbind();
 }

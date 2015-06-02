@@ -20,6 +20,7 @@ PlayState::PlayState(GLFWwindow* window) : GameState(window) {
 	p_Map = new Map();
 	p_Shrine = new Shrine();
 	p_regShade = new Shader("shader/shader.vert", "shader/shader.frag");
+	p_bumpShade = new Shader("shader/bump.vert", "shader/bump.frag");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -47,6 +48,8 @@ int PlayState::InitGL() {
 ////////////////////////////////////////////////////////////////////////////////
 
 int PlayState::Initialize() {
+	//p_bumpShade->init("shader/bump.vert", "shader/bump.frag");
+
 	deathbyparticle = false;
 	parti = false;
 	// Configs initialization
@@ -105,12 +108,11 @@ int PlayState::Initialize() {
 	rotationChanged = false;
 	attacking = false;
 	Player = NULL;
-	shader.init("shader/bump.vert", "shader/bump.frag");
 
 	text_picture = LoadRAWTexture("ppm/building.ppm", 1024, 1024);
 	text_normalmap = LoadRAWTexture("ppm/building_norm.ppm", 1024, 1024);
-	floor_picture = LoadRAWTexture("ppm/floor.ppm", 1024, 1024);
-	floor_normalmap = LoadRAWTexture("ppm/floor_norm.ppm", 1024, 1024);
+	//floor_picture = LoadRAWTexture("ppm/floor.ppm", 1024, 1024);
+	//floor_normalmap = LoadRAWTexture("ppm/floor_norm.ppm", 1024, 1024);
 
 	colortex.initTexture(GL_TEXTURE_2D, "ppm/bleh_C.png");
 	normaltex.initTexture(GL_TEXTURE_2D, "ppm/bleh_N.png");
@@ -132,6 +134,7 @@ int PlayState::Initialize() {
 	t.loadTexture("ppm/c_top.ppm", photos[4]);
 
 	once = true;
+
 	return 0;
 }
 
@@ -178,7 +181,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 				b1 = new Building(v1, v2, rot, objID);
 				b1->tex = text_picture;
 				b1->norm = text_normalmap;
-				b1->shade = shader;
+				b1->shade = p_bumpShade;
 				gameObjects.insert(std::pair<int, GameObject*>(objID, b1));
 				break;
 			}
@@ -548,7 +551,10 @@ void PlayState::Draw(ClientGame* client) {
 	glRotatef(180, 0, 1, 0);
 
 	p_Light->Draw(client, currGameTime);
-	p_Map->Draw(shader, colortex, normaltex, colorslant, normalslant, m_pTrivialNormalMap, photos);
+	p_bumpShade->bind();
+	p_Map->Draw(p_bumpShade, colortex, normaltex, colorslant, normalslant, m_pTrivialNormalMap, photos);
+	p_bumpShade->unbind();
+
 	p_regShade->bind();
 	p_Shrine->Draw();
 
