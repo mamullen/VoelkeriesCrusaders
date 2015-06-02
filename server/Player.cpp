@@ -26,7 +26,7 @@ Player::Player() :GameObject()
 	right = Vector3(-1, 0, 0);
 	jumpup = Vector3(0, 1, 0);
 
-	attr_num = 3;
+	attr_num = 5;
 	isChanged = new bool[attr_num];
 	change_counter = new int[attr_num];
 	for (int i = 0; i < attr_num; i++){
@@ -109,6 +109,40 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 				}
 			}
 
+		}
+		else if (cEvent.compare("b") == 0){
+			if (weaponcollide(Vector3(-75, -1, -60)))
+			{
+				if (!isChanged[4]){
+					change_counter[4]++;
+					std::string* change = new std::string("weapon1");
+					changes.push_back(std::pair<int, std::string*>(id, change));
+				}
+			}
+			if (weaponcollide(Vector3(-75, -1, 60)))
+			{
+				if (!isChanged[4]){
+					change_counter[4]++;
+					std::string* change = new std::string("weapon2");
+					changes.push_back(std::pair<int, std::string*>(id, change));
+				}
+			}	
+			if (weaponcollide(Vector3(75, -1, -60)))
+			{
+				if (!isChanged[4]){
+					change_counter[4]++;
+					std::string* change = new std::string("weapon3");
+					changes.push_back(std::pair<int, std::string*>(id, change));
+				}
+			}	
+			if (weaponcollide(Vector3(75, -1, 60)))
+			{
+				if (!isChanged[4]){
+					change_counter[4]++;
+					std::string* change = new std::string("weapon4");
+					changes.push_back(std::pair<int, std::string*>(id, change));
+				}
+			}
 		}
 		else if (cEvent.compare("move_backward") == 0){
 			if (!isChanged[0]){
@@ -313,6 +347,16 @@ bool Player::shrinecollide(Vector3 min, Vector3 max)
 
 			return true;
 		}
+	}
+	return false;
+}
+
+bool Player::weaponcollide(Vector3 weapon) 
+{
+	Vector3 distance = position - weapon;
+	float d = distance.Mag();
+	if (d < 15) {
+		return true;
 	}
 	return false;
 }

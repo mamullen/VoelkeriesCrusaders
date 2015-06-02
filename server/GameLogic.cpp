@@ -178,6 +178,106 @@ void GameLogic::update(int time)
 
 			serverPackets.push_back(p);
 		}
+		else if (key->compare("weapon1") == 0){
+			float x = gameObjects.at(index)->getPos().x;
+			float y = gameObjects.at(index)->getPos().y;
+			float z = gameObjects.at(index)->getPos().z;
+			///////////////////////////////////////////////////////////////////////////
+			char data[PACKET_DATA_LEN];
+			int pointer = 0;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "weapon1", 8);
+			pointer += 8;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &x, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
+			pointer += sizeof(float);
+			data[pointer] = ',';
+			pointer++;
+			///////////////////////////////////////////////////////////////////////////
+			Packet* p = new Packet;
+			p->packet_type = ACTION_EVENT;
+			memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+			p->id = index;
+
+			serverPackets.push_back(p);
+		}
+		else if (key->compare("weapon2") == 0){
+			float x = gameObjects.at(index)->getPos().x;
+			float y = gameObjects.at(index)->getPos().y;
+			float z = gameObjects.at(index)->getPos().z;
+			///////////////////////////////////////////////////////////////////////////
+			char data[PACKET_DATA_LEN];
+			int pointer = 0;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "weapon2", 8);
+			pointer += 8;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &x, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
+			pointer += sizeof(float);
+			data[pointer] = ',';
+			pointer++;
+			///////////////////////////////////////////////////////////////////////////
+			Packet* p = new Packet;
+			p->packet_type = ACTION_EVENT;
+			memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+			p->id = index;
+
+			serverPackets.push_back(p);
+		}
+		else if (key->compare("weapon3") == 0){
+			float x = gameObjects.at(index)->getPos().x;
+			float y = gameObjects.at(index)->getPos().y;
+			float z = gameObjects.at(index)->getPos().z;
+			///////////////////////////////////////////////////////////////////////////
+			char data[PACKET_DATA_LEN];
+			int pointer = 0;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "weapon3", 8);
+			pointer += 8;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &x, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
+			pointer += sizeof(float);
+			data[pointer] = ',';
+			pointer++;
+			///////////////////////////////////////////////////////////////////////////
+			Packet* p = new Packet;
+			p->packet_type = ACTION_EVENT;
+			memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+			p->id = index;
+
+			serverPackets.push_back(p);
+		}
+		else if (key->compare("weapon4") == 0){
+			float x = gameObjects.at(index)->getPos().x;
+			float y = gameObjects.at(index)->getPos().y;
+			float z = gameObjects.at(index)->getPos().z;
+			///////////////////////////////////////////////////////////////////////////
+			char data[PACKET_DATA_LEN];
+			int pointer = 0;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "weapon4", 8);
+			pointer += 8;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &x, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
+			pointer += sizeof(float);
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
+			pointer += sizeof(float);
+			data[pointer] = ',';
+			pointer++;
+			///////////////////////////////////////////////////////////////////////////
+			Packet* p = new Packet;
+			p->packet_type = ACTION_EVENT;
+			memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+			p->id = index;
+
+			serverPackets.push_back(p);
+		}
 		else if (key->compare("particles") == 0){
 			float r = gameObjects.at(index)->getHP();
 			///////////////////////////////////////////////////////////////////////////

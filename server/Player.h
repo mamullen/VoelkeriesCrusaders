@@ -28,6 +28,7 @@ public:
 	void setAttack(Action*);
 	bool collide(std::vector<GameObject*>* obj, Vector3 dir);
 	bool shrinecollide(Vector3, Vector3);
+	bool weaponcollide(Vector3);
 	string name; 
 	int team; // 0: no team, 1: crusader, 2: vampire
 

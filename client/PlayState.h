@@ -6,6 +6,7 @@
 #define PLAYSTATE_H_
 
 #include "core.h"
+#include "Weapon.h"
 #include "Shrine.h"
 #include "Map.h"
 #include "Light.h"
@@ -106,9 +107,11 @@ private:
 	GLuint skyfront_picture, skyfront_normalmap, skyback_picture, skyback_normalmap, skyleft_picture, skyleft_normalmap, skyright_picture, skyright_normalmap, skytop_picture, skytop_normalmap;
 	bool once;
 	bool parti;
+	bool weap1;
 	Vector3 particlepos;
 	bool deathbyparticle;
 
+	SunMace *p_SunMace;
 	Texture m_pTrivialNormalMap;
 	ParticleEffect* p_DeathByBlood;
 	Light* p_Light;

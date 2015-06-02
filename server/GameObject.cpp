@@ -12,6 +12,7 @@ GameObject::GameObject()
 	objectType = -1;
 	ground = 1;
 	landed = true;
+	speed = 0.2;
 	/*
 	position = Vector3(0, 0, 0);
 	pPosition = Vector3(position.x, position.y, position.z);
