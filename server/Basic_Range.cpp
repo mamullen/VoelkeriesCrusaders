@@ -6,8 +6,8 @@ Basic_Range::Basic_Range()
 {
 	type = 1;
 	cd = 0;
-	maxcd = 2;
-	ad = 10;
+	maxcd = atof(ConfigSettings::config->getValue("ProjectileCD").c_str());;
+	ad = atof(ConfigSettings::config->getValue("ProjectileDMG").c_str());;
 	range = 200;
 	c_ad = ad;
 	c_range = range;
@@ -27,7 +27,7 @@ void Basic_Range::attack(GameObject* obj)
 
 	Projectile* p = new Projectile();
 	obj->forward.Normalize();
-	p->setID(obj->getID());
+	//p->setID(obj->getID());
 	p->setPos(obj->getPos());
 	p->setInitPos(obj->getPos());
 	p->forward = obj->forward;
@@ -35,7 +35,7 @@ void Basic_Range::attack(GameObject* obj)
 	p->setDmg(c_ad);
 	Packet* packet = new Packet;
 	packet->packet_type = ACTION_EVENT;
-	packet->id = 0;
+	packet->id = p->getID();
 
 	float x, y, z; // position, forward direction and speed
 	x = p->getPos().x;
@@ -54,6 +54,7 @@ void Basic_Range::attack(GameObject* obj)
 	pointer += sizeof(float);
 	data[pointer] = ',';
 	pointer++;
+	memcpy_s(packet->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
 	GameLogic::serverPackets.push_back(packet);
 	GameLogic::projectileList.push_back(p);
 }

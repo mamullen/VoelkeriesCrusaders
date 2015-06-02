@@ -4,11 +4,12 @@
 
 Projectile::Projectile()
 {
-	speed =150;
-	range = 200;
+	speed = atof(ConfigSettings::config->getValue("ProjectileSpeed").c_str());
+	range = atof(ConfigSettings::config->getValue("ProjectileRange").c_str());
 	modifier = 1;
 	hitRadius = 6;
 	isRecoil = true;
+	recoilAmount = atof(ConfigSettings::config->getValue("ProjectileRecoil").c_str());
 }
 
 
@@ -16,10 +17,10 @@ Projectile::~Projectile()
 {
 }
 
-bool Projectile::updateTime(int time)
+bool Projectile::updateTime(int time, std::vector<GameObject*>* objects)
 {
-	position = position + speed*time/1000*(forward.Normalize());
-	distance += speed*time/1000;
+	position = position + speed*time / 1000 * (forward.Normalize());
+	distance += speed*time / 1000;
 	sendPosPacket();
 	int hit = 0;
 	for (int i = 0; i < GameLogic::playerList.size(); i++){
@@ -29,7 +30,8 @@ bool Projectile::updateTime(int time)
 			p->isAttacked(dmg * modifier);
 			if (isRecoil){
 				forward.Normalize();
-				p->setPos(p->getPos() + forward*20);
+				if (!(p->collide(objects, forward*recoilAmount)))
+					p->setPos(p->getPos() + forward*recoilAmount);
 				std::string* change = new std::string("pos:");
 				changes.push_back(std::pair<int, std::string*>(p->getID(), change));
 			}
@@ -57,12 +59,12 @@ bool Projectile::collide(GameObject* obj)
 		printf("PID = %d\n", ((Player*)obj)->getPID());
 		printf("distance = %f\n", dist);
 		printf("init pos = %f,%f,%f\n", initPos.x, initPos.y, initPos.z);
-		printf("Position = %f,%f,%f\n",position.x,position.y,position.z);
+		printf("Position = %f,%f,%f\n", position.x, position.y, position.z);
 		printf("Obj Position = %f,%f,%f\n", obj->getPos().x, obj->getPos().y, obj->getPos().z);
 		printf("distance traveld = %f\n", distance);
 	}
 	if (dist <= hitRadius){
-		
+
 		if (dot < 0){
 			return false;
 		}
