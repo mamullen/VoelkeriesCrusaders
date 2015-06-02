@@ -5,6 +5,7 @@
 #include "matrix34.h"
 #include "Vector4.h"
 #include "objparser.h"
+#include "Shader.h"
 #include <iostream>
 
 //should these fields go somewhere else?
@@ -56,6 +57,8 @@ public:
 	void setForward(Matrix34 rotate)	{ rotate.Transform(forward, forward); rotate.Transform(right, right); }
 	void resetForward(Matrix34 rotate)	{ rotate.Transform(Vector4(0, 0, 1, 1), forward); rotate.Transform(Vector4(-1, 0, 0, 1), right); }
 
+	void loadShader(Shader* s) { p_regShade = s; }
+
 private:
 	unsigned int id;
 	float rotation = 0;
@@ -70,6 +73,8 @@ private:
 	Vector4 up = Vector4(0, 1, 0, 1);
 
 	//the model of the object
+
+	Shader* p_regShade;
 
 protected:
 	MeshLoader* g_Model;

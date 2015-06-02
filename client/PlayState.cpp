@@ -20,6 +20,7 @@ PlayState::PlayState(GLFWwindow* window) : GameState(window) {
 	p_Map = new Map();
 	p_Shrine = new Shrine(0); // 0 id is temp for gameobj
 	p_SunMace = new SunMace(0); // 0 id is temp for gameobj
+	p_regShade = new Shader("shader/shader.vert", "shader/shader.frag");
 	weap1 = true;
 }
 
@@ -82,7 +83,7 @@ int PlayState::Initialize() {
 
 	// Particles
 	p_DeathByBlood = new ParticleEffect(100);
-	p_DeathByBlood->LoadTexture("./particles/textures/glitter.png");
+	p_DeathByBlood->LoadTexture("./particles/textures/circle.png");
 
 	ParticleEffect::ColorInterpolator explosion;
 	explosion.AddValue(0.0f, Vector4(1, 0, 0, 1)); //red
@@ -222,6 +223,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 				p->setRotation(rot);
 				p->setMaxHealth(100);
 				p->setHealth(hp);
+				p->loadShader(p_regShade);
 
 				if (objID == client->getClientId()){
 					Player = p;
@@ -590,11 +592,9 @@ void PlayState::Draw(ClientGame* client) {
 	glTranslatef(Player->getPos().x, 0, Player->getPos().z);
 	glRotatef(180, 0, 1, 0);
 
-	Shader regShade = Shader("shader/shader.vert", "shader/shader.frag");
-
 	p_Light->Draw(client, currGameTime);
 	p_Map->Draw(shader, colortex, normaltex, colorslant, normalslant, m_pTrivialNormalMap, photos);
-	regShade.bind();
+	p_regShade->bind();
 	p_Shrine->Draw();
 
 	//Player->update(true, Cam.GetRotation().y);
@@ -607,7 +607,8 @@ void PlayState::Draw(ClientGame* client) {
 	if (weap1) {
 		p_SunMace->Draw();
 	}
-	regShade.unbind();
+
+	p_regShade->unbind();
 
 	if (parti)
 	{
