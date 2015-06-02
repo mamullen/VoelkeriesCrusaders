@@ -10,10 +10,17 @@
 #include <iostream>
 #include "ConfigSettings.h"
 
-class Shrine : public GameObject {
+class Shrine {
+private:
+	MeshLoader *s_Model;
 public:
-	Shrine(unsigned int i) : GameObject(new MeshLoader((char*)ConfigSettings::config->getValue("ShrineAnimationFilePath").c_str()), i){ setShowHP(true); };
-	//Player(unsigned int i) : GameObject(NULL, i){ setShowHP(true); };
+	Shrine() {
+		s_Model = new MeshLoader((char*)ConfigSettings::config->getValue("ShrineAnimationFilePath").c_str());
+	}
+
+	void Draw() {
+		s_Model->Render();
+	}
 };
 
 #endif

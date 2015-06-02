@@ -100,6 +100,7 @@
     <ClCompile Include="Floor.cpp" />
     <ClCompile Include="GameEngine.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="matrix34.cpp" />
     <ClCompile Include="Matrix4x4.cpp" />
     <ClCompile Include="MeshLoader.cpp" />
@@ -111,6 +112,7 @@
     <ClCompile Include="SceneAnimator.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Shaders.cpp" />
+    <ClCompile Include="Map.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="vector3.cpp" />
@@ -132,6 +134,8 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Interpolator.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="Map.h" />
     <ClInclude Include="matrix34.h" />
     <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="MeshLoader.h" />

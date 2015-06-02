@@ -11,25 +11,14 @@
 
 static PlayState *state;
 
-ParticleEffect g_ParticleEffect1(5000);
-ParticleEffect g_ParticleEffect2(5000);
-ParticleEffect g_ParticleEffect3(5000);
-ParticleEffect g_ParticleEffect4(5000);
-
 ////////////////////////////////////////////////////////////////////////////////
 
-void InitLights() {
-	GLfloat light_ambient[] = { 0.0, 0.0, 0.0, 1.0 };
-	GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat light_position[] = { -1.0, -1.0, -1.0, 0.0 };
-
-	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
-	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-
-	glEnable(GL_LIGHT0);
+PlayState::PlayState(GLFWwindow* window) : GameState(window) {
+	Initialize();
+	isNight = false;
+	p_Light = new Light();
+	p_Map = new Map();
+	p_Shrine = new Shrine();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -50,9 +39,7 @@ int PlayState::InitGL() {
 	glClearColor(0.5f, 0.0f, 0.0f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-	
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);	
 
 }
 
@@ -86,56 +73,16 @@ int PlayState::Initialize() {
 	LeftDown = MiddleDown = RightDown = BothDown = 0;
 	MouseX = MouseY = 0;
 
+	//normal thing
+	m_pTrivialNormalMap.initTexture(GL_TEXTURE_2D, "ppm/normal_up.jpg");
+
+	m_pTrivialNormalMap.Load();
+
 	// Particles
-	if (g_ParticleEffect1.LoadTexture("./particles/textures/butterfly.png"))
-	{
-		std::cout << "Successfully loaded particle texture." << std::endl;
-	}
-	else
-	{
-		std::cerr << "Failed to load particle texture!" << std::endl;
-	}
-
-	if (g_ParticleEffect2.LoadTexture("./particles/textures/glitter.png"))
-	{
-		std::cout << "Successfully loaded particle texture." << std::endl;
-	}
-
-	else
-	{
-		std::cerr << "Failed to load particle texture!" << std::endl;
-	}
-
-	if (g_ParticleEffect3.LoadTexture("./particles/textures/circle.png"))
-	{
-		std::cout << "Successfully loaded particle texture." << std::endl;
-	}
-	else
-	{
-		std::cerr << "Failed to load particle texture!" << std::endl;
-	}
-
-	if (g_ParticleEffect4.LoadTexture("./particles/textures/arrow.png"))
-	{
-		std::cout << "Successfully loaded particle texture." << std::endl;
-	}
-	else
-	{
-		std::cerr << "Failed to load particle texture!" << std::endl;
-	}
-
-	ParticleEffect::ColorInterpolator colors;
+	p_DeathByBlood = new ParticleEffect(100);
+	p_DeathByBlood->LoadTexture("./particles/textures/glitter.png");
 
 	ParticleEffect::ColorInterpolator explosion;
-
-	colors.AddValue(0.0f, Vector4(1, 0, 0, 1));     // red
-	colors.AddValue(0.15f, Vector4(1, 0, 1, 1));     // magenta
-	colors.AddValue(0.33f, Vector4(0, 0, 1, 1));     // blue
-	colors.AddValue(0.5f, Vector4(0, 1, 1, 1));     // cyan
-	colors.AddValue(0.67f, Vector4(0, 1, 0, 0.75));  // green
-	colors.AddValue(0.84f, Vector4(1, 1, 0, 0.5));   // yellow
-	colors.AddValue(1.0f, Vector4(1, 0, 0, 0));     // red
-
 	explosion.AddValue(0.0f, Vector4(1, 0, 0, 1)); //red
 	explosion.AddValue(0.2f, Vector4(.255, .102, 0, 1)); //orange
 	explosion.AddValue(0.33f, Vector4(.255, .255, 0, .75)); //o
@@ -147,29 +94,11 @@ int PlayState::Initialize() {
 	explosion.AddValue(1.1f, Vector4(1, 0, 0, .5)); //red
 	explosion.AddValue(1.2f, Vector4(.255, .102, 0, .5)); //orange
 
-
-	g_ParticleEffect1.SetColorInterplator(explosion);
-	g_ParticleEffect2.SetColorInterplator(explosion);
-	g_ParticleEffect3.SetColorInterplator(explosion);
-	g_ParticleEffect4.SetColorInterplator(explosion);
-
-	g_ParticleEffect1.SetParticleEmitter(&g_ParticleEmitter);
-	g_ParticleEffect2.SetParticleEmitter(&g_ParticleEmitter);
-	g_ParticleEffect3.SetParticleEmitter(&g_ParticleEmitter);
-	g_ParticleEffect4.SetParticleEmitter(&g_ParticleEmitter);
-	g_ParticleEffect1.EmitParticles();
-	g_ParticleEffect2.EmitParticles();
-	g_ParticleEffect3.EmitParticles();
-	g_ParticleEffect4.EmitParticles();
-	g_ParticleEffect1.SetCamera(&Cam);
-
-	g_ParticleEffect2.SetCamera(&Cam);
-	g_ParticleEffect3.SetCamera(&Cam);
-	g_ParticleEffect4.SetCamera(&Cam);
+	p_DeathByBlood->SetColorInterplator(explosion);
+	p_DeathByBlood->SetParticleEmitter(&g_ParticleEmitter);
+	p_DeathByBlood->EmitParticles();
+	p_DeathByBlood->SetCamera(&Cam);
 	// End particles
-
-	// Lights
-	InitLights();
 
 	// Player attacks
 	rotationChanged = false;
@@ -181,8 +110,6 @@ int PlayState::Initialize() {
 	text_normalmap = LoadRAWTexture("ppm/building_norm.ppm", 1024, 1024);
 	floor_picture = LoadRAWTexture("ppm/floor.ppm", 1024, 1024);
 	floor_normalmap = LoadRAWTexture("ppm/floor_norm.ppm", 1024, 1024);
-	
-
 
 	colortex.initTexture(GL_TEXTURE_2D, "ppm/bleh_C.png");
 	normaltex.initTexture(GL_TEXTURE_2D, "ppm/bleh_N.png");
@@ -195,8 +122,6 @@ int PlayState::Initialize() {
 
 	colorslant.Load();
 	normalslant.Load();
-
-
 
 	glGenTextures(5, photos);
 	t.loadTexture("ppm/c_front.ppm", photos[0]);
@@ -215,10 +140,7 @@ void PlayState::UpdateParticles() {
 	static ElapsedTime elapsedTime;
 	float fDeltaTime = elapsedTime.GetElapsedTime();
 
-	g_ParticleEffect1.Update(fDeltaTime);
-	g_ParticleEffect2.Update(fDeltaTime);
-	g_ParticleEffect3.Update(fDeltaTime);
-	g_ParticleEffect4.Update(fDeltaTime);
+	p_DeathByBlood->Update(fDeltaTime);
 }
 
 void PlayState::UpdateClient(ClientGame* client) {
@@ -444,311 +366,20 @@ void PlayState::Update(ClientGame* client) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void PlayState::DrawGround() {
-	glPushMatrix();
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	shader.bind();
 
-	glEnable(GL_TEXTURE_2D);
-	int texture_location = glGetUniformLocation(shader.id(), "color_texture");
-	glUniform1i(texture_location, 0);
-	//glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_2D, texture);
-	colortex.Bind(GL_TEXTURE0);
-
-	//glActiveTexture(GL_TEXTURE1);
-	glEnable(GL_TEXTURE_2D);
-	int normal_location = glGetUniformLocation(shader.id(), "normal_texture");
-	glUniform1i(normal_location, 1);
-	//glActiveTexture(GL_TEXTURE1);
-	//glBindTexture(GL_TEXTURE_2D, normal_texture);
-	normaltex.Bind(GL_TEXTURE1);
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(-240, -1, -240);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-240, -1, -90);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(-80, -1, -90);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(-80, -1, -240);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(-80, -1, -240);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-80, -1, -90);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(80, -1, -90);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(80, -1, -240);
-
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(80, -1, -240);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(80, -1, -90);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(240, -1, -90);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(240, -1, -240);
-
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(-240, -1, 90);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-240, -1, 240);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(-90, -1, 240);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(-90, -1, 90);
-
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(-90, -1, 90);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-90, -1, 240);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(90, -1, 240);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(90, -1, 90);
-
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(90, -1, 90);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(90, -1, 240);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(240, -1, 240);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(240, -1, 90);
-
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(-240, -1, -90);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-240, -1, 90);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(-100, -1, 90);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(-100, -1, -90);
-
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(100, -1, -90);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(100, -1, 90);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(240, -1, 90);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(240, -1, -90);
-
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(-75, -8, -60);//
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-75, -8, 60);//
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(75, -8, 60);////
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(75, -8, -60);////
-
-	glEnd();
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glDisable(GL_TEXTURE_2D);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	shader.unbind();
-	glDisable(GL_TEXTURE_2D);
-
-	shader.unbind();
-
-	shader.bind();
-
-	glEnable(GL_TEXTURE_2D);
-	texture_location = glGetUniformLocation(shader.id(), "color_texture");
-	glUniform1i(texture_location, 0);
-	//glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_2D, texture);
-	colorslant.Bind(GL_TEXTURE0);
-
-	//glActiveTexture(GL_TEXTURE1);
-	glEnable(GL_TEXTURE_2D);
-	normal_location = glGetUniformLocation(shader.id(), "normal_texture");
-	glUniform1i(normal_location, 1);
-	//glActiveTexture(GL_TEXTURE1);
-	//glBindTexture(GL_TEXTURE_2D, normal_texture);
-	normalslant.Bind(GL_TEXTURE1);
-
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(100, -1, 90);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(75, -8, 60);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(-75, -8, 60);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(-100, -1, 90);
-
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(-100, -1, -90);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-75, -8, -60);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(75, -8, -60);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(100, -1, -90);
-
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(-100, -1, 90);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-75, -8, 60);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(-75, -8, -60);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(-100, -1, -90);
-
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(100, -1, -90);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(75, -8, -60);//
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(75, -8, 60);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(100, -1, 90);
-
-	glEnd();
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glDisable(GL_TEXTURE_2D);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	shader.unbind();
-	glDisable(GL_TEXTURE_2D);
-
-	glColor3f(1, 1, 1);
-	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	glBindTexture(GL_TEXTURE_2D, photos[0]);
-	glBegin(GL_QUADS);
-	//front
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(-260, 200, -260);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-260, -60, -260);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(260, -60, -260);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(260, 200, -260);
-	glEnd();
-	//back
-	glBindTexture(GL_TEXTURE_2D, photos[1]);
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(260, 200, 260);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(260, -60, 260);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(-260, -60, 260);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(-260, 200, 260);
-	glEnd();
-
-
-	//right
-	glBindTexture(GL_TEXTURE_2D, photos[2]);
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(260, 200, -260);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(260, -60, -260);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(260, -60, 260);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(260, 200, 260);
-	glEnd();
-
-	//left
-	glBindTexture(GL_TEXTURE_2D, photos[3]);
-	glBegin(GL_QUADS);
-	glNormal3f(1, 0, 0);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(-260, 200, 260);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-260, -60, 260);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(-260, -60, -260);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(-260, 200, -260);
-	glEnd();
-
-	//Top
-	//glDisable(GL_CULL_FACE);
-	//glNormal3f(0, -1, 0);
-	glBindTexture(GL_TEXTURE_2D, photos[4]);
-	glBegin(GL_QUADS);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(-260, 200, -260);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(260, 200, -260);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(260, 200, 260);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-260, 200, 260);
-	//glDisable(GL_TEXTURE_2D);
-	glEnd();
-	glPopMatrix();
-}
 ////////////////////////////////////////////////////////////////////////
-void PlayState::RenderParti(float rot, ParticleEffect p, float xx, float yy, float zz)
+void PlayState::RenderParticle(float rot, ParticleEffect* p, float xx, float yy, float zz)
 {
 	glPushMatrix();
 	glTranslatef(xx, yy, zz);
 	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
 	glRotatef(rot, 0, 1, 0);
 	glScalef(0.3f, 0.3f, 0.3f);
-	p.Render();
+	p->Render();
 	glPopMatrix();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-
-void PlayState::RenderParticles(float rot) {
-	/*glPushMatrix();
-	glTranslatef(100.0f, 0.4f, 100.0f);
-	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
-	//glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
-	glRotatef(rot, 0, 1, 0);
-	glScalef(0.3f, 0.3f, 0.3f);
-	g_ParticleEffect1.Render();
-	glPopMatrix();*/
-
-	glPushMatrix();
-	glTranslatef(100.0f, 0.4f, -100.0f);
-	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
-	//glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
-	glRotatef(rot, 0, 1, 0);
-	glScalef(0.3f, 0.3f, 0.3f);
-	g_ParticleEffect2.Render();
-	glPopMatrix();
-
-	glPushMatrix();
-	glTranslatef(-100.0f, 0.4f, 100.0f);
-	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
-	//glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
-	glRotatef(rot, 0, 1, 0);
-	glScalef(0.3f, 0.3f, 0.3f);
-	g_ParticleEffect3.Render();
-	glPopMatrix();
-
-	glPushMatrix();
-	glTranslatef(-100.0f, 0.4f, -100.0f);
-	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
-	//glRotatef((float)glfwGetTime() * 50.f, 0.f, 1.f, 0.f);
-	glRotatef(rot, 0, 1, 0);
-	glScalef(0.3f, 0.3f, 0.3f);
-	g_ParticleEffect4.Render();
-	glPopMatrix();
-}
-
-//////////////////////////////////////
 
 void drawRect(float x, float y, float w, float h){
 	glVertex2f(x, y);
@@ -898,7 +529,7 @@ void PlayState::drawHUD(ClientGame* client){
 	glMatrixMode(GL_MODELVIEW);
 }
 
-//////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 void PlayState::Draw(ClientGame* client) {
 	// Clear the screen
@@ -911,14 +542,12 @@ void PlayState::Draw(ClientGame* client) {
 	glLoadIdentity();
 	// Draw components
 	Cam.ApplyViewTransform();
-
 	glTranslatef(Player->getPos().x, 0, Player->getPos().z);
-	//Cam.SetTranslate(Vector3(0, -Player->getPos().y, 0));
-	
-
 	glRotatef(180, 0, 1, 0);
 
-	DrawGround();
+	p_Light->Draw(client, currGameTime);
+	p_Map->Draw(shader, colortex, normaltex, colorslant, normalslant, m_pTrivialNormalMap, photos);
+	p_Shrine->Draw();
 	
 	std::map<int, GameObject*>::iterator it;
 	for (it = gameObjects.begin(); it != gameObjects.end(); it++)
@@ -927,8 +556,7 @@ void PlayState::Draw(ClientGame* client) {
 	}
 	if (parti)
 	{
-
-		RenderParti(Cam.GetRotation().y, g_ParticleEffect2, particlepos.x, particlepos.y, particlepos.z);
+		RenderParticle(Cam.GetRotation().y, p_DeathByBlood, particlepos.x, particlepos.y, particlepos.z);
 	}
 	Player->update(true, Cam.GetRotation().y);
 
@@ -940,23 +568,41 @@ void PlayState::Draw(ClientGame* client) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-enum Animation { a_IDLE, a_RUNFORWARD, a_RUNMELEE, a_STRAFELEFT, a_STRAFEFORWARDLEFT, a_STRAFERIGHT, a_STRAFEFORWARDRIGHT, a_WALKBACK};
+enum AnimationIndices { a_IDLE, a_RUNFORWARD, a_RUNMELEE, a_STRAFELEFT, a_STRAFEFORWARDLEFT, a_STRAFERIGHT, a_STRAFEFORWARDRIGHT, a_WALKBACK};
 
 void PlayState::Input(ClientGame* client) {
 	if (!Player)
 		return;
 	
-	if (glfwGetKey(window, FORWARD)) {
-		Player->setAnimation(a_RUNFORWARD);
-		client->addEvent(Player->getID(), "move_forward;", ACTION_EVENT);
+	if (glfwGetKey(window, FORWARD) || glfwGetKey(window, BACKWARD))
+	{
+		if (glfwGetKey(window, FORWARD)) {
+			Player->setAnimation(a_RUNFORWARD);
+			client->addEvent(Player->getID(), "move_forward;", ACTION_EVENT);
+		}
+		if (glfwGetKey(window, BACKWARD)) {
+			Player->setAnimation(a_WALKBACK);
+			client->addEvent(Player->getID(), "move_backward;", ACTION_EVENT);
+		}
 
 		if (glfwGetKey(window, STRAFELEFT)) {
 			Player->setAnimation(a_STRAFEFORWARDLEFT);
+			client->addEvent(Player->getID(), "move_left;", ACTION_EVENT);
 		}
 		if (glfwGetKey(window, STRAFERIGHT)) {
 			Player->setAnimation(a_STRAFEFORWARDRIGHT);
+			client->addEvent(Player->getID(), "move_right;", ACTION_EVENT);
 		}
-	} else {
+	}
+	else if (glfwGetKey(window, STRAFELEFT)) {
+		Player->setAnimation(a_STRAFELEFT);
+		client->addEvent(Player->getID(), "move_left;", ACTION_EVENT);
+	}
+	else if (glfwGetKey(window, STRAFERIGHT)) {
+		Player->setAnimation(a_STRAFERIGHT);
+		client->addEvent(Player->getID(), "move_right;", ACTION_EVENT);
+	}
+	else {
 		Player->setAnimation(a_IDLE);
 	}
 
@@ -965,21 +611,6 @@ void PlayState::Input(ClientGame* client) {
 	}
 	if (glfwGetKey(window, Q)) {
 		client->addEvent(Player->getID(), "q;", ACTION_EVENT);
-	}
-
-	if (glfwGetKey(window, STRAFELEFT)) {
-		Player->setAnimation(a_STRAFELEFT);
-		client->addEvent(Player->getID(), "move_left;", ACTION_EVENT);
-	}
-
-	if (glfwGetKey(window, STRAFERIGHT)) {
-		Player->setAnimation(a_STRAFERIGHT);
-		client->addEvent(Player->getID(), "move_right;", ACTION_EVENT);
-	}
-
-	if (glfwGetKey(window, BACKWARD)) {
-		Player->setAnimation(a_WALKBACK);
-		client->addEvent(Player->getID(), "move_backward;", ACTION_EVENT);
 	}
 
 	if (rotationChanged){
@@ -997,9 +628,6 @@ void PlayState::Input(ClientGame* client) {
 		pointer++;
 		data[pointer] = '\0';
 		client->addEvent(Player->getID(), data, ACTION_EVENT);
-		//printf("STRING IS %s\n", data);
-		//printf("AZIM %f\n", rotate );
-		//printf("Player: %f\n", Player->getRotation());
 	}
 
 	if (attacking){

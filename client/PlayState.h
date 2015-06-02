@@ -6,6 +6,9 @@
 #define PLAYSTATE_H_
 
 #include "core.h"
+#include "Shrine.h"
+#include "Map.h"
+#include "Light.h"
 #include "PlayerType.h"
 #include "CrusaderPlayer.h"
 #include "VampirePlayer.h"
@@ -33,17 +36,13 @@
 #include <string.h>
 #include <iostream>
 #include <stdlib.h>
-#include "Shrine.h"
 
 //#include <fbxsdk/fbxsdk_def.h>
-
-
-
 
 class PlayState : public GameState
 {
 public:
-	PlayState(GLFWwindow* window) :GameState(window) { Initialize(); };
+	PlayState(GLFWwindow* window);
 	
 	int Initialize();
 	int InitGL();
@@ -58,9 +57,8 @@ public:
 	void UpdateParticles();
 	void UpdateClient(ClientGame* Client);
 
-	void RenderParti(float rot, ParticleEffect p, float xx, float yy, float zz);
+	void RenderParticle(float rot, ParticleEffect *p, float xx, float yy, float zz);
 
-	void DrawGround();
 	void drawHUD(ClientGame* Client);
 
 	GLuint LoadRAWTexture(const char * filename, int width, int height);
@@ -110,6 +108,13 @@ private:
 	bool parti;
 	Vector3 particlepos;
 	bool deathbyparticle;
+
+	Texture m_pTrivialNormalMap;
+	ParticleEffect* p_DeathByBlood;
+	Light* p_Light;
+	Map* p_Map;
+	Shrine* p_Shrine;
+	bool isNight;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

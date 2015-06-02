@@ -41,14 +41,6 @@ int main(int argc, char **argv) {
 	double currentTime = glfwGetTime();
 
 	while (!glfwWindowShouldClose(Game->Window())) {
-		double newTime = glfwGetTime();
-		double frameTime = newTime - currentTime;
-
-		currentTime = newTime;
-		//std::cout << frameTime << std::endl;
-
-		//currently goes as fast as possible
-
 		//get Client inputs.  Pass Client as param so that we can add events to
 		//the Client to later send to server if we need to
 		Game->Input(Client);
@@ -75,7 +67,8 @@ GameEngine::GameEngine(int argc, char **argv) {
 	m_running = true;
 
 	// pass in glfwGetPrimaryMonitor() to first null for fullscreen
-	window = glfwCreateWindow(1024, 768, WINDOWTITLE, NULL, NULL); 
+	window = glfwCreateWindow(1920, 1080, WINDOWTITLE, NULL, NULL);
+	//window = glfwCreateWindow(1920, 1080, WINDOWTITLE, glfwGetPrimaryMonitor(), NULL);
 
 	if (!window)
 	{
@@ -85,17 +78,11 @@ GameEngine::GameEngine(int argc, char **argv) {
 	}
 	glfwMakeContextCurrent(window);
 
-	// Currently just starts it with the PlayState
-	//PlayState *state = new PlayState(window);
 	PrePlayState *state = new PrePlayState(window);
 	PushState(state);
 	ChangeState(state);
 	
-	// Initialize the part of the client that connects to the server
 	Client = new ClientGame();
-	//string configIP;
-	//ConfigSettings::config->getValue("ServerIP", configIP);
-	//printf("Connecting to Server IP: %s\n", configIP.c_str());
 	Client->connectToServer(ConfigSettings::config->getValue("ServerIP").c_str()); //set ip of server here
 
 	//Callbacks
@@ -158,5 +145,4 @@ void GameEngine::Quit() {
 GLFWwindow* GameEngine::Window() {
 	return window;
 }
-
 ////////////////////////////////////////////////////////////////////////////////
