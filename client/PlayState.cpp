@@ -545,20 +545,26 @@ void PlayState::Draw(ClientGame* client) {
 	glTranslatef(Player->getPos().x, 0, Player->getPos().z);
 	glRotatef(180, 0, 1, 0);
 
+	Shader regShade = Shader("shader/shader.vert", "shader/shader.frag");
+
 	p_Light->Draw(client, currGameTime);
 	p_Map->Draw(shader, colortex, normaltex, colorslant, normalslant, m_pTrivialNormalMap, photos);
+	regShade.bind();
 	p_Shrine->Draw();
-	
+
+	//Player->update(true, Cam.GetRotation().y);
 	std::map<int, GameObject*>::iterator it;
 	for (it = gameObjects.begin(); it != gameObjects.end(); it++)
 	{
-		it->second->update(false, Cam.GetRotation().y);
+		((PlayerType*)(it->second))->update(false, Cam.GetRotation().y);
 	}
+	Player->update(true, Cam.GetRotation().y);
+	regShade.unbind();
+
 	if (parti)
 	{
 		RenderParticle(Cam.GetRotation().y, p_DeathByBlood, particlepos.x, particlepos.y, particlepos.z);
 	}
-	Player->update(true, Cam.GetRotation().y);
 
 	drawHUD(client); //This includes the game over results
 
