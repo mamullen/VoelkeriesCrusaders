@@ -58,10 +58,10 @@ void GameLogic::update(int time)
 	}
 
 	// update projectiles
-	float p_update_freq = 15; // update frequency
+	float p_update_freq = atof(ConfigSettings::config->getValue("ProjectileUpdateFreq").c_str());; // update frequency
 	for (int i = 0; i < p_update_freq; i++){
 		for (std::vector<Projectile*>::iterator it = GameLogic::projectileList.begin(); it != GameLogic::projectileList.end(); it++){
-			if (!(*it)->updateTime(time/p_update_freq)){
+			if (!(*it)->updateTime(time/p_update_freq, &gameObjects)){
 				(*it)->sendDeathPacket();
 				GameLogic::projectileList.erase(it);
 				it--;
@@ -1146,6 +1146,15 @@ void GameLogic::updateState()
 			//for (std::vector<GameObject*>::iterator it = gameObjects.begin(); it != gameObjects.end(); it++){
 			//	printf("ObjectID: %d with type: %d\n", (*it)->getID(), (*it)->objectType);
 			//}
+
+
+			for (std::vector<GameObject*>::iterator it = gameObjects.begin(); it != gameObjects.end(); it++){
+				if ((*it)->isPlayer){
+					Player * player = (Player *)(*it);
+					player->respawnLocation(&gameObjects);
+				}
+			}
+
 
 			sendCreateObjects();
 		}

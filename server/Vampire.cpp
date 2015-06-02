@@ -26,7 +26,7 @@ void Vampire::updateTime(int time,int delta)
 	
 	if (time == 0){
 		//day
-		speed = default_speed;
+		speed = speed = atof((ConfigSettings::config->getValue("VampireMovespeedBaseMult").c_str())) * default_speed;
 		time_ctr += delta;
 		if (time_ctr > 1000){
 			time_ctr = 0;

@@ -9,7 +9,7 @@ public:
 	Projectile();
 	virtual ~Projectile();
 
-	bool updateTime(int time);
+	bool updateTime(int time, std::vector<GameObject*>*);
 	void setRange(float r){ range = r; }
 	void setDmg(float d) { dmg = d; }
 	float getRange() { return range; }
@@ -18,6 +18,9 @@ public:
 	void sendDeathPacket();
 	void sendPosPacket();
 	void setHitRadius(float r) { hitRadius = r; }
+
+	float recoilAmount;
+
 private:
 	bool collide(GameObject*);
 	float hitRadius;

@@ -360,3 +360,42 @@ bool Player::weaponcollide(Vector3 weapon)
 	}
 	return false;
 }
+
+
+void Player::respawnLocation(std::vector<GameObject*>* gameObjects){
+	float mapMin = -225;
+	float mapMax = 225;
+
+	float randX = 0;
+	float randY = 0;
+	float randZ = 0;
+
+	int spawningID = id;
+
+	bool stillCollides = true;
+	bool col1 = true;
+	bool col2 = true;
+	bool col3 = true;
+	bool col4 = true;
+
+	// randomness happening
+	srand(spawningID*time(NULL));
+
+	while (col1 || col2 || col3 || col4){
+
+
+		randX = rand() % 440 - 220;
+		randZ = rand() % 440 - 220;
+
+		setPos(randX, randY, randZ);
+
+		printf("Trying respawn position %f %f %f\n", randX, randY, randZ);
+
+
+		col1 = collide(gameObjects, forward);
+		col2 = collide(gameObjects, -forward);
+		col3 = collide(gameObjects, right);
+		col4 = collide(gameObjects, -right);
+
+	}
+}
