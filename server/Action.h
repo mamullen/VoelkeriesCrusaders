@@ -13,6 +13,8 @@ public:
 	virtual void attack(GameObject*, GameObject*){}
 	
 	float getDmg() { return c_ad; }
+	void setDmg(float d) { c_ad = d; }
+	void addDmg(float d) { c_ad += d; }
 	void setRange(float m) { c_range = range*m; }
 	float getRange() { return c_range; }
 	void maxCD() { cd = maxcd; }

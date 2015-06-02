@@ -100,10 +100,9 @@ private:
 	Texture t;
 	GLuint photos[5];
 	//Shader floorshader;
-	Texture colortex;
-	Texture normaltex;
-	Texture colorslant;
-	Texture normalslant;
+	
+	Texture colorbuild;
+	Texture normalbuild;
 	GLuint text_picture, text_normalmap;
 	GLuint floor_picture, floor_normalmap;
 	GLuint skyfront_picture, skyfront_normalmap, skyback_picture, skyback_normalmap, skyleft_picture, skyleft_normalmap, skyright_picture, skyright_normalmap, skytop_picture, skytop_normalmap;

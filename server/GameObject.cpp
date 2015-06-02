@@ -47,21 +47,7 @@ void GameObject::moveForward()
 
 void GameObject::gravity()
 {
-	if (position.x > -90 && position.x<90)
-	{
-		if (position.z>-90 && position.z<90)
-		{
-			ground = -6;
-		}
-		else
-		{
-			ground = 1;
-		}
-	}
-	else
-	{
-		ground = 1;
-	}
+
 	if (position.y > ground)
 	{
 		position = position - 0.05*up;
@@ -74,7 +60,8 @@ void GameObject::jump()
 	if (landed)
 	{
 
-		position = position + up;
+		position = position + up*2;
+		
 	}
 	if (position.y >ground + 4)
 	{
