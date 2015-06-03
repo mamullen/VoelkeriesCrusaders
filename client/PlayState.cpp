@@ -23,9 +23,12 @@ PlayState::PlayState(GLFWwindow* window) : GameState(window) {
 	p_Map = new Map();
 	p_Shrine = new Shrine(0); // 0 id is temp for gameobj
 	p_SunMace = new SunMace(0, Vector3(-75.f, -1.f, -60.f)); // 0 id is temp for gameobj
+	p_DefenseShield = new DefenseShield(0, Vector3(-5.f, -1.f, -60.f)); // 0 id is temp for gameobj
+	p_LightningBolt = new LightningBoltAtkSpd(0, Vector3(-75.f, -1.f, 60.f)); // 0 id is temp for gameobj
+	p_BatSword = new BatSword(0, Vector3(75.f, -1.f, 60.f)); // 0 id is temp for gameobj
 	p_regShade = new Shader("shader/shader.vert", "shader/shader.frag");
 	p_bumpShade = new Shader("shader/bump.vert", "shader/bump.frag");
-	weap1 = true;
+	weap1 = weap2 = weap3 = weap4 = true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -209,10 +212,10 @@ void PlayState::UpdateClient(ClientGame* client) {
 				
 				//glScalef(0.01, 0.01, 0.01);
 				PlayerType* p;
-				if (objectType == 3) {
+				if (objectType == HUMAN) {
 					p = new PlayerType(objID, 0);
 				}
-				else if (objectType == 4) {
+				else if (objectType == CRUSADER) {
 					p = new CrusaderPlayer(objID, 1);
 				}
 				else {
@@ -345,6 +348,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 			memcpy(&xPos, serverEvent + 8, sizeof(float));
 			memcpy(&yPos, serverEvent + 12, sizeof(float));
 			memcpy(&zPos, serverEvent + 16, sizeof(float));
+			weap2 = false;
 		}
 		
 		if (strcmp(serverEvent, "weapon3") == 0)
@@ -355,6 +359,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 			memcpy(&xPos, serverEvent + 8, sizeof(float));
 			memcpy(&yPos, serverEvent + 12, sizeof(float));
 			memcpy(&zPos, serverEvent + 16, sizeof(float));
+			weap3 = false;
 		}
 		
 		if (strcmp(serverEvent, "weapon4") == 0)
@@ -365,6 +370,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 			memcpy(&xPos, serverEvent + 8, sizeof(float));
 			memcpy(&yPos, serverEvent + 12, sizeof(float));
 			memcpy(&zPos, serverEvent + 16, sizeof(float));
+			weap4 = false;
 		}
 
 		if (strcmp(serverEvent, "hdir") == 0)
@@ -657,13 +663,22 @@ void PlayState::Draw(ClientGame* client) {
 	}
 
 	Player->update(true, Cam.GetRotation().y);
-	if (weap1) {
-		p_SunMace->Draw();
-	}
-	else {
+	if (!weap1) {
 		Player->EquipWeapon((Weapon*)p_SunMace);
-		p_SunMace->Draw();
 	}
+	else if(!weap2) {
+		Player->EquipWeapon((Weapon*)p_DefenseShield);
+	}
+	else if (!weap3) {
+		Player->EquipWeapon((Weapon*)p_LightningBolt);
+	}
+	else if (!weap4) {
+		Player->EquipWeapon((Weapon*)p_BatSword);
+	}
+	p_SunMace->Draw();
+	p_DefenseShield->Draw();
+	p_LightningBolt->Draw();
+	p_BatSword->Draw();
 
 	p_regShade->unbind();
 

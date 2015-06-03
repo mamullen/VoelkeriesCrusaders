@@ -108,11 +108,16 @@ private:
 	GLuint skyfront_picture, skyfront_normalmap, skyback_picture, skyback_normalmap, skyleft_picture, skyleft_normalmap, skyright_picture, skyright_normalmap, skytop_picture, skytop_normalmap;
 	bool once;
 	bool parti;
-	bool weap1;
+	bool weap1, weap2, weap3, weap4;
 	Vector3 particlepos;
 	bool deathbyparticle;
 
+	// Items
 	SunMace *p_SunMace;
+	BatSword* p_BatSword;
+	DefenseShield *p_DefenseShield;
+	LightningBoltAtkSpd *p_LightningBolt;
+
 	Texture m_pTrivialNormalMap;
 	ParticleEffect* p_DeathByBlood;
 	Light* p_Light;

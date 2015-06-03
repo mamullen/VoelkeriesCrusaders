@@ -46,4 +46,53 @@ public:
 	}
 };
 
+
+class BatSword : Weapon {
+public:
+	BatSword(unsigned int id, Vector3 pos) : Weapon(id, pos) {
+		g_Model = new MeshLoader((char*)ConfigSettings::config->getValue("BatSword").c_str());
+		g_Model->DisableBones();
+	}
+
+	void Draw() {
+		glPushMatrix();
+		glTranslatef(w_Position.x, w_Position.y, w_Position.z);
+		glScalef(5.f, 5.f, 5.f);
+		g_Model->Render();
+		glPopMatrix();
+	}
+};
+
+class DefenseShield : Weapon {
+public:
+	DefenseShield(unsigned int id, Vector3 pos) : Weapon(id, pos) {
+		g_Model = new MeshLoader((char*)ConfigSettings::config->getValue("DefenseShield").c_str());
+		g_Model->DisableBones();
+	}
+
+	void Draw() {
+		glPushMatrix();
+		glTranslatef(w_Position.x, w_Position.y, w_Position.z);
+		glScalef(5.f, 5.f, 5.f);
+		g_Model->Render();
+		glPopMatrix();
+	}
+};
+
+class LightningBoltAtkSpd : Weapon {
+public:
+	LightningBoltAtkSpd(unsigned int id, Vector3 pos) : Weapon(id, pos) {
+		g_Model = new MeshLoader((char*)ConfigSettings::config->getValue("LightningBoltAtkSpd").c_str());
+		g_Model->DisableBones();
+	}
+
+	void Draw() {
+		glPushMatrix();
+		glTranslatef(w_Position.x, w_Position.y, w_Position.z);
+		glScalef(5.f, 5.f, 5.f);
+		g_Model->Render();
+		glPopMatrix();
+	}
+};
+
 #endif
