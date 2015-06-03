@@ -23,7 +23,7 @@ PlayState::PlayState(GLFWwindow* window) : GameState(window) {
 	p_Map = new Map();
 	p_Shrine = new Shrine(0); // 0 id is temp for gameobj
 	p_SunMace = new SunMace(0, Vector3(-75.f, -1.f, -60.f)); // 0 id is temp for gameobj
-	p_DefenseShield = new DefenseShield(0, Vector3(-5.f, -1.f, -60.f)); // 0 id is temp for gameobj
+	p_DefenseShield = new DefenseShield(0, Vector3(75.f, -1.f, -60.f)); // 0 id is temp for gameobj
 	p_LightningBolt = new LightningBoltAtkSpd(0, Vector3(-75.f, -1.f, 60.f)); // 0 id is temp for gameobj
 	p_BatSword = new BatSword(0, Vector3(75.f, -1.f, 60.f)); // 0 id is temp for gameobj
 	p_regShade = new Shader("shader/shader.vert", "shader/shader.frag");

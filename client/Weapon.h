@@ -46,7 +46,6 @@ public:
 	}
 };
 
-
 class BatSword : Weapon {
 public:
 	BatSword(unsigned int id, Vector3 pos) : Weapon(id, pos) {
