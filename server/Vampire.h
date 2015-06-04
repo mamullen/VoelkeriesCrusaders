@@ -9,7 +9,8 @@ public:
 	Vampire();
 	Vampire(int i);
 	virtual ~Vampire();
-
+	void attack2Start() {};
+	void attack2End() {};
 	virtual void updateTime(int,int);
 	//virtual void attack(GameObject*);
 private:

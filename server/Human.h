@@ -6,5 +6,7 @@ class Human :
 public:
 	Human();
 	virtual ~Human();
+	void attack2Start() {};
+	void attack2End() {};
 };
 

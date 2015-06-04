@@ -227,6 +227,12 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 				attack_mode->attack(this);
 			}			
 		}
+		else if (cEvent.compare("attack2Start") == 0){
+
+		}
+		else if (cEvent.compare("attack2End") == 0){
+
+		}
 	}
 
 	for (int i = 0; i < attr_num; i++){

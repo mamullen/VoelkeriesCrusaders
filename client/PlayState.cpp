@@ -600,6 +600,35 @@ void PlayState::drawHUD(ClientGame* client){
 	}
 	glPopMatrix();
 
+	//scoreboard
+	glPushMatrix();
+	std::string cS = std::string("Crusaders: ");
+	cS = cS + std::to_string(crusaderScore);
+	char * cScore = (char *)cS.c_str();
+	glTranslatef(2*width / 50, height / 30, 0);
+	glLineWidth(2);
+	glScalef(width / 5000.88, height / 3800.0f, 1);
+	glRotatef(180, 1, 0, 0);
+	glColor3f(1, 1, 1);
+	for (unsigned int i = 0; i < strlen(cScore); i++){
+		glutStrokeCharacter(GLUT_STROKE_ROMAN, (char)cScore[i]);
+	}
+	glPopMatrix();
+
+	glPushMatrix();
+	std::string vS = std::string(" Vampires: ");
+	vS = vS + std::to_string(vampireScore);
+	char * vScore = (char *)vS.c_str();
+	glTranslatef(width / 40, 2.5*height / 30, 0);
+	glLineWidth(2);
+	glScalef(width / 5000.88, height / 3800.0f, 1);
+	glRotatef(180, 1, 0, 0);
+	glColor3f(1, 1, 1);
+	for (unsigned int i = 0; i < strlen(vScore); i++){
+		glutStrokeCharacter(GLUT_STROKE_ROMAN, (char)vScore[i]);
+	}
+	glPopMatrix();
+
 	if (gameResult == 1){
 		glPushMatrix();
 		char * name = "YOU WIN";
@@ -891,6 +920,19 @@ void PlayState::Input(ClientGame* client) {
 	if (attacking){
 		client->addEvent(Player->getID(), "attack;", ACTION_EVENT);
 	}
+
+	if (attacking2 && !attacking2Sent){
+		attacking2Sent = true;
+		client->addEvent(Player->getID(), "attack2Start;", ACTION_EVENT);
+	}
+
+	if (attacking2Sent && !attacking2){
+		attacking2Sent = false;
+		//only send attack 2 release message if player is a vampire
+		if (Player->getTeam() == 2){
+			client->addEvent(Player->getID(), "attack2End;", ACTION_EVENT);
+		}
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -924,10 +966,10 @@ void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods
 
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS){
 		Player->setAnimation(a_COMBOATTACK);
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		attacking2 = true;
 	}
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		attacking2 = false;
 	}
 }
 

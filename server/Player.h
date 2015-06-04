@@ -18,6 +18,8 @@ public:
 	virtual void update(Packet*, std::vector<GameObject*>*);
 	virtual void isAttacked(float);
 	virtual void updateTime(int,int); // first int is day/night, second int is time elapsed
+	virtual void attack2Start()	{};
+	virtual void attack2End()	{};
 
 	void updateCD();
 	void resetDir()			{ hDir = 0; vDir = 0; }

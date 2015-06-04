@@ -80,7 +80,8 @@ private:
 
 	// Input
 	bool LeftDown, MiddleDown, RightDown, LeftDownTwo, BothDown;
-	bool rotationChanged, attacking;
+	bool rotationChanged = false, attacking = false, attacking2 = false;
+	bool attacking2Sent = false;
 	double MouseX, MouseY;
 	double lastTime;
 	//time in milliseconds
@@ -100,6 +101,7 @@ private:
 	std::map<int, GameObject*> gameObjects;
 	std::map<int, Projectile*> projectiles;
 	int currGameTime = 0, gameResult = -2;
+	int vampireScore = 0, crusaderScore = 0;
 
 	Building* b1;
 	Texture t;
