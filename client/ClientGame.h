@@ -23,6 +23,7 @@ public:
 	void connectToServer(const char*);
 	void addEvent(unsigned int id, char * evt, int type);
 	unsigned int getClientId()			{ return client_id; };
+	void clearPlayerList()				{ otherPlayers.clear(); }
 	void setClientId(unsigned int id)	{ client_id = id; }
 	void setClientName(char * name)		{ client_name = name; }
 	char * getClientName()				{ return client_name; }

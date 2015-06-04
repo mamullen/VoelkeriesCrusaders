@@ -391,7 +391,9 @@ void PrePlayState::CharCallback(GLFWwindow* window, unsigned int code){
 	if (name_state && !wait_name){
 		if (code >= 32 && code <= 126){
 			char in = (char)code;
-			name += in;
+			if (name.size() <= 18){
+				name += in;
+			}
 		}
 	}
 }
