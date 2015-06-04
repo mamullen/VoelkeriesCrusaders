@@ -116,6 +116,7 @@ private:
 	bool once;
 	bool parti;
 	bool weap1, weap2, weap3, weap4;
+	unsigned int pnum1, pnum2, pnum3, pnum4;
 	Vector3 particlepos;
 	bool deathbyparticle;
 

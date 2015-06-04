@@ -29,6 +29,7 @@ PlayState::PlayState(GLFWwindow* window) : GameState(window) {
 	p_regShade = new Shader("shader/shader.vert", "shader/shader.frag");
 	p_bumpShade = new Shader("shader/bump.vert", "shader/bump.frag");
 	weap1 = weap2 = weap3 = weap4 = true;
+	pnum1 = pnum2 = pnum3 = pnum4 = 9; // 9 is no one
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -353,8 +354,9 @@ void PlayState::UpdateClient(ClientGame* client) {
 			memcpy(&yPos, serverEvent + 12, sizeof(float));
 			memcpy(&zPos, serverEvent + 16, sizeof(float));
 			weap1 = false;
+			pnum1 = objID;
 		}
-		
+
 		if (strcmp(serverEvent, "weapon2") == 0)
 		{
 			float xPos;
@@ -364,8 +366,9 @@ void PlayState::UpdateClient(ClientGame* client) {
 			memcpy(&yPos, serverEvent + 12, sizeof(float));
 			memcpy(&zPos, serverEvent + 16, sizeof(float));
 			weap2 = false;
+			pnum2 = objID;
 		}
-		
+
 		if (strcmp(serverEvent, "weapon3") == 0)
 		{
 			float xPos;
@@ -375,8 +378,9 @@ void PlayState::UpdateClient(ClientGame* client) {
 			memcpy(&yPos, serverEvent + 12, sizeof(float));
 			memcpy(&zPos, serverEvent + 16, sizeof(float));
 			weap3 = false;
+			pnum3 = objID;
 		}
-		
+
 		if (strcmp(serverEvent, "weapon4") == 0)
 		{
 			float xPos;
@@ -386,6 +390,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 			memcpy(&yPos, serverEvent + 12, sizeof(float));
 			memcpy(&zPos, serverEvent + 16, sizeof(float));
 			weap4 = false;
+			pnum4 = objID;
 		}
 
 		if (strcmp(serverEvent, "hdir") == 0)
@@ -794,6 +799,18 @@ void PlayState::Draw(ClientGame* client) {
 	for (it = gameObjects.begin(); it != gameObjects.end(); it++)
 	{
 		((PlayerType*)(it->second))->update(false, Cam.GetRotation().y);
+		if (!weap1 && ((PlayerType*)(it->second))->getID() == pnum1) {
+			((PlayerType*)(it->second))->EquipWeapon((Weapon*)p_SunMace);
+		}
+		else if (!weap2 && ((PlayerType*)(it->second))->getID() == pnum2) {
+			((PlayerType*)(it->second))->EquipWeapon((Weapon*)p_DefenseShield);
+		}
+		else if (!weap3 && ((PlayerType*)(it->second))->getID() == pnum3) {
+			((PlayerType*)(it->second))->EquipWeapon((Weapon*)p_LightningBolt);
+		}
+		else if (!weap4 && ((PlayerType*)(it->second))->getID() == pnum4) {
+			((PlayerType*)(it->second))->EquipWeapon((Weapon*)p_BatSword);
+		}
 	}
 
 	std::map<int, Projectile*>::iterator it2;
@@ -803,16 +820,16 @@ void PlayState::Draw(ClientGame* client) {
 	}
 
 	Player->update(true, Cam.GetRotation().y);
-	if (!weap1) {
+	if (!weap1 && Player->getID() == pnum1) {
 		Player->EquipWeapon((Weapon*)p_SunMace);
 	}
-	else if(!weap2) {
+	else if (!weap2 && Player->getID() == pnum2) {
 		Player->EquipWeapon((Weapon*)p_DefenseShield);
 	}
-	else if (!weap3) {
+	else if (!weap3 && Player->getID() == pnum3) {
 		Player->EquipWeapon((Weapon*)p_LightningBolt);
 	}
-	else if (!weap4) {
+	else if (!weap4 && Player->getID() == pnum4) {
 		Player->EquipWeapon((Weapon*)p_BatSword);
 	}
 	p_SunMace->Draw();
