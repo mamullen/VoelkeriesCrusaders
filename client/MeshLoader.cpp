@@ -270,8 +270,9 @@ void MeshLoader::RenderMesh(const aiNode* node) {
 }
 
 void MeshLoader::UpdateAnimation() {
+	static float animRate = 2.f;
 	if (m_Scene->HasAnimations()) {
-		a_CurrentTime += clock() / double(CLOCKS_PER_SEC) - a_LastPlaying;
+		a_CurrentTime += clock() *animRate / double(CLOCKS_PER_SEC) - a_LastPlaying;
 		double time = a_CurrentTime;
 		aiAnimation* mAnim = mAnimator->CurrentAnim();
 		if (mAnim && mAnim->mDuration > 0.0) {

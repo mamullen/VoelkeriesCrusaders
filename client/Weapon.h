@@ -6,7 +6,6 @@
 #include "GameObject.h"
 #include "ConfigSettings.h"
 
-//TODO: plz add to server as gameobject
 class Weapon : GameObject {
 protected:
 	MeshLoader* g_Model;
@@ -20,6 +19,15 @@ public:
 	Vector3 GetPosition() { return w_Position; }
 	void SetPosition(Vector3 pos) {
 		w_Position = pos;
+	}
+
+	void GenericDraw(Vector3 scale, Vector3 translate = Vector3()) {
+		glPushMatrix();
+		glTranslatef(w_Position.x, w_Position.y+translate.y, w_Position.z);
+		glRotatef(glfwGetTime() * 30, 0.f, 1.f, 0.f);
+		glScalef(scale.x, scale.y, scale.z);
+		g_Model->Render();
+		glPopMatrix();
 	}
 
 protected:
@@ -38,11 +46,7 @@ public:
 	}
 
 	void Draw() {
-		glPushMatrix();
-		glTranslatef(w_Position.x, w_Position.y, w_Position.z);
-		glScalef(5.f, 5.f, 5.f);
-		g_Model->Render();
-		glPopMatrix();
+		GenericDraw(Vector3(5.f, 5.f, 5.f));
 	}
 };
 
@@ -54,11 +58,7 @@ public:
 	}
 
 	void Draw() {
-		glPushMatrix();
-		glTranslatef(w_Position.x, w_Position.y, w_Position.z);
-		glScalef(5.f, 5.f, 5.f);
-		g_Model->Render();
-		glPopMatrix();
+		GenericDraw(Vector3(1.f, 1.f, 1.f));
 	}
 };
 
@@ -70,11 +70,7 @@ public:
 	}
 
 	void Draw() {
-		glPushMatrix();
-		glTranslatef(w_Position.x, w_Position.y, w_Position.z);
-		glScalef(5.f, 5.f, 5.f);
-		g_Model->Render();
-		glPopMatrix();
+		GenericDraw(Vector3(25.f, 25.f, 25.f), Vector3(0.f, 5.f, 0.f));
 	}
 };
 
@@ -86,11 +82,7 @@ public:
 	}
 
 	void Draw() {
-		glPushMatrix();
-		glTranslatef(w_Position.x, w_Position.y, w_Position.z);
-		glScalef(5.f, 5.f, 5.f);
-		g_Model->Render();
-		glPopMatrix();
+		GenericDraw(Vector3(1.f, 1.f, 1.f));
 	}
 };
 

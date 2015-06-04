@@ -112,17 +112,19 @@ private:
 	Vector3 particlepos;
 	bool deathbyparticle;
 
+	////// - David's meshes
 	// Items
 	SunMace *p_SunMace;
 	BatSword* p_BatSword;
 	DefenseShield *p_DefenseShield;
 	LightningBoltAtkSpd *p_LightningBolt;
+	Shrine* p_Shrine;
+	MeshLoader* p_DavidsBuilding;
 
 	Texture m_pTrivialNormalMap;
 	ParticleEffect* p_DeathByBlood;
 	Light* p_Light;
 	Map* p_Map;
-	Shrine* p_Shrine;
 	bool isNight;
 
 	Shader* p_regShade;
