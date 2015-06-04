@@ -80,7 +80,7 @@ private:
 
 	// Input
 	bool LeftDown, MiddleDown, RightDown, LeftDownTwo, BothDown;
-	bool rotationChanged = false, attacking = false, attacking2 = false;
+	bool rotationChanged = false, attacking = false;
 	bool attacking2Sent = false;
 	double MouseX, MouseY;
 	double lastTime;

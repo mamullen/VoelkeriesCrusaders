@@ -9,11 +9,16 @@ public:
 	Vampire();
 	Vampire(int i);
 	virtual ~Vampire();
-	void attack2Start() {};
-	void attack2End() {};
+	void attack2Start();
+	void attack2End();
 	virtual void updateTime(int,int);
+
+	double getDashRange()	{ return dashRange; }
 	//virtual void attack(GameObject*);
 private:
 	float HpDropRate = (float)atoi(ConfigSettings::config->getValue("VampireHpDropRate").c_str());
+	double speedDebuff = 0;
+	double dashRange = 0;
+	bool dashCharging = false;
 };
 

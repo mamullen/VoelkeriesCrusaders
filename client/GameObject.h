@@ -56,6 +56,9 @@ public:
 	void setRotation(float rot);
 	void setForward(Matrix34 rotate)	{ rotate.Transform(forward, forward); rotate.Transform(right, right); }
 	void resetForward(Matrix34 rotate)	{ rotate.Transform(Vector4(0, 0, 1, 1), forward); rotate.Transform(Vector4(-1, 0, 0, 1), right); }
+	void setDashRange(float d)			{ dashRange = d; }
+	bool getAttacking2()				{ return attacking2; }
+	void setAttacking2(bool t)			{ attacking2 = t; }
 
 	void loadShader(Shader* reg) { 
 		p_regShade = reg;
@@ -68,6 +71,8 @@ private:
 	float currHP,maxHP;
 	Vector3* min, * max;
 	char* name = NULL;
+	float dashRange = 0;
+	bool attacking2 = false;
 
 	Vector4 position = Vector4(0, 2, 0, 1);
 	Vector4 forward = INIT_FORWARD;

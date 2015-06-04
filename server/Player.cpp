@@ -228,10 +228,10 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 			}			
 		}
 		else if (cEvent.compare("attack2Start") == 0){
-
+			attack2Start();
 		}
 		else if (cEvent.compare("attack2End") == 0){
-
+			attack2End();
 		}
 	}
 

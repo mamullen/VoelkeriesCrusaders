@@ -23,10 +23,24 @@ Vampire::Vampire(int i) :Player(i)
 
 void Vampire::updateTime(int time,int delta)
 {
-	
+	if (dashCharging){
+		speedDebuff += atof((ConfigSettings::config->getValue("VampireChargeSpeedDebuff").c_str()));
+		dashRange += atof((ConfigSettings::config->getValue("VampireChargeDistance").c_str()));
+		double maxDashRange = atof((ConfigSettings::config->getValue("VampireChargeMaxDistance").c_str()));
+		if (dashRange > maxDashRange){
+			dashRange = maxDashRange;
+		}
+		std::string* change = new std::string("dashRange");
+		changes.push_back(std::pair<int, std::string*>(id, change));
+	}
+
 	if (time == 0){
 		//day
 		speed = speed = atof((ConfigSettings::config->getValue("VampireMovespeedBaseMult").c_str())) * default_speed;
+		speed -= speedDebuff;
+		if (speed<0){
+			speed = 0;
+		}
 		time_ctr += delta;
 		if (time_ctr > 1000){
 			time_ctr = 0;
@@ -39,11 +53,32 @@ void Vampire::updateTime(int time,int delta)
 	else if (time == 1){
 		//night
 		speed = atof((ConfigSettings::config->getValue("VampireMovespeedMultiplier").c_str())) * default_speed;
+		speed -= speedDebuff;
+		if (speed<0){
+			speed = 0;
+		}
 		attack_mode->setRange(atof((ConfigSettings::config->getValue("VampireAttackRangeInc").c_str())));
 		if (attack_mode->getType() == 0){
 			((Basic_Attack*)attack_mode)->setDotAngle(0);
 		}
 	}
+}
+
+void Vampire::attack2Start(){
+	dashCharging = true;
+}
+
+void Vampire::attack2End(){
+	//set to new pos at end of dash
+	double prevSpeed = speed;
+	speed = dashRange;
+	moveForward();
+	speed = prevSpeed;
+	std::string* change = new std::string("pos:");
+	changes.push_back(std::pair<int, std::string*>(id, change));
+	speedDebuff = 0;
+	dashRange = 0;
+	dashCharging = false;
 }
 
 //void Vampire::attack(GameObject* obj) // does nothing right now

@@ -78,6 +78,21 @@ void GameObject::update(bool isPlayer, float rot) {
 		p_regShade->bind();
 	}
 
+	//draw dash range circle if this player is dashing
+	if (attacking2 && dashRange > 0){
+		p_regShade->unbind();
+		glBegin(GL_LINE_LOOP);
+		float radius = dashRange;
+		for (int i = 0; i < 360; i++)
+		{
+			float degInRad = i * (3.14159265f / 180);
+			glVertex3f(cos(degInRad)*radius, 2, sin(degInRad)*radius);
+		}
+
+		glEnd();
+		p_regShade->bind();
+	}
+
 	//check  model is not null
 	if (g_Model){
 		g_Model->UpdateAnimation();

@@ -337,6 +337,15 @@ void PlayState::UpdateClient(ClientGame* client) {
 			parti = true;
 		}
 
+		if (strcmp(serverEvent, "dashRange") == 0)
+		{
+			float dRange;
+			memcpy(&dRange, serverEvent + 10, sizeof(float));
+			if (Player && objID == Player->getID()){
+				Player->setDashRange(dRange);
+			}
+		}
+
 		if (strcmp(serverEvent, "p_die") == 0){
 			if (projectiles.find(objID) != projectiles.end()){
 				std::map<int, Projectile*>::iterator it2;
@@ -938,12 +947,12 @@ void PlayState::Input(ClientGame* client) {
 		client->addEvent(Player->getID(), "attack;", ACTION_EVENT);
 	}
 
-	if (attacking2 && !attacking2Sent){
+	if (Player->getAttacking2() && !attacking2Sent){
 		attacking2Sent = true;
 		client->addEvent(Player->getID(), "attack2Start;", ACTION_EVENT);
 	}
 
-	if (attacking2Sent && !attacking2){
+	if (attacking2Sent && !Player->getAttacking2()){
 		attacking2Sent = false;
 		//only send attack 2 release message if player is a vampire
 		if (Player->getTeam() == 2){
@@ -983,10 +992,10 @@ void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods
 
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS){
 		Player->setAnimation(a_COMBOATTACK);
-		attacking2 = true;
+		Player->setAttacking2(true);
 	}
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
-		attacking2 = false;
+		Player->setAttacking2(false);
 	}
 }
 

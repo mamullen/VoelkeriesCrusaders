@@ -191,6 +191,27 @@ void GameLogic::update(int time)
 
 			serverPackets.push_back(p);
 		}
+		else if (key->compare("dashRange") == 0){
+			Vampire* v = (Vampire *)gameObjects.at(index);
+			float dRange = (float)v->getDashRange();
+
+			///////////////////////////////////////////////////////////////////////////
+			char data[PACKET_DATA_LEN];
+			int pointer = 0;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "dashRange", 10);
+			pointer += 10;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &dRange, sizeof(float));
+			pointer += sizeof(float);
+			data[pointer] = ',';
+			pointer++;
+			///////////////////////////////////////////////////////////////////////////
+			Packet* p = new Packet;
+			p->packet_type = ACTION_EVENT;
+			memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+			p->id = index;
+
+			serverPackets.push_back(p);
+		}
 		else if (key->compare("weapon1") == 0){
 			float x = gameObjects.at(index)->getPos().x;
 			float y = gameObjects.at(index)->getPos().y;
