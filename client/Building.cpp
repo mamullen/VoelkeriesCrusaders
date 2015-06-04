@@ -1,6 +1,7 @@
 #include "Building.h"
 
 void Building::drawObj(){
+	glEnable(GL_CULL_FACE);
 	shade->bind();
 	Vector3 min = *getMin();
 	Vector3 max = *getMax();
@@ -92,5 +93,5 @@ void Building::drawObj(){
 	glBindTexture(GL_TEXTURE_2D, 0);
 	shade->unbind();
 	
-	
+	glDisable(GL_CULL_FACE);
 }

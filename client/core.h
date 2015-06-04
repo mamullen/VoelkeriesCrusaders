@@ -34,7 +34,7 @@ void drawWireBox(float xmin,float ymin,float zmin,float xmax,float ymax,float zm
 static const int MIN_CAMERA_DISTANCE = 7;
 static const int MAX_CAMERA_DISTANCE = 20;
 static const int MIN_CAMERA_INCLINE = 0;
-static const int MAX_CAMERA_INCLINE = 85;
+static const int MAX_CAMERA_INCLINE = 15;
 
 static const int ROTATE_LEFT = 10;
 static const int ROTATE_RIGHT = -10;

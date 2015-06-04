@@ -41,6 +41,9 @@ public:
 	int aliveCrusaders;
 	int aliveVampires;
 
+	int crusScore;
+	int vampScore;
+
 	int phase1time;
 	int phase2time;
 	int phase3time;
@@ -50,6 +53,7 @@ public:
 
 	stateType getState();
 	void setState(stateType state);
+	void hardReset();
 	void updateState();
 	
 	std::list<std::pair<int, string>> playerNames;

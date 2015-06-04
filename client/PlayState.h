@@ -39,6 +39,7 @@
 #include <string.h>
 #include <iostream>
 #include <stdlib.h>
+#include <chrono>
 
 //#include <fbxsdk/fbxsdk_def.h>
 
@@ -79,9 +80,14 @@ private:
 
 	// Input
 	bool LeftDown, MiddleDown, RightDown, LeftDownTwo, BothDown;
-	bool rotationChanged, attacking;
+	bool rotationChanged = false, attacking = false;
+	bool attacking2Sent = false;
 	double MouseX, MouseY;
 	double lastTime;
+	//time in milliseconds
+	unsigned int savedTime;//curr time of client
+	int damagedTime = 0, damagedAnimLength = 1000;
+	bool restartGame = false;
 
 	// Components
 	Camera Cam;
@@ -95,6 +101,7 @@ private:
 	std::map<int, GameObject*> gameObjects;
 	std::map<int, Projectile*> projectiles;
 	int currGameTime = 0, gameResult = -2;
+	int vampireScore = 0, crusaderScore = 0;
 
 	Building* b1;
 	Texture t;
@@ -109,8 +116,10 @@ private:
 	bool once;
 	bool parti;
 	bool weap1, weap2, weap3, weap4;
+	unsigned int pnum1, pnum2, pnum3, pnum4;
 	Vector3 particlepos;
 	bool deathbyparticle;
+	float deathTime;
 
 	////// - David's meshes
 	// Items

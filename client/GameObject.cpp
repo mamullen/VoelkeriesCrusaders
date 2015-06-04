@@ -19,6 +19,8 @@ void GameObject::update(bool isPlayer, float rot) {
 		return;
 	}
 
+	
+
 	//initial player model is just a cone for now
 	glPushMatrix();
 	
@@ -26,14 +28,15 @@ void GameObject::update(bool isPlayer, float rot) {
 	glRotatef(rotation, 0, 1, 0);
 
 	if (name != NULL && !isPlayer){
+		p_regShade->unbind();
 		glPushMatrix();
 		glRotatef(-rotation+180, 0, 1, 0);
 		glRotatef(-rot, 0, 1, 0);
 		//calculate how much to move name left so to center name
 		float paramDist = 40.0f;
 		float dist = strlen(name) / 2.0f * (paramDist / 34.0f);
-		glTranslatef(-dist, 5, 0);
-		glLineWidth(3);
+		glTranslatef(-dist, 12, 0);
+		glLineWidth(1.4);
 		glScalef(paramDist / 3500.0f, paramDist / 3500.0f, paramDist / 3500.0f);
 		glColor3f(1, 1, 1);
 		for (int i = 0; i<strlen(name); i++){
@@ -43,34 +46,49 @@ void GameObject::update(bool isPlayer, float rot) {
 
 		glEnd();
 		glPopMatrix();
+		p_regShade->bind();
 	}
 
-	if (showHP){
+	if (showHP && !isPlayer){
 		p_regShade->unbind();
 		glPushMatrix();
-		if (!isPlayer){
-			glRotatef(-rotation, 0, 1, 0);
-			glRotatef(-rot, 0, 1, 0);
-		}
+		glRotatef(-rotation, 0, 1, 0);
+		glRotatef(-rot, 0, 1, 0);
 
 		glBegin(GL_QUADS);
 		glColor3f(0.f, 1.f, 0.f);
 		glNormal3f(0, 1, 0);
-		glVertex3f(2.f - ((getHealth() / getMaxHealth()))*4.f, 4.f, 0.f); // starting at -2.f
-		glVertex3f(2.f, 4.f, 0.f);
-		glVertex3f(2.f, 3.f, 0.f);
-		glVertex3f(2.f - ((getHealth() / getMaxHealth()))*4.f, 3.f, 0.f);
+		glVertex3f(2.f - ((getHealth() / getMaxHealth()))*4.f, 11.f, 0.f); // starting at -2.f
+		glVertex3f(2.f, 11.f, 0.f);
+		glVertex3f(2.f, 10.f, 0.f);
+		glVertex3f(2.f - ((getHealth() / getMaxHealth()))*4.f, 10.f, 0.f);
 
 		
 		glColor3f(1.f, 0.f, 0.f);
 		glNormal3f(0, 1, 0);
-		glVertex3f(-2.f, 4.f, 0.f); // starting at 2.f
-		glVertex3f(-2.f + (1-(getHealth() / getMaxHealth()))*4.f, 4.f, 0.f);
-		glVertex3f(-2.f + (1-(getHealth() / getMaxHealth()))*4.f, 3.f, 0.f);
-		glVertex3f(-2.f, 3.f, 0.f);
+		glVertex3f(-2.f, 11.f, 0.f); // starting at 2.f
+		glVertex3f(-2.f + (1-(getHealth() / getMaxHealth()))*4.f, 11.f, 0.f);
+		glVertex3f(-2.f + (1-(getHealth() / getMaxHealth()))*4.f, 10.f, 0.f);
+		glVertex3f(-2.f, 10.f, 0.f);
 		
 		glEnd();
 		glPopMatrix();
+		p_regShade->bind();
+	}
+
+	//draw dash range circle if this player is dashing
+	if (attacking2 && dashRange > 0){
+		p_regShade->unbind();
+		glBegin(GL_LINE_LOOP);
+		glColor3f(1.f, 0.f, 0.f);
+		float radius = dashRange;
+		for (int i = 0; i < 360; i++)
+		{
+			float degInRad = i * (3.14159265f / 180);
+			glVertex3f(cos(degInRad)*radius, 2, sin(degInRad)*radius);
+		}
+
+		glEnd();
 		p_regShade->bind();
 	}
 
@@ -148,4 +166,10 @@ bool GameObject::shrinecollide(Vector3 min, Vector3 max)
 	}
 	printf("shrine false\n\n");
 	return false;
+}
+
+void GameObject::setAttacking2(bool t){
+	attacking2 = t;
+	dashRange = 0;
+	printf("Setting to 0...\n");
 }

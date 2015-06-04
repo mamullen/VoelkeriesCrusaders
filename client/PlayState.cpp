@@ -31,6 +31,7 @@ PlayState::PlayState(GLFWwindow* window) : GameState(window) {
 	p_regShade = new Shader("shader/shader.vert", "shader/shader.frag");
 	p_bumpShade = new Shader("shader/bump.vert", "shader/bump.frag");
 	weap1 = weap2 = weap3 = weap4 = true;
+	pnum1 = pnum2 = pnum3 = pnum4 = 9; // 9 is no one
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -58,6 +59,10 @@ int PlayState::InitGL() {
 
 int PlayState::Initialize() {
 	//p_bumpShade->init("shader/bump.vert", "shader/bump.frag");
+
+	savedTime =
+		std::chrono::duration_cast<std::chrono::milliseconds>
+		(std::chrono::system_clock::now().time_since_epoch()).count();
 
 	deathbyparticle = false;
 	parti = false;
@@ -157,6 +162,17 @@ void PlayState::UpdateParticles() {
 enum ObjectTypes {BUILDING, none1, none2, HUMAN, CRUSADER, VAMPIRE, SUNMACE};
 
 void PlayState::UpdateClient(ClientGame* client) {
+	//do timing stuff here... for now?
+	unsigned int currTime =
+		std::chrono::duration_cast<std::chrono::milliseconds>
+		(std::chrono::system_clock::now().time_since_epoch()).count();
+	unsigned int elapsedTime = currTime - savedTime;
+	savedTime = currTime;
+
+	damagedTime -= elapsedTime;
+
+	////////////////////////////////////////////////////////////////////
+
 	Packet * serverPacket = client->popServerEvent();
 
 	while (serverPacket != NULL){
@@ -320,7 +336,27 @@ void PlayState::UpdateClient(ClientGame* client) {
 			memcpy(&zPos, serverEvent + 13, sizeof(float));
 			particlepos = Vector3(xPos, yPos, zPos);
 			deathbyparticle = true;
-			parti = true;
+			//parti = true;
+			deathTime = currGameTime;
+		}
+
+		if (strcmp(serverEvent, "dashRange") == 0)
+		{
+			float dRange;
+			memcpy(&dRange, serverEvent + 10, sizeof(float));
+			printf("Getting Range %f\n", dRange);
+			if (Player && objID == Player->getID()){
+				Player->setDashRange(dRange);
+			}
+		}
+
+		if (strcmp(serverEvent, "score") == 0){
+			int cS, vS;
+			memcpy(&cS, serverEvent + 6, sizeof(int));
+			memcpy(&vS, serverEvent + 10, sizeof(int));
+
+			crusaderScore = cS;
+			vampireScore = vS;
 		}
 
 		if (strcmp(serverEvent, "p_die") == 0){
@@ -340,8 +376,9 @@ void PlayState::UpdateClient(ClientGame* client) {
 			memcpy(&yPos, serverEvent + 12, sizeof(float));
 			memcpy(&zPos, serverEvent + 16, sizeof(float));
 			weap1 = false;
+			pnum1 = objID;
 		}
-		
+
 		if (strcmp(serverEvent, "weapon2") == 0)
 		{
 			float xPos;
@@ -351,8 +388,9 @@ void PlayState::UpdateClient(ClientGame* client) {
 			memcpy(&yPos, serverEvent + 12, sizeof(float));
 			memcpy(&zPos, serverEvent + 16, sizeof(float));
 			weap2 = false;
+			pnum2 = objID;
 		}
-		
+
 		if (strcmp(serverEvent, "weapon3") == 0)
 		{
 			float xPos;
@@ -362,8 +400,9 @@ void PlayState::UpdateClient(ClientGame* client) {
 			memcpy(&yPos, serverEvent + 12, sizeof(float));
 			memcpy(&zPos, serverEvent + 16, sizeof(float));
 			weap3 = false;
+			pnum3 = objID;
 		}
-		
+
 		if (strcmp(serverEvent, "weapon4") == 0)
 		{
 			float xPos;
@@ -373,6 +412,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 			memcpy(&yPos, serverEvent + 12, sizeof(float));
 			memcpy(&zPos, serverEvent + 16, sizeof(float));
 			weap4 = false;
+			pnum4 = objID;
 		}
 
 		if (strcmp(serverEvent, "hdir") == 0)
@@ -417,7 +457,13 @@ void PlayState::UpdateClient(ClientGame* client) {
 			float hp;
 			memcpy(&hp, serverEvent + 3, sizeof(float));
 			if (Player && objID == Player->getID()){
+				//first calculate health loss amount
+				int hpTemp = Player->getHealth();
 				Player->setHealth(hp);
+				hpTemp = Player->getHealth() - hpTemp;
+				if (hpTemp < -1){
+					damagedTime = damagedAnimLength;
+				}
 			}
 			else if (gameObjects.find(objID) != gameObjects.end()){
 				GameObject* o = gameObjects.at(objID);
@@ -581,6 +627,35 @@ void PlayState::drawHUD(ClientGame* client){
 	}
 	glPopMatrix();
 
+	//scoreboard
+	glPushMatrix();
+	std::string cS = std::string("Crusaders: ");
+	cS = cS + std::to_string(crusaderScore);
+	char * cScore = (char *)cS.c_str();
+	glTranslatef(2*width / 50, height / 30, 0);
+	glLineWidth(2);
+	glScalef(width / 5000.88, height / 3800.0f, 1);
+	glRotatef(180, 1, 0, 0);
+	glColor3f(1, 1, 1);
+	for (unsigned int i = 0; i < strlen(cScore); i++){
+		glutStrokeCharacter(GLUT_STROKE_ROMAN, (char)cScore[i]);
+	}
+	glPopMatrix();
+
+	glPushMatrix();
+	std::string vS = std::string(" Vampires: ");
+	vS = vS + std::to_string(vampireScore);
+	char * vScore = (char *)vS.c_str();
+	glTranslatef(width / 40, 2.5*height / 30, 0);
+	glLineWidth(2);
+	glScalef(width / 5000.88, height / 3800.0f, 1);
+	glRotatef(180, 1, 0, 0);
+	glColor3f(1, 1, 1);
+	for (unsigned int i = 0; i < strlen(vScore); i++){
+		glutStrokeCharacter(GLUT_STROKE_ROMAN, (char)vScore[i]);
+	}
+	glPopMatrix();
+
 	if (gameResult == 1){
 		glPushMatrix();
 		char * name = "YOU WIN";
@@ -620,8 +695,98 @@ void PlayState::drawHUD(ClientGame* client){
 		}
 		glPopMatrix();
 	}
+	//draw restart game text
+	if (gameResult == -1 || gameResult == 0 || gameResult == 1){
+		glPushMatrix();
+		char * restartText = "Press R to Restart";
+		glTranslatef(width*.2f, height * .35f, 0);
+		glLineWidth(4);
+		glScalef(width / 3024.0f, height / 2168.0f, 1);
+		glRotatef(180, 1, 0, 0);
+		glColor3f(1, 1, 1);
+		for (unsigned int i = 0; i < strlen(restartText); i++){
+			glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, (char)restartText[i]);
+		}
+		glPopMatrix();
 
-	// Making sure we can render 3d again
+		glPushMatrix();
+		char * escText = "Press ESC to Quit";
+		glTranslatef(width*.21f, height * .45f, 0);
+		glLineWidth(4);
+		glScalef(width / 3024.0f, height / 2168.0f, 1);
+		glRotatef(180, 1, 0, 0);
+		glColor3f(1, 1, 1);
+		for (unsigned int i = 0; i < strlen(escText); i++){
+			glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, (char)escText[i]);
+		}
+		glPopMatrix();
+	}
+
+	if (damagedTime > 0){
+		//draw edges when getting hit
+		glPushMatrix();
+		glEnable(GL_BLEND); //Enable blending.
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBegin(GL_QUADS);
+		glColor4f(1.f, 0.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		glVertex2f(0, 0);
+		glVertex2f(width, 0);
+		glColor4f(1.f, 0.f, 0.f, 0.f);
+		glVertex2f(width, height / 8);
+		glVertex2f(0, height / 8);
+
+		glColor4f(1.f, 0.f, 0.f, 0.f);
+		glVertex2f(0, height - (height / 8));
+		glVertex2f(width, height - (height / 8));
+		glColor4f(1.f, 0.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		glVertex2f(width, height);
+		glVertex2f(0, height);
+		glEnd();
+
+		glDisable(GL_BLEND);
+		glPopMatrix();
+
+		// Making sure we can render 3d again
+		glMatrixMode(GL_PROJECTION);
+		glPopMatrix();
+		glMatrixMode(GL_MODELVIEW);
+
+
+		//had to do this again for each side rect because alphas were not
+		//working well with eachother...
+		glMatrixMode(GL_PROJECTION);
+		glPushMatrix();
+		glLoadIdentity();
+		glOrtho(0.0, width, height, 0.0, -1.0, 10.0);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glDisable(GL_CULL_FACE);
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+		glPushMatrix();
+		glEnable(GL_BLEND); //Enable blending.
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBegin(GL_QUADS);
+		glColor4f(1.f, 0.f, 0.f, ((float)damagedTime/damagedAnimLength));
+		glVertex2f(0, 0);
+		glColor4f(1.f, 0.f, 0.f, 0.f);
+		glVertex2f(width / 10, 0);
+		glVertex2f(width / 10, height);
+		glColor4f(1.f, 0.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		glVertex2f(0, height);
+
+		glColor4f(1.f, 0.f, 0.f, 0.f);
+		glVertex2f(width - (width / 10), 0);
+		glColor4f(1.f, 0.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		glVertex2f(width, 0);
+		glVertex2f(width, height);
+		glColor4f(1.f, 0.f, 0.f, 0.f);
+		glVertex2f(width - (width / 10), height);
+		glEnd();
+		glDisable(GL_BLEND);
+		glPopMatrix();
+	}
+
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
@@ -656,6 +821,18 @@ void PlayState::Draw(ClientGame* client) {
 	for (it = gameObjects.begin(); it != gameObjects.end(); it++)
 	{
 		((PlayerType*)(it->second))->update(false, Cam.GetRotation().y);
+		if (!weap1 && ((PlayerType*)(it->second))->getID() == pnum1) {
+			((PlayerType*)(it->second))->EquipWeapon((Weapon*)p_SunMace);
+		}
+		else if (!weap2 && ((PlayerType*)(it->second))->getID() == pnum2) {
+			((PlayerType*)(it->second))->EquipWeapon((Weapon*)p_DefenseShield);
+		}
+		else if (!weap3 && ((PlayerType*)(it->second))->getID() == pnum3) {
+			((PlayerType*)(it->second))->EquipWeapon((Weapon*)p_LightningBolt);
+		}
+		else if (!weap4 && ((PlayerType*)(it->second))->getID() == pnum4) {
+			((PlayerType*)(it->second))->EquipWeapon((Weapon*)p_BatSword);
+		}
 	}
 
 	std::map<int, Projectile*>::iterator it2;
@@ -672,16 +849,16 @@ void PlayState::Draw(ClientGame* client) {
 	p_DavidsBuilding->Render();
 	glPopMatrix();
 
-	if (!weap1) {
+	if (!weap1 && Player->getID() == pnum1) {
 		Player->EquipWeapon((Weapon*)p_SunMace);
 	}
-	else if (!weap2) {
-		Player->EquipWeapon((Weapon*)p_LightningBolt);
-	}
-	else if (!weap3) {
+	else if (!weap2 && Player->getID() == pnum2) {
 		Player->EquipWeapon((Weapon*)p_DefenseShield);
 	}
-	else if (!weap4) {
+	else if (!weap3 && Player->getID() == pnum3) {
+		Player->EquipWeapon((Weapon*)p_LightningBolt);
+	}
+	else if (!weap4 && Player->getID() == pnum4) {
 		Player->EquipWeapon((Weapon*)p_BatSword);
 	}
 	p_SunMace->Draw();
@@ -691,7 +868,7 @@ void PlayState::Draw(ClientGame* client) {
 	
 	p_regShade->unbind();
 
-	if (parti)
+	if (parti && abs(currGameTime-deathTime) < 2000)
 	{
 		RenderParticle(Cam.GetRotation().y, p_DeathByBlood, particlepos.x, particlepos.y, particlepos.z);
 	}
@@ -781,8 +958,24 @@ void PlayState::Input(ClientGame* client) {
 		client->addEvent(Player->getID(), data, ACTION_EVENT);
 	}
 
+	if (restartGame){
+		client->setStateChange("pre_state");
+		client->addEvent(Player->getID(), "restart;", ACTION_EVENT);
+	}
+
 	if (attacking){
 		client->addEvent(Player->getID(), "attack;", ACTION_EVENT);
+	}
+
+	if (Player->getAttacking2Starts() >= Player->getAttacking2Ends() && Player->getAttacking2Starts()>0){
+		client->addEvent(Player->getID(), "attack2Start;", ACTION_EVENT);
+		Player->setAttacking2Starts(Player->getAttacking2Starts()-1);
+		Player->setAttacking2(true);
+	}
+	else if (Player->getAttacking2Starts() < Player->getAttacking2Ends()){
+		client->addEvent(Player->getID(), "attack2End;", ACTION_EVENT);
+		Player->setAttacking2Ends(Player->getAttacking2Ends() - 1);
+		Player->setAttacking2(false);
 	}
 }
 
@@ -791,6 +984,12 @@ void PlayState::Input(ClientGame* client) {
 void PlayState::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) // exit
 		glfwSetWindowShouldClose(window, GL_TRUE);
+
+	if (gameResult == -1 || gameResult == 0 || gameResult == 1){
+		if (key == GLFW_KEY_R && action == GLFW_PRESS){
+			restartGame = true;
+		}
+	}
 }
 
 void PlayState::CharCallback(GLFWwindow* window, unsigned int code) {
@@ -817,6 +1016,10 @@ void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		Player->setAnimation(a_IDLE);
+		Player->setAttacking2Starts(Player->getAttacking2Starts()+1);
+	}
+	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
+		Player->setAttacking2Ends(Player->getAttacking2Ends()+1);
 	}
 }
 
@@ -844,7 +1047,7 @@ void PlayState::MouseMotion(GLFWwindow* window, double xpos, double ypos) {
 	}
 
 	// Move camera
-	Cam.AddPitch(-dy);
+	Cam.AddPitch(-dy/2.0f);
 	Cam.AddYaw(sign*newDx);
 	rotationChanged = true;
 }

@@ -166,7 +166,13 @@ void ServerGame::receiveFromClients()
 				//printf("PACKET DATA: %s\n", packet.packet_data);
 				//printf(packet.packet_data);
 				//printf("\n");
-				gameLogic->savePacket(iter->first, temp);
+
+				if (!strncmp(packet.packet_data, "restart", 7)){
+					sendInitialConnection(iter->first);
+				}
+				else{
+					gameLogic->savePacket(iter->first, temp);
+				}
 				//sendActionPackets(iter->first);
 				break;
 			}

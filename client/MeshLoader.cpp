@@ -17,12 +17,27 @@ MeshLoader::MeshLoader() {
 	m_EnforceNoBones = false;
 	m_LeftHandPosTrafo = NULL;
 	a_IsWeapon = false;
+	playable = false;
 }
 
 MeshLoader::MeshLoader(const char* filename) {
 	a_LastPlaying = 0;
 	a_CurrentTime = 0;
 	m_EnforceNoBones = false;
+	playable = false;
+
+	std::cout << "MeshLoader:: loading " << filename << std::endl;
+	if (!LoadAsset(filename)) {
+		std::cout << "Error loading file" << std::endl;
+	};
+	std::cout << "MeshLoader:: finished " << std::endl;
+}
+
+MeshLoader::MeshLoader(const char* filename, bool model) {
+	a_LastPlaying = 0;
+	a_CurrentTime = 0;
+	m_EnforceNoBones = false;
+	playable = model;
 
 	std::cout << "MeshLoader:: loading " << filename << std::endl;
 	if (!LoadAsset(filename)) {
@@ -32,6 +47,7 @@ MeshLoader::MeshLoader(const char* filename) {
 }
 
 MeshLoader::~MeshLoader() {
+	delete(m_Scene);
 }
 
 
@@ -185,12 +201,20 @@ void MeshLoader::ApplyMaterial(const struct aiMaterial *material)
 	glPolygonMode(GL_FRONT_AND_BACK, fill_mode);
 
 	max = 1;
-	if ((AI_SUCCESS == aiGetMaterialIntegerArray(material, AI_MATKEY_TWOSIDED, &two_sided, &max)) && two_sided)
+	/*if ((AI_SUCCESS == aiGetMaterialIntegerArray(material, AI_MATKEY_TWOSIDED, &two_sided, &max)) && two_sided)
 		glDisable(GL_CULL_FACE);
 	else
+		glEnable(GL_CULL_FACE);*/
+	if (playable)
+	{
+		glDisable(GL_CULL_FACE);
+	}
+	else
+	{
 		glEnable(GL_CULL_FACE);
+	}
 
-	glDisable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 }
 
 void MeshLoader::IsEquippedWeapon(aiMatrix4x4* PosTrafo) {

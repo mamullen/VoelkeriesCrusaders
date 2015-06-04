@@ -227,6 +227,15 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 				attack_mode->attack(this);
 			}			
 		}
+		else if (cEvent.compare("attack2Start") == 0){
+			attack2Start();
+			//printf("ATTACK 2 START\n");
+		}
+		else if (cEvent.compare("attack2End") == 0){
+			attack2End();
+			//printf("ATTACK 2 END\n");
+
+		}
 	}
 
 	for (int i = 0; i < attr_num; i++){
@@ -291,7 +300,7 @@ void Player::updateCD()
 	attack_mode->update();
 }
 
-void Player::updateTime(int time,int delta){
+void Player::updateTime(int time, int delta, std::vector<GameObject*>* obj){
 	// does nothing =[
 }
 
@@ -378,8 +387,8 @@ bool Player::weaponcollide(Vector3 weapon)
 
 
 void Player::respawnLocation(std::vector<GameObject*>* gameObjects){
-	float mapMin = -225;
-	float mapMax = 225;
+	float mapMin = atof(ConfigSettings::config->getValue("RespawnMin").c_str());
+	float mapMax = atof(ConfigSettings::config->getValue("RespawnMax").c_str());
 
 	float randX = 0;
 	float randY = 0;
@@ -413,4 +422,11 @@ void Player::respawnLocation(std::vector<GameObject*>* gameObjects){
 		col4 = collide(gameObjects, -right);
 
 	}
+}
+
+void Player::respawn(std::vector<GameObject*>* gameObjects){
+	respawnLocation(gameObjects);
+	addHp(100);
+	std::string* change = new std::string("pos:");
+	changes.push_back(std::pair<int, std::string*>(id, change));
 }

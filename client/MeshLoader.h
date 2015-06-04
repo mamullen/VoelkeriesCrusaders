@@ -40,6 +40,7 @@ public:
 	MeshLoader();
 	~MeshLoader();
 	MeshLoader(const char* filename);
+	MeshLoader(const char* filename, bool model);
 	
 	void Render();
 	void DisableBones()		{ m_EnforceNoBones = true; }
@@ -61,6 +62,7 @@ private:
 	double a_CurrentTime;
 	double a_LastPlaying;
 	bool a_IsWeapon;
+	bool playable;
 };
 
 #endif
