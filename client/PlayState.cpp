@@ -57,6 +57,10 @@ int PlayState::InitGL() {
 int PlayState::Initialize() {
 	//p_bumpShade->init("shader/bump.vert", "shader/bump.frag");
 
+	savedTime =
+		std::chrono::duration_cast<std::chrono::milliseconds>
+		(std::chrono::system_clock::now().time_since_epoch()).count();
+
 	deathbyparticle = false;
 	parti = false;
 	// Configs initialization
@@ -155,6 +159,17 @@ void PlayState::UpdateParticles() {
 enum ObjectTypes {BUILDING, none1, none2, HUMAN, CRUSADER, VAMPIRE, SUNMACE};
 
 void PlayState::UpdateClient(ClientGame* client) {
+	//do timing stuff here... for now?
+	unsigned int currTime =
+		std::chrono::duration_cast<std::chrono::milliseconds>
+		(std::chrono::system_clock::now().time_since_epoch()).count();
+	unsigned int elapsedTime = currTime - savedTime;
+	savedTime = currTime;
+
+	damagedTime -= elapsedTime;
+
+	////////////////////////////////////////////////////////////////////
+
 	Packet * serverPacket = client->popServerEvent();
 
 	while (serverPacket != NULL){
@@ -415,7 +430,13 @@ void PlayState::UpdateClient(ClientGame* client) {
 			float hp;
 			memcpy(&hp, serverEvent + 3, sizeof(float));
 			if (Player && objID == Player->getID()){
+				//first calculate health loss amount
+				int hpTemp = Player->getHealth();
 				Player->setHealth(hp);
+				hpTemp = Player->getHealth() - hpTemp;
+				if (hpTemp < -1){
+					damagedTime = damagedAnimLength;
+				}
 			}
 			else if (gameObjects.find(objID) != gameObjects.end()){
 				GameObject* o = gameObjects.at(objID);
@@ -645,7 +666,71 @@ void PlayState::drawHUD(ClientGame* client){
 		glPopMatrix();
 	}
 
-	// Making sure we can render 3d again
+	if (damagedTime > 0){
+		//draw edges when getting hit
+		glPushMatrix();
+		glEnable(GL_BLEND); //Enable blending.
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBegin(GL_QUADS);
+		glColor4f(1.f, 0.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		glVertex2f(0, 0);
+		glVertex2f(width, 0);
+		glColor4f(1.f, 0.f, 0.f, 0.f);
+		glVertex2f(width, height / 8);
+		glVertex2f(0, height / 8);
+
+		glColor4f(1.f, 0.f, 0.f, 0.f);
+		glVertex2f(0, height - (height / 8));
+		glVertex2f(width, height - (height / 8));
+		glColor4f(1.f, 0.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		glVertex2f(width, height);
+		glVertex2f(0, height);
+		glEnd();
+
+		glDisable(GL_BLEND);
+		glPopMatrix();
+
+		// Making sure we can render 3d again
+		glMatrixMode(GL_PROJECTION);
+		glPopMatrix();
+		glMatrixMode(GL_MODELVIEW);
+
+
+		//had to do this again for each side rect because alphas were not
+		//working well with eachother...
+		glMatrixMode(GL_PROJECTION);
+		glPushMatrix();
+		glLoadIdentity();
+		glOrtho(0.0, width, height, 0.0, -1.0, 10.0);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glDisable(GL_CULL_FACE);
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+		glPushMatrix();
+		glEnable(GL_BLEND); //Enable blending.
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBegin(GL_QUADS);
+		glColor4f(1.f, 0.f, 0.f, ((float)damagedTime/damagedAnimLength));
+		glVertex2f(0, 0);
+		glColor4f(1.f, 0.f, 0.f, 0.f);
+		glVertex2f(width / 10, 0);
+		glVertex2f(width / 10, height);
+		glColor4f(1.f, 0.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		glVertex2f(0, height);
+
+		glColor4f(1.f, 0.f, 0.f, 0.f);
+		glVertex2f(width - (width / 10), 0);
+		glColor4f(1.f, 0.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		glVertex2f(width, 0);
+		glVertex2f(width, height);
+		glColor4f(1.f, 0.f, 0.f, 0.f);
+		glVertex2f(width - (width / 10), height);
+		glEnd();
+		glDisable(GL_BLEND);
+		glPopMatrix();
+	}
+
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);

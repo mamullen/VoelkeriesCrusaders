@@ -39,6 +39,7 @@
 #include <string.h>
 #include <iostream>
 #include <stdlib.h>
+#include <chrono>
 
 //#include <fbxsdk/fbxsdk_def.h>
 
@@ -82,6 +83,9 @@ private:
 	bool rotationChanged, attacking;
 	double MouseX, MouseY;
 	double lastTime;
+	//time in milliseconds
+	unsigned int savedTime;//curr time of client
+	int damagedTime = 0, damagedAnimLength = 1000;
 	bool restartGame = false;
 
 	// Components
