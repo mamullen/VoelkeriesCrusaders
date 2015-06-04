@@ -16,6 +16,7 @@ public:
 	void Input(ClientGame* Client);
 	void Update(ClientGame* Client);
 	void Draw(ClientGame* client);
+	void SetName(char* n)			{ name = n; };
 
 	GLuint LoadRAWTexture(const char * filename, int width, int height);
 

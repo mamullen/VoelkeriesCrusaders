@@ -618,6 +618,32 @@ void PlayState::drawHUD(ClientGame* client){
 		}
 		glPopMatrix();
 	}
+	//draw restart game text
+	if (gameResult == -1 || gameResult == 0 || gameResult == 1){
+		glPushMatrix();
+		char * restartText = "Press R to Restart";
+		glTranslatef(width*.2f, height * .35f, 0);
+		glLineWidth(4);
+		glScalef(width / 3024.0f, height / 2168.0f, 1);
+		glRotatef(180, 1, 0, 0);
+		glColor3f(1, 1, 1);
+		for (unsigned int i = 0; i < strlen(restartText); i++){
+			glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, (char)restartText[i]);
+		}
+		glPopMatrix();
+
+		glPushMatrix();
+		char * escText = "Press ESC to Quit";
+		glTranslatef(width*.21f, height * .45f, 0);
+		glLineWidth(4);
+		glScalef(width / 3024.0f, height / 2168.0f, 1);
+		glRotatef(180, 1, 0, 0);
+		glColor3f(1, 1, 1);
+		for (unsigned int i = 0; i < strlen(escText); i++){
+			glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, (char)escText[i]);
+		}
+		glPopMatrix();
+	}
 
 	// Making sure we can render 3d again
 	glMatrixMode(GL_PROJECTION);
@@ -772,6 +798,11 @@ void PlayState::Input(ClientGame* client) {
 		client->addEvent(Player->getID(), data, ACTION_EVENT);
 	}
 
+	if (restartGame){
+		client->setStateChange("pre_state");
+		client->addEvent(Player->getID(), "restart;", ACTION_EVENT);
+	}
+
 	if (attacking){
 		client->addEvent(Player->getID(), "attack;", ACTION_EVENT);
 	}
@@ -782,6 +813,12 @@ void PlayState::Input(ClientGame* client) {
 void PlayState::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) // exit
 		glfwSetWindowShouldClose(window, GL_TRUE);
+
+	if (gameResult == -1 || gameResult == 0 || gameResult == 1){
+		if (key == GLFW_KEY_R && action == GLFW_PRESS){
+			restartGame = true;
+		}
+	}
 }
 
 void PlayState::CharCallback(GLFWwindow* window, unsigned int code) {

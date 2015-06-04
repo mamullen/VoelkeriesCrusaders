@@ -82,6 +82,7 @@ private:
 	bool rotationChanged, attacking;
 	double MouseX, MouseY;
 	double lastTime;
+	bool restartGame = false;
 
 	// Components
 	Camera Cam;

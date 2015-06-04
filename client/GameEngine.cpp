@@ -54,6 +54,12 @@ int main(int argc, char **argv) {
 			if (strcmp(Client->getStateChange(), "play_state") == 0){
 				Game->ChangeState(new PlayState(Game->Window()));
 			}
+			if (strcmp(Client->getStateChange(), "pre_state") == 0){
+				PrePlayState* nextPreState = new PrePlayState(Game->Window());
+				nextPreState->SetName(Client->getClientName());
+				Game->ChangeState(nextPreState);
+
+			}
 			Client->setStateChange(NULL);
 		}
 	}
