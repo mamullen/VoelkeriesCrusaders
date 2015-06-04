@@ -80,6 +80,7 @@ void GameObject::update(bool isPlayer, float rot) {
 	if (attacking2 && dashRange > 0){
 		p_regShade->unbind();
 		glBegin(GL_LINE_LOOP);
+		glColor3f(1.f, 0.f, 0.f);
 		float radius = dashRange;
 		for (int i = 0; i < 360; i++)
 		{
