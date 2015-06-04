@@ -688,6 +688,20 @@ void GameLogic::hardReset(){
 	playerList.clear();
 	projectileList.clear();
 	playerNames.clear();
+
+	ticksSinceSend = ticksPerTimerSend;
+
+	numCrusaders = 0;
+	numVampires = 0;
+	aliveCrusaders = 0;
+	aliveVampires = 0;
+
+	gameState = WAIT;
+	timer = new Timer();
+	timer->setPhase(phase1time, phase2time, phase3time);
+	timer->setMaxTime(phase3time);
+
+	printf("RESETTING THE GAME\n");
 }
 
 void GameLogic::updateState()
@@ -1148,6 +1162,7 @@ void GameLogic::updateState()
 			p->id = 0;
 
 			serverPackets.push_back(p);
+			hardReset();
 		}
 	}
 }

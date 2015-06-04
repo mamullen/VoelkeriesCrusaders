@@ -168,8 +168,7 @@ void ServerGame::receiveFromClients()
 				//printf("\n");
 
 				if (!strncmp(packet.packet_data, "restart", 7)){
-					gameLogic->hardReset();
-					printf("HARD RESET THE GAME\n");
+					sendInitialConnection(iter->first);
 				}
 				else{
 					gameLogic->savePacket(iter->first, temp);
