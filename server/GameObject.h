@@ -22,7 +22,15 @@ public:
 	int getID();
 	void setID(int theID);
 	float getHP();
-	
+	virtual void addHp(float h) {
+		hp += h; 
+		if (hp > 100){ 
+			hp = 100; 
+		}
+		std::string* change = new std::string("hp");
+		changes.push_back(std::pair<int, std::string*>(id, change));
+	}
+
 	void setPos(float, float, float);
 	void setPos(Vector3&);
 	void moveForward();

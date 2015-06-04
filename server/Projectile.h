@@ -23,6 +23,7 @@ public:
 
 private:
 	bool collide(GameObject*);
+	bool collideWall(std::vector<GameObject*>* obj,int time);
 	float hitRadius;
 	float range;
 	float distance; // distance traveled

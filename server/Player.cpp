@@ -10,7 +10,7 @@ Player::Player() :GameObject()
 	position = Vector3(0, 1.3, 0);
 	rotation = 0;
 	hp = 100;
-	default_speed = (float)atoi(ConfigSettings::config->getValue("PlayerMoveSpeed").c_str());
+	default_speed = atof(ConfigSettings::config->getValue("PlayerMoveSpeed").c_str());
 	speed = default_speed;
 	isAlive = true;
 	// actions
