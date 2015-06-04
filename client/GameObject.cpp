@@ -168,3 +168,9 @@ bool GameObject::shrinecollide(Vector3 min, Vector3 max)
 	printf("shrine false\n\n");
 	return false;
 }
+
+void GameObject::setAttacking2(bool t){
+	attacking2 = t;
+	dashRange = 0;
+	printf("Setting to 0...\n");
+}

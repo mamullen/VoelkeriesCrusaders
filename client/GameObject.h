@@ -57,8 +57,11 @@ public:
 	void setForward(Matrix34 rotate)	{ rotate.Transform(forward, forward); rotate.Transform(right, right); }
 	void resetForward(Matrix34 rotate)	{ rotate.Transform(Vector4(0, 0, 1, 1), forward); rotate.Transform(Vector4(-1, 0, 0, 1), right); }
 	void setDashRange(float d)			{ dashRange = d; }
-	bool getAttacking2()				{ return attacking2; }
-	void setAttacking2(bool t)			{ attacking2 = t; }
+	int getAttacking2Starts()			{ return attack2Starts; }
+	int getAttacking2Ends()				{ return attack2Ends; }
+	void setAttacking2Starts(int d)		{ attack2Starts = d; }
+	void setAttacking2Ends(int d)		{ attack2Ends = d; }
+	void setAttacking2(bool t);
 
 	void loadShader(Shader* reg) { 
 		p_regShade = reg;
@@ -73,6 +76,7 @@ private:
 	char* name = NULL;
 	float dashRange = 0;
 	bool attacking2 = false;
+	int attack2Starts = 0, attack2Ends = 0;
 
 	Vector4 position = Vector4(0, 2, 0, 1);
 	Vector4 forward = INIT_FORWARD;

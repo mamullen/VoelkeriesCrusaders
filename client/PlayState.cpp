@@ -341,9 +341,19 @@ void PlayState::UpdateClient(ClientGame* client) {
 		{
 			float dRange;
 			memcpy(&dRange, serverEvent + 10, sizeof(float));
+			printf("Getting Range %f\n", dRange);
 			if (Player && objID == Player->getID()){
 				Player->setDashRange(dRange);
 			}
+		}
+
+		if (strcmp(serverEvent, "score") == 0){
+			int cS, vS;
+			memcpy(&cS, serverEvent + 6, sizeof(int));
+			memcpy(&vS, serverEvent + 10, sizeof(int));
+
+			crusaderScore = cS;
+			vampireScore = vS;
 		}
 
 		if (strcmp(serverEvent, "p_die") == 0){
@@ -947,17 +957,15 @@ void PlayState::Input(ClientGame* client) {
 		client->addEvent(Player->getID(), "attack;", ACTION_EVENT);
 	}
 
-	if (Player->getAttacking2() && !attacking2Sent){
-		attacking2Sent = true;
+	if (Player->getAttacking2Starts() >= Player->getAttacking2Ends() && Player->getAttacking2Starts()>0){
 		client->addEvent(Player->getID(), "attack2Start;", ACTION_EVENT);
+		Player->setAttacking2Starts(Player->getAttacking2Starts()-1);
+		Player->setAttacking2(true);
 	}
-
-	if (attacking2Sent && !Player->getAttacking2()){
-		attacking2Sent = false;
-		//only send attack 2 release message if player is a vampire
-		if (Player->getTeam() == 2){
-			client->addEvent(Player->getID(), "attack2End;", ACTION_EVENT);
-		}
+	else if (Player->getAttacking2Starts() < Player->getAttacking2Ends()){
+		client->addEvent(Player->getID(), "attack2End;", ACTION_EVENT);
+		Player->setAttacking2Ends(Player->getAttacking2Ends() - 1);
+		Player->setAttacking2(false);
 	}
 }
 
@@ -992,10 +1000,10 @@ void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods
 
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS){
 		Player->setAnimation(a_COMBOATTACK);
-		Player->setAttacking2(true);
+		Player->setAttacking2Starts(Player->getAttacking2Starts()+1);
 	}
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
-		Player->setAttacking2(false);
+		Player->setAttacking2Ends(Player->getAttacking2Ends()+1);
 	}
 }
 
@@ -1023,7 +1031,7 @@ void PlayState::MouseMotion(GLFWwindow* window, double xpos, double ypos) {
 	}
 
 	// Move camera
-	Cam.AddPitch(-dy);
+	Cam.AddPitch(-dy/2.0f);
 	Cam.AddYaw(sign*newDx);
 	rotationChanged = true;
 }
