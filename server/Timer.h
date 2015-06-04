@@ -1,4 +1,5 @@
 #pragma once
+#include "ConfigSettings.h"
 class Timer
 {
 public:
@@ -8,7 +9,7 @@ public:
 	void reset() { time = 0; }
 	void update(int t) {
 		time += t; 
-		if (round <= 2 && time >= max) { round++; reset(); printf("reset\n"); }
+		if (round < atof((ConfigSettings::config->getValue("NumResets").c_str())) && time >= max) { round++; reset(); printf("reset\n"); }
 	}
 	int getTime() { return time; }
 	int getState();
