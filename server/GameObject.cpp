@@ -50,7 +50,7 @@ void GameObject::gravity()
 
 	if (position.y > ground)
 	{
-		position = position - 0.05*up;
+		position = position - 0.3*up;
 
 	}
 }
@@ -59,14 +59,12 @@ void GameObject::jump()
 {
 	if (landed)
 	{
-
 		position = position + up*2;
 		
 	}
 	if (position.y >ground + 4)
 	{
 		landed = false;
-
 	}
 	//if (!landed)
 	//{

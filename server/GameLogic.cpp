@@ -74,6 +74,7 @@ void GameLogic::update(int time)
 	// go through each player and update their attack cd and status based on time
 	for (int i = 0; i < gameObjects.size(); i++){
 		if (gameObjects[i]->isPlayer){
+			((Player *)gameObjects[i])->gravity();
 			((Player *)gameObjects[i])->updateCD();
 			((Player *)gameObjects[i])->updateTime(timer->getState(), time);
 			((Player *)gameObjects[i])->resetDir();
@@ -689,6 +690,7 @@ void GameLogic::updateState()
 	aliveVampires = 0;
 	for (int i = 0; i < gameObjects.size(); i++){
 		if (gameObjects[i]->isPlayer){
+			((Player *)gameObjects[i])->gravity();
 			if (gameObjects[i]->getHP() <= 0){
 				count--;
 			}
@@ -1093,7 +1095,7 @@ void GameLogic::updateState()
 
 		if (crusadersToStart == 0 || vampiresToStart == 0){
 			if (ticksSinceSend == ticksPerTimerSend)
-				printf("Dev mode: 0 Crusaders or 0 Vampires to start selected NEVER ENEDING THE GAME...\n");
+				printf("Dev mode: 0 Crusaders or 0 Vampires to start selected NEVER ENDING THE GAME...\n");
 			return;
 		}
 

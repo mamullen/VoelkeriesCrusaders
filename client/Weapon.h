@@ -21,21 +21,35 @@ public:
 		w_Position = pos;
 	}
 
+	void SetRotation(aiMatrix4x4* rot) {
+		/*w_Rotation = Matrix4x4(rot->a1, rot->a2, rot->a3, rot->a4,
+							   rot->b1, rot->b2, rot->b3, rot->b4,
+							   rot->c1, rot->c2, rot->c3, rot->c4,
+							   rot->d1, rot->d2, rot->d3, rot->d4);*/
+		w_Rotation = rot;
+	}
+
 	void GenericDraw(Vector3 scale, Vector3 translate = Vector3()) {
 		glPushMatrix();
 		glTranslatef(w_Position.x, w_Position.y+translate.y, w_Position.z);
-		glRotatef(glfwGetTime() * 30, 0.f, 1.f, 0.f);
+		if (!w_Equipped) {
+			glRotatef(glfwGetTime() * 30, 0.f, 1.f, 0.f);
+		}
 		glScalef(scale.x, scale.y, scale.z);
+		g_Model->IsEquippedWeapon(w_Rotation);
 		g_Model->Render();
 		glPopMatrix();
+	}
+
+	void SetEquipped(bool equip) {
+		w_Equipped = equip;
 	}
 
 protected:
 	std::string w_Name;
 	Vector3 w_Position;
-	float w_Damage;
-	float w_Range;
-	float w_Ammo;
+	aiMatrix4x4* w_Rotation;
+	bool w_Equipped;
 };
 
 class SunMace : Weapon {

@@ -12,7 +12,7 @@ Matrix4x4::Matrix4x4()
 	identity();
 }
 
-Matrix4x4::Matrix4x4(double angle, int which)
+Matrix4x4::Matrix4x4(float angle, int which)
 {
 	if (which == 0) {
 		makeRotateY(angle);
@@ -22,7 +22,7 @@ Matrix4x4::Matrix4x4(double angle, int which)
 	}
 }
 
-Matrix4x4::Matrix4x4(double x, double y, double z, int which)
+Matrix4x4::Matrix4x4(float x, float y, float z, int which)
 {
 	if (which == 0) {
 		identity();
@@ -35,10 +35,10 @@ Matrix4x4::Matrix4x4(double x, double y, double z, int which)
 	}
 }
 
-Matrix4x4::Matrix4x4(double &x0, double &x1, double &x2, double &x3,
-	double &y0, double &y1, double &y2, double &y3,
-	double &z0, double &z1, double &z2, double &z3,
-	double w0, double w1, double w2, double w3) {
+Matrix4x4::Matrix4x4(float &x0, float &x1, float &x2, float &x3,
+	float &y0, float &y1, float &y2, float &y3,
+	float &z0, float &z1, float &z2, float &z3,
+	float w0, float w1, float w2, float w3) {
 	this->m[0][0] = x0; this->m[0][1] = x1; this->m[0][2] = x2; this->m[0][3] = x3;
 	this->m[1][0] = y0; this->m[1][1] = y1; this->m[1][2] = y2; this->m[1][3] = y3;
 	this->m[2][0] = z0; this->m[2][1] = z1; this->m[2][2] = z2; this->m[2][3] = z3;
@@ -64,7 +64,7 @@ Matrix4x4& Matrix4x4::operator=(const Matrix4x4& m2)
 
 Matrix4x4& Matrix4x4::operator*(const Matrix4x4& m2)
 {
-	double sum = 0;
+	float sum = 0;
 	Matrix4x4 tempM;
 	for (int row = 0; row < 4; row++)
 	{
@@ -86,9 +86,9 @@ Matrix4x4& Matrix4x4::operator*(const Matrix4x4& m2)
 Vector4& Matrix4x4::operator*(const Vector4& v)
 {
 	Vector4 result;
-	double sum = 0;
-	double vect[4];
-	double tempV[4];
+	float sum = 0;
+	float vect[4];
+	float tempV[4];
 	vect[0] = v.x;
 	vect[1] = v.y;
 	vect[2] = v.z;
@@ -109,12 +109,12 @@ Vector4& Matrix4x4::operator*(const Vector4& v)
 }
 
 // return pointer to matrix elements
-double* Matrix4x4::getPointerByRowMajor()
+float* Matrix4x4::getPointerByRowMajor()
 {
 	return &m[0][0];
 }
 
-double* Matrix4x4::getPointerByColMajor()
+float* Matrix4x4::getPointerByColMajor()
 {
 	transpose();
 	return &m[0][0];
@@ -152,7 +152,7 @@ void Matrix4x4::transpose()
 
 // Creates a rotation matrix which rotates about the x axis.
 // angle is expected in degrees
-void Matrix4x4::makeRotateX(double angle)
+void Matrix4x4::makeRotateX(float angle)
 {
 	angle = angle / 180.0 * M_PI;  // convert from degrees to radians
 	identity();
@@ -165,7 +165,7 @@ void Matrix4x4::makeRotateX(double angle)
 
 // Creates a rotation matrix which rotates about the y axis.
 // angle is expected in degrees
-void Matrix4x4::makeRotateY(double angle)
+void Matrix4x4::makeRotateY(float angle)
 {
 	angle = angle / 180.0 * M_PI;  // convert from degrees to radians
 	identity();
@@ -177,7 +177,7 @@ void Matrix4x4::makeRotateY(double angle)
 
 // Creates a rotation matrix which rotates about the z axis.
 // angle is expected in degrees
-void Matrix4x4::makeRotateZ(double angle)
+void Matrix4x4::makeRotateZ(float angle)
 {
 	angle = angle / 180.0 * M_PI;  // convert from degrees to radians
 	identity();
@@ -187,7 +187,7 @@ void Matrix4x4::makeRotateZ(double angle)
 	m[1][1] = cos(angle);
 }
 
-void Matrix4x4::makeRotate(double angle, const Vector3& axis)
+void Matrix4x4::makeRotate(float angle, const Vector3& axis)
 {
 	angle = angle / 180.0 * M_PI; // convert from degrees to radians
 	identity(); //we need to normalize to prevent shearing (put axis in temp, then normalize the temp)
@@ -205,7 +205,7 @@ void Matrix4x4::makeRotate(double angle, const Vector3& axis)
 	m[2][2] = pow(temp.z, 2) + cos(angle) * (1 - pow(temp.z, 2));
 }
 
-void Matrix4x4::makeScale(double sx, double sy, double sz)
+void Matrix4x4::makeScale(float sx, float sy, float sz)
 {
 	identity();
 	m[0][0] = sx;
@@ -213,7 +213,7 @@ void Matrix4x4::makeScale(double sx, double sy, double sz)
 	m[2][2] = sz;
 }
 
-void Matrix4x4::makeTranslate(double tx, double ty, double tz)
+void Matrix4x4::makeTranslate(float tx, float ty, float tz)
 {
 	identity();
 	m[0][3] = tx;

@@ -45,6 +45,9 @@ public:
 	void DisableBones()		{ m_EnforceNoBones = true; }
 	void UpdateAnimation();
 	void ChangeAnimation(unsigned int index);
+	void SetLeftHand(const aiMatrix4x4& LeftHandPosTrafo) { m_LeftHandPosTrafo = new aiMatrix4x4(LeftHandPosTrafo); }
+	aiMatrix4x4* GetLeftHand() { return m_LeftHandPosTrafo; }
+	void IsEquippedWeapon(aiMatrix4x4* PosTrafo);
 
 private:
 	const aiScene* m_Scene;
@@ -53,9 +56,11 @@ private:
 	aiVector3D sceneCenter, sceneMin, sceneMax;
 	void getBoundingBox(aiVector3D* min, aiVector3D* max);
 	void getBoundingBoxForNode(const aiNode* node, aiVector3D* min, aiVector3D* max, aiMatrix4x4* trafo);
+	aiMatrix4x4 *m_LeftHandPosTrafo;
 
 	double a_CurrentTime;
 	double a_LastPlaying;
+	bool a_IsWeapon;
 };
 
 #endif

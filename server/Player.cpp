@@ -65,7 +65,7 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 	int currInd = 0;
 	int currEnd = in.find(';', currInd);
 	//std::cout << "packet update = " << in.c_str() << std::endl;
-	this->gravity();
+	//this->gravity();
 	if (hp <= 0){
 		return;
 	}

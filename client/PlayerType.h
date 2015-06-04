@@ -25,6 +25,7 @@ public:
 	void EquipWeapon(Weapon* weapon) {
 		equippedWeapon = weapon;
 		weapon->SetPosition(Vector3(getPos().x, getPos().y, getPos().z));
+		weapon->SetRotation(g_Model->GetLeftHand());
 	}
 
 private:
