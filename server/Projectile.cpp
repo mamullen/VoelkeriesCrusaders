@@ -19,7 +19,7 @@ Projectile::~Projectile()
 
 bool Projectile::updateTime(int time, std::vector<GameObject*>* objects)
 {
-	if (collideWall(objects,time)){
+	if (collideWall(objects, time)){
 		return false;
 	}
 	position = position + speed*time / 1000 * (forward.Normalize());
@@ -33,8 +33,16 @@ bool Projectile::updateTime(int time, std::vector<GameObject*>* objects)
 			p->isAttacked(dmg * modifier);
 			if (isRecoil){
 				forward.Normalize();
-				if (!(p->collide(objects, forward*recoilAmount)))
-					p->setPos(p->getPos() + forward*recoilAmount);
+				float prevSpeed = p->getSpeed();
+				for (int i = 0; i < recoilAmount*prevSpeed; i++){
+					p->setSpeed(i);
+					if (!(p->collide(objects, forward))){
+						p->setPos(p->getPos() + forward*i);
+					}
+					else
+						break;
+				}
+				p->setSpeed(prevSpeed);
 				std::string* change = new std::string("pos:");
 				changes.push_back(std::pair<int, std::string*>(p->getID(), change));
 			}
@@ -129,10 +137,10 @@ void Projectile::sendDeathPacket()
 	GameLogic::serverPackets.push_back(p);
 }
 
-bool Projectile::collideWall(std::vector<GameObject*>* obj,int time)
+bool Projectile::collideWall(std::vector<GameObject*>* obj, int time)
 {
 	Vector3 objmin, objmax, playerposition;
-	playerposition = (this->getPos()) + forward*speed*time/1000;
+	playerposition = (this->getPos()) + forward*speed*time / 1000;
 	//printf("Number of objs %d\n\n", obj->size());
 	for (int i = 0; i < obj->size(); i++)
 	{
@@ -146,7 +154,7 @@ bool Projectile::collideWall(std::vector<GameObject*>* obj,int time)
 		{
 			if ((objmin.z <= playerposition.z && playerposition.z <= objmax.z))// || (tile.buildingList[i]->min.z <= -position.z + mx.z && -position.z + mx.z <= tile.buildingList[i]->max.z))
 			{
-					return true;
+				return true;
 			}
 		}
 
