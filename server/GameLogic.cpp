@@ -26,6 +26,7 @@ GameLogic::GameLogic()
 	gameState = WAIT;
 	timer = new Timer();
 	timer->setPhase(phase1time, phase2time, phase3time);
+	timer->setMaxTime(phase3time);
 }
 
 

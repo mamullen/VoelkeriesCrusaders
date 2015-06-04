@@ -19,6 +19,9 @@ Projectile::~Projectile()
 
 bool Projectile::updateTime(int time, std::vector<GameObject*>* objects)
 {
+	if (collideWall(objects,time)){
+		return false;
+	}
 	position = position + speed*time / 1000 * (forward.Normalize());
 	distance += speed*time / 1000;
 	sendPosPacket();
@@ -124,4 +127,30 @@ void Projectile::sendDeathPacket()
 	p->id = this->id;
 
 	GameLogic::serverPackets.push_back(p);
+}
+
+bool Projectile::collideWall(std::vector<GameObject*>* obj,int time)
+{
+	Vector3 objmin, objmax, playerposition;
+	playerposition = (this->getPos()) + forward*speed*time/1000;
+	//printf("Number of objs %d\n\n", obj->size());
+	for (int i = 0; i < obj->size(); i++)
+	{
+
+		objmin = obj->at(i)->getMin();
+		objmax = obj->at(i)->getMax();
+
+
+
+		if ((objmin.x <= playerposition.x && playerposition.x <= objmax.x))// || min.x <= -position.x + mx.x && -position.x + mx.x <= tile.buildingList[i]->max.x)))
+		{
+			if ((objmin.z <= playerposition.z && playerposition.z <= objmax.z))// || (tile.buildingList[i]->min.z <= -position.z + mx.z && -position.z + mx.z <= tile.buildingList[i]->max.z))
+			{
+					return true;
+			}
+		}
+
+
+	}
+	return false;
 }

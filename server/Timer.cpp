@@ -5,6 +5,7 @@
 Timer::Timer()
 {
 	time = 0;
+	round = 0;
 }
 
 
