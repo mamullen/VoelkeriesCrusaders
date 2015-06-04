@@ -14,9 +14,9 @@
 class VampirePlayer : public PlayerType {
 public:
 	VampirePlayer(unsigned int i, int t) : PlayerType(i, t) { 
-		g_Model = new MeshLoader((char*)ConfigSettings::config->getValue("VampFilePath").c_str());
+		g_Model = new MeshLoader((char*)ConfigSettings::config->getValue("VampFilePath").c_str(), true);
 		setShowHP(true);
-		team = t; 
+		team = t;
 	}
 	int getTeam()		{ return team; }
 
