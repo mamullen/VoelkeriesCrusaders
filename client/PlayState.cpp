@@ -334,7 +334,8 @@ void PlayState::UpdateClient(ClientGame* client) {
 			memcpy(&zPos, serverEvent + 13, sizeof(float));
 			particlepos = Vector3(xPos, yPos, zPos);
 			deathbyparticle = true;
-			parti = true;
+			//parti = true;
+			deathTime = currGameTime;
 		}
 
 		if (strcmp(serverEvent, "dashRange") == 0)
@@ -858,7 +859,7 @@ void PlayState::Draw(ClientGame* client) {
 
 	p_regShade->unbind();
 
-	if (parti)
+	if (parti && abs(currGameTime-deathTime) < 2000)
 	{
 		RenderParticle(Cam.GetRotation().y, p_DeathByBlood, particlepos.x, particlepos.y, particlepos.z);
 	}

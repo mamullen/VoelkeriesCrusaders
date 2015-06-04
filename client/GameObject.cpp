@@ -49,13 +49,11 @@ void GameObject::update(bool isPlayer, float rot) {
 		p_regShade->bind();
 	}
 
-	if (showHP){
+	if (showHP && !isPlayer){
 		p_regShade->unbind();
 		glPushMatrix();
-		if (!isPlayer){
-			glRotatef(-rotation, 0, 1, 0);
-			glRotatef(-rot, 0, 1, 0);
-		}
+		glRotatef(-rotation, 0, 1, 0);
+		glRotatef(-rot, 0, 1, 0);
 
 		glBegin(GL_QUADS);
 		glColor3f(0.f, 1.f, 0.f);

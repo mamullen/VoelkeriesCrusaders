@@ -119,6 +119,7 @@ private:
 	unsigned int pnum1, pnum2, pnum3, pnum4;
 	Vector3 particlepos;
 	bool deathbyparticle;
+	float deathTime;
 
 	// Items
 	SunMace *p_SunMace;
