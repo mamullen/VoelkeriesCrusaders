@@ -80,5 +80,7 @@ private:
 
 protected:
 	MeshLoader* g_Model;
+
+	Shader* shade;
 };
 
