@@ -682,6 +682,14 @@ GameLogic::stateType GameLogic::getState()
 	return gameState;
 }
 
+void GameLogic::hardReset(){
+	gameState = WAIT;
+	gameObjects.clear();
+	playerList.clear();
+	projectileList.clear();
+	playerNames.clear();
+}
+
 void GameLogic::updateState()
 {
 	int count = gameObjects.size();

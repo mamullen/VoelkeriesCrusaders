@@ -50,6 +50,7 @@ public:
 
 	stateType getState();
 	void setState(stateType state);
+	void hardReset();
 	void updateState();
 	
 	std::list<std::pair<int, string>> playerNames;
