@@ -41,6 +41,9 @@ public:
 	int aliveCrusaders;
 	int aliveVampires;
 
+	int crusScore;
+	int vampScore;
+
 	int phase1time;
 	int phase2time;
 	int phase3time;

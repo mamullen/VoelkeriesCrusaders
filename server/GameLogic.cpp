@@ -22,6 +22,8 @@ GameLogic::GameLogic()
 	numVampires = 0;
 	aliveCrusaders = 0;
 	aliveVampires = 0;
+	crusScore = 0;
+	vampScore = 0;
 
 	gameState = WAIT;
 	timer = new Timer();
@@ -75,7 +77,7 @@ void GameLogic::update(int time)
 	for (int i = 0; i < gameObjects.size(); i++){
 		if (gameObjects[i]->isPlayer){
 			((Player *)gameObjects[i])->updateCD();
-			((Player *)gameObjects[i])->updateTime(timer->getState(), time);
+			((Player *)gameObjects[i])->updateTime(timer->getState(), time, &gameObjects);
 			((Player *)gameObjects[i])->resetDir();
 		}
 	}
@@ -716,6 +718,9 @@ void GameLogic::hardReset(){
 	numVampires = 0;
 	aliveCrusaders = 0;
 	aliveVampires = 0;
+	crusScore = 0;
+	vampScore = 0;
+
 
 	gameState = WAIT;
 	timer = new Timer();
@@ -733,8 +738,33 @@ void GameLogic::updateState()
 	for (int i = 0; i < gameObjects.size(); i++){
 		if (gameObjects[i]->isPlayer){
 			if (gameObjects[i]->getHP() <= 0){
-				count--;
+				
+				Player * player = (Player *)(gameObjects[i]);
+				if (player->team == 1)
+					vampScore++;
+				else if (player->team == 2)
+					crusScore++;
+
+				player->respawn(&gameObjects);
+				printf("A PLAYER DIED, score is now crusaders: %d, vampires: %d\n", crusScore, vampScore);
+
+				Packet* p = new Packet;
+				p->packet_type = ACTION_EVENT;
+				p->id = 0;
+
+				char data[PACKET_DATA_LEN];
+				int pointer = 0;
+				memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "score", 6);
+				pointer += 6;
+				memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &crusScore, sizeof(int));
+				pointer += sizeof(int);
+				memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &vampScore, sizeof(int));
+				pointer += sizeof(int);
+				data[pointer] = ',';
+				memcpy_s(p->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+				serverPackets.push_back(p);
 			}
+			/*
 			else{
 				int team = ((Player *)gameObjects[i])->team;
 				if (team == 1)
@@ -742,6 +772,7 @@ void GameLogic::updateState()
 				else if (team == 2)
 					aliveVampires++;
 			}
+			*/
 		}
 	}
 
@@ -1133,14 +1164,15 @@ void GameLogic::updateState()
 	}
 	else if (gameState == START)
 	{
-
+		int gameover = 0; // 0: draw, 1: crusaders win, 2: vampires win
+		/*
 		if (crusadersToStart == 0 || vampiresToStart == 0){
 			if (ticksSinceSend == ticksPerTimerSend)
 				printf("Dev mode: 0 Crusaders or 0 Vampires to start selected NEVER ENEDING THE GAME...\n");
 			return;
 		}
 
-		int gameover = 0; // 0: draw, 1: crusaders win, 2: vampires win
+		
 		if (aliveCrusaders == 0){
 			printf("We have %d crusaders left, VAMPIRES WIN!\n", aliveCrusaders);
 			gameState = END;
@@ -1151,19 +1183,23 @@ void GameLogic::updateState()
 			gameState = END;
 			gameover = 1;
 		}
-		else if (timer->getTime() >= phase3time){
+		*/
+
+		if (timer->getTime() >= phase3time){
 			printf("Time is up. %d crusaders and %d vampires left. ", aliveCrusaders, aliveVampires);
-			if (aliveCrusaders > aliveVampires){
+			if (crusScore > vampScore){
 				printf("CRUSADERS WIN!\n");
+				gameover = 1;
 			}
-			else if (aliveVampires > aliveCrusaders){
+			else if (vampScore > crusScore){
 				printf("VAMPIRES WIN!\n");
+				gameover = 2;
 			}
 			else{
 				printf("IT'S A DRAW!\n");
+				gameover = 0;
 			}
 			gameState = END;
-			gameover = 0;
 		}
 
 

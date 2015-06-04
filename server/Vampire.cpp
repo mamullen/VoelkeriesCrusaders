@@ -21,8 +21,22 @@ Vampire::Vampire(int i) :Player(i)
 	setAttack(new Basic_Attack());
 }
 
-void Vampire::updateTime(int time,int delta)
+void Vampire::updateTime(int time, int delta, std::vector<GameObject*>* obj)
 {
+
+
+	if (dashCounter > 0){
+		speed = dashSpeed;
+		forward = dashDir;
+		if (!collide(obj, forward))
+			moveForward();
+		//speed = prevSpeed;
+		std::string* change = new std::string("pos:");
+		changes.push_back(std::pair<int, std::string*>(id, change));
+		dashCounter--;
+		return;
+	}
+
 	if (dashCharging){
 		speedDebuff += atof((ConfigSettings::config->getValue("VampireChargeSpeedDebuff").c_str()));
 		dashRange += atof((ConfigSettings::config->getValue("VampireChargeDistance").c_str()));
@@ -36,10 +50,10 @@ void Vampire::updateTime(int time,int delta)
 
 	if (time == 0){
 		//day
-		speed = speed = atof((ConfigSettings::config->getValue("VampireMovespeedBaseMult").c_str())) * default_speed;
+		speed = atof((ConfigSettings::config->getValue("VampireMovespeedBaseMult").c_str())) * default_speed;
 		speed -= speedDebuff;
 		if (speed<0){
-			speed = 0;
+			speed = atof((ConfigSettings::config->getValue("VampireLowestMovespeed").c_str()));
 		}
 		time_ctr += delta;
 		if (time_ctr > 1000){
@@ -54,8 +68,8 @@ void Vampire::updateTime(int time,int delta)
 		//night
 		speed = atof((ConfigSettings::config->getValue("VampireMovespeedMultiplier").c_str())) * default_speed;
 		speed -= speedDebuff;
-		if (speed<0){
-			speed = 0;
+		if (speed < 0){
+			speed = atof((ConfigSettings::config->getValue("VampireLowestMovespeed").c_str()));
 		}
 		attack_mode->setRange(atof((ConfigSettings::config->getValue("VampireAttackRangeInc").c_str())));
 		if (attack_mode->getType() == 0){
@@ -65,20 +79,34 @@ void Vampire::updateTime(int time,int delta)
 }
 
 void Vampire::attack2Start(){
+	if (dashCounter > 0)
+		return;
 	dashCharging = true;
 }
 
 void Vampire::attack2End(){
+
+	if (dashCounter > 0 || !dashCharging)
+		return;
 	//set to new pos at end of dash
-	double prevSpeed = speed;
-	speed = dashRange;
+
+	prevSpeed = speed;
+	/*
 	moveForward();
 	speed = prevSpeed;
-	std::string* change = new std::string("pos:");
-	changes.push_back(std::pair<int, std::string*>(id, change));
+	*/
+
+
+	dashSpeed = dashRange / dashDivider;
+	dashDir = forward;
+	dashCounter = dashDivider;
+
 	speedDebuff = 0;
 	dashRange = 0;
 	dashCharging = false;
+	std::string* change = new std::string("dashRange");
+	changes.push_back(std::pair<int, std::string*>(id, change));
+
 }
 
 //void Vampire::attack(GameObject* obj) // does nothing right now

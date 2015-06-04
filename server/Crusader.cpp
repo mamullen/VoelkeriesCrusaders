@@ -21,7 +21,7 @@ Crusader::Crusader(int i) :Player(i)
 	setAttack(new Basic_Range());
 }
 
-void Crusader::updateTime(int time, int delta)
+void Crusader::updateTime(int time, int delta, std::vector<GameObject*>* obj)
 {
 	if (time == 0){
 		//day
