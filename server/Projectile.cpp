@@ -10,6 +10,7 @@ Projectile::Projectile()
 	hitRadius = 6;
 	isRecoil = true;
 	recoilAmount = atof(ConfigSettings::config->getValue("ProjectileRecoil").c_str());
+	fromTeam = 0;
 }
 
 
@@ -27,7 +28,7 @@ bool Projectile::updateTime(int time, std::vector<GameObject*>* objects)
 	sendPosPacket();
 	int hit = 0;
 	for (int i = 0; i < GameLogic::playerList.size(); i++){
-		if (collide(GameLogic::playerList[i])){
+		if (collide(GameLogic::playerList[i]) && fromTeam != GameLogic::playerList[i]->objectType){
 			printf("target hit!\n");
 			Player* p = GameLogic::playerList[i];
 			p->isAttacked(dmg * modifier);

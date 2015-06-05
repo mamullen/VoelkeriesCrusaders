@@ -10,6 +10,8 @@ Basic_Knock::Basic_Knock()
 	range = stof(ConfigSettings::config->getValue("MeleeKnockBackRange").c_str());
 	c_range = range;
 	maxcd = stof(ConfigSettings::config->getValue("MeleeKnockBackCD").c_str());
+	ad = atof(ConfigSettings::config->getValue("MeleeKnockBackDMG").c_str());
+	c_ad = ad;
 }
 
 
@@ -22,9 +24,12 @@ void Basic_Knock::attack(GameObject* obj, GameObject* target)
 	if (obj->getID() == target->getID()){
 		return;
 	}
+	if (obj->objectType == target->objectType)
+		return;
 	if (inRange(obj, target)){
-		if (target->objectType == 4 && target->getHP() >= 0){
-			obj->addHp(0.5*c_ad);
+		if (target->objectType == 5 && target->getHP() >= 0){
+			obj->addHp(atof(ConfigSettings::config->getValue("MeleeKnockBackLifesteal").c_str())*c_ad);
+			target->removeHp(c_ad);
 		}
 		Vector3 direction = target->getPos() - obj->getPos();
 		direction.Normalize();

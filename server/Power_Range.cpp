@@ -4,7 +4,7 @@
 
 Power_Range::Power_Range()
 {
-	ad = 30;
+	ad = atof(ConfigSettings::config->getValue("PowerDMG").c_str());
 	c_ad = ad;
 	maxcd = atof(ConfigSettings::config->getValue("PowerCD").c_str());
 	disableTime = atof(ConfigSettings::config->getValue("PowerStunDuration").c_str());
