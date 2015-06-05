@@ -310,13 +310,6 @@ void MeshLoader::RenderMesh(const aiNode* node) {
 
 void MeshLoader::UpdateAnimation() {
 	if (m_Scene->HasAnimations()) {
-		if (mAnimator->CurrentAnimIndex() == a_RUNMELEE) {
-			animRate = 3.f;
-			a_LockIndex = true;
-		}
-		else {
-			animRate = 2.f;
-		}
 		a_CurrentTime += clock() *animRate / double(CLOCKS_PER_SEC) - a_LastPlaying;
 		mAnimator->Calculate(a_CurrentTime);
 		a_LockIndex = false;
