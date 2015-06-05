@@ -58,7 +58,7 @@ int PlayState::InitGL() {
 
 int PlayState::Initialize() {
 	//p_bumpShade->init("shader/bump.vert", "shader/bump.frag");
-
+	timercoeef = 1;
 	savedTime =
 		std::chrono::duration_cast<std::chrono::milliseconds>
 		(std::chrono::system_clock::now().time_since_epoch()).count();
@@ -137,6 +137,62 @@ int PlayState::Initialize() {
 	t.loadTexture("ppm/i_top.ppm", photos[4]);
 
 	once = true;
+
+	string filenm = "./particles/textures/moon.png";
+	moonID = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+
+	filenm = "./particles/textures/sun.png";
+	sunID = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+
+	filenm = "./ppm/0-v.png";
+	timer[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+
+	filenm = "./ppm/1-v.png";
+	timer[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+
+	filenm = "./ppm/2-v.png";
+	timer[2] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+
+	filenm = "./ppm/3-v.png";
+	timer[3] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+
+
+
+	filenm = "./ppm/4-v.png";
+	timer[4] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+
+
+	filenm = "./ppm/5-v.png";
+	timer[5] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+
+
+	filenm = "./ppm/6-v.png";
+	timer[6] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+
+	filenm = "./ppm/7-v.png";
+	timer[7] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+
+
+	filenm = "./ppm/8-v.png";
+	timer[8] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+
+
+	filenm = "./ppm/9-v.png";
+	timer[9] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+
+	filenm = "./ppm/colon-v.png";
+	timer[10] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+
+	filenm = "./ppm/hp-hud-c.png";
+	hud[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+
+
+	filenm = "./ppm/side-hud-c.png";
+	hud[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+
+	filenm = "./ppm/time-hud-c.png";
+	hud[2] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+
 
 	return 0;
 }
@@ -638,26 +694,37 @@ void PlayState::drawHUD(ClientGame* client){
 
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	glBegin(GL_QUADS);
-	//draw top bar
-	float p1w = ((float)client->getPhase1Time() / client->getPhase3Time()) * (width / 2);
-	float p2w = ((float)(client->getPhase2Time() - client->getPhase1Time()) / client->getPhase3Time()) * (width / 2);
-	glColor3f(1, 1, 0);
-	drawRect(width / 4, height / 120, p1w, height / 70);
-	glColor3f(1, 0, 0);
-	drawRect(width/4+p1w, height / 120, p2w, height / 70);
-	glColor3f(1, 1, 0);
-	drawRect(width/4 + p1w + p2w, height / 120, width / 8, height / 70);
-	glEnd();
+	if (currGameTime >= 120000)
+	{
+		timercoeef++;
+	}
+
+	int time[4];
+	int now = (240000 / timercoeef) - currGameTime;
+	int one = now / 60000;
+
+	now = now % 60000;
+	int two = now / 10000;
+	int three = (now % 10000) / 1000;
 
 	//timer triangle
-	float timerX = width / 4 + ((float)currGameTime/client->getPhase3Time()) * (width/2);
-	glBegin(GL_TRIANGLES);
-	glColor3f(1.f, 1.f, 1.f);
-	glVertex2f(timerX,height/120+height/70);
-	glVertex2f(timerX + width / 150, height / 120 + height / 70 + height / 60);
-	glVertex2f(timerX - width / 150, height / 120 + height / 70 + height / 60);
-	glEnd();
+
+	if ((float)currGameTime < 30000)
+	{
+
+		timerX = 3 * width / 8 + ((float)currGameTime / client->getPhase3Time()) * (width / 2);
+
+	}
+	if ((float)currGameTime > 90000)
+	{
+
+		timerX = 3 * width / 8 + (((float)currGameTime - 60000) / client->getPhase3Time()) * (width / 2);
+
+	}
+	glColor3f(1, 1, 1);
+	drawCircleOutline(20, Vector3(timerX, height / 5, 0), 0);
+	drawCircleOutline(19, Vector3(width / 2, height / 5, 0), 1);
+
 
 	//bottom panel
 	glBegin(GL_QUADS);
@@ -684,24 +751,18 @@ void PlayState::drawHUD(ClientGame* client){
 	}
 	glPopMatrix();
 
+	glEnable(GL_BLEND); //Enable blending.
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	glBegin(GL_QUADS);
-	glColor3f(0, 1, 0);
-	drawRect(width / 15, height - height / 12, (width / 5)*((float)Player->getHealth() / Player->getMaxHealth()), height / 25);
-	glColor3f(1, 0, 0);
-	drawRect(width/15,height-height/12,width/5, height/25);
+	glColor4f(0, 1, 0, 0.8f);
+	drawRect(width / 9, height - height / 13, (width / 4)*((float)Player->getHealth() / Player->getMaxHealth()), height / 15);
+	glColor4f(0, 0, 0, 0.8f);
+	drawRect(width / 9, height - height / 13, width / 4, height / 15);
 	glEnd();
+	glDisable(GL_BLEND);
 	
-	glPushMatrix();
-	char * hp = "HP";
-	glTranslatef(width / 50, height - height / 20, 0);
-	glLineWidth(3);
-	glScalef(width/5120.0f,height/3800.0f,1);
-	glRotatef(180, 1, 0, 0);
-	glColor3f(1, 1, 1);
-	for (unsigned int i = 0; i < strlen(hp); i++){
-		glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, (char)hp[i]);
-	}
-	glPopMatrix();
+	
 
 	//player's name
 	glPushMatrix();
@@ -925,6 +986,108 @@ void PlayState::drawHUD(ClientGame* client){
 		glDisable(GL_BLEND);
 		glPopMatrix();
 	}
+	glPushMatrix();
+	glEnable(GL_BLEND); //Enable blending.
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glColor4f(1, 0, 0, 5.0f);
+	glEnable(GL_TEXTURE_2D);
+
+	glBindTexture(GL_TEXTURE_2D, timer[0]);
+	glBegin(GL_QUADS);
+
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width / 3, height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width / 3, 0.0f);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, timer[one]);
+	glBegin(GL_QUADS);
+	//glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (2 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (2 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (width / 15), 0.0f);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, timer[10]);
+	glBegin(GL_QUADS);
+	//glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (2 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (3 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (3 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (2 * width / 15), 0.0f);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, timer[two]);
+	glBegin(GL_QUADS);
+	//	glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (3 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (4 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (4 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (3 * width / 15), 0.0f);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, timer[three]);
+	glBegin(GL_QUADS);
+	//glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (4 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (5 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (5 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (4 * width / 15), 0.0f);
+	glEnd();
+
+	glColor4f(1, 1, 1, 0.75f);
+	glBindTexture(GL_TEXTURE_2D, hud[0]);
+	glBegin(GL_QUADS);
+
+
+
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(0, height);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((5 * width / 12), height);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((5 * width / 12), height - height / 6);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((0), height - height / 6);
+	glEnd();
+
+	glColor4f(1, 1, 1, 0.75f);
+	glBindTexture(GL_TEXTURE_2D, hud[1]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width - width / 12, height / 8);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width - width / 12, 3 * height / 4);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width, 3 * height / 4);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width, height / 8);
+	glEnd();
+	glDisable(GL_BLEND);
+
+	glPopMatrix();
+
 
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
@@ -1275,4 +1438,38 @@ GLuint PlayState::LoadRAWTexture(const char * filename, int width, int height)
 	free(data); //free the texture
 
 	return texture; //return whether it was successfull
+}
+
+void PlayState::drawCircleOutline(float r, Vector3 pos, int i)
+{
+	float angle, radian, x, y;       // values needed by drawCircleOutline
+	float xcos, ysin, tx, ty;
+	glEnable(GL_TEXTURE_2D);
+	if (i == 0)
+	{
+		glBindTexture(GL_TEXTURE_2D, moonID);
+	}
+	else
+	{
+		glBindTexture(GL_TEXTURE_2D, sunID);
+	}
+	glBegin(GL_POLYGON);
+
+	for (angle = 0.0; angle<360.0; angle += 2.0)
+	{
+		radian = angle * (M_PI / 180.0f);
+
+		xcos = (float)cos(radian);
+		ysin = (float)sin(radian);
+		x = xcos * r + pos.x;
+		y = ysin * r + pos.y;
+		tx = xcos * 0.5 + 0.5;
+		ty = ysin * 0.5 + 0.5;
+
+		glTexCoord2f(tx, ty);
+		glVertex2f(x, y);
+	}
+
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
 }

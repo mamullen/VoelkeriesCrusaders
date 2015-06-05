@@ -140,6 +140,19 @@ private:
 
 	Shader* p_regShade;
 	Shader* p_bumpShade;
+
+	
+	GLuint avatar[2];
+	GLuint hud[3];
+	void drawCircleOutline(float r, Vector3 pos, int i);
+
+	GLuint timer[11];//load numbers here
+
+	int oType;
+	GLuint sunID;
+	GLuint moonID;
+	int timercoeef;
+	float timerX;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
