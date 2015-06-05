@@ -326,11 +326,13 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 	}
 
 	if (move_flag == 1){
-		direction.Normalize();
-		//direction.Print();
-		this->setPos(position + direction*speed);
-		std::string* change = new std::string("pos:");
-		changes.push_back(std::pair<int, std::string*>(id, change));
+		if (direction.Mag() != 0){
+			direction.Normalize();
+			//direction.Print();
+			this->setPos(position + direction*speed);
+			std::string* change = new std::string("pos:");
+			changes.push_back(std::pair<int, std::string*>(id, change));
+		}
 	}
 	for (int i = 0; i < attr_num; i++){
 		if (change_counter[i] >0){

@@ -51,6 +51,12 @@ void GameLogic::update(int time)
 	if (getState() == WAIT)
 		return;
 
+	if (getState() == START)
+	{
+		if (time > 5000){
+			time = 0;
+		}
+	}
 	if (getState() == END){
 		/*char data[PACKET_DATA_LEN];
 		memcpy_s(data, PACKET_DATA_LEN, "game_over", 10);

@@ -26,10 +26,12 @@ PlayState::PlayState(GLFWwindow* window) : GameState(window) {
 	p_DefenseShield = new DefenseShield(0, Vector3(-75.f, 1.f, 60.f)); // 0 id is temp for gameobj
 	p_LightningBolt = new LightningBoltAtkSpd(0, Vector3(75.f, -5.f, -60.f)); // 0 id is temp for gameobj
 	p_BatSword = new BatSword(0, Vector3(75.f, 0.f, 60.f)); // 0 id is temp for gameobj
-	p_DavidsBuilding = new MeshLoader("models/Building33.fbx");
+	p_DavidsBuilding = new MeshLoader("models/BuildingTestForWes.fbx");
+	p_DavidsBuilding3 = new MeshLoader("models/Building33.fbx");
 	p_DavidsGrave = new MeshLoader("models/Tombstone.fbx");
 	p_DavidsBuilding->DisableBones();
 	p_DavidsGrave->DisableBones();
+	p_DavidsBuilding3->DisableBones();
 	p_regShade = new Shader("shader/shader.vert", "shader/shader.frag");
 	p_bumpShade = new Shader("shader/bump.vert", "shader/bump.frag");
 	weap1 = weap2 = weap3 = weap4 = true;
@@ -144,7 +146,7 @@ int PlayState::Initialize() {
 	t.loadTexture("ppm/i_top.ppm", photos[4]);
 
 	once = true;
-
+	tonce = true;
 	string filenm = "./particles/textures/moon.png";
 	moonID = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
 	filenm = "./particles/textures/sun.png";
@@ -785,18 +787,30 @@ void PlayState::drawHUD(ClientGame* client){
 
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	if (currGameTime % 60000 == 0)
+	if (currGameTime >=60000)
+	{
+		//timercoeef++;
+	}
+
+	int time[4];
+	//int now = (240000) - (60000 * (timercoeef - 1)) - currGameTime;
+	//int one = now / 60000;
+	
+
+	//now = now % 60000;
+	if (currGameTime >= 60000)
 	{
 		timercoeef++;
 	}
 
-	int time[4];
-	int now = (240000) - 6000 * (timercoeef - 1) - currGameTime;
+	int now = (240000 / timercoeef) - currGameTime;
 	int one = now / 60000;
 
 	now = now % 60000;
 	int two = now / 10000;
 	int three = (now % 10000) / 1000;
+
+
 
 	//timer triangle
 
@@ -1422,7 +1436,14 @@ void PlayState::Draw(ClientGame* client) {
 
 	// David's building(no collision)
 	glPushMatrix();
-	glTranslatef(250, 50, 250);
+	glTranslatef(320, 50, 250);
+	glTranslatef(15, 15, 15);
+	p_DavidsBuilding->Render();
+	glPopMatrix();
+	glPushMatrix();
+	glPushMatrix();
+	glTranslatef(-320, 40, -250);
+	glTranslatef(17,17,17);
 	p_DavidsBuilding->Render();
 	glPopMatrix();
 	glPushMatrix();

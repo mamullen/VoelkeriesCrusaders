@@ -134,6 +134,7 @@ private:
 	LightningBoltAtkSpd *p_LightningBolt;
 	Shrine* p_Shrine;
 	MeshLoader* p_DavidsBuilding;
+	MeshLoader* p_DavidsBuilding3;
 
 	Texture m_pTrivialNormalMap;
 	ParticleEffect* p_ShrineFire;
@@ -166,6 +167,9 @@ private:
 	GLuint moonID;
 	int timercoeef;
 	float timerX;
+	int tone = 3;
+	int temp;
+	bool tonce;
 	GLuint ctimer[11];//load numbers here
 	GLuint vtimer[11];//load numbers here
 };

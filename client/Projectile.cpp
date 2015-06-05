@@ -33,6 +33,10 @@ void Projectile::setRotate(float rot) {
 }
 
 void PowerProjectile::drawObj() {
+	
+
+
+	glDisable(GL_LIGHTING);
 	glDisable(GL_CULL_FACE);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND); //Enable blending.
@@ -52,6 +56,12 @@ void PowerProjectile::drawObj() {
 	glVertex3f(5, 0, -5);
 	glEnd();
 	glDisable(GL_BLEND);
-
-	
+	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_LIGHTING);
 }
+
+/*
+glDisable(GL_CULL_FACE);
+glColor3f(1.f, 99.0 / 255, 71.0 / 255);
+glutSolidSphere(5, 30, 30);
+*/
