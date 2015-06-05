@@ -153,6 +153,7 @@
     <ClInclude Include="Building.h" />
     <ClInclude Include="ConfigSettings.h" />
     <ClInclude Include="Crusader.h" />
+    <ClInclude Include="DisableTimer.h" />
     <ClInclude Include="GameLogic.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Human.h" />
@@ -162,6 +163,8 @@
     <ClInclude Include="NetworkServices.h" />
     <ClInclude Include="PacketParser.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PowerProjectile.h" />
+    <ClInclude Include="Power_Range.h" />
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="Score.h" />
     <ClInclude Include="ScoreBoard.h" />
@@ -181,6 +184,7 @@
     <ClCompile Include="Building.cpp" />
     <ClCompile Include="ConfigSettings.cpp" />
     <ClCompile Include="Crusader.cpp" />
+    <ClCompile Include="DisableTimer.cpp" />
     <ClCompile Include="GameLogic.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Human.cpp" />
@@ -189,6 +193,8 @@
     <ClCompile Include="NetworkServices.cpp" />
     <ClCompile Include="PacketParser.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PowerProjectile.cpp" />
+    <ClCompile Include="Power_Range.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="Score.cpp" />
     <ClCompile Include="ScoreBoard.cpp" />

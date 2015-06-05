@@ -13,6 +13,8 @@ Player::Player() :GameObject()
 	default_speed = atof(ConfigSettings::config->getValue("PlayerMoveSpeed").c_str());
 	speed = default_speed;
 	isAlive = true;
+	// disable
+	disableTimer.setMaxTime(500);
 	// actions
 	setAttack(new Basic_Attack());
 	//////////////////////////////////
@@ -60,24 +62,37 @@ void Player::checkChangedDir(){
 
 void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 {
-	std::string in = std::string(packet->packet_data);
-	int pid = packet->id;
-	int currInd = 0;
-	int currEnd = in.find(';', currInd);
-	//std::cout << "packet update = " << in.c_str() << std::endl;
-	//this->gravity();
 	if (hp <= 0){
 		return;
 	}
 
+	std::string in = std::string(packet->packet_data);
+	int pid = packet->id;
+	int currInd = 0;
+	int currEnd = in.find(';', currInd);
+
+	Vector3 direction(0,0,0);
+	//std::cout << "packet update = " << in.c_str() << std::endl;
+	//this->gravity();
+	
 	while (currEnd != std::string::npos){
 		std::string cEvent = in.substr(currInd, currEnd - currInd);
 		currInd = currEnd + 1;
 		currEnd = in.find(';', currInd);
 		
+		if (cEvent.compare("sw1") == 0){
+			setAttack(default_attack_1);
+		}
+		else if (cEvent.compare("sw2") == 0){
+			setAttack(default_attack_2);
+		}
+		if (disableTimer.getDisable()){
+			continue;
+		}
 		if (cEvent.compare("move_forward") == 0){
 			if (!isChanged[0]){
 				change_counter[0]++;
+
 				std::string* change = new std::string("pos:");
 				changes.push_back(std::pair<int, std::string*>(id, change));
 				if (!(collide(objects,forward)))
@@ -429,4 +444,20 @@ void Player::respawn(std::vector<GameObject*>* gameObjects){
 	addHp(100);
 	std::string* change = new std::string("pos:");
 	changes.push_back(std::pair<int, std::string*>(id, change));
+}
+
+void Player::updateDisable(int time)
+{
+	disableTimer.update(time);
+}
+
+void Player::isDisabled(int time)
+{
+	disableTimer.setMaxTime(time);
+	disableTimer.disable();
+}
+
+bool Player::getDisabled()
+{
+	return disableTimer.getDisable();
 }

@@ -10,5 +10,7 @@ public:
 	virtual ~Basic_Range();
 
 	virtual void attack(GameObject*);
+	void createSingleProjectile(GameObject*);
+	void createPowerProjectile(GameObject*);
 };
 

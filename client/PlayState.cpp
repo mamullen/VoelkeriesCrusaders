@@ -965,7 +965,14 @@ void PlayState::Input(ClientGame* client) {
 	if (glfwGetKey(window, GLFW_KEY_B)) {
 		client->addEvent(Player->getID(), "b;", ACTION_EVENT);
 	}
-
+	// attack mode change //////////////////////////////////////////////
+	if (glfwGetKey(window, GLFW_KEY_1)){
+		client->addEvent(Player->getID(), "sw1;", ACTION_EVENT);
+	}
+	else if (glfwGetKey(window, GLFW_KEY_2)){
+		client->addEvent(Player->getID(), "sw2;", ACTION_EVENT);
+	}
+	///////////////////////////////////////////////////////////////////
 	if (rotationChanged){
 		rotationChanged = false;
 		float rotate = -Cam.GetRotation().y + 360;
