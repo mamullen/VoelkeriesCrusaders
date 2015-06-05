@@ -6,6 +6,7 @@ using namespace std;
 vector<Projectile*> GameLogic::projectileList;
 vector<Player*> GameLogic::playerList;
 list<Packet*> GameLogic::serverPackets;
+vector<GameObject*> GameLogic::gameObjects;
 
 GameLogic::GameLogic()
 {

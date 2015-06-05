@@ -34,6 +34,7 @@ public:
 	//virtual void attack(GameObject*);
 	void setAttack(Action*);
 	bool collide(std::vector<GameObject*>* obj, Vector3 dir);
+	bool collide(std::vector<GameObject*>* obj, Vector3 dir, float spd);
 	bool shrinecollide(Vector3, Vector3);
 	bool weaponcollide(Vector3);
 	string name; 

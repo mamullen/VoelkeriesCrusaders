@@ -377,6 +377,43 @@ bool Player::collide(std::vector<GameObject*>* obj, Vector3 dir)
 		return true;
 	}*/
 }
+
+bool Player::collide(std::vector<GameObject*>* obj, Vector3 dir,float spd)
+{
+	ground = -1;
+	Vector3 objmin, objmax, playerposition;
+	playerposition = (this->getPos()) + dir*spd;
+	//printf("Number of objs %d\n\n", obj->size());
+	for (int i = 0; i < obj->size(); i++)
+	{
+
+		objmin = obj->at(i)->getMin();
+		objmax = obj->at(i)->getMax();
+
+
+
+		if ((objmin.x <= playerposition.x && playerposition.x <= objmax.x))// || min.x <= -position.x + mx.x && -position.x + mx.x <= tile.buildingList[i]->max.x)))
+		{
+			if ((objmin.z <= playerposition.z && playerposition.z <= objmax.z))// || (tile.buildingList[i]->min.z <= -position.z + mx.z && -position.z + mx.z <= tile.buildingList[i]->max.z))
+			{
+				ground = objmax.y;
+				if (playerposition.y > ground - 1)
+				{
+					return false;
+				}
+				if ((objmin.y <= playerposition.y && playerposition.y <= objmax.y))// || (tile.buildingList[i]->min.z <= -position.z + mx.z && -position.z + mx.z <= tile.buildingList[i]->max.z))
+				{
+
+					return true;
+
+
+				}
+
+			}
+		}
+	}
+	return false;
+}
 bool Player::shrinecollide(Vector3 min, Vector3 max)
 {
 	if (min.x < position.x && position.x <max.x)
@@ -461,3 +498,5 @@ bool Player::getDisabled()
 {
 	return disableTimer.getDisable();
 }
+
+

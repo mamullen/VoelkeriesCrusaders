@@ -1,6 +1,7 @@
 #pragma once
 #include "Player.h"
 #include "Power_Range.h"
+#include "Basic_Knock.h"
 class Crusader :
 	public Player
 {

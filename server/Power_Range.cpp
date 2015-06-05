@@ -6,7 +6,8 @@ Power_Range::Power_Range()
 {
 	ad = 30;
 	c_ad = ad;
-	maxcd = 3.0;
+	maxcd = atof(ConfigSettings::config->getValue("PowerCD").c_str());
+	disableTime = atof(ConfigSettings::config->getValue("PowerStunDuration").c_str());
 }
 
 
@@ -22,10 +23,18 @@ void Power_Range::attack(GameObject* obj)
 	maxCD();
 	if (obj->isPlayer){
 		Player* player = (Player*)obj;
-		player->isDisabled(500);
-		player->setPos(player->getPos()-player->forward*10);
-		std::string* change = new std::string("pos:");
-		GameObject::changes.push_back(std::pair<int, std::string*>(player->getID(), change));
+		
+		for (int i = 15; i > 0; i--){
+			float spd = i;
+			if (!(player->collide(&GameLogic::gameObjects, -1*player->forward,spd))){
+				player->setPos(player->getPos() - player->forward *spd);
+				std::string* change = new std::string("pos:");
+				GameObject::changes.push_back(std::pair<int, std::string*>(player->getID(), change));
+				break;
+			}
+		}
+		player->isDisabled(disableTime);
+		
 	}
 
 	createPowerProjectile(obj);

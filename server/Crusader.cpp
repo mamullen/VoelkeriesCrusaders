@@ -7,7 +7,7 @@ Crusader::Crusader() :Player()
 	objectType = 4;
 	team = 1;
 	default_attack_1 = new Basic_Range();
-	default_attack_2 = new Power_Range();
+	default_attack_2 = new Basic_Knock();
 	setAttack(default_attack_1);
 }
 
@@ -21,7 +21,7 @@ Crusader::Crusader(int i) :Player(i)
 	objectType = 4;
 	team = 1;
 	default_attack_1 = new Basic_Range();
-	default_attack_2 = new Power_Range();
+	default_attack_2 = new Basic_Knock();
 	setAttack(default_attack_1);
 }
 
