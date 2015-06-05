@@ -203,7 +203,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 				Vector3* v1 = new Vector3(x1, y1, z1);
 				Vector3* v2 = new Vector3(x2, y2, z2);
 
-				b1 = new Building(v1, v2, rot, objID);
+				Building* b1 = new Building(v1, v2, rot, objID);
 				b1->tex = colorbuild;
 				b1->norm = normalbuild;
 				b1->shade = p_bumpShade;
@@ -224,9 +224,6 @@ void PlayState::UpdateClient(ClientGame* client) {
 				memcpy(&zPos, serverEvent + 19, sizeof(float));
 				memcpy(&rot, serverEvent + 23, sizeof(float));
 				memcpy(&hp, serverEvent + 27, sizeof(float));
-
-
-				printf("PERSON: %f,%f,%f,%f,%f\n", xPos, yPos, zPos, rot, hp);
 				
 				//glScalef(0.01, 0.01, 0.01);
 				PlayerType* p;
@@ -262,6 +259,91 @@ void PlayState::UpdateClient(ClientGame* client) {
 					gameObjects.insert(std::pair<int, GameObject*>(objID, p));
 				}
 				break;
+			}
+		}
+
+		if (strcmp(serverEvent, "create_stealth") == 0){
+			float x1, y1, z1, x2, y2, z2, a;
+			memcpy(&x1, serverEvent + 15, sizeof(float));
+			memcpy(&y1, serverEvent + 19, sizeof(float));
+			memcpy(&z1, serverEvent + 23, sizeof(float));
+			memcpy(&x2, serverEvent + 27, sizeof(float));
+			memcpy(&y2, serverEvent + 31, sizeof(float));
+			memcpy(&z2, serverEvent + 35, sizeof(float));
+			memcpy(&a, serverEvent + 39, sizeof(float));
+
+			printf("CRUBOX: %f,%f,%f,%f,%f,%f,%f\n", x1, y1, z1, x2, y2, z2, a);
+
+			Vector3* v1 = new Vector3(x1, y1, z1);
+			Vector3* v2 = new Vector3(x2, y2, z2);
+
+			CrusaderBox* c = new CrusaderBox(v1, v2, a, objID);
+			crusaderBoxes.insert(std::pair<int, CrusaderBox*>(objID, c));
+		}
+
+		if (strcmp(serverEvent, "stealth") == 0){
+			float x1, y1, z1, x2, y2, z2, a;
+			int pid, stealthed;
+			memcpy(&x1, serverEvent + 8, sizeof(float));
+			memcpy(&y1, serverEvent + 12, sizeof(float));
+			memcpy(&z1, serverEvent + 16, sizeof(float));
+			memcpy(&x2, serverEvent + 20, sizeof(float));
+			memcpy(&y2, serverEvent + 24, sizeof(float));
+			memcpy(&z2, serverEvent + 28, sizeof(float));
+			memcpy(&a, serverEvent + 32, sizeof(float));
+			memcpy(&pid, serverEvent + 36, sizeof(int));
+			memcpy(&stealthed, serverEvent + 40, sizeof(int));
+
+			printf("cbox_update: %f, %f, %f, %f, %f, %f, %f, %d, %d\n", x1,y1,z1,x2,y2,z2,a,pid,stealthed);
+
+			if (crusaderBoxes.find(objID) != crusaderBoxes.end()){
+				CrusaderBox* o = crusaderBoxes.at(objID);
+				o->getMin()->x = x1;
+				o->getMin()->y = y1;
+				o->getMin()->z = z1;
+				o->getMax()->x = x2;
+				o->getMax()->y = y2;
+				o->getMax()->z = z2;
+				o->setAlpha(a);
+			}
+
+			if (stealthed == 1){
+				if (Player && pid == Player->getID()){
+					Player->setVisible(false);
+				}
+				else if (gameObjects.find(pid) != gameObjects.end()){
+					GameObject* o = gameObjects.at(pid);
+					o->setVisible(false);
+				}
+			}
+		}
+
+		if (strcmp(serverEvent, "kill_stealth") == 0){
+			float x1, y1, z1, x2, y2, z2, a;
+			int pid, stealthed;
+			memcpy(&x1, serverEvent + 13, sizeof(float));
+			memcpy(&y1, serverEvent + 17, sizeof(float));
+			memcpy(&z1, serverEvent + 21, sizeof(float));
+			memcpy(&x2, serverEvent + 25, sizeof(float));
+			memcpy(&y2, serverEvent + 29, sizeof(float));
+			memcpy(&z2, serverEvent + 33, sizeof(float));
+			memcpy(&a, serverEvent + 37, sizeof(float));
+			memcpy(&pid, serverEvent + 41, sizeof(int));
+			memcpy(&stealthed, serverEvent + 45, sizeof(int));
+
+			printf("killin_stealth %d\n",pid);
+
+			if (crusaderBoxes.find(objID) != crusaderBoxes.end()){
+				std::map<int, CrusaderBox*>::iterator it2;
+				it2 = crusaderBoxes.find(objID);
+				crusaderBoxes.erase(it2);
+			}
+			if (Player && pid == Player->getID()){
+				Player->setVisible(true);
+			}
+			else if (gameObjects.find(pid) != gameObjects.end()){
+				GameObject* o = gameObjects.at(pid);
+				o->setVisible(true);
 			}
 		}
 
@@ -463,6 +545,11 @@ void PlayState::UpdateClient(ClientGame* client) {
 				hpTemp = Player->getHealth() - hpTemp;
 				if (hpTemp < -1){
 					damagedTime = damagedAnimLength;
+					redBorder = true;
+				}
+				else if (hpTemp>40){
+					damagedTime = damagedAnimLength;
+					redBorder = false;
 				}
 			}
 			else if (gameObjects.find(objID) != gameObjects.end()){
@@ -723,22 +810,42 @@ void PlayState::drawHUD(ClientGame* client){
 	}
 
 	if (damagedTime > 0){
-		//draw edges when getting hit
+		//draw edges when getting hit or healed
 		glPushMatrix();
 		glEnable(GL_BLEND); //Enable blending.
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glBegin(GL_QUADS);
-		glColor4f(1.f, 0.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		if (redBorder){
+			glColor4f(1.f, 0.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		}
+		else{
+			glColor4f(0.f, 1.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		}
 		glVertex2f(0, 0);
 		glVertex2f(width, 0);
-		glColor4f(1.f, 0.f, 0.f, 0.f);
+		if (redBorder){
+			glColor4f(1.f, 0.f, 0.f, 0);
+		}
+		else{
+			glColor4f(0.f, 1.f, 0.f, 0);
+		}
 		glVertex2f(width, height / 8);
 		glVertex2f(0, height / 8);
 
-		glColor4f(1.f, 0.f, 0.f, 0.f);
+		if (redBorder){
+			glColor4f(1.f, 0.f, 0.f, 0);
+		}
+		else{
+			glColor4f(0.f, 1.f, 0.f, 0);
+		}
 		glVertex2f(0, height - (height / 8));
 		glVertex2f(width, height - (height / 8));
-		glColor4f(1.f, 0.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		if (redBorder){
+			glColor4f(1.f, 0.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		}
+		else{
+			glColor4f(0.f, 1.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		}
 		glVertex2f(width, height);
 		glVertex2f(0, height);
 		glEnd();
@@ -767,20 +874,50 @@ void PlayState::drawHUD(ClientGame* client){
 		glEnable(GL_BLEND); //Enable blending.
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glBegin(GL_QUADS);
-		glColor4f(1.f, 0.f, 0.f, ((float)damagedTime/damagedAnimLength));
+		if (redBorder){
+			glColor4f(1.f, 0.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		}
+		else{
+			glColor4f(0.f, 1.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		}
 		glVertex2f(0, 0);
-		glColor4f(1.f, 0.f, 0.f, 0.f);
+		if (redBorder){
+			glColor4f(1.f, 0.f, 0.f, 0);
+		}
+		else{
+			glColor4f(0.f, 1.f, 0.f, 0);
+		}
 		glVertex2f(width / 10, 0);
 		glVertex2f(width / 10, height);
-		glColor4f(1.f, 0.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		if (redBorder){
+			glColor4f(1.f, 0.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		}
+		else{
+			glColor4f(0.f, 1.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		}
 		glVertex2f(0, height);
 
-		glColor4f(1.f, 0.f, 0.f, 0.f);
+		if (redBorder){
+			glColor4f(1.f, 0.f, 0.f, 0);
+		}
+		else{
+			glColor4f(0.f, 1.f, 0.f, 0);
+		}
 		glVertex2f(width - (width / 10), 0);
-		glColor4f(1.f, 0.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		if (redBorder){
+			glColor4f(1.f, 0.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		}
+		else{
+			glColor4f(0.f, 1.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		}
 		glVertex2f(width, 0);
 		glVertex2f(width, height);
-		glColor4f(1.f, 0.f, 0.f, 0.f);
+		if (redBorder){
+			glColor4f(1.f, 0.f, 0.f, 0);
+		}
+		else{
+			glColor4f(0.f, 1.f, 0.f, 0);
+		}
 		glVertex2f(width - (width / 10), height);
 		glEnd();
 		glDisable(GL_BLEND);
@@ -871,6 +1008,13 @@ void PlayState::Draw(ClientGame* client) {
 	p_LightningBolt->Draw();
 	p_BatSword->Draw();
 	
+	//draw transparent stuff here
+	std::map<int, CrusaderBox*>::iterator it3;
+	for (it3 = crusaderBoxes.begin(); it3 != crusaderBoxes.end(); it3++)
+	{
+		(it3->second)->update(false, Cam.GetRotation().y);
+	}
+
 	p_regShade->unbind();
 
 	if (parti && abs(currGameTime-deathTime) < 2000)

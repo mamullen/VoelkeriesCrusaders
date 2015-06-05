@@ -95,6 +95,7 @@
     <ClCompile Include="ClientNetwork.cpp" />
     <ClCompile Include="ConfigSettings.cpp" />
     <ClCompile Include="core.cpp" />
+    <ClCompile Include="CrusaderBox.cpp" />
     <ClCompile Include="ElapsedTime.cpp" />
     <ClCompile Include="Emitter.cpp" />
     <ClCompile Include="Floor.cpp" />
@@ -128,6 +129,7 @@
     <ClInclude Include="ClientNetwork.h" />
     <ClInclude Include="ConfigSettings.h" />
     <ClInclude Include="core.h" />
+    <ClInclude Include="CrusaderBox.h" />
     <ClInclude Include="CrusaderPlayer.h" />
     <ClInclude Include="ElapsedTime.h" />
     <ClInclude Include="Emitter.h" />
