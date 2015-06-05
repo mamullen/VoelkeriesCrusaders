@@ -297,7 +297,7 @@ void PrePlayState::Draw(ClientGame* client) {
 			int teamNum = it->second.first;
 			char* pName = it->second.second;
 			if (teamNum == 1){
-				drawRect(0, 0, 1, .13f, .062f + .05f * crusaderCount, .016f,.03);
+				drawRect(1, 1, 0, .13f, .062f + .05f * crusaderCount, .016f,.03);
 				drawText(pName, .15f, .085f + .05f * crusaderCount, 11000, 5500, 1, 1, 1);
 				crusaderCount++;
 			}
@@ -313,7 +313,7 @@ void PrePlayState::Draw(ClientGame* client) {
 			drawText(client->getClientName(), .39375f, .94f, 11000, 5500, 0, 1, 0);
 		}
 		else if (curr_team == 1){
-			drawRect(0, 0, 1, .13f, .062f + .05f * crusaderCount, .016f, .03);
+			drawRect(1, 1, 0, .13f, .062f + .05f * crusaderCount, .016f, .03);
 			drawText(client->getClientName(), .15f, .085f + .05f * crusaderCount, 11000, 5500, 0, 1, 0);
 		}
 		else if (curr_team == 2){

@@ -1,9 +1,11 @@
 #include "stdafx.h"
 #include "Player.h"
 #include <iostream>
+#include "GameLogic.h"
 
 Player::Player() :GameObject()
 {
+	controlShrine = false;
 	// attributes
 	name = "anonymous";
 	team = 0;
@@ -41,6 +43,7 @@ Player::Player(int i) :Player()
 {
 	pid = i;
 	setID(i);
+	controlShrine = false;
 
 }
 Player::~Player()
@@ -122,15 +125,28 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 		else if (cEvent.compare("q") == 0){
 			//
 
-			if (shrinecollide(Vector3(-60, 0, -60), Vector3(60, 0, 60)))
+			if (shrinecollide(Vector3(-35, 0, -35), Vector3(35, 0, 35)))
 			{
 				if (!isChanged[3]){
 					change_counter[3]++;
 					std::string* change = new std::string("particles");
 					changes.push_back(std::pair<int, std::string*>(id, change));
+					this->controlShrine = true;
+					ShrineT(10);
+
 				}
 			}
 
+		}
+		else if (cEvent.compare("heal") == 0)
+		{
+			if (isAlive)
+			{
+				std::string* change = new std::string("hp");
+				changes.push_back(std::pair<int, std::string*>(id, change));
+				hp += 3;
+
+			}
 		}
 		else if (cEvent.compare("b") == 0){
 			if (weaponcollide(Vector3(-75, -1, -60)))
@@ -252,6 +268,51 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 				//printf("range\n");
 				attack_mode->attack(this);
 			}
+			else if (attack_mode->getType() == 2){ // basic knock shockwave business
+
+				bool sendPacket = false;
+				printf("melee!\n");
+				if (attack_mode->getCD() <= 0){
+					sendPacket = true;
+					attack_mode->maxCD();
+					for (int i = 0; i < objects->size(); i++)
+					{
+						if (objects->at(i)->isPlayer){
+							attack_mode->attack(this, objects->at(i));
+						}
+					}
+				}
+
+				
+				if (sendPacket){
+					Packet* packet = new Packet;
+					packet->packet_type = ACTION_EVENT;
+					packet->id = getID();
+
+
+					float x = getPos().x;
+					float y = getPos().y;
+					float z = getPos().z;
+					float range = attack_mode->getRange();
+
+					char data[PACKET_DATA_LEN];
+					int pointer = 0;
+					memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "shockwave", 10);
+					pointer += 10;
+					memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &x, sizeof(float));
+					pointer += sizeof(float);
+					memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
+					pointer += sizeof(float);
+					memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
+					pointer += sizeof(float);
+					memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &range, sizeof(float));
+					pointer += sizeof(float);
+					data[pointer] = ',';
+					pointer++;
+					memcpy_s(packet->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+					GameLogic::serverPackets.push_back(packet);
+				}
+			}
 		}
 		else if (cEvent.compare("attack2Start") == 0){
 			attack2Start();
@@ -330,7 +391,38 @@ void Player::setAttack(Action* act)
 
 void Player::updateCD()
 {
-	attack_mode->update();
+	default_attack_1->update();
+	default_attack_2->update();
+
+	Packet* packet = new Packet;
+	packet->packet_type = ACTION_EVENT;
+	packet->id = getID();
+
+
+	float cooldown1 = default_attack_1->getCD() / default_attack_1->getMaxCD();
+	float cooldown2 = default_attack_2->getCD() / default_attack_2->getMaxCD();
+
+	if (cooldown1 <= 0)
+		cooldown1 = 0;
+
+	if (cooldown2 <= 0)
+		cooldown2 = 0;
+
+	//printf("COOLDOWNS are 1: %f, and 2: %f \n", cooldown1, cooldown2);
+
+	char data[PACKET_DATA_LEN];
+	int pointer = 0;
+	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "cooldown", 9);
+	pointer += 9;
+	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &cooldown1, sizeof(float));
+	pointer += sizeof(float);
+	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &cooldown2, sizeof(float));
+	pointer += sizeof(float);
+	data[pointer] = ',';
+	pointer++;
+	memcpy_s(packet->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+	GameLogic::serverPackets.push_back(packet);
+
 }
 
 void Player::updateTime(int time, int delta, std::vector<GameObject*>* obj){
@@ -372,6 +464,43 @@ bool Player::collide(std::vector<GameObject*>* obj, Vector3 dir)
 		}
 
 
+	}
+	if ((-32 <= playerposition.x && playerposition.x <= -23))// || min.x <= -position.x + mx.x && -position.x + mx.x <= tile.buildingList[i]->max.x)))
+	{
+		if ((-32 <= playerposition.z && playerposition.z <= -23))// || (tile.buildingList[i]->min.z <= -position.z + mx.z && -position.z + mx.z <= tile.buildingList[i]->max.z))
+		{
+			return true;
+		}
+	}
+
+	if ((23 <= playerposition.x && playerposition.x <= 32))// || min.x <= -position.x + mx.x && -position.x + mx.x <= tile.buildingList[i]->max.x)))
+	{
+		if ((-32 <= playerposition.z && playerposition.z <= -23))// || (tile.buildingList[i]->min.z <= -position.z + mx.z && -position.z + mx.z <= tile.buildingList[i]->max.z))
+		{
+			return true;
+		}
+	}
+	if ((23 <= playerposition.z && playerposition.z <= 32))// || min.x <= -position.x + mx.x && -position.x + mx.x <= tile.buildingList[i]->max.x)))
+	{
+		if ((-32 <= playerposition.x && playerposition.x <= -23))// || (tile.buildingList[i]->min.z <= -position.z + mx.z && -position.z + mx.z <= tile.buildingList[i]->max.z))
+		{
+			return true;
+		}
+	}
+	if ((23 <= playerposition.x && playerposition.x <= 32))// || min.x <= -position.x + mx.x && -position.x + mx.x <= tile.buildingList[i]->max.x)))
+	{
+		if ((23 <= playerposition.z && playerposition.z <= 32))// || (tile.buildingList[i]->min.z <= -position.z + mx.z && -position.z + mx.z <= tile.buildingList[i]->max.z))
+		{
+			return true;
+		}
+	}
+
+	if ((-15 <= playerposition.x && playerposition.x <= 15))// || min.x <= -position.x + mx.x && -position.x + mx.x <= tile.buildingList[i]->max.x)))
+	{
+		if ((-15 <= playerposition.z && playerposition.z <= 15))// || (tile.buildingList[i]->min.z <= -position.z + mx.z && -position.z + mx.z <= tile.buildingList[i]->max.z))
+		{
+			return true;
+		}
 	}
 	return false;
 	//check to see is within world
@@ -506,6 +635,7 @@ void Player::respawn(std::vector<GameObject*>* gameObjects){
 void Player::updateDisable(int time)
 {
 	disableTimer.update(time);
+	shrineTimer.update(time);
 }
 
 void Player::isDisabled(int time)
@@ -513,10 +643,23 @@ void Player::isDisabled(int time)
 	disableTimer.setMaxTime(time);
 	disableTimer.disable();
 }
+void Player::ShrineT(int time)
+{
+	shrineTimer.setsTime(time);
+	//shrineTimer.disable();
+}
+bool Player::getST()
+{
+
+}
 
 bool Player::getDisabled()
 {
 	return disableTimer.getDisable();
 }
 
+bool Player::stillShrine(int time)
+{
+	return shrineTimer.updates(time);
+}
 

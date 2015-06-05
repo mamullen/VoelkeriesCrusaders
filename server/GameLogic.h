@@ -71,7 +71,7 @@ private:
 	
 	std::map<int, Player*> players;
 	PacketParser* packetParser;
-
+	int shrineTeam;
 	stateType gameState;
 };
 

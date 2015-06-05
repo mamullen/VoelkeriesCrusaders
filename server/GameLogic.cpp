@@ -87,6 +87,20 @@ void GameLogic::update(int time)
 			((Player *)gameObjects[i])->updateTime(timer->getState(), time, &gameObjects);
 			((Player *)gameObjects[i])->resetDir();
 			((Player *)gameObjects[i])->updateDisable(time);
+			if ((Player*)gameObjects[i]->controlShrine)
+			{
+				shrineTeam = ((Player*)gameObjects[i])->objectType;
+				for (int j = 0; j < gameObjects.size(); j++){
+					if (shrineTeam == ((Player*)gameObjects[j])->objectType)
+					{
+						//shrines heals here
+						((Player*)gameObjects[j])->addHp(0.1);
+
+					}
+				}
+
+				((Player*)gameObjects[i])->controlShrine = ((Player*)gameObjects[i])->stillShrine(time);
+			}
 		}
 	}
 
@@ -324,11 +338,14 @@ void GameLogic::update(int time)
 		}
 		else if (key->compare("particles") == 0){
 			float r = gameObjects.at(index)->getHP();
+			float t = gameObjects.at(index)->objectType;
 			///////////////////////////////////////////////////////////////////////////
 			char data[PACKET_DATA_LEN];
 			int pointer = 0;
 			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "particles", 10);
 			pointer += 10;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &t, sizeof(float));
+			pointer += sizeof(float);;
 			data[pointer] = ',';
 			pointer++;
 			///////////////////////////////////////////////////////////////////////////

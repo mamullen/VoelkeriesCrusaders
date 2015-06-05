@@ -22,10 +22,11 @@ public:
 	void resetAd() { c_ad = ad; }
 	int getType() { return type; }
 	float getCD(){ return cd; }
+	float getMaxCD() { return maxcd;  }
 	void update() { if (cd > 0){ cd -= 0.1; } }
 	
 protected:
-	int type; // 0 for melee 1 for range
+	int type; // 0 for melee 1 for range, 2 for the basic knock
 	float cd;
 	float range,c_range;
 	float ad,c_ad;

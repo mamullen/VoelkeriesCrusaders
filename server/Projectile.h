@@ -20,6 +20,7 @@ public:
 	void sendPosPacket();
 	void setHitRadius(float r) { hitRadius = r; }
 
+	int fromTeam;
 	float recoilAmount;
 
 protected:

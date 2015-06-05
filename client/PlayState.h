@@ -20,6 +20,7 @@
 #include "GameState.h"
 #include "Building.h"
 #include "CrusaderBox.h"
+#include "Shockwave.h"
 #include "Projectile.h"
 #include "Floor.h"
 #include "ClientGame.h"
@@ -102,8 +103,10 @@ private:
 	std::map<int, GameObject*> gameObjects;
 	std::map<int, Projectile*> projectiles;
 	std::map<int, CrusaderBox*> crusaderBoxes;
+	std::list<Shockwave*> shockwaves;
 	int currGameTime = 0, gameResult = -2;
 	int vampireScore = 0, crusaderScore = 0;
+	float cooldown1 = 0, cooldown2 = 0;
 
 	//Building* b1;
 	Texture t;
@@ -137,9 +140,30 @@ private:
 	Light* p_Light;
 	Map* p_Map;
 	bool isNight;
+	bool debug = false;
+	std::list<int> ints;
 
 	Shader* p_regShade;
 	Shader* p_bumpShade;
+
+	GLuint attackpic[2];
+	GLuint cattackpic[2];
+	GLuint vattackpic[2];
+	GLuint avatar[2];
+	GLuint vhud[3];
+	GLuint chud[3];
+	GLuint hud[3];
+	void drawCircleOutline(float r, Vector3 pos, int i);
+
+	GLuint timer[11];//load numbers here
+
+	int oType;
+	GLuint sunID;
+	GLuint moonID;
+	int timercoeef;
+	float timerX;
+	GLuint ctimer[11];//load numbers here
+	GLuint vtimer[11];//load numbers here
 };
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -6,11 +6,12 @@ Vampire::Vampire() :Player()
 {
 	objectType = 5;
 	team = 2;
+
+	//default_attack_1 = new Basic_Attack();
+	//default_attack_2 = new Basic_Attack();
 	default_attack_1 = new Basic_Attack();
 	default_attack_2 = new Power_Range();
-	//default_attack_1 = new Basic_Range();
-	//default_attack_2 = new Power_Range();
-	setAttack(new Basic_Attack());
+	setAttack(default_attack_1);
 }
 
 
@@ -22,12 +23,12 @@ Vampire::Vampire(int i) :Player(i)
 {
 	objectType = 5;
 	team = 2;
+
+	//default_attack_1 = new Basic_Attack();
+	//default_attack_2 = new Basic_Attack();
 	default_attack_1 = new Basic_Attack();
 	default_attack_2 = new Power_Range();
-	//default_attack_1 = new Basic_Range();
-	//default_attack_2 = new Power_Range();
-	//default_attack_3 = new Power_Range();
-	setAttack(new Basic_Attack());
+	setAttack(default_attack_1);
 }
 
 void Vampire::updateTime(int time, int delta, std::vector<GameObject*>* obj)

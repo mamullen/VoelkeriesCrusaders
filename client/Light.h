@@ -21,6 +21,7 @@ public:
 
 private:
 	float r, g, b;
+	float r1, g1, b1;
 };
 
 #endif

@@ -16,7 +16,7 @@ class GameObject
 public:
 	GameObject();
 	~GameObject();
-
+	bool controlShrine;
 	Vector3 getPos();
 	float getRot();
 	int getID();
@@ -58,10 +58,10 @@ public:
 	Vector3 getMin();
 	Vector3 getMax();
 
-	
+	bool stillShrine(int time);
 	virtual void isAttacked(float) {}
 	virtual void update(Packet*, std::vector<GameObject*>*){}
-
+	void setShrine(bool b){ controlShrine = b; }
 	std::map<std::string*, bool> getChanges();
 	void addChange(std::string* change);
 	void clearChanges();

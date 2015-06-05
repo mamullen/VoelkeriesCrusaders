@@ -58,7 +58,7 @@ int PlayState::InitGL() {
 
 int PlayState::Initialize() {
 	//p_bumpShade->init("shader/bump.vert", "shader/bump.frag");
-
+	timercoeef = 1;
 	savedTime =
 		std::chrono::duration_cast<std::chrono::milliseconds>
 		(std::chrono::system_clock::now().time_since_epoch()).count();
@@ -138,7 +138,82 @@ int PlayState::Initialize() {
 
 	once = true;
 
-	return 0;
+	string filenm = "./particles/textures/moon.png";
+	moonID = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+
+	filenm = "./particles/textures/sun.png";
+	sunID = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./particles/textures/sun.png";
+	sunID = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/0-c.png";
+	vtimer[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/1-c.png";
+	vtimer[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/2-c.png";
+	vtimer[2] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/3-c.png";
+	vtimer[3] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/4-c.png";
+	vtimer[4] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/5-c.png";
+	vtimer[5] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/6-c.png";
+	vtimer[6] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/7-c.png";
+	vtimer[7] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/8-c.png";
+	vtimer[8] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/9-c.png";
+	vtimer[9] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/colon-c.png";
+	vtimer[10] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/hp-hud-v.png";
+	vhud[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/side-hud-v.png";
+	vhud[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/time-hud-v.png";
+	vhud[2] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/vamp1.png";
+	vattackpic[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/vamp2.png";
+	vattackpic[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+
+
+	filenm = "./ppm/0-c.png";
+	ctimer[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/1-c.png";
+	ctimer[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/2-c.png";
+	ctimer[2] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/3-c.png";
+	ctimer[3] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/4-c.png";
+	ctimer[4] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/5-c.png";
+	ctimer[5] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/6-c.png";
+	ctimer[6] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/7-c.png";
+	ctimer[7] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/8-c.png";
+	ctimer[8] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/9-c.png";
+	ctimer[9] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/colon-c.png";
+	ctimer[10] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/hp-hud-c.png";
+	chud[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/side-hud-c.png";
+	chud[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/time-hud-c.png";
+	chud[2] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/crus1.png";
+	cattackpic[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/crus2.png";
+	cattackpic[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+
+	
+		return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -159,6 +234,17 @@ void PlayState::UpdateClient(ClientGame* client) {
 		(std::chrono::system_clock::now().time_since_epoch()).count();
 	unsigned int elapsedTime = currTime - savedTime;
 	savedTime = currTime;
+
+	std::list<Shockwave*>::iterator it4;
+	for (it4 = shockwaves.begin(); it4 != shockwaves.end();){
+		(*it4)->decreaseTime(elapsedTime);
+		if ((*it4)->getTime() <= 0){
+			shockwaves.erase(it4++);
+		}
+		else{
+			it4++;
+		}
+	}
 
 	damagedTime -= elapsedTime;
 
@@ -250,6 +336,16 @@ void PlayState::UpdateClient(ClientGame* client) {
 					gameObjects.insert(std::pair<int, GameObject*>(objID, p));
 				}
 				break;
+			}
+		}
+
+		if (strcmp(serverEvent, "cooldown") == 0){
+			float cd1, cd2;
+			memcpy(&cd1, serverEvent + 9, sizeof(float));
+			memcpy(&cd2, serverEvent + 13, sizeof(float));
+			if (objID == Player->getID()){
+				cooldown1 = cd1;
+				cooldown2 = cd2;
 			}
 		}
 
@@ -348,6 +444,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 
 			Projectile* p = new Projectile(objID);
 			p->setPos(xPos, yPos+7.3, zPos);
+			p->setRotate(-Cam.GetRotation().y + 360);
 
 			printf("Projectile ID: %d\n", objID);
 
@@ -454,6 +551,18 @@ void PlayState::UpdateClient(ClientGame* client) {
 				it2 = projectiles.find(objID);
 				projectiles.erase(it2);
 			}
+		}
+
+		if (strcmp(serverEvent, "shockwave") == 0){
+			float x, y, z, range;
+			memcpy(&x, serverEvent + 10, sizeof(float));
+			memcpy(&y, serverEvent + 14, sizeof(float));
+			memcpy(&z, serverEvent + 18, sizeof(float));
+			memcpy(&range, serverEvent + 22, sizeof(float));
+
+			printf("SHOCK %f,%f,%f,%f", x, y, z, range);
+
+			shockwaves.push_back(new Shockwave(new Vector3(x-range,-1,z-range),new Vector3(x+range,-1,z+range)));
 		}
 
 		if (strcmp(serverEvent, "weapon1") == 0)
@@ -638,26 +747,37 @@ void PlayState::drawHUD(ClientGame* client){
 
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	glBegin(GL_QUADS);
-	//draw top bar
-	float p1w = ((float)client->getPhase1Time() / client->getPhase3Time()) * (width / 2);
-	float p2w = ((float)(client->getPhase2Time() - client->getPhase1Time()) / client->getPhase3Time()) * (width / 2);
-	glColor3f(1, 1, 0);
-	drawRect(width / 4, height / 120, p1w, height / 70);
-	glColor3f(1, 0, 0);
-	drawRect(width/4+p1w, height / 120, p2w, height / 70);
-	glColor3f(1, 1, 0);
-	drawRect(width/4 + p1w + p2w, height / 120, width / 8, height / 70);
-	glEnd();
+	if (currGameTime >= 120000)
+	{
+		timercoeef++;
+	}
+
+	int time[4];
+	int now = (240000 / timercoeef) - currGameTime;
+	int one = now / 60000;
+
+	now = now % 60000;
+	int two = now / 10000;
+	int three = (now % 10000) / 1000;
 
 	//timer triangle
-	float timerX = width / 4 + ((float)currGameTime/client->getPhase3Time()) * (width/2);
-	glBegin(GL_TRIANGLES);
-	glColor3f(1.f, 1.f, 1.f);
-	glVertex2f(timerX,height/120+height/70);
-	glVertex2f(timerX + width / 150, height / 120 + height / 70 + height / 60);
-	glVertex2f(timerX - width / 150, height / 120 + height / 70 + height / 60);
-	glEnd();
+
+	if ((float)currGameTime*timercoeef < 15000)
+	{
+
+		timerX = 3 * width / 8 + ((float)currGameTime / client->getPhase3Time()) * (width / 2);
+
+	}
+	if ((float)currGameTime*timercoeef > 45000)
+	{
+
+		timerX = 5 * width / 8 + (((float)currGameTime - 60000) / client->getPhase3Time()) * (width / 2);
+
+	}
+	glColor3f(1, 1, 1);
+	drawCircleOutline(20, Vector3(timerX, height / 5, 0), 0);
+	drawCircleOutline(18.5, Vector3(width / 2, height / 5, 0), 1);
+
 
 	//bottom panel
 	glBegin(GL_QUADS);
@@ -671,42 +791,31 @@ void PlayState::drawHUD(ClientGame* client){
 	glEnd();
 
 	//healthbar
-	glPushMatrix();
-	std::string s = std::to_string((int)Player->getHealth());
-	char * healthString = (char*)s.c_str();
-	glTranslatef(width / 7, height - height / 19, 1);
-	glLineWidth(2);
-	glScalef(width/6990.0f, height/4443.07f, 1);
-	glRotatef(180, 1, 0, 0);
-	glColor3f(1, 1, 1);
-	for (unsigned int i = 0; i < strlen(healthString); i++){
-		glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, (char)healthString[i]);
-	}
-	glPopMatrix();
+	glEnable(GL_BLEND); //Enable blending.
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glBegin(GL_QUADS);
-	glColor3f(0, 1, 0);
-	drawRect(width / 15, height - height / 12, (width / 5)*((float)Player->getHealth() / Player->getMaxHealth()), height / 25);
-	glColor3f(1, 0, 0);
-	drawRect(width/15,height-height/12,width/5, height/25);
+	glColor4f(0, 1, 0, 0.8f);
+	drawRect(width / 9, height - height / 13, (width / 4)*((float)Player->getHealth() / Player->getMaxHealth()), height / 15);
+	glColor4f(0, 0, 0, 0.8f);
+	drawRect(width / 9, height - height / 13, width / 4, height / 15);
 	glEnd();
 	
-	glPushMatrix();
-	char * hp = "HP";
-	glTranslatef(width / 50, height - height / 20, 0);
-	glLineWidth(3);
-	glScalef(width/5120.0f,height/3800.0f,1);
-	glRotatef(180, 1, 0, 0);
-	glColor3f(1, 1, 1);
-	for (unsigned int i = 0; i < strlen(hp); i++){
-		glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, (char)hp[i]);
+	
+	//cooldown bars
+	glBegin(GL_QUADS);
+	glColor4f(1,0,0,0.5f);
+	if (Player->getTeam() == 1){
+		glColor4f(1, 1, 0,0.5f);
 	}
-	glPopMatrix();
-
+	drawRect(width - width / 12 + width / 150, 3 * height / 4 - 3 * height / 8 + (1 - (height / 15) * cooldown1), width / 14, (height / 15) * cooldown1);
+	drawRect(width - width / 12 + width / 150, height - 3 * height / 8 + (1 - (height/15) * cooldown2), width / 14, (height / 15) * cooldown2);
+	glEnd();
+	glDisable(GL_BLEND);
 	//player's name
 	glPushMatrix();
 	char * name = client->getClientName();
-	glTranslatef(width / 50, height - height / 10, 0);
+	glTranslatef(width *.11, height - height * .125, 0);
 	glLineWidth(2);
 	glScalef(width/5242.88, height/3800.0f, 1);
 	glRotatef(180, 1, 0, 0);
@@ -925,6 +1034,416 @@ void PlayState::drawHUD(ClientGame* client){
 		glDisable(GL_BLEND);
 		glPopMatrix();
 	}
+	/*
+	glPushMatrix();
+	glEnable(GL_BLEND); //Enable blending.
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glColor4f(1, 0, 0, 5.0f);
+	glEnable(GL_TEXTURE_2D);
+
+	glBindTexture(GL_TEXTURE_2D, timer[0]);
+	glBegin(GL_QUADS);
+
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width / 3, height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width / 3, 0.0f);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, timer[one]);
+	glBegin(GL_QUADS);
+	//glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (2 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (2 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (width / 15), 0.0f);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, timer[10]);
+	glBegin(GL_QUADS);
+	//glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (2 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (3 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (3 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (2 * width / 15), 0.0f);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, timer[two]);
+	glBegin(GL_QUADS);
+	//	glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (3 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (4 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (4 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (3 * width / 15), 0.0f);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, timer[three]);
+	glBegin(GL_QUADS);
+	//glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (4 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (5 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (5 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (4 * width / 15), 0.0f);
+	glEnd();
+
+	glColor4f(1, 1, 1, 1.75f);
+	glBindTexture(GL_TEXTURE_2D, attackpic[0]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width - width / 12+width/150 , height / 8 + height / 16);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width - width / 12+width/150 , 3 * height / 4 - 3 * height / 8);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width - width / 150 , 3 * height / 4 - 3 * height / 8);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width - width / 150 , height / 8 + height / 16);
+	glEnd();
+	
+	glBindTexture(GL_TEXTURE_2D, attackpic[1]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width - width / 12 + width / 150 , height / 8 + height / 16+height/4);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width - width / 12 + width / 150 , 3 * height / 4 - 3 * height / 8 + height / 4);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width - width / 150 , 3 * height / 4 - 3 * height / 8 + height / 4);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width - width / 150 , height / 8 + height / 16 + height / 4);
+	glEnd();
+
+
+
+	glColor4f(1, 1, 1, 1.75f);
+	glBindTexture(GL_TEXTURE_2D, hud[0]);
+	glBegin(GL_QUADS);
+
+
+
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(0, height);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((5 * width / 12), height);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((5 * width / 12), height - height / 6);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((0), height - height / 6);
+	glEnd();
+
+	glColor4f(1, 1, 1, 1.75f);
+	glBindTexture(GL_TEXTURE_2D, hud[1]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width - width / 12, height / 8);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width - width / 12, 3 * height / 4);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width, 3 * height / 4);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width, height / 8);
+	glEnd();
+
+
+
+
+
+	glDisable(GL_BLEND);
+
+	glPopMatrix();*/
+
+
+if (Player->getTeam() == 2)
+{
+	glPushMatrix();
+	glEnable(GL_BLEND); //Enable blending.
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glColor4f(1, 0, 0, 1.0f);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, vtimer[0]);
+	glBegin(GL_QUADS);
+
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width / 3, height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width / 3, 0.0f);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, vtimer[one]);
+	glBegin(GL_QUADS);
+	//glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (2 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (2 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (width / 15), 0.0f);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, vtimer[10]);
+	glBegin(GL_QUADS);
+	//glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (2 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (3 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (3 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (2 * width / 15), 0.0f);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, vtimer[two]);
+	glBegin(GL_QUADS);
+	//	glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (3 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (4 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (4 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (3 * width / 15), 0.0f);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, vtimer[three]);
+	glBegin(GL_QUADS);
+	//glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (4 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (5 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (5 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (4 * width / 15), 0.0f);
+	glEnd();
+
+	glColor4f(1, 1, 1, 1.75f);
+	glBindTexture(GL_TEXTURE_2D, vattackpic[0]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width - width / 12 + width / 150, height / 8 + height / 16);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width - width / 12 + width / 150, 3 * height / 4 - 3 * height / 8);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width - width / 150, 3 * height / 4 - 3 * height / 8);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width - width / 150, height / 8 + height / 16);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, vattackpic[1]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width - width / 12 + width / 150, height / 8 + height / 16 + height / 4);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width - width / 12 + width / 150, 3 * height / 4 - 3 * height / 8 + height / 4);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width - width / 150, 3 * height / 4 - 3 * height / 8 + height / 4);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width - width / 150, height / 8 + height / 16 + height / 4);
+	glEnd();
+
+
+
+	glColor4f(1, 1, 1, 1.75f);
+	glBindTexture(GL_TEXTURE_2D, vhud[0]);
+	glBegin(GL_QUADS);
+
+
+
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(0, height);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((5 * width / 12), height);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((5 * width / 12), height - height / 6);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((0), height - height / 6);
+	glEnd();
+
+	glColor4f(1, 1, 1, 1.75f);
+	glBindTexture(GL_TEXTURE_2D, vhud[1]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width - width / 12, height / 8);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width - width / 12, 3 * height / 4);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width, 3 * height / 4);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width, height / 8);
+	glEnd();
+
+
+
+
+
+	glDisable(GL_BLEND);
+
+	glPopMatrix();
+}
+else
+{
+	glPushMatrix();
+
+	glEnable(GL_BLEND); //Enable blending.
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glColor4f(1, 1, 1, 1.0f);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, ctimer[0]);
+	glBegin(GL_QUADS);
+
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width / 3, height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width / 3, 0.0f);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, ctimer[one]);
+	glBegin(GL_QUADS);
+	//glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (2 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (2 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (width / 15), 0.0f);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, ctimer[10]);
+	glBegin(GL_QUADS);
+	//glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (2 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (3 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (3 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (2 * width / 15), 0.0f);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, ctimer[two]);
+	glBegin(GL_QUADS);
+	//	glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (3 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (4 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (4 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (3 * width / 15), 0.0f);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, ctimer[three]);
+	glBegin(GL_QUADS);
+	//glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (4 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (5 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (5 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (4 * width / 15), 0.0f);
+	glEnd();
+
+	glColor4f(1, 1, 1, 1.75f);
+	glBindTexture(GL_TEXTURE_2D, cattackpic[0]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width - width / 12 + width / 150, height / 8 + height / 16);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width - width / 12 + width / 150, 3 * height / 4 - 3 * height / 8);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width - width / 150, 3 * height / 4 - 3 * height / 8);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width - width / 150, height / 8 + height / 16);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, cattackpic[1]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width - width / 12 + width / 150, height / 8 + height / 16 + height / 4);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width - width / 12 + width / 150, 3 * height / 4 - 3 * height / 8 + height / 4);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width - width / 150, 3 * height / 4 - 3 * height / 8 + height / 4);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width - width / 150, height / 8 + height / 16 + height / 4);
+	glEnd();
+
+
+
+	glColor4f(1, 1, 1, 1.75f);
+	glBindTexture(GL_TEXTURE_2D, chud[0]);
+	glBegin(GL_QUADS);
+
+
+
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(0, height);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((5 * width / 12), height);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((5 * width / 12), height - height / 6);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((0), height - height / 6);
+	glEnd();
+
+	glColor4f(1, 1, 1, 1.75f);
+	glBindTexture(GL_TEXTURE_2D, chud[1]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width - width / 12, height / 8);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width - width / 12, 3 * height / 4);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width, 3 * height / 4);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width, height / 8);
+	glEnd();
+
+
+
+
+
+	glDisable(GL_BLEND);
+
+	glPopMatrix();
+
+
+}
+
 
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
@@ -963,13 +1482,13 @@ void PlayState::Draw(ClientGame* client) {
 
 	//Player->update(true, Cam.GetRotation().y);
 	Player->UpdateMoveAnimation(isNight, Player);
-	Player->update(true, Cam.GetRotation().y);
+	Player->update(true, Cam.GetRotation().y, Player->getTeam());
 
 	std::map<int, GameObject*>::iterator it;
 	for (it = gameObjects.begin(); it != gameObjects.end(); it++)
 	{
 		((PlayerType*)(it->second))->UpdateMoveAnimation(isNight, Player);
-		((PlayerType*)(it->second))->update(false, Cam.GetRotation().y);
+		((PlayerType*)(it->second))->update(false, Cam.GetRotation().y,Player->getTeam());
 
 		if (!weap1 && ((PlayerType*)(it->second))->getID() == pnum1) {
 			((PlayerType*)(it->second))->EquipWeapon((Weapon*)p_SunMace);
@@ -988,7 +1507,7 @@ void PlayState::Draw(ClientGame* client) {
 	std::map<int, Projectile*>::iterator it2;
 	for (it2 = projectiles.begin(); it2 != projectiles.end(); it2++)
 	{
-		((PlayerType*)(it2->second))->update(false, Cam.GetRotation().y);
+		((it2->second))->update(false, -Cam.GetRotation().y + 360, Player->getTeam());
 	}
 
 	// David's building(no collision)
@@ -1016,15 +1535,20 @@ void PlayState::Draw(ClientGame* client) {
 	p_BatSword->Draw();
 	
 	//draw transparent stuff here
+	std::list<Shockwave*>::iterator it4;
+	for (it4 = shockwaves.begin(); it4 != shockwaves.end(); it4++){
+		(*it4)->update(false, Cam.GetRotation().y, Player->getTeam());
+	}
+
 	std::map<int, CrusaderBox*>::iterator it3;
 	for (it3 = crusaderBoxes.begin(); it3 != crusaderBoxes.end(); it3++)
 	{
-		(it3->second)->update(false, Cam.GetRotation().y);
+		(it3->second)->update(false, Cam.GetRotation().y,Player->getTeam());
 	}
 
 	p_regShade->unbind();
 
-	RenderParticle(Cam.GetRotation().y, p_ShrineFire, 0, 14, 0);
+	//RenderParticle(Cam.GetRotation().y, p_ShrineFire, 0, 14, 0);
 	
 	drawHUD(client); //This includes the game over results
 
@@ -1275,4 +1799,38 @@ GLuint PlayState::LoadRAWTexture(const char * filename, int width, int height)
 	free(data); //free the texture
 
 	return texture; //return whether it was successfull
+}
+
+void PlayState::drawCircleOutline(float r, Vector3 pos, int i)
+{
+	float angle, radian, x, y;       // values needed by drawCircleOutline
+	float xcos, ysin, tx, ty;
+	glEnable(GL_TEXTURE_2D);
+	if (i == 0)
+	{
+		glBindTexture(GL_TEXTURE_2D, moonID);
+	}
+	else
+	{
+		glBindTexture(GL_TEXTURE_2D, sunID);
+	}
+	glBegin(GL_POLYGON);
+
+	for (angle = 0.0; angle<360.0; angle += 2.0)
+	{
+		radian = angle * (M_PI / 180.0f);
+
+		xcos = (float)cos(radian);
+		ysin = (float)sin(radian);
+		x = xcos * r + pos.x;
+		y = ysin * r + pos.y;
+		tx = xcos * 0.5 + 0.5;
+		ty = ysin * 0.5 + 0.5;
+
+		glTexCoord2f(tx, ty);
+		glVertex2f(x, y);
+	}
+
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
 }

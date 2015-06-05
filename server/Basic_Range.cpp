@@ -31,6 +31,7 @@ void Basic_Range::attack(GameObject* obj)
 void Basic_Range::createSingleProjectile(GameObject* obj)
 {
 	Projectile* p = new Projectile();
+	p->fromTeam = obj->objectType;
 	obj->forward.Normalize();
 	//p->setID(obj->getID());
 	p->setPos(obj->getPos() + obj->forward * 2);
@@ -67,6 +68,7 @@ void Basic_Range::createSingleProjectile(GameObject* obj)
 void Basic_Range::createPowerProjectile(GameObject* obj)
 {
 	Projectile* p = new Projectile();
+	p->fromTeam = obj->objectType;
 	obj->forward.Normalize();
 	//p->setID(obj->getID());
 	p->setPos(obj->getPos() + obj->forward * 2);

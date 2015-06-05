@@ -105,6 +105,9 @@ void Crusader::attack2EndExtra(){
 	attack2started = false;
 	crusSpeed = default_speed;
 
+	if (sbox == NULL)
+		return;
+
 	for (std::vector<StealthBox*>::iterator it = GameLogic::stealthBoxList.begin(); it != GameLogic::stealthBoxList.end(); it++){
 		if ((*it)->getID() == sbox->getID()){
 			GameLogic::stealthBoxList.erase(it);
