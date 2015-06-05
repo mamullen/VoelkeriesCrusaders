@@ -1034,15 +1034,11 @@ void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods
 	}
 
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS){
-		Player->setAnimation(a_RUNMELEE);
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		Player->setAnimation(a_COMBOATTACK);
+		Player->setAttacking2Starts(Player->getAttacking2Starts() + 1);
 	}
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		Player->setAttacking2Starts(Player->getAttacking2Starts()+1);
-	}
-	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
-		Player->setAttacking2Ends(Player->getAttacking2Ends()+1);
+		Player->setAttacking2Ends(Player->getAttacking2Ends() + 1);
 	}
 }
 
