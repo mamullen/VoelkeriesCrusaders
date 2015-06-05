@@ -66,6 +66,7 @@ public:
 	void setAttacking2(bool t);
 	bool isVisible()					{ return visible; };
 	void setVisible(bool t)				{ visible = t; };
+	void setProj(bool sp)				{ proj = sp; }
 
 	void loadShader(Shader* reg) { 
 		p_regShade = reg;
@@ -81,6 +82,7 @@ private:
 	char* name = NULL;
 	float dashRange = 0;
 	bool attacking2 = false, visible = true;
+	bool proj = false;
 	int attack2Starts = 0, attack2Ends = 0, team;
 
 	Vector4 position = Vector4(0, 2, 0, 1);

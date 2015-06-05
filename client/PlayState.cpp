@@ -404,6 +404,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 
 			Projectile* p = new Projectile(objID);
 			p->setPos(xPos, yPos+7.3, zPos);
+			p->setRotate(-Cam.GetRotation().y + 360);
 
 			printf("Projectile ID: %d\n", objID);
 
@@ -1151,7 +1152,7 @@ void PlayState::Draw(ClientGame* client) {
 	std::map<int, Projectile*>::iterator it2;
 	for (it2 = projectiles.begin(); it2 != projectiles.end(); it2++)
 	{
-		((PlayerType*)(it2->second))->update(false, Cam.GetRotation().y, Player->getTeam());
+		((it2->second))->update(false, -Cam.GetRotation().y + 360, Player->getTeam());
 	}
 
 	// David's building(no collision)
