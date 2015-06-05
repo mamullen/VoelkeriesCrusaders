@@ -101,11 +101,11 @@ int PlayState::Initialize() {
 
 	ParticleEffect::ColorInterpolator explosion; 
 	explosion.AddValue(0.0f, Vector4(1, 0, 0, 1));
-	explosion.AddValue(0.2f, Vector4(1, 0.5, 0, 1));
-	explosion.AddValue(0.4f, Vector4(1, 1, 0, .75));
+	explosion.AddValue(0.2f, Vector4(1, 0, 0, 1));
+	explosion.AddValue(0.4f, Vector4(1, 0.5, 0, 1));
 	explosion.AddValue(0.6f, Vector4(1, 0.5, 0, 1));
-	explosion.AddValue(0.8f, Vector4(0.5, 0.5, 0, 1));
-	explosion.AddValue(1.0f, Vector4(1, 0, 0, .5));
+	explosion.AddValue(0.8f, Vector4(1, 1, 0, 1));
+	explosion.AddValue(1.0f, Vector4(1, 1, 0, 1));
 
 	p_ShrineFire->SetColorInterplator(explosion);
 	p_ShrineFire->SetParticleEmitter(&g_ParticleEmitter);
