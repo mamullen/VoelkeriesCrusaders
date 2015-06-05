@@ -7,7 +7,7 @@ public:
 	virtual ~Timer();
 
 	void reset() { time = 0; }
-	void update(int t) {
+	virtual void update(int t) {
 		time += t; 
 		if (round < atof((ConfigSettings::config->getValue("NumResets").c_str())) && time >= max) { round++; reset(); printf("reset\n"); }
 	}
@@ -17,7 +17,7 @@ public:
 	
 	void print() { printf("Time =  %d\n", time); }
 	void setPhase(int, int, int); //set time period for day/night/day
-private:
+protected:
 	int round; // # of rounds happened for day/night/day cycle
 	int time;
 	int max;

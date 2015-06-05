@@ -80,6 +80,7 @@ void GameLogic::update(int time)
 			((Player *)gameObjects[i])->updateCD();
 			((Player *)gameObjects[i])->updateTime(timer->getState(), time, &gameObjects);
 			((Player *)gameObjects[i])->resetDir();
+			((Player *)gameObjects[i])->updateDisable(time);
 		}
 	}
 

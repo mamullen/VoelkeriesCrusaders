@@ -49,10 +49,9 @@ int PlayState::InitGL() {
 	ratio = WinX / (float)WinY;
 
 	// Background color
-	glClearColor(0.5f, 0.0f, 0.0f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
-
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);	
+	
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -363,6 +362,22 @@ void PlayState::UpdateClient(ClientGame* client) {
 			projectiles.insert(std::pair<int, Projectile*>(objID, p));
 		}
 
+		if (strcmp(serverEvent, "projectile2") == 0){
+			float xPos;
+			float yPos;
+			float zPos;
+			memcpy(&xPos, serverEvent + 11, sizeof(float));
+			memcpy(&yPos, serverEvent + 15, sizeof(float));
+			memcpy(&zPos, serverEvent + 19, sizeof(float));
+
+			PowerProjectile* p = new PowerProjectile(objID);
+			p->setPos(xPos, yPos + 7.3, zPos);
+
+			printf("Projectile2 ID: %d\n", objID);
+
+			projectiles.insert(std::pair<int, Projectile*>(objID, p));
+		}
+
 		if (strcmp(serverEvent, "pos") == 0){
 			float xPos;
 			float yPos;
@@ -603,9 +618,7 @@ void PlayState::RenderParticle(float rot, ParticleEffect* p, float xx, float yy,
 {
 	glPushMatrix();
 	glTranslatef(xx, yy, zz);
-	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
 	glRotatef(rot, 0, 1, 0);
-	glScalef(0.3f, 0.3f, 0.3f);
 	p->Render();
 	glPopMatrix();
 }
@@ -955,13 +968,19 @@ void PlayState::Draw(ClientGame* client) {
 	p_bumpShade->unbind();
 
 	p_regShade->bind();
+
+	Player->update(true, Cam.GetRotation().y);
 	p_Shrine->Draw();
 
 	//Player->update(true, Cam.GetRotation().y);
+	Player->UpdateMoveAnimation(isNight, Player);
+
 	std::map<int, GameObject*>::iterator it;
 	for (it = gameObjects.begin(); it != gameObjects.end(); it++)
 	{
+		((PlayerType*)(it->second))->UpdateMoveAnimation(isNight, Player);
 		((PlayerType*)(it->second))->update(false, Cam.GetRotation().y);
+
 		if (!weap1 && ((PlayerType*)(it->second))->getID() == pnum1) {
 			((PlayerType*)(it->second))->EquipWeapon((Weapon*)p_SunMace);
 		}
@@ -981,8 +1000,6 @@ void PlayState::Draw(ClientGame* client) {
 	{
 		((PlayerType*)(it2->second))->update(false, Cam.GetRotation().y);
 	}
-
-	Player->update(true, Cam.GetRotation().y);
 
 	// David's building(no collision)
 	glPushMatrix();
@@ -1035,7 +1052,7 @@ void PlayState::Input(ClientGame* client) {
 		return;
 	
 	float speedup;
-	if (isNight)
+	if (isNight && Player->getTeam() == 2)
 		speedup = 3.f;
 	else
 		speedup = 2.f;
@@ -1043,61 +1060,61 @@ void PlayState::Input(ClientGame* client) {
 	if (glfwGetKey(window, FORWARD) || glfwGetKey(window, BACKWARD))
 	{
 		if (glfwGetKey(window, FORWARD)) {
-			if (!attacking) {
+			/*if (!attacking) {
 				Player->setAnimation(a_RUNFORWARD, 0, speedup);
-			}
+			}*/
 			client->addEvent(Player->getID(), "move_forward;", ACTION_EVENT);
 
 			if (glfwGetKey(window, STRAFELEFT)) {
-				if (!attacking) {
+				/*if (!attacking) {
 					Player->setAnimation(a_RUNFORWARD, 30, speedup);
-				}
+				}*/
 				client->addEvent(Player->getID(), "move_left;", ACTION_EVENT);
 			}
 			if (glfwGetKey(window, STRAFERIGHT)) {
-				if (!attacking) {
+				/*if (!attacking) {
 					Player->setAnimation(a_RUNFORWARD, -30, speedup);
-				}
+				}*/
 				client->addEvent(Player->getID(), "move_right;", ACTION_EVENT);
 			}
 		}
 		if (glfwGetKey(window, BACKWARD)) {
-			if (!attacking) {
+			/*if (!attacking) {
 				Player->setAnimation(a_WALKBACK);
-			}
+			}*/
 			client->addEvent(Player->getID(), "move_backward;", ACTION_EVENT);
 
 			if (glfwGetKey(window, STRAFELEFT)) {
-				if (!attacking) {
+				/*if (!attacking) {
 					Player->setAnimation(a_RUNFORWARD, -30, speedup);
-				}
+				}*/
 				client->addEvent(Player->getID(), "move_left;", ACTION_EVENT);
 			}
 			if (glfwGetKey(window, STRAFERIGHT)) {
-				if (!attacking) {
+				/*if (!attacking) {
 					Player->setAnimation(a_RUNFORWARD, 30, speedup);
-				}
+				}*/
 				client->addEvent(Player->getID(), "move_right;", ACTION_EVENT);
 			}
 		}
 
 	}
 	else if (glfwGetKey(window, STRAFELEFT)) {
-		if (!attacking) {
+		/*if (!attacking) {
 			Player->setAnimation(a_STRAFELEFT, 0, speedup);
-		}
+		}*/
 		client->addEvent(Player->getID(), "move_left;", ACTION_EVENT);
 	}
 	else if (glfwGetKey(window, STRAFERIGHT)) {
-		if (!attacking) {
+		/*if (!attacking) {
 			Player->setAnimation(a_STRAFERIGHT, 0, speedup);
-		}
+		}*/
 		client->addEvent(Player->getID(), "move_right;", ACTION_EVENT);
 	}
 	else {
-		if (!attacking) {
+		/*if (!attacking) {
 			Player->setAnimation(a_IDLE);
-		}
+		}*/
 	}
 
 	if (glfwGetKey(window, JUMP)) {
@@ -1109,7 +1126,14 @@ void PlayState::Input(ClientGame* client) {
 	if (glfwGetKey(window, GLFW_KEY_B)) {
 		client->addEvent(Player->getID(), "b;", ACTION_EVENT);
 	}
-
+	// attack mode change //////////////////////////////////////////////
+	if (glfwGetKey(window, GLFW_KEY_1)){
+		client->addEvent(Player->getID(), "sw1;", ACTION_EVENT);
+	}
+	else if (glfwGetKey(window, GLFW_KEY_2)){
+		client->addEvent(Player->getID(), "sw2;", ACTION_EVENT);
+	}
+	///////////////////////////////////////////////////////////////////
 	if (rotationChanged){
 		rotationChanged = false;
 		float rotate = -Cam.GetRotation().y + 360;

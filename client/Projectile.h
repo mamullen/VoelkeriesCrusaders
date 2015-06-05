@@ -14,13 +14,14 @@
 #include "PlayerType.h"
 #include <iostream>
 #include "ConfigSettings.h"
+#include "ParticleSystem.h"
+#include "Emitter.h"
 
 class Projectile : public GameObject {
 public:
-	Projectile(unsigned int id) : GameObject(id) { 
+	Projectile(unsigned int id) : GameObject(id) {
 		setMaxHealth(1); 
 		setHealth(1); 
-		//g_Model = new MeshLoader((char*)ConfigSettings::config->getValue("CrusaderFilePath").c_str(),false);
 	};
 	~Projectile();
 	void init();
@@ -28,6 +29,16 @@ public:
 
 private:
 	
+};
+
+class PowerProjectile : public Projectile {
+public:
+	PowerProjectile(unsigned int id) : Projectile(id) {
+		setMaxHealth(1);
+		setHealth(1);
+	}
+	~PowerProjectile();
+	void drawObj();
 };
 
 #endif

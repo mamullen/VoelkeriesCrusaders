@@ -48,9 +48,8 @@ public:
 	void DisableBones()		{ m_EnforceNoBones = true; }
 	void UpdateAnimation();
 	void ChangeAnimation(unsigned int index);
-	void SetLeftHand(const aiMatrix4x4& LeftHandPosTrafo) { m_LeftHandPosTrafo = new aiMatrix4x4(LeftHandPosTrafo); }
-	aiMatrix4x4* GetLeftHand() { return m_LeftHandPosTrafo; }
 	void IsEquippedWeapon(aiMatrix4x4* PosTrafo);
+	bool HasAnimations() { return a_IsAnimated; };
 	float animRate = 2.f;
 
 private:
@@ -66,6 +65,7 @@ private:
 	double a_LastPlaying;
 	bool a_IsWeapon;
 	bool a_LockIndex;
+	bool a_IsAnimated;
 	bool playable;
 };
 

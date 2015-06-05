@@ -9,7 +9,7 @@ public:
 	Projectile();
 	virtual ~Projectile();
 
-	bool updateTime(int time, std::vector<GameObject*>*);
+	virtual bool updateTime(int time, std::vector<GameObject*>*);
 	void setRange(float r){ range = r; }
 	void setDmg(float d) { dmg = d; }
 	float getRange() { return range; }
@@ -21,7 +21,7 @@ public:
 
 	float recoilAmount;
 
-private:
+protected:
 	bool collide(GameObject*);
 	bool collideWall(std::vector<GameObject*>* obj,int time);
 	float hitRadius;
@@ -30,6 +30,7 @@ private:
 	float dmg;      // damage
 	float modifier; // dmg modifier
 	bool isRecoil;
+	bool isStun;
 	Vector3 initPos;
 };
 

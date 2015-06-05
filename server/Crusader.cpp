@@ -6,7 +6,9 @@ Crusader::Crusader() :Player()
 {
 	objectType = 4;
 	team = 1;
-	setAttack(new Basic_Range());
+	default_attack_1 = new Basic_Range();
+	default_attack_2 = new Power_Range();
+	setAttack(default_attack_1);
 }
 
 
@@ -18,7 +20,9 @@ Crusader::Crusader(int i) :Player(i)
 {
 	objectType = 4;
 	team = 1;
-	setAttack(new Basic_Range());
+	default_attack_1 = new Basic_Range();
+	default_attack_2 = new Power_Range();
+	setAttack(default_attack_1);
 }
 
 void Crusader::updateTime(int time, int delta, std::vector<GameObject*>* obj)
