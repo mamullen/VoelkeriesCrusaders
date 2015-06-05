@@ -216,6 +216,17 @@ void PlayState::UpdateClient(ClientGame* client) {
 	unsigned int elapsedTime = currTime - savedTime;
 	savedTime = currTime;
 
+	std::list<Shockwave*>::iterator it4;
+	for (it4 = shockwaves.begin(); it4 != shockwaves.end();){
+		(*it4)->decreaseTime(elapsedTime);
+		if ((*it4)->getTime() <= 0){
+			shockwaves.erase(it4++);
+		}
+		else{
+			it4++;
+		}
+	}
+
 	damagedTime -= elapsedTime;
 
 	////////////////////////////////////////////////////////////////////
@@ -306,6 +317,16 @@ void PlayState::UpdateClient(ClientGame* client) {
 					gameObjects.insert(std::pair<int, GameObject*>(objID, p));
 				}
 				break;
+			}
+		}
+
+		if (strcmp(serverEvent, "cooldown") == 0){
+			float cd1, cd2;
+			memcpy(&cd1, serverEvent + 9, sizeof(float));
+			memcpy(&cd2, serverEvent + 13, sizeof(float));
+			if (objID == Player->getID()){
+				cooldown1 = cd1;
+				cooldown2 = cd2;
 			}
 		}
 
@@ -510,6 +531,18 @@ void PlayState::UpdateClient(ClientGame* client) {
 				it2 = projectiles.find(objID);
 				projectiles.erase(it2);
 			}
+		}
+
+		if (strcmp(serverEvent, "shockwave") == 0){
+			float x, y, z, range;
+			memcpy(&x, serverEvent + 10, sizeof(float));
+			memcpy(&y, serverEvent + 14, sizeof(float));
+			memcpy(&z, serverEvent + 18, sizeof(float));
+			memcpy(&range, serverEvent + 22, sizeof(float));
+
+			printf("SHOCK %f,%f,%f,%f", x, y, z, range);
+
+			shockwaves.push_back(new Shockwave(new Vector3(x-range,-1,z-range),new Vector3(x+range,-1,z+range)));
 		}
 
 		if (strcmp(serverEvent, "weapon1") == 0)
@@ -738,19 +771,6 @@ void PlayState::drawHUD(ClientGame* client){
 	glEnd();
 
 	//healthbar
-	glPushMatrix();
-	std::string s = std::to_string((int)Player->getHealth());
-	char * healthString = (char*)s.c_str();
-	glTranslatef(width / 7, height - height / 19, 1);
-	glLineWidth(2);
-	glScalef(width/6990.0f, height/4443.07f, 1);
-	glRotatef(180, 1, 0, 0);
-	glColor3f(1, 1, 1);
-	for (unsigned int i = 0; i < strlen(healthString); i++){
-		glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, (char)healthString[i]);
-	}
-	glPopMatrix();
-
 	glEnable(GL_BLEND); //Enable blending.
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -762,12 +782,20 @@ void PlayState::drawHUD(ClientGame* client){
 	glEnd();
 	glDisable(GL_BLEND);
 	
-	
+	//cooldown bars
+	glBegin(GL_QUADS);
+	glColor3f(1,0,0);
+	if (Player->getTeam() == 1){
+		glColor3f(1, 1, 0);
+	}
+	drawRect(width - width / 10, height / 13 + (1-(height / 15) * cooldown1), width / 40, (height / 15) * cooldown1);
+	drawRect(width - width / 10, 3 * height / 13 + (1-(height / 15) * cooldown2), width / 40, (height / 15) * cooldown2);
+	glEnd();
 
 	//player's name
 	glPushMatrix();
 	char * name = client->getClientName();
-	glTranslatef(width / 50, height - height / 10, 0);
+	glTranslatef(width *.11, height - height * .125, 0);
 	glLineWidth(2);
 	glScalef(width/5242.88, height/3800.0f, 1);
 	glRotatef(180, 1, 0, 0);
@@ -1179,6 +1207,11 @@ void PlayState::Draw(ClientGame* client) {
 	p_BatSword->Draw();
 	
 	//draw transparent stuff here
+	std::list<Shockwave*>::iterator it4;
+	for (it4 = shockwaves.begin(); it4 != shockwaves.end(); it4++){
+		(*it4)->update(false, Cam.GetRotation().y, Player->getTeam());
+	}
+
 	std::map<int, CrusaderBox*>::iterator it3;
 	for (it3 = crusaderBoxes.begin(); it3 != crusaderBoxes.end(); it3++)
 	{
