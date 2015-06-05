@@ -19,7 +19,9 @@ void GameObject::update(bool isPlayer, float rot) {
 		return;
 	}
 
-	
+	if (!isVisible()){
+		return;
+	}
 
 	//initial player model is just a cone for now
 	glPushMatrix();
@@ -179,5 +181,4 @@ bool GameObject::shrinecollide(Vector3 min, Vector3 max)
 void GameObject::setAttacking2(bool t){
 	attacking2 = t;
 	dashRange = 0;
-	printf("Setting to 0...\n");
 }

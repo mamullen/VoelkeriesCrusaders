@@ -19,6 +19,7 @@
 #include "Emitter.h"
 #include "GameState.h"
 #include "Building.h"
+#include "CrusaderBox.h"
 #include "Projectile.h"
 #include "Floor.h"
 #include "ClientGame.h"
@@ -87,7 +88,7 @@ private:
 	//time in milliseconds
 	unsigned int savedTime;//curr time of client
 	int damagedTime = 0, damagedAnimLength = 1000;
-	bool restartGame = false;
+	bool restartGame = false, redBorder = false;
 
 	// Components
 	Camera Cam;
@@ -100,10 +101,11 @@ private:
 	//player is not stored in this map
 	std::map<int, GameObject*> gameObjects;
 	std::map<int, Projectile*> projectiles;
+	std::map<int, CrusaderBox*> crusaderBoxes;
 	int currGameTime = 0, gameResult = -2;
 	int vampireScore = 0, crusaderScore = 0;
 
-	Building* b1;
+	//Building* b1;
 	Texture t;
 	GLuint photos[5];
 	//Shader floorshader;
