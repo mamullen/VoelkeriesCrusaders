@@ -36,7 +36,6 @@ public:
 			glRotatef(glfwGetTime() * 30, 0.f, 1.f, 0.f);
 		}
 		glScalef(scale.x, scale.y, scale.z);
-		g_Model->IsEquippedWeapon(w_Rotation);
 		g_Model->Render();
 		glPopMatrix();
 	}

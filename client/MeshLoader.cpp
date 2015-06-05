@@ -9,8 +9,17 @@
 #define aisgl_min(x,y) (x<y?x:y)
 #define aisgl_max(x,y) (y>x?y:x)
 
+#define INVALID_MATERIAL 0xFFFFFFFF
+
+#define POSITION_LOCATION 0
+#define NORMAL_LOCATION 1
+#define TEX_COORD_LOCATION 2
+
 MeshEntry::MeshEntry() {
 	NumIndices = 0;
+	BaseVertex = 0;
+	BaseIndex = 0;
+	MaterialIndex = INVALID_MATERIAL;
 }
 
 MeshEntry::~MeshEntry() {
@@ -22,23 +31,29 @@ void MeshEntry::Init(const std::vector<Vector3>& CachedPositions, const std::vec
 }
 
 MeshLoader::MeshLoader() {
-	std::cout << "No filename specified" << std::endl;
 	a_LastPlaying = 0;
 	a_CurrentTime = 0;
 	m_Scene = NULL;
 	m_EnforceNoBones = false;
-	m_LeftHandPosTrafo = NULL;
 	a_IsWeapon = false;
 	a_LockIndex = false;
 	a_IsAnimated = false;
 	playable = false;
+	memset(m_Buffers, 0, sizeof(m_Buffers));
+	m_VAO = 0;
 }
 
 MeshLoader::MeshLoader(const char* filename) {
 	a_LastPlaying = 0;
 	a_CurrentTime = 0;
+	m_Scene = NULL;
 	m_EnforceNoBones = false;
+	a_IsWeapon = false;
+	a_LockIndex = false;
+	a_IsAnimated = false;
 	playable = false;
+	memset(m_Buffers, 0, sizeof(m_Buffers));
+	m_VAO = 0;
 
 	std::cout << "MeshLoader:: loading " << filename << std::endl;
 	if (!LoadAsset(filename)) {
@@ -63,6 +78,12 @@ MeshLoader::MeshLoader(const char* filename, bool model) {
 }
 
 MeshLoader::~MeshLoader() {
+	if (m_Buffers[0] != 0) {
+		glDeleteBuffers(sizeof(m_Buffers) / sizeof(m_Buffers[0]), m_Buffers);
+	}
+	if (m_VAO != 0) {
+		glDeleteVertexArrays(1, &m_VAO);
+	}
 	delete(m_Scene);
 }
 
@@ -107,6 +128,11 @@ void MeshLoader::getBoundingBoxForNode(const aiNode* node, aiVector3D* min, aiVe
 
 
 bool MeshLoader::LoadAsset(const char* filename) {
+	glGenVertexArrays(1, &m_VAO);
+	glBindVertexArray(m_VAO);
+
+	glGenBuffers(sizeof(m_Buffers) / sizeof(m_Buffers[0]), m_Buffers);
+
 	m_Scene = aiImportFile(filename, aiProcessPreset_TargetRealtime_MaxQuality);
 
 	if (!m_Scene) {
@@ -135,40 +161,78 @@ bool MeshLoader::LoadAsset(const char* filename) {
 		mAnimator = new SceneAnimator(m_Scene);
 	}
 
-
-
 	LoadScene();
+
 	return true;
 }
 
 void MeshLoader::LoadScene() {
 	m_Entries.resize(m_Scene->mNumMeshes);
 
+	unsigned int NumVertices = 0;
+	unsigned int NumIndices = 0;
+
+	for (unsigned int i = 0; i < m_Entries.size(); i++) {
+		m_Entries[i].MaterialIndex = m_Scene->mMeshes[i]->mMaterialIndex;
+		m_Entries[i].NumIndices = m_Scene->mMeshes[i]->mNumFaces * 3;
+		m_Entries[i].BaseVertex = NumVertices;
+		m_Entries[i].BaseIndex = NumIndices;
+
+		NumVertices += m_Scene->mMeshes[i]->mNumVertices;
+		NumIndices += m_Entries[i].NumIndices;
+	}
+
+	CachedPositions.reserve(NumVertices);
+	CachedNormals.reserve(NumVertices);
+	TexCoords.reserve(NumVertices);
+	Indices.reserve(NumIndices);
+
 	for (unsigned int i = 0; i < m_Entries.size(); i++) {
 		const aiMesh* mesh = m_Scene->mMeshes[i];
-		LoadMesh(i, mesh);
+		LoadMesh(i, mesh, CachedPositions, CachedNormals, TexCoords, Indices);
 	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[POS_VB]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(CachedPositions[0]) * CachedPositions.size(), &CachedPositions[0], GL_STATIC_DRAW);
+	glEnableVertexAttribArray(POSITION_LOCATION);
+	glVertexAttribPointer(POSITION_LOCATION, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[NORMAL_VB]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(CachedNormals[0]) * CachedNormals.size(), &CachedNormals[0], GL_STATIC_DRAW);
+	glEnableVertexAttribArray(NORMAL_LOCATION);
+	glVertexAttribPointer(NORMAL_LOCATION, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[TEXCOORD_VB]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(TexCoords[0]) * TexCoords.size(), &TexCoords[0], GL_STATIC_DRAW);
+	glEnableVertexAttribArray(TEX_COORD_LOCATION);
+	glVertexAttribPointer(TEX_COORD_LOCATION, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[INDEX_BUFFER]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices[0]) * Indices.size(), &Indices[0], GL_STATIC_DRAW);
 }
 
-void MeshLoader::LoadMesh(unsigned int index, const aiMesh* mesh) {
-	std::vector<unsigned int> Indices;
+void MeshLoader::LoadMesh(unsigned int index, const aiMesh* mesh, std::vector<Vector3>& CachedPositions, std::vector<Vector3>& CachedNormals, std::vector<Vector2>& TexCoords, std::vector<unsigned int>& Indices) {
 	for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
 		const Vector3 vertices = Vector3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
 		const Vector3 normals = Vector3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
+		const Vector2 tex = Vector2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y);
 		CachedPositions.push_back(vertices);
 		CachedNormals.push_back(normals);
+		TexCoords.push_back(tex);
 	}
 
 	for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
 		const aiFace* face = &mesh->mFaces[i];
-
-		for (unsigned int j = 0; j < face->mNumIndices; j++) {
-			int v_index = face->mIndices[j];
-			Indices.push_back(v_index);
+		if (face->mNumIndices == 2) {
+			Indices.push_back(face->mIndices[0]);
+			Indices.push_back(face->mIndices[1]);
+			Indices.push_back(0);
+		} else if (face->mNumIndices == 3) {
+			Indices.push_back(face->mIndices[0]);
+			Indices.push_back(face->mIndices[1]);
+			Indices.push_back(face->mIndices[2]);
 		}
 	}
-
-	m_Entries[index].Init(CachedPositions, CachedNormals, Indices);
 }
 
 void MeshLoader::ChangeAnimation(unsigned int index) {
@@ -268,28 +332,23 @@ void MeshLoader::ApplyMaterial(const struct aiMaterial *material)
 	//glEnable(GL_CULL_FACE);
 }
 
-void MeshLoader::IsEquippedWeapon(aiMatrix4x4* PosTrafo) {
-	a_IsWeapon = true;
-	m_LeftHandPosTrafo = PosTrafo;
-}
-
-void MeshLoader::RenderMesh(const aiNode *node) {
-	/*for (unsigned int i = 0; i < m_Entries.size(); i++) {  // each mesh in the scene
-		for (unsigned int j = 0; j < Faces.size(); j++) {
-			for (unsigned int k = 0; k < Indices.size(); k++) {
-				glBegin(GL_TRIANGLES);
-				glColor4f(1, 1, 1, 1);
-				glNormal3f(CachedNormals[k].x, CachedNormals[k].y, CachedNormals[k].z);
-				glVertex3f(CachedPositions[k].x, CachedPositions[k].y, CachedPositions[k].z);
-				glEnd();
-			}
-		}
-	}*/
-	// naive, put into VBO
+void MeshLoader::RenderMesh(const aiNode* node) {
 	glPushMatrix();
+	glBindVertexArray(m_VAO);
+	glScalef(0.05, 0.05, 0.05);
+	glEnable(GL_NORMALIZE);
+	for (unsigned int i = 0; i < m_Entries.size(); i++) {
+		ApplyMaterial(m_Scene->mMaterials[m_Entries[i].MaterialIndex]);
+		glDrawElementsBaseVertex(GL_TRIANGLES, m_Entries[i].NumIndices, GL_UNSIGNED_INT, (void*)(sizeof(unsigned int) * m_Entries[i].BaseIndex), m_Entries[i].BaseVertex);
+	}
+
+	glBindVertexArray(0);
+	glPopMatrix();
+
+	/*
 	for (unsigned int i = 0; i < node->mNumMeshes; i++) {
 		const aiMesh* mesh = m_Scene->mMeshes[node->mMeshes[i]];
-		/*std::vector<CachedVertex> CachedPosition(mesh->mNumVertices);
+		std::vector<CachedVertex> CachedPosition(mesh->mNumVertices);
 		std::vector<CachedVertex> CachedNormal(mesh->mNumVertices);
 		if (mesh->HasBones() && !m_EnforceNoBones) {
 			const std::vector<aiMatrix4x4>& boneMatrices = mAnimator->GetBoneMatrices(node, i);
@@ -310,7 +369,7 @@ void MeshLoader::RenderMesh(const aiNode *node) {
 					CachedNormal[vertexId].cached = true;
 				}
 			}
-		}*/
+		}
 		aiMatrix4x4 Mx;
 		if (m_Scene->HasAnimations()) {
 			Mx = mAnimator->GetLocalTransform(node);
@@ -331,24 +390,34 @@ void MeshLoader::RenderMesh(const aiNode *node) {
 			glBegin(GL_TRIANGLES);
 
 			glScalef(0.1, 0.1, 0.1);
+
+			if (face->mNumIndices == 3) {
+				glNormal3fv(&mesh->mNormals[face->mIndices[0]].x);
+				glVertex3fv(&mesh->mVertices[face->mIndices[0]].x);
+				glNormal3fv(&mesh->mNormals[face->mIndices[1]].x);
+				glVertex3fv(&mesh->mVertices[face->mIndices[1]].x);
+				glNormal3fv(&mesh->mNormals[face->mIndices[2]].x);
+				glVertex3fv(&mesh->mVertices[face->mIndices[2]].x);
+			}
+			
 			for (unsigned int k = 0; k < face->mNumIndices; k++) {
 				int v_index = face->mIndices[k];
 				if (mesh->mColors[0] != NULL)
 					glColor4fv((GLfloat*)&mesh->mColors[0][v_index]);
 				if (mesh->mNormals != NULL) {
 					glNormal3fv(&mesh->mNormals[v_index].x);
-					//if (&CachedNormal[v_index].cached && !m_EnforceNoBones) {
-					//	glNormal3fv(&CachedNormal[v_index].vec.x);
-					//} else {
+					if (&CachedNormal[v_index].cached && !m_EnforceNoBones) {
+						glNormal3fv(&CachedNormal[v_index].vec.x);
+					} else {
 						
-					//}
+					}
 				}
 
-				//if (&CachedPosition[v_index].cached && !m_EnforceNoBones) {
-				//	glVertex3fv(&CachedPosition[v_index].vec.x);
-				//} else {
+				if (&CachedPosition[v_index].cached && !m_EnforceNoBones) {
+					glVertex3fv(&CachedPosition[v_index].vec.x);
+				} else {
 					glVertex3fv(&mesh->mVertices[v_index].x);
-				//}
+				}
 			}
 			glEnd();
 		}
@@ -358,8 +427,7 @@ void MeshLoader::RenderMesh(const aiNode *node) {
 
 	for (unsigned int i = 0; i < node->mNumChildren; i++) {
 		RenderMesh(node->mChildren[i]);
-	}
-	glPopMatrix();
+	}*/
 }
 
 void MeshLoader::UpdateAnimation() {
@@ -371,9 +439,42 @@ void MeshLoader::UpdateAnimation() {
 	}
 }
 
+void MeshLoader::CalculateBones(const aiNode* node) {
+	for (unsigned int i = 0; i < node->mNumMeshes; i++) {
+		const aiMesh* mesh = m_Scene->mMeshes[node->mMeshes[i]];
+		if (mesh->HasBones() && !m_EnforceNoBones) {
+			const std::vector<aiMatrix4x4>& boneMatrices = mAnimator->GetBoneMatrices(node, i);
+
+			for (unsigned int a = 0; a < mesh->mNumBones; a++) {
+				const aiBone *bone = mesh->mBones[a];
+				const aiMatrix4x4& posTrafo = boneMatrices[a];
+				aiMatrix3x3 normTrafo = aiMatrix3x3(posTrafo);
+				for (unsigned int b = 0; b < bone->mNumWeights; b++)
+				{
+					const aiVertexWeight& weight = bone->mWeights[b];
+					unsigned int vertexId = weight.mVertexId;
+					const aiVector3D& srcPos = mesh->mVertices[vertexId];
+					const aiVector3D& srcNorm = mesh->mNormals[vertexId];
+					aiVector3D cpos;
+					aiVector3D cnorm;
+					cpos += weight.mWeight * (posTrafo * srcPos);
+					cnorm += weight.mWeight * (normTrafo * srcNorm);
+					CachedPositions[vertexId] = Vector3(cpos.x, cpos.y, cpos.z);
+					CachedNormals[vertexId] = Vector3(cnorm.x, cnorm.y, cnorm.z);
+				}
+			}
+		}
+	}
+	
+	for (unsigned int i = 0; i < node->mNumChildren; i++) {
+		CalculateBones(node->mChildren[i]);
+	}
+}
+
 void MeshLoader::Render() {
 	//std::cout << sceneCenter.x << " " << sceneCenter.y << " " << sceneCenter.z << std::endl;
 	glEnable(GL_LIGHTING);
+	CalculateBones(m_Scene->mRootNode);
 	RenderMesh(m_Scene->mRootNode);
 	glDisable(GL_LIGHTING);
 }

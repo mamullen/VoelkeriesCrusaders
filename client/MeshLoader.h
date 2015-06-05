@@ -35,6 +35,9 @@ struct MeshEntry {
 	void Init(const std::vector<Vector3>& CachedPositions, const std::vector<Vector3>& CachedNormals, const std::vector<unsigned int>& Indices);
 
 	unsigned int NumIndices;
+	unsigned int BaseVertex;
+	unsigned int BaseIndex;
+	unsigned int MaterialIndex;
 };
 
 class MeshLoader {
@@ -42,7 +45,8 @@ private:
 	bool m_EnforceNoBones;
 
 	bool LoadAsset(const char* filename);
-	void ApplyMaterial(const aiMaterial *material);
+	void ApplyMaterial(const aiMaterial *material); 
+	void CalculateBones(const aiNode* node);
 
 	void RenderMesh(const aiNode* node);
 public:
@@ -52,13 +56,12 @@ public:
 	MeshLoader(const char* filename, bool model);
 
 	void LoadScene();
-	void LoadMesh(unsigned int index, const aiMesh* mesh);
+	void LoadMesh(unsigned int index, const aiMesh* mesh, std::vector<Vector3>& CachedPositions, std::vector<Vector3>& CachedNormals, std::vector<Vector2>& TexCoords, std::vector<unsigned int>& Indices);
 	
 	void Render();
 	void DisableBones()		{ m_EnforceNoBones = true; }
 	void UpdateAnimation();
 	void ChangeAnimation(unsigned int index);
-	void IsEquippedWeapon(aiMatrix4x4* PosTrafo);
 	bool HasAnimations() { return a_IsAnimated; };
 	float animRate = 2.f;
 
@@ -69,7 +72,6 @@ private:
 	aiVector3D sceneCenter, sceneMin, sceneMax;
 	void getBoundingBox(aiVector3D* min, aiVector3D* max);
 	void getBoundingBoxForNode(const aiNode* node, aiVector3D* min, aiVector3D* max, aiMatrix4x4* trafo);
-	aiMatrix4x4 *m_LeftHandPosTrafo;
 
 	double a_CurrentTime;
 	double a_LastPlaying;
@@ -79,10 +81,20 @@ private:
 	bool playable;
 
 	std::vector<MeshEntry> m_Entries;
-	std::vector<std::vector<unsigned int>> Faces;
-
 	std::vector<Vector3> CachedPositions;
 	std::vector<Vector3> CachedNormals;
+	std::vector<Vector2> TexCoords;
+	std::vector<unsigned int> Indices;
+
+	enum VB_TYPES {
+		INDEX_BUFFER,
+		POS_VB,
+		NORMAL_VB,
+		TEXCOORD_VB,
+		NUM_VBs
+	};
+	GLuint m_VAO;
+	GLuint m_Buffers[NUM_VBs];
 };
 
 #endif
