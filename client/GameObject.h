@@ -48,7 +48,7 @@ public:
 	Vector3* getMax()					{ return max; }
 	void setName(char* n)				{ name = n; }
 	char * getName()					{ return name; }
-	void setAnimation(int index);
+	void setAnimation(int index, int rotate = 0, float speedup = 2.f);
 	bool shrinecollide(Vector3, Vector3);
 
 	void setPos(double x, double y, double z);
@@ -68,6 +68,7 @@ public:
 	}
 
 private:
+	float animRotate = 0;
 	unsigned int id;
 	float rotation = 0;
 	bool showHP = false;

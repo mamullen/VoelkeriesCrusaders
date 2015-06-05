@@ -808,6 +808,10 @@ void PlayState::Draw(ClientGame* client) {
 	glTranslatef(Player->getPos().x, 0, Player->getPos().z);
 	glRotatef(180, 0, 1, 0);
 
+	if (currGameTime < client->getPhase2Time() && currGameTime >= client->getPhase1Time())
+		isNight = true;
+	else
+		isNight = false;
 	p_Light->Draw(client, currGameTime);
 	p_bumpShade->bind();
 	p_Map->Draw(p_bumpShade, m_pTrivialNormalMap, photos);
@@ -886,43 +890,63 @@ void PlayState::Input(ClientGame* client) {
 	if (!Player)
 		return;
 	
+	float speedup;
+	if (isNight)
+		speedup = 3.f;
+	else
+		speedup = 2.f;
+
 	if (glfwGetKey(window, FORWARD) || glfwGetKey(window, BACKWARD))
 	{
 		if (glfwGetKey(window, FORWARD)) {
 			if (!attacking) {
-				Player->setAnimation(a_RUNFORWARD);
+				Player->setAnimation(a_RUNFORWARD, 0, speedup);
 			}
 			client->addEvent(Player->getID(), "move_forward;", ACTION_EVENT);
+
+			if (glfwGetKey(window, STRAFELEFT)) {
+				if (!attacking) {
+					Player->setAnimation(a_RUNFORWARD, 30, speedup);
+				}
+				client->addEvent(Player->getID(), "move_left;", ACTION_EVENT);
+			}
+			if (glfwGetKey(window, STRAFERIGHT)) {
+				if (!attacking) {
+					Player->setAnimation(a_RUNFORWARD, -30, speedup);
+				}
+				client->addEvent(Player->getID(), "move_right;", ACTION_EVENT);
+			}
 		}
 		if (glfwGetKey(window, BACKWARD)) {
 			if (!attacking) {
 				Player->setAnimation(a_WALKBACK);
 			}
 			client->addEvent(Player->getID(), "move_backward;", ACTION_EVENT);
+
+			if (glfwGetKey(window, STRAFELEFT)) {
+				if (!attacking) {
+					Player->setAnimation(a_RUNFORWARD, -30, speedup);
+				}
+				client->addEvent(Player->getID(), "move_left;", ACTION_EVENT);
+			}
+			if (glfwGetKey(window, STRAFERIGHT)) {
+				if (!attacking) {
+					Player->setAnimation(a_RUNFORWARD, 30, speedup);
+				}
+				client->addEvent(Player->getID(), "move_right;", ACTION_EVENT);
+			}
 		}
 
-		if (glfwGetKey(window, STRAFELEFT)) {
-			if (!attacking) {
-				Player->setAnimation(a_STRAFEFORWARDLEFT);
-			}
-			client->addEvent(Player->getID(), "move_left;", ACTION_EVENT);
-		}
-		if (glfwGetKey(window, STRAFERIGHT)) {
-			if (!attacking) {
-				Player->setAnimation(a_STRAFEFORWARDRIGHT);
-			}
-			client->addEvent(Player->getID(), "move_right;", ACTION_EVENT);
-		}
 	}
 	else if (glfwGetKey(window, STRAFELEFT)) {
 		if (!attacking) {
-			Player->setAnimation(a_STRAFELEFT);
+			Player->setAnimation(a_STRAFELEFT, 0, speedup);
 		}
 		client->addEvent(Player->getID(), "move_left;", ACTION_EVENT);
 	}
 	else if (glfwGetKey(window, STRAFERIGHT)) {
 		if (!attacking) {
-			Player->setAnimation(a_STRAFERIGHT);
+			Player->setAnimation(a_STRAFERIGHT, 0, speedup);
 		}
 		client->addEvent(Player->getID(), "move_right;", ACTION_EVENT);
 	}

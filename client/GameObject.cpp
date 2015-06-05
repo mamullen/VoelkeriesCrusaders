@@ -94,6 +94,7 @@ void GameObject::update(bool isPlayer, float rot) {
 
 	//check  model is not null
 	if (g_Model){
+		glRotatef(animRotate, 0.f, 1.f, 0.f);
 		g_Model->UpdateAnimation();
 		g_Model->Render();
 	}
@@ -140,7 +141,14 @@ void GameObject::setHealth(float h){
 	printf("NEW HEALTH VAL: %f\n", currHP);
 }
 
-void GameObject::setAnimation(int index) {
+void GameObject::setAnimation(int index, int rotate, float speedup) {
+	if (index == a_RUNFORWARD) {
+		animRotate = rotate;
+	}
+	else {
+		animRotate = 0;
+	}
+	g_Model->animRate = speedup;
 	g_Model->ChangeAnimation(index);
 }
 
