@@ -9,5 +9,7 @@ public:
 	virtual ~Power_Range();
 
 	virtual void attack(GameObject*);
+private:
+	float disableTime;
 };
 

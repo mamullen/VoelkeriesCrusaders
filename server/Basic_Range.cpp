@@ -6,8 +6,8 @@ Basic_Range::Basic_Range()
 {
 	type = 1;
 	cd = 0;
-	maxcd = atof(ConfigSettings::config->getValue("ProjectileCD").c_str());;
-	ad = atof(ConfigSettings::config->getValue("ProjectileDMG").c_str());;
+	maxcd = atof(ConfigSettings::config->getValue("ProjectileCD").c_str());
+	ad = atof(ConfigSettings::config->getValue("ProjectileDMG").c_str());
 	range = 200;
 	c_ad = ad;
 	c_range = range;
@@ -74,6 +74,9 @@ void Basic_Range::createPowerProjectile(GameObject* obj)
 	p->forward = obj->forward;
 	p->setRange(c_range);
 	p->setDmg(c_ad);
+	p->setStun(true);
+	p->setRecoil(true);
+	p->setSpeed(80);
 	Packet* packet = new Packet;
 	packet->packet_type = ACTION_EVENT;
 	packet->id = p->getID();

@@ -62,9 +62,10 @@ public:
 	static std::vector<StealthBox*> stealthBoxList;
     static std::vector<Player*> playerList;
 	static std::list<Packet*> serverPackets;
+
+	static std::vector<GameObject*> gameObjects;
 private:
 	Timer* timer;
-	std::vector<GameObject*> gameObjects;
 	
 	std::list<std::pair<int,Packet*>> packets;
 	
