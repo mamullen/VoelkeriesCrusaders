@@ -28,6 +28,16 @@ void DisableTimer::update(int t)
 		isDisable = false;
 	}
 }
+bool DisableTimer::updates(int t)
+{
+	if (time > 0){
+		time -= t;
+		return true;
+	}
+	else{
+		return false;
+	}
+}
 
 bool DisableTimer::getDisable()
 {

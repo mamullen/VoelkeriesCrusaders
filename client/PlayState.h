@@ -147,7 +147,11 @@ private:
 	Shader* p_bumpShade;
 
 	GLuint attackpic[2];
+	GLuint cattackpic[2];
+	GLuint vattackpic[2];
 	GLuint avatar[2];
+	GLuint vhud[3];
+	GLuint chud[3];
 	GLuint hud[3];
 	void drawCircleOutline(float r, Vector3 pos, int i);
 
@@ -158,6 +162,8 @@ private:
 	GLuint moonID;
 	int timercoeef;
 	float timerX;
+	GLuint ctimer[11];//load numbers here
+	GLuint vtimer[11];//load numbers here
 };
 
 ////////////////////////////////////////////////////////////////////////////////

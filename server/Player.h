@@ -48,12 +48,14 @@ public:
 	void updateDisable(int time);
 	void isDisabled(int time);
 	bool getDisabled();
-
-
+	void ShrineT(int time);
+	bool getST();
+	bool stillShrine(int time);
 
 protected:
 	Action* default_attack_1, *default_attack_2;
 	DisableTimer disableTimer;
+	DisableTimer shrineTimer;
 	Score score;
 	unsigned int pid; // corresponds to Client ID
 	float ad;	// attack dmg

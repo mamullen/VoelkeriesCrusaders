@@ -143,78 +143,76 @@ int PlayState::Initialize() {
 
 	filenm = "./particles/textures/sun.png";
 	sunID = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-	if (true)
-	{
+	filenm = "./particles/textures/sun.png";
+	sunID = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/0-c.png";
+	vtimer[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/1-c.png";
+	vtimer[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/2-c.png";
+	vtimer[2] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/3-c.png";
+	vtimer[3] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/4-c.png";
+	vtimer[4] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/5-c.png";
+	vtimer[5] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/6-c.png";
+	vtimer[6] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/7-c.png";
+	vtimer[7] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/8-c.png";
+	vtimer[8] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/9-c.png";
+	vtimer[9] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/colon-c.png";
+	vtimer[10] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/hp-hud-v.png";
+	vhud[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/side-hud-v.png";
+	vhud[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/time-hud-v.png";
+	vhud[2] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/vamp1.png";
+	vattackpic[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/vamp2.png";
+	vattackpic[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
 
-		filenm = "./ppm/0-v.png";
-		timer[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/1-v.png";
-		timer[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/2-v.png";
-		timer[2] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/3-v.png";
-		timer[3] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/4-v.png";
-		timer[4] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/5-v.png";
-		timer[5] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/6-v.png";
-		timer[6] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/7-v.png";
-		timer[7] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/8-v.png";
-		timer[8] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/9-v.png";
-		timer[9] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/colon-v.png";
-		timer[10] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/hp-hud-v.png";
-		hud[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/side-hud-v.png";
-		hud[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/time-hud-v.png";
-		hud[2] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/vamp1.png";
-		attackpic[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/vamp2.png";
-		attackpic[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-	}
-	else
-	{
 
-		filenm = "./ppm/0-c.png";
-		timer[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/1-c.png";
-		timer[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/2-c.png";
-		timer[2] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/3-c.png";
-		timer[3] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/4-c.png";
-		timer[4] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/5-c.png";
-		timer[5] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/6-c.png";
-		timer[6] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/7-c.png";
-		timer[7] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/8-c.png";
-		timer[8] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/9-c.png";
-		timer[9] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/colon-c.png";
-		timer[10] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/hp-hud-c.png";
-		hud[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/side-hud-c.png";
-		hud[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/time-hud-c.png";
-		hud[2] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/crus1.png";
-		attackpic[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-		filenm = "./ppm/crus2.png";
-		attackpic[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-	}
+	filenm = "./ppm/0-c.png";
+	ctimer[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/1-c.png";
+	ctimer[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/2-c.png";
+	ctimer[2] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/3-c.png";
+	ctimer[3] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/4-c.png";
+	ctimer[4] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/5-c.png";
+	ctimer[5] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/6-c.png";
+	ctimer[6] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/7-c.png";
+	ctimer[7] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/8-c.png";
+	ctimer[8] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/9-c.png";
+	ctimer[9] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/colon-c.png";
+	ctimer[10] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/hp-hud-c.png";
+	chud[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/side-hud-c.png";
+	chud[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/time-hud-c.png";
+	chud[2] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/crus1.png";
+	cattackpic[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	filenm = "./ppm/crus2.png";
+	cattackpic[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+
+	
 		return 0;
 }
 
@@ -764,21 +762,21 @@ void PlayState::drawHUD(ClientGame* client){
 
 	//timer triangle
 
-	if ((float)currGameTime < 30000)
+	if ((float)currGameTime*timercoeef < 15000)
 	{
 
 		timerX = 3 * width / 8 + ((float)currGameTime / client->getPhase3Time()) * (width / 2);
 
 	}
-	if ((float)currGameTime > 90000)
+	if ((float)currGameTime*timercoeef > 45000)
 	{
 
-		timerX = 3 * width / 8 + (((float)currGameTime - 60000) / client->getPhase3Time()) * (width / 2);
+		timerX = 5 * width / 8 + (((float)currGameTime - 60000) / client->getPhase3Time()) * (width / 2);
 
 	}
 	glColor3f(1, 1, 1);
 	drawCircleOutline(20, Vector3(timerX, height / 5, 0), 0);
-	drawCircleOutline(19, Vector3(width / 2, height / 5, 0), 1);
+	drawCircleOutline(18.5, Vector3(width / 2, height / 5, 0), 1);
 
 
 	//bottom panel
@@ -802,18 +800,18 @@ void PlayState::drawHUD(ClientGame* client){
 	glColor4f(0, 0, 0, 0.8f);
 	drawRect(width / 9, height - height / 13, width / 4, height / 15);
 	glEnd();
-	glDisable(GL_BLEND);
+	
 	
 	//cooldown bars
 	glBegin(GL_QUADS);
-	glColor3f(1,0,0);
+	glColor4f(1,0,0,0.5f);
 	if (Player->getTeam() == 1){
-		glColor3f(1, 1, 0);
+		glColor4f(1, 1, 0,0.5f);
 	}
-	drawRect(width - width / 10, height / 13 + (1-(height / 15) * cooldown1), width / 40, (height / 15) * cooldown1);
-	drawRect(width - width / 10, 3 * height / 13 + (1-(height / 15) * cooldown2), width / 40, (height / 15) * cooldown2);
+	drawRect(width - width / 12 + width / 150, 3 * height / 4 - 3 * height / 8 + (1 - (height / 15) * cooldown1), width / 14, (height / 15) * cooldown1);
+	drawRect(width - width / 12 + width / 150, height - 3 * height / 8 + (1 - (height/15) * cooldown2), width / 14, (height / 15) * cooldown2);
 	glEnd();
-
+	glDisable(GL_BLEND);
 	//player's name
 	glPushMatrix();
 	char * name = client->getClientName();
@@ -1036,6 +1034,7 @@ void PlayState::drawHUD(ClientGame* client){
 		glDisable(GL_BLEND);
 		glPopMatrix();
 	}
+	/*
 	glPushMatrix();
 	glEnable(GL_BLEND); //Enable blending.
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -1110,25 +1109,25 @@ void PlayState::drawHUD(ClientGame* client){
 	glBindTexture(GL_TEXTURE_2D, attackpic[0]);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(width - width / 12+width/150, height / 8 + height / 16);
+	glVertex2f(width - width / 12+width/150 , height / 8 + height / 16);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f(width - width / 12+width/150, 3 * height / 4 - 3 * height / 8);
+	glVertex2f(width - width / 12+width/150 , 3 * height / 4 - 3 * height / 8);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f(width - width / 150, 3 * height / 4 - 3 * height / 8);
+	glVertex2f(width - width / 150 , 3 * height / 4 - 3 * height / 8);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f(width - width / 150, height / 8 + height / 16);
+	glVertex2f(width - width / 150 , height / 8 + height / 16);
 	glEnd();
-
+	
 	glBindTexture(GL_TEXTURE_2D, attackpic[1]);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(width - width / 12 + width / 150, height / 8 + height / 16+height/4);
+	glVertex2f(width - width / 12 + width / 150 , height / 8 + height / 16+height/4);
 	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f(width - width / 12 + width / 150, 3 * height / 4 - 3 * height / 8 + height / 4);
+	glVertex2f(width - width / 12 + width / 150 , 3 * height / 4 - 3 * height / 8 + height / 4);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f(width - width / 150, 3 * height / 4 - 3 * height / 8 + height / 4);
+	glVertex2f(width - width / 150 , 3 * height / 4 - 3 * height / 8 + height / 4);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f(width - width / 150, height / 8 + height / 16 + height / 4);
+	glVertex2f(width - width / 150 , height / 8 + height / 16 + height / 4);
 	glEnd();
 
 
@@ -1168,7 +1167,282 @@ void PlayState::drawHUD(ClientGame* client){
 
 	glDisable(GL_BLEND);
 
+	glPopMatrix();*/
+
+
+if (Player->getTeam() == 2)
+{
+	glPushMatrix();
+	glEnable(GL_BLEND); //Enable blending.
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glColor4f(1, 0, 0, 1.0f);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, vtimer[0]);
+	glBegin(GL_QUADS);
+
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width / 3, height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width / 3, 0.0f);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, vtimer[one]);
+	glBegin(GL_QUADS);
+	//glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (2 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (2 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (width / 15), 0.0f);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, vtimer[10]);
+	glBegin(GL_QUADS);
+	//glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (2 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (3 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (3 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (2 * width / 15), 0.0f);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, vtimer[two]);
+	glBegin(GL_QUADS);
+	//	glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (3 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (4 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (4 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (3 * width / 15), 0.0f);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, vtimer[three]);
+	glBegin(GL_QUADS);
+	//glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (4 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (5 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (5 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (4 * width / 15), 0.0f);
+	glEnd();
+
+	glColor4f(1, 1, 1, 1.75f);
+	glBindTexture(GL_TEXTURE_2D, vattackpic[0]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width - width / 12 + width / 150, height / 8 + height / 16);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width - width / 12 + width / 150, 3 * height / 4 - 3 * height / 8);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width - width / 150, 3 * height / 4 - 3 * height / 8);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width - width / 150, height / 8 + height / 16);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, vattackpic[1]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width - width / 12 + width / 150, height / 8 + height / 16 + height / 4);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width - width / 12 + width / 150, 3 * height / 4 - 3 * height / 8 + height / 4);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width - width / 150, 3 * height / 4 - 3 * height / 8 + height / 4);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width - width / 150, height / 8 + height / 16 + height / 4);
+	glEnd();
+
+
+
+	glColor4f(1, 1, 1, 1.75f);
+	glBindTexture(GL_TEXTURE_2D, vhud[0]);
+	glBegin(GL_QUADS);
+
+
+
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(0, height);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((5 * width / 12), height);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((5 * width / 12), height - height / 6);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((0), height - height / 6);
+	glEnd();
+
+	glColor4f(1, 1, 1, 1.75f);
+	glBindTexture(GL_TEXTURE_2D, vhud[1]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width - width / 12, height / 8);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width - width / 12, 3 * height / 4);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width, 3 * height / 4);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width, height / 8);
+	glEnd();
+
+
+
+
+
+	glDisable(GL_BLEND);
+
 	glPopMatrix();
+}
+else
+{
+	glPushMatrix();
+
+	glEnable(GL_BLEND); //Enable blending.
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glColor4f(1, 1, 1, 1.0f);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, ctimer[0]);
+	glBegin(GL_QUADS);
+
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width / 3, height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width / 3, 0.0f);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, ctimer[one]);
+	glBegin(GL_QUADS);
+	//glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (2 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (2 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (width / 15), 0.0f);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, ctimer[10]);
+	glBegin(GL_QUADS);
+	//glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (2 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (3 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (3 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (2 * width / 15), 0.0f);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, ctimer[two]);
+	glBegin(GL_QUADS);
+	//	glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (3 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (4 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (4 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (3 * width / 15), 0.0f);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, ctimer[three]);
+	glBegin(GL_QUADS);
+	//glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (4 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (5 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (5 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (4 * width / 15), 0.0f);
+	glEnd();
+
+	glColor4f(1, 1, 1, 1.75f);
+	glBindTexture(GL_TEXTURE_2D, cattackpic[0]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width - width / 12 + width / 150, height / 8 + height / 16);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width - width / 12 + width / 150, 3 * height / 4 - 3 * height / 8);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width - width / 150, 3 * height / 4 - 3 * height / 8);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width - width / 150, height / 8 + height / 16);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, cattackpic[1]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width - width / 12 + width / 150, height / 8 + height / 16 + height / 4);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width - width / 12 + width / 150, 3 * height / 4 - 3 * height / 8 + height / 4);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width - width / 150, 3 * height / 4 - 3 * height / 8 + height / 4);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width - width / 150, height / 8 + height / 16 + height / 4);
+	glEnd();
+
+
+
+	glColor4f(1, 1, 1, 1.75f);
+	glBindTexture(GL_TEXTURE_2D, chud[0]);
+	glBegin(GL_QUADS);
+
+
+
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(0, height);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((5 * width / 12), height);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((5 * width / 12), height - height / 6);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((0), height - height / 6);
+	glEnd();
+
+	glColor4f(1, 1, 1, 1.75f);
+	glBindTexture(GL_TEXTURE_2D, chud[1]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width - width / 12, height / 8);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width - width / 12, 3 * height / 4);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width, 3 * height / 4);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width, height / 8);
+	glEnd();
+
+
+
+
+
+	glDisable(GL_BLEND);
+
+	glPopMatrix();
+
+
+}
 
 
 	glMatrixMode(GL_PROJECTION);

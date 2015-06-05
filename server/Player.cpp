@@ -5,6 +5,7 @@
 
 Player::Player() :GameObject()
 {
+	controlShrine = false;
 	// attributes
 	name = "anonymous";
 	team = 0;
@@ -42,6 +43,7 @@ Player::Player(int i) :Player()
 {
 	pid = i;
 	setID(i);
+	controlShrine = false;
 
 }
 Player::~Player()
@@ -122,15 +124,28 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 		else if (cEvent.compare("q") == 0){
 			//
 
-			if (shrinecollide(Vector3(-60, 0, -60), Vector3(60, 0, 60)))
+			if (shrinecollide(Vector3(-35, 0, -35), Vector3(35, 0, 35)))
 			{
 				if (!isChanged[3]){
 					change_counter[3]++;
 					std::string* change = new std::string("particles");
 					changes.push_back(std::pair<int, std::string*>(id, change));
+					this->controlShrine = true;
+					ShrineT(10);
+
 				}
 			}
 
+		}
+		else if (cEvent.compare("heal") == 0)
+		{
+			if (isAlive)
+			{
+				std::string* change = new std::string("hp");
+				changes.push_back(std::pair<int, std::string*>(id, change));
+				hp += 3;
+
+			}
 		}
 		else if (cEvent.compare("b") == 0){
 			if (weaponcollide(Vector3(-75, -1, -60)))
@@ -436,6 +451,43 @@ bool Player::collide(std::vector<GameObject*>* obj, Vector3 dir)
 
 
 	}
+	if ((-32 <= playerposition.x && playerposition.x <= -23))// || min.x <= -position.x + mx.x && -position.x + mx.x <= tile.buildingList[i]->max.x)))
+	{
+		if ((-32 <= playerposition.z && playerposition.z <= -23))// || (tile.buildingList[i]->min.z <= -position.z + mx.z && -position.z + mx.z <= tile.buildingList[i]->max.z))
+		{
+			return true;
+		}
+	}
+
+	if ((23 <= playerposition.x && playerposition.x <= 32))// || min.x <= -position.x + mx.x && -position.x + mx.x <= tile.buildingList[i]->max.x)))
+	{
+		if ((-32 <= playerposition.z && playerposition.z <= -23))// || (tile.buildingList[i]->min.z <= -position.z + mx.z && -position.z + mx.z <= tile.buildingList[i]->max.z))
+		{
+			return true;
+		}
+	}
+	if ((23 <= playerposition.z && playerposition.z <= 32))// || min.x <= -position.x + mx.x && -position.x + mx.x <= tile.buildingList[i]->max.x)))
+	{
+		if ((-32 <= playerposition.x && playerposition.x <= -23))// || (tile.buildingList[i]->min.z <= -position.z + mx.z && -position.z + mx.z <= tile.buildingList[i]->max.z))
+		{
+			return true;
+		}
+	}
+	if ((23 <= playerposition.x && playerposition.x <= 32))// || min.x <= -position.x + mx.x && -position.x + mx.x <= tile.buildingList[i]->max.x)))
+	{
+		if ((23 <= playerposition.z && playerposition.z <= 32))// || (tile.buildingList[i]->min.z <= -position.z + mx.z && -position.z + mx.z <= tile.buildingList[i]->max.z))
+		{
+			return true;
+		}
+	}
+
+	if ((-15 <= playerposition.x && playerposition.x <= 15))// || min.x <= -position.x + mx.x && -position.x + mx.x <= tile.buildingList[i]->max.x)))
+	{
+		if ((-15 <= playerposition.z && playerposition.z <= 15))// || (tile.buildingList[i]->min.z <= -position.z + mx.z && -position.z + mx.z <= tile.buildingList[i]->max.z))
+		{
+			return true;
+		}
+	}
 	return false;
 	//check to see is within world
 
@@ -569,6 +621,7 @@ void Player::respawn(std::vector<GameObject*>* gameObjects){
 void Player::updateDisable(int time)
 {
 	disableTimer.update(time);
+	shrineTimer.update(time);
 }
 
 void Player::isDisabled(int time)
@@ -576,10 +629,23 @@ void Player::isDisabled(int time)
 	disableTimer.setMaxTime(time);
 	disableTimer.disable();
 }
+void Player::ShrineT(int time)
+{
+	shrineTimer.setsTime(time);
+	//shrineTimer.disable();
+}
+bool Player::getST()
+{
+
+}
 
 bool Player::getDisabled()
 {
 	return disableTimer.getDisable();
 }
 
+bool Player::stillShrine(int time)
+{
+	return shrineTimer.updates(time);
+}
 
