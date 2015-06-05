@@ -143,58 +143,79 @@ int PlayState::Initialize() {
 
 	filenm = "./particles/textures/sun.png";
 	sunID = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	if (true)
+	{
 
-	filenm = "./ppm/0-v.png";
-	timer[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/0-v.png";
+		timer[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/1-v.png";
+		timer[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/2-v.png";
+		timer[2] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/3-v.png";
+		timer[3] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/4-v.png";
+		timer[4] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/5-v.png";
+		timer[5] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/6-v.png";
+		timer[6] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/7-v.png";
+		timer[7] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/8-v.png";
+		timer[8] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/9-v.png";
+		timer[9] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/colon-v.png";
+		timer[10] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/hp-hud-v.png";
+		hud[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/side-hud-v.png";
+		hud[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/time-hud-v.png";
+		hud[2] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/vamp1.png";
+		attackpic[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/vamp2.png";
+		attackpic[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	}
+	else
+	{
 
-	filenm = "./ppm/1-v.png";
-	timer[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
-	filenm = "./ppm/2-v.png";
-	timer[2] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
-	filenm = "./ppm/3-v.png";
-	timer[3] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
-
-
-	filenm = "./ppm/4-v.png";
-	timer[4] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
-
-	filenm = "./ppm/5-v.png";
-	timer[5] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
-
-	filenm = "./ppm/6-v.png";
-	timer[6] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
-	filenm = "./ppm/7-v.png";
-	timer[7] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
-
-	filenm = "./ppm/8-v.png";
-	timer[8] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
-
-	filenm = "./ppm/9-v.png";
-	timer[9] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
-	filenm = "./ppm/colon-v.png";
-	timer[10] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
-	filenm = "./ppm/hp-hud-c.png";
-	hud[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
-
-	filenm = "./ppm/side-hud-c.png";
-	hud[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
-	filenm = "./ppm/time-hud-c.png";
-	hud[2] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
-
-	return 0;
+		filenm = "./ppm/0-c.png";
+		timer[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/1-c.png";
+		timer[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/2-c.png";
+		timer[2] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/3-c.png";
+		timer[3] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/4-c.png";
+		timer[4] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/5-c.png";
+		timer[5] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/6-c.png";
+		timer[6] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/7-c.png";
+		timer[7] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/8-c.png";
+		timer[8] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/9-c.png";
+		timer[9] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/colon-c.png";
+		timer[10] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/hp-hud-c.png";
+		hud[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/side-hud-c.png";
+		hud[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/time-hud-c.png";
+		hud[2] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/crus1.png";
+		attackpic[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/crus2.png";
+		attackpic[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	}
+		return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -215,6 +236,17 @@ void PlayState::UpdateClient(ClientGame* client) {
 		(std::chrono::system_clock::now().time_since_epoch()).count();
 	unsigned int elapsedTime = currTime - savedTime;
 	savedTime = currTime;
+
+	std::list<Shockwave*>::iterator it4;
+	for (it4 = shockwaves.begin(); it4 != shockwaves.end();){
+		(*it4)->decreaseTime(elapsedTime);
+		if ((*it4)->getTime() <= 0){
+			shockwaves.erase(it4++);
+		}
+		else{
+			it4++;
+		}
+	}
 
 	damagedTime -= elapsedTime;
 
@@ -306,6 +338,16 @@ void PlayState::UpdateClient(ClientGame* client) {
 					gameObjects.insert(std::pair<int, GameObject*>(objID, p));
 				}
 				break;
+			}
+		}
+
+		if (strcmp(serverEvent, "cooldown") == 0){
+			float cd1, cd2;
+			memcpy(&cd1, serverEvent + 9, sizeof(float));
+			memcpy(&cd2, serverEvent + 13, sizeof(float));
+			if (objID == Player->getID()){
+				cooldown1 = cd1;
+				cooldown2 = cd2;
 			}
 		}
 
@@ -404,6 +446,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 
 			Projectile* p = new Projectile(objID);
 			p->setPos(xPos, yPos+7.3, zPos);
+			p->setRotate(-Cam.GetRotation().y + 360);
 
 			printf("Projectile ID: %d\n", objID);
 
@@ -510,6 +553,18 @@ void PlayState::UpdateClient(ClientGame* client) {
 				it2 = projectiles.find(objID);
 				projectiles.erase(it2);
 			}
+		}
+
+		if (strcmp(serverEvent, "shockwave") == 0){
+			float x, y, z, range;
+			memcpy(&x, serverEvent + 10, sizeof(float));
+			memcpy(&y, serverEvent + 14, sizeof(float));
+			memcpy(&z, serverEvent + 18, sizeof(float));
+			memcpy(&range, serverEvent + 22, sizeof(float));
+
+			printf("SHOCK %f,%f,%f,%f", x, y, z, range);
+
+			shockwaves.push_back(new Shockwave(new Vector3(x-range,-1,z-range),new Vector3(x+range,-1,z+range)));
 		}
 
 		if (strcmp(serverEvent, "weapon1") == 0)
@@ -738,19 +793,6 @@ void PlayState::drawHUD(ClientGame* client){
 	glEnd();
 
 	//healthbar
-	glPushMatrix();
-	std::string s = std::to_string((int)Player->getHealth());
-	char * healthString = (char*)s.c_str();
-	glTranslatef(width / 7, height - height / 19, 1);
-	glLineWidth(2);
-	glScalef(width/6990.0f, height/4443.07f, 1);
-	glRotatef(180, 1, 0, 0);
-	glColor3f(1, 1, 1);
-	for (unsigned int i = 0; i < strlen(healthString); i++){
-		glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, (char)healthString[i]);
-	}
-	glPopMatrix();
-
 	glEnable(GL_BLEND); //Enable blending.
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -762,12 +804,20 @@ void PlayState::drawHUD(ClientGame* client){
 	glEnd();
 	glDisable(GL_BLEND);
 	
-	
+	//cooldown bars
+	glBegin(GL_QUADS);
+	glColor3f(1,0,0);
+	if (Player->getTeam() == 1){
+		glColor3f(1, 1, 0);
+	}
+	drawRect(width - width / 10, height / 13 + (1-(height / 15) * cooldown1), width / 40, (height / 15) * cooldown1);
+	drawRect(width - width / 10, 3 * height / 13 + (1-(height / 15) * cooldown2), width / 40, (height / 15) * cooldown2);
+	glEnd();
 
 	//player's name
 	glPushMatrix();
 	char * name = client->getClientName();
-	glTranslatef(width / 50, height - height / 10, 0);
+	glTranslatef(width *.11, height - height * .125, 0);
 	glLineWidth(2);
 	glScalef(width/5242.88, height/3800.0f, 1);
 	glRotatef(180, 1, 0, 0);
@@ -1056,7 +1106,34 @@ void PlayState::drawHUD(ClientGame* client){
 	glVertex2f((width / 3) + (4 * width / 15), 0.0f);
 	glEnd();
 
-	glColor4f(1, 1, 1, 0.75f);
+	glColor4f(1, 1, 1, 1.75f);
+	glBindTexture(GL_TEXTURE_2D, attackpic[0]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width - width / 12+width/150, height / 8 + height / 16);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width - width / 12+width/150, 3 * height / 4 - 3 * height / 8);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width - width / 150, 3 * height / 4 - 3 * height / 8);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width - width / 150, height / 8 + height / 16);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, attackpic[1]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width - width / 12 + width / 150, height / 8 + height / 16+height/4);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width - width / 12 + width / 150, 3 * height / 4 - 3 * height / 8 + height / 4);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width - width / 150, 3 * height / 4 - 3 * height / 8 + height / 4);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width - width / 150, height / 8 + height / 16 + height / 4);
+	glEnd();
+
+
+
+	glColor4f(1, 1, 1, 1.75f);
 	glBindTexture(GL_TEXTURE_2D, hud[0]);
 	glBegin(GL_QUADS);
 
@@ -1072,7 +1149,7 @@ void PlayState::drawHUD(ClientGame* client){
 	glVertex2f((0), height - height / 6);
 	glEnd();
 
-	glColor4f(1, 1, 1, 0.75f);
+	glColor4f(1, 1, 1, 1.75f);
 	glBindTexture(GL_TEXTURE_2D, hud[1]);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f);
@@ -1084,6 +1161,11 @@ void PlayState::drawHUD(ClientGame* client){
 	glTexCoord2f(1.0f, 0.0f);
 	glVertex2f(width, height / 8);
 	glEnd();
+
+
+
+
+
 	glDisable(GL_BLEND);
 
 	glPopMatrix();
@@ -1126,13 +1208,13 @@ void PlayState::Draw(ClientGame* client) {
 
 	//Player->update(true, Cam.GetRotation().y);
 	Player->UpdateMoveAnimation(isNight, Player);
-	Player->update(true, Cam.GetRotation().y);
+	Player->update(true, Cam.GetRotation().y, Player->getTeam());
 
 	std::map<int, GameObject*>::iterator it;
 	for (it = gameObjects.begin(); it != gameObjects.end(); it++)
 	{
 		((PlayerType*)(it->second))->UpdateMoveAnimation(isNight, Player);
-		((PlayerType*)(it->second))->update(false, Cam.GetRotation().y);
+		((PlayerType*)(it->second))->update(false, Cam.GetRotation().y,Player->getTeam());
 
 		if (!weap1 && ((PlayerType*)(it->second))->getID() == pnum1) {
 			((PlayerType*)(it->second))->EquipWeapon((Weapon*)p_SunMace);
@@ -1151,7 +1233,7 @@ void PlayState::Draw(ClientGame* client) {
 	std::map<int, Projectile*>::iterator it2;
 	for (it2 = projectiles.begin(); it2 != projectiles.end(); it2++)
 	{
-		((PlayerType*)(it2->second))->update(false, Cam.GetRotation().y);
+		((it2->second))->update(false, -Cam.GetRotation().y + 360, Player->getTeam());
 	}
 
 	// David's building(no collision)
@@ -1179,15 +1261,20 @@ void PlayState::Draw(ClientGame* client) {
 	p_BatSword->Draw();
 	
 	//draw transparent stuff here
+	std::list<Shockwave*>::iterator it4;
+	for (it4 = shockwaves.begin(); it4 != shockwaves.end(); it4++){
+		(*it4)->update(false, Cam.GetRotation().y, Player->getTeam());
+	}
+
 	std::map<int, CrusaderBox*>::iterator it3;
 	for (it3 = crusaderBoxes.begin(); it3 != crusaderBoxes.end(); it3++)
 	{
-		(it3->second)->update(false, Cam.GetRotation().y);
+		(it3->second)->update(false, Cam.GetRotation().y,Player->getTeam());
 	}
 
 	p_regShade->unbind();
 
-	RenderParticle(Cam.GetRotation().y, p_ShrineFire, 0, 14, 0);
+	//RenderParticle(Cam.GetRotation().y, p_ShrineFire, 0, 14, 0);
 	
 	drawHUD(client); //This includes the game over results
 

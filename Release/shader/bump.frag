@@ -42,5 +42,5 @@ void main() {
    // vec3 color = (diffuse * texture2D(color_texture, Pos).rgb)*temp;
     
     // Set the output color of our current pixel
-    gl_FragColor = vec4(color, 1.0) * gl_LightSource[0].diffuse;
+    gl_FragColor = vec4(color, 1.0) * (gl_LightSource[0].diffuse / 2 + gl_LightSource[1].diffuse / 2);
 }
