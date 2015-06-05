@@ -96,6 +96,9 @@
     <ClInclude Include="ScoreBoard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+<<<<<<< HEAD
+    <ClInclude Include="StealthBox.h">
+=======
     <ClInclude Include="Power_Range.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -103,6 +106,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PowerProjectile.h">
+>>>>>>> 4f8d26194749ed0ca44a82d8e600f6512594b0b5
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -179,6 +183,9 @@
     <ClCompile Include="ScoreBoard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+<<<<<<< HEAD
+    <ClCompile Include="StealthBox.cpp">
+=======
     <ClCompile Include="Power_Range.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -186,6 +193,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PowerProjectile.cpp">
+>>>>>>> 4f8d26194749ed0ca44a82d8e600f6512594b0b5
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

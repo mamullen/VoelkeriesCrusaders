@@ -67,19 +67,21 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 	}
 
 	std::string in = std::string(packet->packet_data);
+
+	//printf("STRING THING IS: %s\n", in.c_str());
 	int pid = packet->id;
 	int currInd = 0;
 	int currEnd = in.find(';', currInd);
 
-	Vector3 direction(0,0,0);
+	Vector3 direction(0, 0, 0);
 	//std::cout << "packet update = " << in.c_str() << std::endl;
 	//this->gravity();
-	
+
 	while (currEnd != std::string::npos){
 		std::string cEvent = in.substr(currInd, currEnd - currInd);
 		currInd = currEnd + 1;
 		currEnd = in.find(';', currInd);
-		
+
 		if (cEvent.compare("sw1") == 0){
 			setAttack(default_attack_1);
 		}
@@ -95,20 +97,20 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 
 				std::string* change = new std::string("pos:");
 				changes.push_back(std::pair<int, std::string*>(id, change));
-				if (!(collide(objects,forward)))
+				if (!(collide(objects, forward)))
 				{
 					this->moveForward();
 				}
 				vDir++;
 			}
-			
+
 		}
 		else if (cEvent.compare("move_jump") == 0){
 			if (!isChanged[0]){
 				change_counter[0]++;
 				std::string* change = new std::string("pos:");
 				changes.push_back(std::pair<int, std::string*>(id, change));
-				if (!(collide(objects, forward/2)))
+				if (!(collide(objects, forward / 2)))
 				{
 
 					this->jump();
@@ -149,7 +151,7 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 					attack_mode->addDmg(2);
 					this->setSpeed((7 * this->getSpeed()) / 8);
 				}
-			}	
+			}
 			if (weaponcollide(Vector3(75, -1, -60)))
 			{
 				if (!isChanged[4]){
@@ -157,9 +159,9 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 					std::string* change = new std::string("weapon3");
 					changes.push_back(std::pair<int, std::string*>(id, change));
 					attack_mode->addDmg(2);
-					this->setSpeed((7*this->getSpeed())/8);
+					this->setSpeed((7 * this->getSpeed()) / 8);
 				}
-			}	
+			}
 			if (weaponcollide(Vector3(75, -1, 60)))
 			{
 				if (!isChanged[4]){
@@ -188,7 +190,7 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 				change_counter[0]++;
 				std::string* change = new std::string("pos:");
 				changes.push_back(std::pair<int, std::string*>(id, change));
-				if (!(collide(objects,-right)))
+				if (!(collide(objects, -right)))
 				{
 					this->strafeLeft();
 				}
@@ -200,14 +202,14 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 				change_counter[0]++;
 				std::string* change = new std::string("pos:");
 				changes.push_back(std::pair<int, std::string*>(id, change));
-				if (!(collide(objects,right)))
+				if (!(collide(objects, right)))
 				{
 					this->strafeRight();
 				}
 				hDir++;
 			}
 		}
-		else if (cEvent.substr(0,6).compare("rotate") == 0){
+		else if (cEvent.substr(0, 6).compare("rotate") == 0){
 
 			std::string num = cEvent.substr(6, currEnd);
 			num = num.substr(num.find_last_of(' ') + 1);
@@ -224,6 +226,8 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 		else if (cEvent.compare("attack") == 0){
 			//ad = attack_mode->getDmg();
 			// melee attack
+			if (objectType == 4)
+				attack2EndExtra();
 			if (attack_mode->getType() == 0){
 				printf("melee!\n");
 				if (attack_mode->getCD() <= 0){
@@ -240,7 +244,7 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 			else if (attack_mode->getType() == 1){
 				//printf("range\n");
 				attack_mode->attack(this);
-			}			
+			}
 		}
 		else if (cEvent.compare("attack2Start") == 0){
 			attack2Start();
@@ -296,7 +300,7 @@ bool Player::inRange(GameObject* obj)
 {
 	float dot = (obj->getPos() - this->position).Normalize().Dot(this->forward.Normalize());
 	float distance = (obj->getPos() - this->position).Mag();
-	if ( dot < 0.75){
+	if (dot < 0.75){
 		return false;
 	}
 	if (distance > attack_mode->getRange()){
@@ -323,15 +327,15 @@ bool Player::collide(std::vector<GameObject*>* obj, Vector3 dir)
 {
 	ground = -1;
 	Vector3 objmin, objmax, playerposition;
-	playerposition = (this->getPos())+dir*speed;
+	playerposition = (this->getPos()) + dir*speed;
 	//printf("Number of objs %d\n\n", obj->size());
 	for (int i = 0; i < obj->size(); i++)
 	{
-		
+
 		objmin = obj->at(i)->getMin();
 		objmax = obj->at(i)->getMax();
-		
-		
+
+
 
 		if ((objmin.x <= playerposition.x && playerposition.x <= objmax.x))// || min.x <= -position.x + mx.x && -position.x + mx.x <= tile.buildingList[i]->max.x)))
 		{
@@ -362,24 +366,24 @@ bool Player::collide(std::vector<GameObject*>* obj, Vector3 dir)
 	{
 
 
-		if ((-240 <= playerposition.z && playerposition.z <= 240))// || (tile.buildingList[i]->min.z <= -position.z + mx.z && -position.z + mx.z <= tile.buildingList[i]->max.z))
-		{
+	if ((-240 <= playerposition.z && playerposition.z <= 240))// || (tile.buildingList[i]->min.z <= -position.z + mx.z && -position.z + mx.z <= tile.buildingList[i]->max.z))
+	{
 
-			return false;
-		}
-		else
-		{
-			return true;
-		}
+	return false;
 	}
 	else
 	{
-		return true;
+	return true;
+	}
+	}
+	else
+	{
+	return true;
 	}*/
 }
 bool Player::shrinecollide(Vector3 min, Vector3 max)
 {
-	if (min.x < position.x && position.x <max.x)
+	if (min.x < position.x && position.x < max.x)
 	{
 		if (min.z < position.z && position.z < max.z)
 		{
@@ -390,7 +394,7 @@ bool Player::shrinecollide(Vector3 min, Vector3 max)
 	return false;
 }
 
-bool Player::weaponcollide(Vector3 weapon) 
+bool Player::weaponcollide(Vector3 weapon)
 {
 	Vector3 distance = position - weapon;
 	float d = distance.Mag();
@@ -402,8 +406,9 @@ bool Player::weaponcollide(Vector3 weapon)
 
 
 void Player::respawnLocation(std::vector<GameObject*>* gameObjects){
-	float mapMin = atof(ConfigSettings::config->getValue("RespawnMin").c_str());
-	float mapMax = atof(ConfigSettings::config->getValue("RespawnMax").c_str());
+	float mapX = atof(ConfigSettings::config->getValue("RespawnX").c_str());
+	float mapZ = atof(ConfigSettings::config->getValue("RespawnZ").c_str());
+
 
 	float randX = 0;
 	float randY = 0;
@@ -422,9 +427,10 @@ void Player::respawnLocation(std::vector<GameObject*>* gameObjects){
 
 	while (col1 || col2 || col3 || col4){
 
-
-		randX = rand() % 440 - 220;
-		randZ = rand() % 440 - 220;
+		int maxX = int(mapX * 2);
+		int maxZ = int(mapZ * 2);
+		randX = rand() % maxX - mapX;
+		randZ = rand() % maxZ - mapZ;
 
 		setPos(randX, randY, randZ);
 

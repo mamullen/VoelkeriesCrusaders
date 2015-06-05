@@ -140,7 +140,6 @@ void GameObject::setHealth(float h){
 	else if (currHP < 0){
 		currHP = 0;
 	}
-	printf("NEW HEALTH VAL: %f\n", currHP);
 }
 
 void GameObject::setAnimation(int index, int rotate, float speedup) {

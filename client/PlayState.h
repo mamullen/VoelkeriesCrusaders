@@ -88,7 +88,7 @@ private:
 	//time in milliseconds
 	unsigned int savedTime;//curr time of client
 	int damagedTime = 0, damagedAnimLength = 1000;
-	bool restartGame = false, redBorder = false;
+	bool restartGame = false, redBorder = false, startJustSent = false;
 
 	// Components
 	Camera Cam;

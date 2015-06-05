@@ -8,5 +8,6 @@ public:
 	virtual ~Human();
 	void attack2Start() {};
 	void attack2End() {};
+	void attack2EndExtra() {};
 };
 

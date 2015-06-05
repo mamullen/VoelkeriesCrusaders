@@ -170,7 +170,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 		char * serverEvent = serverPacket->packet_data;
 		unsigned int objID = serverPacket->id;
 
-		printf("%s\n", serverEvent);
+		//printf("%s\n", serverEvent);
 		//printf("%d\n", objID);
 
 		if (strcmp(serverEvent, "create") == 0){
@@ -263,7 +263,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 			memcpy(&z2, serverEvent + 35, sizeof(float));
 			memcpy(&a, serverEvent + 39, sizeof(float));
 
-			printf("CRUBOX: %f,%f,%f,%f,%f,%f,%f\n", x1, y1, z1, x2, y2, z2, a);
+			//printf("CRUBOX: %f,%f,%f,%f,%f,%f,%f\n", x1, y1, z1, x2, y2, z2, a);
 
 			Vector3* v1 = new Vector3(x1, y1, z1);
 			Vector3* v2 = new Vector3(x2, y2, z2);
@@ -285,7 +285,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 			memcpy(&pid, serverEvent + 36, sizeof(int));
 			memcpy(&stealthed, serverEvent + 40, sizeof(int));
 
-			printf("cbox_update: %f, %f, %f, %f, %f, %f, %f, %d, %d\n", x1,y1,z1,x2,y2,z2,a,pid,stealthed);
+			//printf("cbox_update: %f, %f, %f, %f, %f, %f, %f, %d, %d\n", x1,y1,z1,x2,y2,z2,a,pid,stealthed);
 
 			if (crusaderBoxes.find(objID) != crusaderBoxes.end()){
 				CrusaderBox* o = crusaderBoxes.at(objID);
@@ -958,11 +958,12 @@ void PlayState::Draw(ClientGame* client) {
 	
 	p_regShade->bind();
 
-	Player->update(true, Cam.GetRotation().y);
+	
 	p_Shrine->Draw();
 
 	//Player->update(true, Cam.GetRotation().y);
 	Player->UpdateMoveAnimation(isNight, Player);
+	Player->update(true, Cam.GetRotation().y);
 
 	std::map<int, GameObject*>::iterator it;
 	for (it = gameObjects.begin(); it != gameObjects.end(); it++)
@@ -1146,15 +1147,19 @@ void PlayState::Input(ClientGame* client) {
 		client->addEvent(Player->getID(), "attack;", ACTION_EVENT);
 	}
 
-	if (Player->getAttacking2Starts() >= Player->getAttacking2Ends() && Player->getAttacking2Starts()>0){
+	if (Player->getAttacking2Starts() >= Player->getAttacking2Ends() && Player->getAttacking2Starts()>0 && !startJustSent){
+		printf("Attaching Start\n");
 		client->addEvent(Player->getID(), "attack2Start;", ACTION_EVENT);
 		Player->setAttacking2Starts(Player->getAttacking2Starts()-1);
 		Player->setAttacking2(true);
+		startJustSent = true;
 	}
-	else if (Player->getAttacking2Starts() < Player->getAttacking2Ends()){
+	else if (Player->getAttacking2Starts() < Player->getAttacking2Ends() && startJustSent){
+		printf("Attaching End\n");
 		client->addEvent(Player->getID(), "attack2End;", ACTION_EVENT);
 		Player->setAttacking2Ends(Player->getAttacking2Ends() - 1);
 		Player->setAttacking2(false);
+		startJustSent = false;
 	}
 }
 
@@ -1191,7 +1196,7 @@ void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods
 		Player->setAnimation(a_COMBOATTACK);
 		Player->setAttacking2Starts(Player->getAttacking2Starts() + 1);
 	}
-	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
+	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
 		Player->setAttacking2Ends(Player->getAttacking2Ends() + 1);
 	}
 }
