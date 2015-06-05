@@ -25,7 +25,7 @@ Vampire::Vampire(int i) :Player(i)
 
 	//default_attack_1 = new Basic_Attack();
 	//default_attack_2 = new Basic_Attack();
-	default_attack_1 = new Basic_Range();
+	default_attack_1 = new Basic_Attack();
 	default_attack_2 = new Power_Range();
 	setAttack(default_attack_1);
 }

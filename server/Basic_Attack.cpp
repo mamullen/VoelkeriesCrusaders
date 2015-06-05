@@ -32,7 +32,7 @@ void Basic_Attack::attack(GameObject* obj,GameObject* target)
 		return;
 	if (inRange(obj,target)){
 		if (target->objectType == 4 && target->getHP() >= 0){
-			obj->addHp(0.8*c_ad);
+			obj->addHp(atof(ConfigSettings::config->getValue("BasicAttackLifesteal").c_str())*c_ad);
 		}
 		//printf("basic attack in range!!!\n");
 		if (target->isPlayer && obj->isPlayer){
