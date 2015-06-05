@@ -280,6 +280,22 @@ void PlayState::UpdateClient(ClientGame* client) {
 			projectiles.insert(std::pair<int, Projectile*>(objID, p));
 		}
 
+		if (strcmp(serverEvent, "projectile2") == 0){
+			float xPos;
+			float yPos;
+			float zPos;
+			memcpy(&xPos, serverEvent + 11, sizeof(float));
+			memcpy(&yPos, serverEvent + 15, sizeof(float));
+			memcpy(&zPos, serverEvent + 19, sizeof(float));
+
+			PowerProjectile* p = new PowerProjectile(objID);
+			p->setPos(xPos, yPos + 7.3, zPos);
+
+			printf("Projectile2 ID: %d\n", objID);
+
+			projectiles.insert(std::pair<int, Projectile*>(objID, p));
+		}
+
 		if (strcmp(serverEvent, "pos") == 0){
 			float xPos;
 			float yPos;
@@ -515,9 +531,7 @@ void PlayState::RenderParticle(float rot, ParticleEffect* p, float xx, float yy,
 {
 	glPushMatrix();
 	glTranslatef(xx, yy, zz);
-	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
 	glRotatef(rot, 0, 1, 0);
-	glScalef(0.3f, 0.3f, 0.3f);
 	p->Render();
 	glPopMatrix();
 }
@@ -823,6 +837,7 @@ void PlayState::Draw(ClientGame* client) {
 
 	//Player->update(true, Cam.GetRotation().y);
 	Player->UpdateMoveAnimation(isNight, Player);
+
 	std::map<int, GameObject*>::iterator it;
 	for (it = gameObjects.begin(); it != gameObjects.end(); it++)
 	{
