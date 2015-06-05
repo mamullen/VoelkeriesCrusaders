@@ -1353,13 +1353,13 @@ void PlayState::Draw(ClientGame* client) {
 	p_Shrine->Draw();
 
 	//Player->update(true, Cam.GetRotation().y);
-	Player->UpdateMoveAnimation(isNight, Player);
+	Player->UpdateMoveAnimation(isNight, Player, attacking);
 	Player->update(true, Cam.GetRotation().y, Player->getTeam());
 
 	std::map<int, GameObject*>::iterator it;
 	for (it = gameObjects.begin(); it != gameObjects.end(); it++)
 	{
-		((PlayerType*)(it->second))->UpdateMoveAnimation(isNight, Player);
+		((PlayerType*)(it->second))->UpdateMoveAnimation(isNight, Player, attacking);
 		((PlayerType*)(it->second))->update(false, Cam.GetRotation().y,Player->getTeam());
 
 		if (!weap1 && ((PlayerType*)(it->second))->getID() == pnum1) {
@@ -1440,64 +1440,20 @@ void PlayState::Input(ClientGame* client) {
 	else
 		speedup = 2.f;
 
-	if (glfwGetKey(window, FORWARD) || glfwGetKey(window, BACKWARD))
-	{
-		if (glfwGetKey(window, FORWARD)) {
-			/*if (!attacking) {
-				Player->setAnimation(a_RUNFORWARD, 0, speedup);
-			}*/
-			client->addEvent(Player->getID(), "move_forward;", ACTION_EVENT);
-
-			if (glfwGetKey(window, STRAFELEFT)) {
-				/*if (!attacking) {
-					Player->setAnimation(a_RUNFORWARD, 30, speedup);
-				}*/
-				client->addEvent(Player->getID(), "move_left;", ACTION_EVENT);
-			}
-			if (glfwGetKey(window, STRAFERIGHT)) {
-				/*if (!attacking) {
-					Player->setAnimation(a_RUNFORWARD, -30, speedup);
-				}*/
-				client->addEvent(Player->getID(), "move_right;", ACTION_EVENT);
-			}
-		}
-		if (glfwGetKey(window, BACKWARD)) {
-			/*if (!attacking) {
-				Player->setAnimation(a_WALKBACK);
-			}*/
-			client->addEvent(Player->getID(), "move_backward;", ACTION_EVENT);
-
-			if (glfwGetKey(window, STRAFELEFT)) {
-				/*if (!attacking) {
-					Player->setAnimation(a_RUNFORWARD, -30, speedup);
-				}*/
-				client->addEvent(Player->getID(), "move_left;", ACTION_EVENT);
-			}
-			if (glfwGetKey(window, STRAFERIGHT)) {
-				/*if (!attacking) {
-					Player->setAnimation(a_RUNFORWARD, 30, speedup);
-				}*/
-				client->addEvent(Player->getID(), "move_right;", ACTION_EVENT);
-			}
-		}
-
+	if (glfwGetKey(window, FORWARD)) {
+		client->addEvent(Player->getID(), "move_forward;", ACTION_EVENT);
 	}
-	else if (glfwGetKey(window, STRAFELEFT)) {
-		/*if (!attacking) {
-			Player->setAnimation(a_STRAFELEFT, 0, speedup);
-		}*/
+
+	if (glfwGetKey(window, BACKWARD)) {
+		client->addEvent(Player->getID(), "move_backward;", ACTION_EVENT);
+	}
+
+	if (glfwGetKey(window, STRAFELEFT)) {
 		client->addEvent(Player->getID(), "move_left;", ACTION_EVENT);
 	}
-	else if (glfwGetKey(window, STRAFERIGHT)) {
-		/*if (!attacking) {
-			Player->setAnimation(a_STRAFERIGHT, 0, speedup);
-		}*/
+
+	if (glfwGetKey(window, STRAFERIGHT)) {
 		client->addEvent(Player->getID(), "move_right;", ACTION_EVENT);
-	}
-	else {
-		/*if (!attacking) {
-			Player->setAnimation(a_IDLE);
-		}*/
 	}
 
 	if (glfwGetKey(window, JUMP)) {
@@ -1512,9 +1468,11 @@ void PlayState::Input(ClientGame* client) {
 	// attack mode change //////////////////////////////////////////////
 	if (glfwGetKey(window, GLFW_KEY_1)){
 		client->addEvent(Player->getID(), "sw1;", ACTION_EVENT);
+		Player->SetAttack(ATTACK1);
 	}
 	else if (glfwGetKey(window, GLFW_KEY_2)){
 		client->addEvent(Player->getID(), "sw2;", ACTION_EVENT);
+		Player->SetAttack(ATTACK2);
 	}
 	///////////////////////////////////////////////////////////////////
 	if (rotationChanged){
@@ -1581,7 +1539,12 @@ void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods
 	if (!Player)
 		return;
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS){
-		Player->setAnimation(a_RUNMELEE);
+		if (Player->GetAttack() == ATTACK2 && Player->getTeam() == 2) {
+			Player->setAnimation(a_POWERRANGESHOT, 0, 0.5f);
+		}
+		else {
+			Player->setAnimation(a_RUNMELEE, 0, 5.0f);
+		}
 		attacking = true;
 	}
 	else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
@@ -1589,7 +1552,7 @@ void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods
 	}
 
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS){
-		Player->setAnimation(a_COMBOATTACK);
+		Player->setAnimation(a_COMBOATTACK, 0, 5.0f);
 		Player->setAttacking2Starts(Player->getAttacking2Starts() + 1);
 	}
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {

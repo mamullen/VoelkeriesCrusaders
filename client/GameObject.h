@@ -8,6 +8,8 @@
 #include "Shader.h"
 #include <iostream>
 
+enum Attack {ATTACK1, ATTACK2};
+
 //should these fields go somewhere else?
 /////////////////////////////////////////////////////////////////
 static const Vector4 INIT_FORWARD = Vector4(0, 0, 1, 1);
@@ -67,12 +69,15 @@ public:
 	bool isVisible()					{ return visible; };
 	void setVisible(bool t)				{ visible = t; };
 	void setProj(bool sp)				{ proj = sp; }
+	Attack GetAttack() { return p_Attack; }
+	void SetAttack(Attack atk) { p_Attack = atk; }
 
 	void loadShader(Shader* reg) { 
 		p_regShade = reg;
 	}
 
 private:
+	Attack p_Attack;
 	float animRotate = 0;
 	unsigned int id;
 	float rotation = 0;

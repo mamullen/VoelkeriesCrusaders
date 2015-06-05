@@ -27,45 +27,51 @@ public:
 		weapon->SetPosition(Vector3(getPos().x, getPos().y, getPos().z));
 	}
 
-	void UpdateMoveAnimation(bool isNight, PlayerType *Player) {
+	void UpdateMoveAnimation(bool isNight, PlayerType *Player, bool attacking) {
 		float speedup;
 		if (isNight && Player->getTeam() == 2)
 			speedup = 3.f;
 		else
 			speedup = 2.f;
 
-		if (g_Model != NULL && g_Model->HasAnimations()) {
-			if (getVDir() == 1) { // forward
-				if (getHDir() == 1) { // forward right
-					setAnimation(a_RUNFORWARD, -30, speedup);
+		if (Player->getTeam() == 1) {
+			speedup = 0.5f;
+		}
+
+		if (!attacking) {
+			if (g_Model != NULL && g_Model->HasAnimations()) {
+				if (getVDir() == 1) { // forward
+					if (getHDir() == 1) { // forward right
+						setAnimation(a_RUNFORWARD, -30, speedup);
+					}
+					else if (getHDir() == -1) { // forward left
+						setAnimation(a_RUNFORWARD, 30, speedup);
+					}
+					else { // just forward
+						setAnimation(a_RUNFORWARD, 0, speedup);
+					}
 				}
-				else if (getHDir() == -1) { // forward left
-					setAnimation(a_RUNFORWARD, 30, speedup);
+				else if (getVDir() == -1)  { // backward
+					if (getHDir() == 1) { // backward right
+						setAnimation(a_RUNFORWARD, 30, speedup);
+					}
+					else if (getHDir() == -1) { // backward left
+						setAnimation(a_RUNFORWARD, -30, speedup);
+					}
+					else { // just backward
+						setAnimation(a_WALKBACK, 0, speedup);
+					}
 				}
-				else { // just forward
-					setAnimation(a_RUNFORWARD, 0, speedup);
-				}
-			}
-			else if (getVDir() == -1)  { // backward
-				if (getHDir() == 1) { // backward right
-					setAnimation(a_RUNFORWARD, 30, speedup);
-				}
-				else if (getHDir() == -1) { // backward left
-					setAnimation(a_RUNFORWARD, -30, speedup);
-				}
-				else { // just backward
-					setAnimation(a_WALKBACK, 0, speedup);
-				}
-			}
-			else { // no vdir
-				if (getHDir() == 1) { // right
-					setAnimation(a_STRAFERIGHT, 0, speedup);
-				}
-				else if (getHDir() == -1) { // left
-					setAnimation(a_STRAFELEFT, 0, speedup);
-				}
-				else { // idle
-					setAnimation(a_IDLE, 0, speedup);
+				else { // no vdir
+					if (getHDir() == 1) { // right
+						setAnimation(a_STRAFERIGHT, 0, speedup);
+					}
+					else if (getHDir() == -1) { // left
+						setAnimation(a_STRAFELEFT, 0, speedup);
+					}
+					else { // idle
+						setAnimation(a_IDLE, 0, speedup);
+					}
 				}
 			}
 		}

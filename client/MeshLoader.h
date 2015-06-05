@@ -21,7 +21,7 @@
 #include <iostream>
 #include <vector>
 
-enum AnimationIndices { a_IDLE, a_RUNFORWARD, a_COMBOATTACK, a_STRAFELEFT, a_STRAFEFORWARDLEFT, a_STRAFERIGHT, a_STRAFEFORWARDRIGHT, a_WALKBACK, a_RUNMELEE };
+enum AnimationIndices { a_IDLE, a_RUNFORWARD, a_COMBOATTACK, a_STRAFELEFT, a_STRAFEFORWARDLEFT, a_STRAFERIGHT, a_STRAFEFORWARDRIGHT, a_WALKBACK, a_RUNMELEE, a_POWERRANGESHOT };
 
 struct CachedVertex {
 	CachedVertex() { cached = false; }
