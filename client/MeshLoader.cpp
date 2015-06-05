@@ -151,6 +151,7 @@ void MeshLoader::LoadScene() {
 }
 
 void MeshLoader::LoadMesh(unsigned int index, const aiMesh* mesh) {
+	std::vector<unsigned int> Indices;
 	for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
 		const Vector3 vertices = Vector3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
 		const Vector3 normals = Vector3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
@@ -160,9 +161,11 @@ void MeshLoader::LoadMesh(unsigned int index, const aiMesh* mesh) {
 
 	for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
 		const aiFace* face = &mesh->mFaces[i];
-		Indices.push_back(face->mIndices[0]);
-		Indices.push_back(face->mIndices[1]);
-		Indices.push_back(face->mIndices[2]);
+
+		for (unsigned int j = 0; j < face->mNumIndices; j++) {
+			int v_index = face->mIndices[j];
+			Indices.push_back(v_index);
+		}
 	}
 
 	m_Entries[index].Init(CachedPositions, CachedNormals, Indices);
@@ -270,18 +273,23 @@ void MeshLoader::IsEquippedWeapon(aiMatrix4x4* PosTrafo) {
 	m_LeftHandPosTrafo = PosTrafo;
 }
 
-void MeshLoader::RenderMesh(const aiNode* node) {
-	for (unsigned int i = 0; i < m_Entries.size(); i++) {
-		glBegin(GL_TRIANGLES);
-		glNormal3fv(&CachedNormals[i].x);
-		glVertex3fv(&CachedPositions[i].x);
-		glEnd();
-	}
-	/*// naive, put into VBO
+void MeshLoader::RenderMesh(const aiNode *node) {
+	/*for (unsigned int i = 0; i < m_Entries.size(); i++) {  // each mesh in the scene
+		for (unsigned int j = 0; j < Faces.size(); j++) {
+			for (unsigned int k = 0; k < Indices.size(); k++) {
+				glBegin(GL_TRIANGLES);
+				glColor4f(1, 1, 1, 1);
+				glNormal3f(CachedNormals[k].x, CachedNormals[k].y, CachedNormals[k].z);
+				glVertex3f(CachedPositions[k].x, CachedPositions[k].y, CachedPositions[k].z);
+				glEnd();
+			}
+		}
+	}*/
+	// naive, put into VBO
 	glPushMatrix();
 	for (unsigned int i = 0; i < node->mNumMeshes; i++) {
 		const aiMesh* mesh = m_Scene->mMeshes[node->mMeshes[i]];
-		std::vector<CachedVertex> CachedPosition(mesh->mNumVertices);
+		/*std::vector<CachedVertex> CachedPosition(mesh->mNumVertices);
 		std::vector<CachedVertex> CachedNormal(mesh->mNumVertices);
 		if (mesh->HasBones() && !m_EnforceNoBones) {
 			const std::vector<aiMatrix4x4>& boneMatrices = mAnimator->GetBoneMatrices(node, i);
@@ -302,7 +310,7 @@ void MeshLoader::RenderMesh(const aiNode* node) {
 					CachedNormal[vertexId].cached = true;
 				}
 			}
-		}
+		}*/
 		aiMatrix4x4 Mx;
 		if (m_Scene->HasAnimations()) {
 			Mx = mAnimator->GetLocalTransform(node);
@@ -328,18 +336,19 @@ void MeshLoader::RenderMesh(const aiNode* node) {
 				if (mesh->mColors[0] != NULL)
 					glColor4fv((GLfloat*)&mesh->mColors[0][v_index]);
 				if (mesh->mNormals != NULL) {
-					if (&CachedNormal[v_index].cached && !m_EnforceNoBones) {
-						glNormal3fv(&CachedNormal[v_index].vec.x);
-					} else {
-						glNormal3fv(&mesh->mNormals[v_index].x);
-					}
+					glNormal3fv(&mesh->mNormals[v_index].x);
+					//if (&CachedNormal[v_index].cached && !m_EnforceNoBones) {
+					//	glNormal3fv(&CachedNormal[v_index].vec.x);
+					//} else {
+						
+					//}
 				}
 
-				if (&CachedPosition[v_index].cached && !m_EnforceNoBones) {
-					glVertex3fv(&CachedPosition[v_index].vec.x);
-				} else {
+				//if (&CachedPosition[v_index].cached && !m_EnforceNoBones) {
+				//	glVertex3fv(&CachedPosition[v_index].vec.x);
+				//} else {
 					glVertex3fv(&mesh->mVertices[v_index].x);
-				}
+				//}
 			}
 			glEnd();
 		}
@@ -350,7 +359,7 @@ void MeshLoader::RenderMesh(const aiNode* node) {
 	for (unsigned int i = 0; i < node->mNumChildren; i++) {
 		RenderMesh(node->mChildren[i]);
 	}
-	glPopMatrix();*/
+	glPopMatrix();
 }
 
 void MeshLoader::UpdateAnimation() {

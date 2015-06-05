@@ -45,7 +45,6 @@ private:
 	void ApplyMaterial(const aiMaterial *material);
 
 	void RenderMesh(const aiNode* node);
-	void RenderBones(const aiNode* node);
 public:
 	MeshLoader();
 	~MeshLoader();
@@ -80,7 +79,7 @@ private:
 	bool playable;
 
 	std::vector<MeshEntry> m_Entries;
-	std::vector<unsigned int> Indices;
+	std::vector<std::vector<unsigned int>> Faces;
 
 	std::vector<Vector3> CachedPositions;
 	std::vector<Vector3> CachedNormals;
