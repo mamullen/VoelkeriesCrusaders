@@ -111,6 +111,18 @@ int PlayState::Initialize() {
 	p_ShrineFire->SetParticleEmitter(&g_ParticleEmitter);
 	p_ShrineFire->EmitParticles();
 	p_ShrineFire->SetCamera(&Cam);
+
+	p_Sparks = new ParticleEffect(10);
+	p_Sparks->LoadTexture("./particles/textures/sparks.png");
+	ParticleEffect::ColorInterpolator sparkle;
+	sparkle.AddValue(0.0f, Vector4(1, 1, 1, 1));
+	sparkle.AddValue(0.2f, Vector4(0, 1, 0, 1));
+	sparkle.AddValue(0.4f, Vector4(0, 0, 1, 1));
+	p_Sparks->SetColorInterplator(sparkle);
+	p_Sparks->SetParticleEmitter(&g_ParticleEmitter);
+	p_Sparks->EmitParticles();
+	p_Sparks->SetCamera(&Cam);
+
 	// End particles
 
 	// Player attacks
@@ -148,6 +160,7 @@ void PlayState::UpdateParticles() {
 	float fDeltaTime = elapsedTime.GetElapsedTime();
 
 	p_ShrineFire->Update(fDeltaTime);
+	p_Sparks->Update(fDeltaTime);
 }
 
 enum ObjectTypes {BUILDING, none1, none2, HUMAN, CRUSADER, VAMPIRE, SUNMACE};
@@ -601,11 +614,11 @@ void PlayState::Update(ClientGame* client) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void PlayState::RenderParticle(float rot, ParticleEffect* p, float xx, float yy, float zz)
+void PlayState::RenderParticle(float rot, ParticleEffect* p, float scale, float xx, float yy, float zz)
 {
 	glPushMatrix();
 	glTranslatef(xx, yy, zz);
-	glScalef(0.1, 0.1, 0.1);
+	glScalef(scale, scale, scale);
 	glRotatef(rot, 0, 1, 0);
 	glRotatef(180, 1, 0, 0);
 	p->Render();
@@ -1024,7 +1037,8 @@ void PlayState::Draw(ClientGame* client) {
 
 	p_regShade->unbind();
 
-	RenderParticle(Cam.GetRotation().y, p_ShrineFire, 0, 14, 0);
+	RenderParticle(-Cam.GetRotation().y, p_ShrineFire, 0.1, 0, 14, 0);
+	RenderParticle(-Cam.GetRotation().y, p_Sparks, 1, Player->getPos().x, Player->getPos().y, Player->getPos().z);
 	
 	drawHUD(client); //This includes the game over results
 

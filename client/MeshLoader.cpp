@@ -9,6 +9,18 @@
 #define aisgl_min(x,y) (x<y?x:y)
 #define aisgl_max(x,y) (y>x?y:x)
 
+MeshEntry::MeshEntry() {
+	NumIndices = 0;
+}
+
+MeshEntry::~MeshEntry() {
+	NumIndices = 0;
+}
+
+void MeshEntry::Init(const std::vector<Vector3>& CachedPositions, const std::vector<Vector3>& CachedNormals, const std::vector<unsigned int>& Indices) {
+	NumIndices = Indices.size();
+}
+
 MeshLoader::MeshLoader() {
 	std::cout << "No filename specified" << std::endl;
 	a_LastPlaying = 0;
@@ -46,6 +58,8 @@ MeshLoader::MeshLoader(const char* filename, bool model) {
 		std::cout << "Error loading file" << std::endl;
 	};
 	std::cout << "MeshLoader:: finished " << std::endl;
+
+
 }
 
 MeshLoader::~MeshLoader() {
@@ -120,7 +134,38 @@ bool MeshLoader::LoadAsset(const char* filename) {
 		a_IsAnimated = true;
 		mAnimator = new SceneAnimator(m_Scene);
 	}
+
+
+
+	LoadScene();
 	return true;
+}
+
+void MeshLoader::LoadScene() {
+	m_Entries.resize(m_Scene->mNumMeshes);
+
+	for (unsigned int i = 0; i < m_Entries.size(); i++) {
+		const aiMesh* mesh = m_Scene->mMeshes[i];
+		LoadMesh(i, mesh);
+	}
+}
+
+void MeshLoader::LoadMesh(unsigned int index, const aiMesh* mesh) {
+	for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
+		const Vector3 vertices = Vector3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
+		const Vector3 normals = Vector3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
+		CachedPositions.push_back(vertices);
+		CachedNormals.push_back(normals);
+	}
+
+	for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
+		const aiFace* face = &mesh->mFaces[i];
+		Indices.push_back(face->mIndices[0]);
+		Indices.push_back(face->mIndices[1]);
+		Indices.push_back(face->mIndices[2]);
+	}
+
+	m_Entries[index].Init(CachedPositions, CachedNormals, Indices);
 }
 
 void MeshLoader::ChangeAnimation(unsigned int index) {
@@ -226,7 +271,13 @@ void MeshLoader::IsEquippedWeapon(aiMatrix4x4* PosTrafo) {
 }
 
 void MeshLoader::RenderMesh(const aiNode* node) {
-	// naive, put into VBO
+	for (unsigned int i = 0; i < m_Entries.size(); i++) {
+		glBegin(GL_TRIANGLES);
+		glNormal3fv(&CachedNormals[i].x);
+		glVertex3fv(&CachedPositions[i].x);
+		glEnd();
+	}
+	/*// naive, put into VBO
 	glPushMatrix();
 	for (unsigned int i = 0; i < node->mNumMeshes; i++) {
 		const aiMesh* mesh = m_Scene->mMeshes[node->mMeshes[i]];
@@ -280,7 +331,7 @@ void MeshLoader::RenderMesh(const aiNode* node) {
 					if (&CachedNormal[v_index].cached && !m_EnforceNoBones) {
 						glNormal3fv(&CachedNormal[v_index].vec.x);
 					} else {
-						glNormal3fv(&mesh->mNormals[v_index].x);	
+						glNormal3fv(&mesh->mNormals[v_index].x);
 					}
 				}
 
@@ -299,7 +350,7 @@ void MeshLoader::RenderMesh(const aiNode* node) {
 	for (unsigned int i = 0; i < node->mNumChildren; i++) {
 		RenderMesh(node->mChildren[i]);
 	}
-	glPopMatrix();
+	glPopMatrix();*/
 }
 
 void MeshLoader::UpdateAnimation() {

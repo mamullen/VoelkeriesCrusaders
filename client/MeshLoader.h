@@ -29,6 +29,14 @@ struct CachedVertex {
 	bool cached;
 };
 
+struct MeshEntry {
+	MeshEntry();
+	~MeshEntry();
+	void Init(const std::vector<Vector3>& CachedPositions, const std::vector<Vector3>& CachedNormals, const std::vector<unsigned int>& Indices);
+
+	unsigned int NumIndices;
+};
+
 class MeshLoader {
 private:
 	bool m_EnforceNoBones;
@@ -43,6 +51,9 @@ public:
 	~MeshLoader();
 	MeshLoader(const char* filename);
 	MeshLoader(const char* filename, bool model);
+
+	void LoadScene();
+	void LoadMesh(unsigned int index, const aiMesh* mesh);
 	
 	void Render();
 	void DisableBones()		{ m_EnforceNoBones = true; }
@@ -67,6 +78,12 @@ private:
 	bool a_LockIndex;
 	bool a_IsAnimated;
 	bool playable;
+
+	std::vector<MeshEntry> m_Entries;
+	std::vector<unsigned int> Indices;
+
+	std::vector<Vector3> CachedPositions;
+	std::vector<Vector3> CachedNormals;
 };
 
 #endif

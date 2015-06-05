@@ -62,7 +62,7 @@ public:
 	void UpdateParticles();
 	void UpdateClient(ClientGame* Client);
 
-	void RenderParticle(float rot, ParticleEffect *p, float xx, float yy, float zz);
+	void RenderParticle(float rot, ParticleEffect *p, float scale, float xx, float yy, float zz);
 
 	void drawHUD(ClientGame* Client);
 
@@ -134,6 +134,7 @@ private:
 
 	Texture m_pTrivialNormalMap;
 	ParticleEffect* p_ShrineFire;
+	ParticleEffect* p_Sparks;
 	Light* p_Light;
 	Map* p_Map;
 	bool isNight;
