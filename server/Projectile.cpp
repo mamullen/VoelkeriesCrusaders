@@ -47,7 +47,7 @@ bool Projectile::updateTime(int time, std::vector<GameObject*>* objects)
 				changes.push_back(std::pair<int, std::string*>(p->getID(), change));
 			}
 			if (isStun){
-				p->isDisabled(1000);
+				p->isDisabled(2000);
 			}
 			hit++;
 		}
@@ -83,7 +83,7 @@ bool Projectile::collide(GameObject* obj)
 			return false;
 		}
 		if (dot > 0.8){
-			modifier = 1.5;
+			modifier = 1.1;
 		}
 		else if (dot > 0.6){
 			modifier = 1;

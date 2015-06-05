@@ -96,25 +96,21 @@ int PlayState::Initialize() {
 	m_pTrivialNormalMap.Load();
 
 	// Particles
-	p_DeathByBlood = new ParticleEffect(100);
-	p_DeathByBlood->LoadTexture("./particles/textures/circle.png");
+	p_ShrineFire = new ParticleEffect(5000);
+	p_ShrineFire->LoadTexture("./particles/textures/glitter.png");
 
-	ParticleEffect::ColorInterpolator explosion;
-	explosion.AddValue(0.0f, Vector4(1, 0, 0, 1)); //red
-	explosion.AddValue(0.2f, Vector4(.255, .102, 0, 1)); //orange
-	explosion.AddValue(0.33f, Vector4(.255, .255, 0, .75)); //o
-	explosion.AddValue(0.4f, Vector4(1, 0, 0, 1)); //red
-	explosion.AddValue(0.6f, Vector4(.255, .102, 0, 1)); //orange
-	explosion.AddValue(0.33f, Vector4(.255, .255, 0, .5)); //o
-	explosion.AddValue(0.8f, Vector4(0, 0, 0, 0.75));
-	explosion.AddValue(1.0f, Vector4(0, 0, 0, 0.5));
-	explosion.AddValue(1.1f, Vector4(1, 0, 0, .5)); //red
-	explosion.AddValue(1.2f, Vector4(.255, .102, 0, .5)); //orange
+	ParticleEffect::ColorInterpolator explosion; 
+	explosion.AddValue(0.0f, Vector4(1, 0, 0, 1));
+	explosion.AddValue(0.2f, Vector4(1, 0.5, 0, 1));
+	explosion.AddValue(0.4f, Vector4(1, 1, 0, .75));
+	explosion.AddValue(0.6f, Vector4(1, 0.5, 0, 1));
+	explosion.AddValue(0.8f, Vector4(0.5, 0.5, 0, 1));
+	explosion.AddValue(1.0f, Vector4(1, 0, 0, .5));
 
-	p_DeathByBlood->SetColorInterplator(explosion);
-	p_DeathByBlood->SetParticleEmitter(&g_ParticleEmitter);
-	p_DeathByBlood->EmitParticles();
-	p_DeathByBlood->SetCamera(&Cam);
+	p_ShrineFire->SetColorInterplator(explosion);
+	p_ShrineFire->SetParticleEmitter(&g_ParticleEmitter);
+	p_ShrineFire->EmitParticles();
+	p_ShrineFire->SetCamera(&Cam);
 	// End particles
 
 	// Player attacks
@@ -132,10 +128,6 @@ int PlayState::Initialize() {
 
 	colorbuild.Load();
 	normalbuild.Load();
-
-
-
-	
 
 	glGenTextures(5, photos);
 	t.loadTexture("ppm/i_ft.ppm", photos[0]);
@@ -155,7 +147,7 @@ void PlayState::UpdateParticles() {
 	static ElapsedTime elapsedTime;
 	float fDeltaTime = elapsedTime.GetElapsedTime();
 
-	p_DeathByBlood->Update(fDeltaTime);
+	p_ShrineFire->Update(fDeltaTime);
 }
 
 enum ObjectTypes {BUILDING, none1, none2, HUMAN, CRUSADER, VAMPIRE, SUNMACE};
@@ -433,7 +425,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 			memcpy(&zPos, serverEvent + 13, sizeof(float));
 			particlepos = Vector3(xPos, yPos, zPos);
 			deathbyparticle = true;
-			//parti = true;
+			parti = true;
 			deathTime = currGameTime;
 		}
 
@@ -602,23 +594,20 @@ void PlayState::UpdateClient(ClientGame* client) {
 }
 
 void PlayState::Update(ClientGame* client) {
-	if (parti)
-	{
-		UpdateParticles();
-	}
+	UpdateParticles();
 	UpdateClient(client);
 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-
-////////////////////////////////////////////////////////////////////////
 void PlayState::RenderParticle(float rot, ParticleEffect* p, float xx, float yy, float zz)
 {
 	glPushMatrix();
 	glTranslatef(xx, yy, zz);
+	glScalef(0.1, 0.1, 0.1);
 	glRotatef(rot, 0, 1, 0);
+	glRotatef(180, 1, 0, 0);
 	p->Render();
 	glPopMatrix();
 }
@@ -966,7 +955,7 @@ void PlayState::Draw(ClientGame* client) {
 	p_bumpShade->bind();
 	p_Map->Draw(p_bumpShade, m_pTrivialNormalMap, photos);
 	p_bumpShade->unbind();
-
+	
 	p_regShade->bind();
 
 	
@@ -1035,11 +1024,8 @@ void PlayState::Draw(ClientGame* client) {
 
 	p_regShade->unbind();
 
-	if (parti && abs(currGameTime-deathTime) < 2000)
-	{
-		RenderParticle(Cam.GetRotation().y, p_DeathByBlood, particlepos.x, particlepos.y, particlepos.z);
-	}
-
+	RenderParticle(Cam.GetRotation().y, p_ShrineFire, 0, 14, 0);
+	
 	drawHUD(client); //This includes the game over results
 
 	glfwSwapBuffers(window);

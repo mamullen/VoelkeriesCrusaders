@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClInclude Include="Action.h" />
     <ClInclude Include="Basic_Attack.h" />
+    <ClInclude Include="Basic_Knock.h" />
     <ClInclude Include="Basic_Range.h" />
     <ClInclude Include="Building.h" />
     <ClInclude Include="ConfigSettings.h" />
@@ -163,7 +164,6 @@
     <ClInclude Include="NetworkServices.h" />
     <ClInclude Include="PacketParser.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="PowerProjectile.h" />
     <ClInclude Include="Power_Range.h" />
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="Score.h" />
@@ -181,6 +181,7 @@
   <ItemGroup>
     <ClCompile Include="Action.cpp" />
     <ClCompile Include="Basic_Attack.cpp" />
+    <ClCompile Include="Basic_Knock.cpp" />
     <ClCompile Include="Basic_Range.cpp" />
     <ClCompile Include="Building.cpp" />
     <ClCompile Include="ConfigSettings.cpp" />
@@ -194,7 +195,6 @@
     <ClCompile Include="NetworkServices.cpp" />
     <ClCompile Include="PacketParser.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="PowerProjectile.cpp" />
     <ClCompile Include="Power_Range.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="Score.cpp" />

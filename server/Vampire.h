@@ -1,6 +1,7 @@
 #pragma once
 #include "Player.h"
 #include "ConfigSettings.h"
+#include "Power_Range.h"
 
 class Vampire :
 	public Player

@@ -7,6 +7,7 @@ vector<Projectile*> GameLogic::projectileList;
 vector<StealthBox*> GameLogic::stealthBoxList;
 vector<Player*> GameLogic::playerList;
 list<Packet*> GameLogic::serverPackets;
+vector<GameObject*> GameLogic::gameObjects;
 
 GameLogic::GameLogic()
 {

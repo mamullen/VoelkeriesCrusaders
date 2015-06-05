@@ -105,8 +105,12 @@
     <ClInclude Include="DisableTimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+<<<<<<< HEAD
+    <ClInclude Include="Basic_Knock.h">
+=======
     <ClInclude Include="PowerProjectile.h">
 >>>>>>> 4f8d26194749ed0ca44a82d8e600f6512594b0b5
+>>>>>>> db510a61f9904239c66e6191cb582b1fdf6b1ef4
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -192,8 +196,12 @@
     <ClCompile Include="DisableTimer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+<<<<<<< HEAD
+    <ClCompile Include="Basic_Knock.cpp">
+=======
     <ClCompile Include="PowerProjectile.cpp">
 >>>>>>> 4f8d26194749ed0ca44a82d8e600f6512594b0b5
+>>>>>>> db510a61f9904239c66e6191cb582b1fdf6b1ef4
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -15,6 +15,7 @@ public:
 	float getRange() { return range; }
 	void setInitPos(Vector3& v) { initPos = v; }
 	void setRecoil(bool r) { isRecoil = r; }
+	void setStun(bool r) { isStun = r; }
 	void sendDeathPacket();
 	void sendPosPacket();
 	void setHitRadius(float r) { hitRadius = r; }
