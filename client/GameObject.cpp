@@ -13,7 +13,7 @@ GameObject::GameObject(Vector3* mn, Vector3* mx, unsigned int i)
 	id = i;
 }
 
-void GameObject::update(bool isPlayer, float rot) {
+void GameObject::update(bool isPlayer, float rot, int t) {
 
 	if (getHealth() <= 0){
 		return;
@@ -41,6 +41,9 @@ void GameObject::update(bool isPlayer, float rot) {
 		glLineWidth(1.4);
 		glScalef(paramDist / 3500.0f, paramDist / 3500.0f, paramDist / 3500.0f);
 		glColor3f(1, 1, 1);
+		if (team == t){
+			glColor3f(0, 0, 1);
+		}
 		for (int i = 0; i<strlen(name); i++){
 			//glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, (int)name[i]); // generation of characters in our text with 9 by 15 GLU font
 			glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, (char)name[i]);

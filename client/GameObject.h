@@ -28,11 +28,12 @@ public:
 	//initialize game object with some model.  If there is no model
 	//associated with this GameObject, then just pass in NULL
 	GameObject(unsigned int id);
+	GameObject(unsigned int i, int t) { id = i; team = t; };
 	GameObject(Vector3* mn, Vector3* mx, unsigned int id);
 
 	void rotateLeft();
 	void rotateRight();
-	void update(bool isPlayer,float rot);
+	void update(bool isPlayer,float rot, int team);
 	virtual void drawObj(); //will draw a triangle if not overridden
 	void print(std::string);
 
@@ -50,6 +51,7 @@ public:
 	char * getName()					{ return name; }
 	void setAnimation(int index, int rotate = 0, float speedup = 2.f);
 	bool shrinecollide(Vector3, Vector3);
+	int getTeam()		{ return team; }
 
 	void setPos(double x, double y, double z);
 	float getRotation()					{ return rotation; }
@@ -79,7 +81,7 @@ private:
 	char* name = NULL;
 	float dashRange = 0;
 	bool attacking2 = false, visible = true;
-	int attack2Starts = 0, attack2Ends = 0;
+	int attack2Starts = 0, attack2Ends = 0, team;
 
 	Vector4 position = Vector4(0, 2, 0, 1);
 	Vector4 forward = INIT_FORWARD;

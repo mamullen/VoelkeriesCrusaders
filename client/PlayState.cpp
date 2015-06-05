@@ -963,13 +963,13 @@ void PlayState::Draw(ClientGame* client) {
 
 	//Player->update(true, Cam.GetRotation().y);
 	Player->UpdateMoveAnimation(isNight, Player);
-	Player->update(true, Cam.GetRotation().y);
+	Player->update(true, Cam.GetRotation().y, Player->getTeam());
 
 	std::map<int, GameObject*>::iterator it;
 	for (it = gameObjects.begin(); it != gameObjects.end(); it++)
 	{
 		((PlayerType*)(it->second))->UpdateMoveAnimation(isNight, Player);
-		((PlayerType*)(it->second))->update(false, Cam.GetRotation().y);
+		((PlayerType*)(it->second))->update(false, Cam.GetRotation().y,Player->getTeam());
 
 		if (!weap1 && ((PlayerType*)(it->second))->getID() == pnum1) {
 			((PlayerType*)(it->second))->EquipWeapon((Weapon*)p_SunMace);
@@ -988,7 +988,7 @@ void PlayState::Draw(ClientGame* client) {
 	std::map<int, Projectile*>::iterator it2;
 	for (it2 = projectiles.begin(); it2 != projectiles.end(); it2++)
 	{
-		((PlayerType*)(it2->second))->update(false, Cam.GetRotation().y);
+		((PlayerType*)(it2->second))->update(false, Cam.GetRotation().y, Player->getTeam());
 	}
 
 	// David's building(no collision)
@@ -1019,12 +1019,12 @@ void PlayState::Draw(ClientGame* client) {
 	std::map<int, CrusaderBox*>::iterator it3;
 	for (it3 = crusaderBoxes.begin(); it3 != crusaderBoxes.end(); it3++)
 	{
-		(it3->second)->update(false, Cam.GetRotation().y);
+		(it3->second)->update(false, Cam.GetRotation().y,Player->getTeam());
 	}
 
 	p_regShade->unbind();
 
-	RenderParticle(Cam.GetRotation().y, p_ShrineFire, 0, 14, 0);
+	//RenderParticle(Cam.GetRotation().y, p_ShrineFire, 0, 14, 0);
 	
 	drawHUD(client); //This includes the game over results
 

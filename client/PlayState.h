@@ -137,6 +137,8 @@ private:
 	Light* p_Light;
 	Map* p_Map;
 	bool isNight;
+	bool debug = false;
+	std::list<int> ints;
 
 	Shader* p_regShade;
 	Shader* p_bumpShade;
