@@ -343,7 +343,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 			float cd1, cd2;
 			memcpy(&cd1, serverEvent + 9, sizeof(float));
 			memcpy(&cd2, serverEvent + 13, sizeof(float));
-			if (objID == Player->getID()){
+			if (Player && objID == Player->getID()){
 				cooldown1 = cd1;
 				cooldown2 = cd2;
 			}
@@ -775,8 +775,8 @@ void PlayState::drawHUD(ClientGame* client){
 
 	}
 	glColor3f(1, 1, 1);
-	drawCircleOutline(20, Vector3(timerX, height / 5, 0), 0);
-	drawCircleOutline(18.5, Vector3(width / 2, height / 5, 0), 1);
+	drawCircleOutline(20, Vector3(timerX, height / 6, 0), 0);
+	drawCircleOutline(18.5, Vector3(width / 2, height / 6, 0), 1);
 
 
 	//bottom panel
@@ -796,28 +796,27 @@ void PlayState::drawHUD(ClientGame* client){
 
 	glBegin(GL_QUADS);
 	glColor4f(0, 1, 0, 0.8f);
-	drawRect(width / 9, height - height / 13, (width / 4)*((float)Player->getHealth() / Player->getMaxHealth()), height / 15);
+	drawRect(width * .055, height - height * .04, (width*.13)*((float)Player->getHealth() / Player->getMaxHealth()), height * .025);
 	glColor4f(0, 0, 0, 0.8f);
-	drawRect(width / 9, height - height / 13, width / 4, height / 15);
+	drawRect(width * .055, height - height * .04, width*.13, height * .025);
 	glEnd();
-	
-	
+
 	//cooldown bars
 	glBegin(GL_QUADS);
 	glColor4f(1,0,0,0.5f);
 	if (Player->getTeam() == 1){
 		glColor4f(1, 1, 0,0.5f);
 	}
-	drawRect(width - width / 12 + width / 150, 3 * height / 4 - 3 * height / 8 + (1 - (height / 15) * cooldown1), width / 14, (height / 15) * cooldown1);
-	drawRect(width - width / 12 + width / 150, height - 3 * height / 8 + (1 - (height/15) * cooldown2), width / 14, (height / 15) * cooldown2);
+	drawRect(width - width*.0355, height *.375f + (1 - height*.0625 * cooldown1), width * .031, height*.0625 * cooldown1);
+	drawRect(width - width*.0355, height * .5075f + (1 - height*.0625 * cooldown2), width *.031, height*.0625 * cooldown2);
 	glEnd();
 	glDisable(GL_BLEND);
 	//player's name
 	glPushMatrix();
 	char * name = client->getClientName();
-	glTranslatef(width *.11, height - height * .125, 0);
+	glTranslatef(width *.05, height - height * .07, 0);
 	glLineWidth(2);
-	glScalef(width/5242.88, height/3800.0f, 1);
+	glScalef(width/8342.88, height/6000.0f, 1);
 	glRotatef(180, 1, 0, 0);
 	glColor3f(1, 1, 1);
 	for (unsigned int i = 0; i < strlen(name); i++){
@@ -920,7 +919,289 @@ void PlayState::drawHUD(ClientGame* client){
 		glPopMatrix();
 	}
 
+
+if (Player->getTeam() == 2)
+{
+	glPushMatrix();
+	glEnable(GL_BLEND); //Enable blending.
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glColor4f(1, 0, 0, 1.0f);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, vtimer[0]);
+	glBegin(GL_QUADS);
+
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width / 3, height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width / 3, 0.0f);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, vtimer[one]);
+	glBegin(GL_QUADS);
+	//glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (2 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (2 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (width / 15), 0.0f);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, vtimer[10]);
+	glBegin(GL_QUADS);
+	//glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (2 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (3 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (3 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (2 * width / 15), 0.0f);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, vtimer[two]);
+	glBegin(GL_QUADS);
+	//	glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (3 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (4 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (4 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (3 * width / 15), 0.0f);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, vtimer[three]);
+	glBegin(GL_QUADS);
+	//glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (4 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (5 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (5 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (4 * width / 15), 0.0f);
+	glEnd();
+
+	glColor4f(1, 1, 1, 1.75f);
+	glBindTexture(GL_TEXTURE_2D, vattackpic[0]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width - width*.0355, height *.3125f);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width - width*.0355, height * .375f);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width - width *.0045, height * .375f);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width - width * .0045, height *.3125f);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, vattackpic[1]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width - width*.0355, height * .445f);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width - width*.0355, height * .5075f);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width - width * .0045, height * .5075f);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width - width * .0045, height * .445f);
+	glEnd();
+
+
+
+	glColor4f(1, 1, 1, 1.75f);
+	glBindTexture(GL_TEXTURE_2D, vhud[0]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width * .001, height);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width * .2, height);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width * .2, height - height * .09);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width * .001, height - height * .09);
+	glEnd();
+
+	glColor4f(1, 1, 1, 1.75f);
+	glBindTexture(GL_TEXTURE_2D, vhud[1]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width - width / 25, height *.24);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width - width / 25, height * .585);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width, height * .585);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width, height *.24);
+	glEnd();
+
+
+	glDisable(GL_BLEND);
+
+	glPopMatrix();
+}
+else
+{
+	glPushMatrix();
+
+	glEnable(GL_BLEND); //Enable blending.
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glColor4f(1, 1, 1, 1.0f);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, ctimer[0]);
+	glBegin(GL_QUADS);
+
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width / 3, height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width / 3, 0.0f);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, ctimer[one]);
+	glBegin(GL_QUADS);
+	//glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (2 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (2 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (width / 15), 0.0f);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, ctimer[10]);
+	glBegin(GL_QUADS);
+	//glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (2 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (3 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (3 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (2 * width / 15), 0.0f);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, ctimer[two]);
+	glBegin(GL_QUADS);
+	//	glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (3 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (4 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (4 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (3 * width / 15), 0.0f);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, ctimer[three]);
+	glBegin(GL_QUADS);
+	//glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f((width / 3) + (4 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f((width / 3) + (5 * width / 15), height / 9);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f((width / 3) + (5 * width / 15), 0);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f((width / 3) + (4 * width / 15), 0.0f);
+	glEnd();
+
+	glColor4f(1, 1, 1, 1.75f);
+	glBindTexture(GL_TEXTURE_2D, cattackpic[0]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width - width*.0355, height *.3125f);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width - width*.0355, height * .375f);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width - width *.0045, height * .375f);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width - width * .0045, height *.3125f);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, cattackpic[1]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width - width*.0355, height * .445f);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width - width*.0355, height * .5075f);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width - width * .0045, height * .5075f);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width - width * .0045, height * .445f);
+	glEnd();
+
+
+
+	glColor4f(1, 1, 1, 1.75f);
+	glBindTexture(GL_TEXTURE_2D, chud[0]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width * .001, height);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width * .2, height);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width * .2, height - height * .09);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width * .001, height - height * .09);
+	glEnd();
+
+	glColor4f(1, 1, 1, 1.75f);
+	glBindTexture(GL_TEXTURE_2D, chud[1]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width - width / 25, height *.24);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width - width / 25, height * .585);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width, height * .585);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width, height *.24);
+	glEnd();
+
+
+	glDisable(GL_BLEND);
+
+	glPopMatrix();
+
+
+}
+
+
 	if (damagedTime > 0){
+
+		// Making sure we can render 3d again
+		glMatrixMode(GL_PROJECTION);
+		glPopMatrix();
+		glMatrixMode(GL_MODELVIEW);
+
+
+		//had to do this again for each side rect because alphas were not
+		//working well with eachother...
+		glMatrixMode(GL_PROJECTION);
+		glPushMatrix();
+		glLoadIdentity();
+		glOrtho(0.0, width, height, 0.0, -1.0, 10.0);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glDisable(GL_CULL_FACE);
+		glClear(GL_DEPTH_BUFFER_BIT);
+
 		//draw edges when getting hit or healed
 		glPushMatrix();
 		glEnable(GL_BLEND); //Enable blending.
@@ -1034,415 +1315,6 @@ void PlayState::drawHUD(ClientGame* client){
 		glDisable(GL_BLEND);
 		glPopMatrix();
 	}
-	/*
-	glPushMatrix();
-	glEnable(GL_BLEND); //Enable blending.
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glColor4f(1, 0, 0, 5.0f);
-	glEnable(GL_TEXTURE_2D);
-
-	glBindTexture(GL_TEXTURE_2D, timer[0]);
-	glBegin(GL_QUADS);
-
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f(width / 3, height / 9);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f((width / 3) + (width / 15), height / 9);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f((width / 3) + (width / 15), 0);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(width / 3, 0.0f);
-	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, timer[one]);
-	glBegin(GL_QUADS);
-	//glColor3f(1, 1, 1);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f((width / 3) + (width / 15), height / 9);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f((width / 3) + (2 * width / 15), height / 9);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f((width / 3) + (2 * width / 15), 0);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f((width / 3) + (width / 15), 0.0f);
-	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, timer[10]);
-	glBegin(GL_QUADS);
-	//glColor3f(1, 1, 1);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f((width / 3) + (2 * width / 15), height / 9);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f((width / 3) + (3 * width / 15), height / 9);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f((width / 3) + (3 * width / 15), 0);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f((width / 3) + (2 * width / 15), 0.0f);
-	glEnd();
-	glBindTexture(GL_TEXTURE_2D, timer[two]);
-	glBegin(GL_QUADS);
-	//	glColor3f(1, 1, 1);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f((width / 3) + (3 * width / 15), height / 9);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f((width / 3) + (4 * width / 15), height / 9);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f((width / 3) + (4 * width / 15), 0);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f((width / 3) + (3 * width / 15), 0.0f);
-	glEnd();
-	glBindTexture(GL_TEXTURE_2D, timer[three]);
-	glBegin(GL_QUADS);
-	//glColor3f(1, 1, 1);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f((width / 3) + (4 * width / 15), height / 9);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f((width / 3) + (5 * width / 15), height / 9);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f((width / 3) + (5 * width / 15), 0);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f((width / 3) + (4 * width / 15), 0.0f);
-	glEnd();
-
-	glColor4f(1, 1, 1, 1.75f);
-	glBindTexture(GL_TEXTURE_2D, attackpic[0]);
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(width - width / 12+width/150 , height / 8 + height / 16);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f(width - width / 12+width/150 , 3 * height / 4 - 3 * height / 8);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f(width - width / 150 , 3 * height / 4 - 3 * height / 8);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f(width - width / 150 , height / 8 + height / 16);
-	glEnd();
-	
-	glBindTexture(GL_TEXTURE_2D, attackpic[1]);
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(width - width / 12 + width / 150 , height / 8 + height / 16+height/4);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f(width - width / 12 + width / 150 , 3 * height / 4 - 3 * height / 8 + height / 4);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f(width - width / 150 , 3 * height / 4 - 3 * height / 8 + height / 4);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f(width - width / 150 , height / 8 + height / 16 + height / 4);
-	glEnd();
-
-
-
-	glColor4f(1, 1, 1, 1.75f);
-	glBindTexture(GL_TEXTURE_2D, hud[0]);
-	glBegin(GL_QUADS);
-
-
-
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f(0, height);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f((5 * width / 12), height);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f((5 * width / 12), height - height / 6);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f((0), height - height / 6);
-	glEnd();
-
-	glColor4f(1, 1, 1, 1.75f);
-	glBindTexture(GL_TEXTURE_2D, hud[1]);
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(width - width / 12, height / 8);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f(width - width / 12, 3 * height / 4);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f(width, 3 * height / 4);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f(width, height / 8);
-	glEnd();
-
-
-
-
-
-	glDisable(GL_BLEND);
-
-	glPopMatrix();*/
-
-
-if (Player->getTeam() == 2)
-{
-	glPushMatrix();
-	glEnable(GL_BLEND); //Enable blending.
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glColor4f(1, 0, 0, 1.0f);
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, vtimer[0]);
-	glBegin(GL_QUADS);
-
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f(width / 3, height / 9);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f((width / 3) + (width / 15), height / 9);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f((width / 3) + (width / 15), 0);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(width / 3, 0.0f);
-	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, vtimer[one]);
-	glBegin(GL_QUADS);
-	//glColor3f(1, 1, 1);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f((width / 3) + (width / 15), height / 9);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f((width / 3) + (2 * width / 15), height / 9);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f((width / 3) + (2 * width / 15), 0);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f((width / 3) + (width / 15), 0.0f);
-	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, vtimer[10]);
-	glBegin(GL_QUADS);
-	//glColor3f(1, 1, 1);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f((width / 3) + (2 * width / 15), height / 9);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f((width / 3) + (3 * width / 15), height / 9);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f((width / 3) + (3 * width / 15), 0);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f((width / 3) + (2 * width / 15), 0.0f);
-	glEnd();
-	glBindTexture(GL_TEXTURE_2D, vtimer[two]);
-	glBegin(GL_QUADS);
-	//	glColor3f(1, 1, 1);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f((width / 3) + (3 * width / 15), height / 9);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f((width / 3) + (4 * width / 15), height / 9);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f((width / 3) + (4 * width / 15), 0);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f((width / 3) + (3 * width / 15), 0.0f);
-	glEnd();
-	glBindTexture(GL_TEXTURE_2D, vtimer[three]);
-	glBegin(GL_QUADS);
-	//glColor3f(1, 1, 1);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f((width / 3) + (4 * width / 15), height / 9);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f((width / 3) + (5 * width / 15), height / 9);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f((width / 3) + (5 * width / 15), 0);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f((width / 3) + (4 * width / 15), 0.0f);
-	glEnd();
-
-	glColor4f(1, 1, 1, 1.75f);
-	glBindTexture(GL_TEXTURE_2D, vattackpic[0]);
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(width - width / 12 + width / 150, height / 8 + height / 16);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f(width - width / 12 + width / 150, 3 * height / 4 - 3 * height / 8);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f(width - width / 150, 3 * height / 4 - 3 * height / 8);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f(width - width / 150, height / 8 + height / 16);
-	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, vattackpic[1]);
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(width - width / 12 + width / 150, height / 8 + height / 16 + height / 4);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f(width - width / 12 + width / 150, 3 * height / 4 - 3 * height / 8 + height / 4);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f(width - width / 150, 3 * height / 4 - 3 * height / 8 + height / 4);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f(width - width / 150, height / 8 + height / 16 + height / 4);
-	glEnd();
-
-
-
-	glColor4f(1, 1, 1, 1.75f);
-	glBindTexture(GL_TEXTURE_2D, vhud[0]);
-	glBegin(GL_QUADS);
-
-
-
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f(0, height);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f((5 * width / 12), height);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f((5 * width / 12), height - height / 6);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f((0), height - height / 6);
-	glEnd();
-
-	glColor4f(1, 1, 1, 1.75f);
-	glBindTexture(GL_TEXTURE_2D, vhud[1]);
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(width - width / 12, height / 8);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f(width - width / 12, 3 * height / 4);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f(width, 3 * height / 4);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f(width, height / 8);
-	glEnd();
-
-
-
-
-
-	glDisable(GL_BLEND);
-
-	glPopMatrix();
-}
-else
-{
-	glPushMatrix();
-
-	glEnable(GL_BLEND); //Enable blending.
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glColor4f(1, 1, 1, 1.0f);
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, ctimer[0]);
-	glBegin(GL_QUADS);
-
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f(width / 3, height / 9);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f((width / 3) + (width / 15), height / 9);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f((width / 3) + (width / 15), 0);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(width / 3, 0.0f);
-	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, ctimer[one]);
-	glBegin(GL_QUADS);
-	//glColor3f(1, 1, 1);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f((width / 3) + (width / 15), height / 9);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f((width / 3) + (2 * width / 15), height / 9);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f((width / 3) + (2 * width / 15), 0);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f((width / 3) + (width / 15), 0.0f);
-	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, ctimer[10]);
-	glBegin(GL_QUADS);
-	//glColor3f(1, 1, 1);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f((width / 3) + (2 * width / 15), height / 9);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f((width / 3) + (3 * width / 15), height / 9);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f((width / 3) + (3 * width / 15), 0);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f((width / 3) + (2 * width / 15), 0.0f);
-	glEnd();
-	glBindTexture(GL_TEXTURE_2D, ctimer[two]);
-	glBegin(GL_QUADS);
-	//	glColor3f(1, 1, 1);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f((width / 3) + (3 * width / 15), height / 9);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f((width / 3) + (4 * width / 15), height / 9);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f((width / 3) + (4 * width / 15), 0);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f((width / 3) + (3 * width / 15), 0.0f);
-	glEnd();
-	glBindTexture(GL_TEXTURE_2D, ctimer[three]);
-	glBegin(GL_QUADS);
-	//glColor3f(1, 1, 1);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f((width / 3) + (4 * width / 15), height / 9);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f((width / 3) + (5 * width / 15), height / 9);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f((width / 3) + (5 * width / 15), 0);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f((width / 3) + (4 * width / 15), 0.0f);
-	glEnd();
-
-	glColor4f(1, 1, 1, 1.75f);
-	glBindTexture(GL_TEXTURE_2D, cattackpic[0]);
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(width - width / 12 + width / 150, height / 8 + height / 16);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f(width - width / 12 + width / 150, 3 * height / 4 - 3 * height / 8);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f(width - width / 150, 3 * height / 4 - 3 * height / 8);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f(width - width / 150, height / 8 + height / 16);
-	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, cattackpic[1]);
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(width - width / 12 + width / 150, height / 8 + height / 16 + height / 4);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f(width - width / 12 + width / 150, 3 * height / 4 - 3 * height / 8 + height / 4);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f(width - width / 150, 3 * height / 4 - 3 * height / 8 + height / 4);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f(width - width / 150, height / 8 + height / 16 + height / 4);
-	glEnd();
-
-
-
-	glColor4f(1, 1, 1, 1.75f);
-	glBindTexture(GL_TEXTURE_2D, chud[0]);
-	glBegin(GL_QUADS);
-
-
-
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f(0, height);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f((5 * width / 12), height);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f((5 * width / 12), height - height / 6);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f((0), height - height / 6);
-	glEnd();
-
-	glColor4f(1, 1, 1, 1.75f);
-	glBindTexture(GL_TEXTURE_2D, chud[1]);
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(width - width / 12, height / 8);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f(width - width / 12, 3 * height / 4);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f(width, 3 * height / 4);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f(width, height / 8);
-	glEnd();
-
-
-
-
-
-	glDisable(GL_BLEND);
-
-	glPopMatrix();
-
-
-}
 
 
 	glMatrixMode(GL_PROJECTION);
