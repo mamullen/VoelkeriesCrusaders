@@ -18,6 +18,7 @@ MeshLoader::MeshLoader() {
 	m_LeftHandPosTrafo = NULL;
 	a_IsWeapon = false;
 	a_LockIndex = false;
+	a_IsAnimated = false;
 	playable = false;
 }
 
@@ -116,6 +117,7 @@ bool MeshLoader::LoadAsset(const char* filename) {
 		for (unsigned int i = 0; i < m_Scene->mNumAnimations; i++) {
 			std::cout << "\t" << m_Scene->mAnimations[i]->mName.C_Str() << std::endl;
 		}
+		a_IsAnimated = true;
 		mAnimator = new SceneAnimator(m_Scene);
 	}
 	return true;
@@ -291,7 +293,7 @@ void MeshLoader::RenderMesh(const aiNode* node) {
 					glVertex3fv(&CachedPosition[v_index].vec.x);
 				} else {
 					if (a_IsWeapon && m_LeftHandPosTrafo != NULL) {
-						//mesh->mVertices[v_index] = aiMatrix3x3(*m_LeftHandPosTrafo) * mesh->mVertices[v_index];
+						mesh->mVertices[v_index] = aiMatrix3x3(*m_LeftHandPosTrafo) * mesh->mVertices[v_index];
 					}
 					glVertex3fv(&mesh->mVertices[v_index].x);
 				}
