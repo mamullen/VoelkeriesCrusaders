@@ -26,8 +26,10 @@ PlayState::PlayState(GLFWwindow* window) : GameState(window) {
 	p_DefenseShield = new DefenseShield(0, Vector3(-75.f, 1.f, 60.f)); // 0 id is temp for gameobj
 	p_LightningBolt = new LightningBoltAtkSpd(0, Vector3(75.f, -5.f, -60.f)); // 0 id is temp for gameobj
 	p_BatSword = new BatSword(0, Vector3(75.f, 0.f, 60.f)); // 0 id is temp for gameobj
-	p_DavidsBuilding = new MeshLoader("models/BuildingTestForWes.fbx");
+	p_DavidsBuilding = new MeshLoader("models/Building33.fbx");
+	p_DavidsGrave = new MeshLoader("models/Tombstone.fbx");
 	p_DavidsBuilding->DisableBones();
+	p_DavidsGrave->DisableBones();
 	p_regShade = new Shader("shader/shader.vert", "shader/shader.frag");
 	p_bumpShade = new Shader("shader/bump.vert", "shader/bump.frag");
 	weap1 = weap2 = weap3 = weap4 = true;
@@ -63,6 +65,11 @@ int PlayState::Initialize() {
 		std::chrono::duration_cast<std::chrono::milliseconds>
 		(std::chrono::system_clock::now().time_since_epoch()).count();
 
+	dayonce = true;
+	nightonce = true;
+	currentControler = 0;
+	newController = 0;
+	end = true;
 	deathbyparticle = false;
 	parti = false;
 	// Configs initialization
@@ -140,11 +147,6 @@ int PlayState::Initialize() {
 
 	string filenm = "./particles/textures/moon.png";
 	moonID = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
-	filenm = "./particles/textures/sun.png";
-	sunID = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-	filenm = "./particles/textures/sun.png";
-	sunID = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
 	filenm = "./ppm/0-c.png";
 	vtimer[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
 	filenm = "./ppm/1-c.png";
@@ -212,7 +214,6 @@ int PlayState::Initialize() {
 	filenm = "./ppm/crus2.png";
 	cattackpic[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
 
-	
 		return 0;
 }
 
@@ -645,9 +646,26 @@ void PlayState::UpdateClient(ClientGame* client) {
 
 		if (strcmp(serverEvent, "particles") == 0)
 		{
-			printf("truetruetrue\n\n");
-			parti = true;
+			int controller;
+			memcpy(&controller, serverEvent + 10, sizeof(int));
+			if (currentControler != controller)
+			{
+				currentControler = controller;
+				if (controller == 5)
+				{
+					//vamp
+					PlaySound(NULL, NULL, NULL);
+					PlaySound("sound/vampshrine.wav", NULL, SND_ASYNC | SND_LOOP);
+				}
+				else if (controller == 4)
+				{
+					//crus
+					PlaySound(NULL, NULL, NULL);
+					PlaySound("sound/crusshrine.wav", NULL, SND_ASYNC | SND_LOOP);
+				}
 
+			}
+			parti = true;
 		}
 
 
@@ -686,12 +704,30 @@ void PlayState::UpdateClient(ClientGame* client) {
 			//gameResult: -1 = lose, 0 = tie, 1 = win
 			if (Player != NULL){
 				if (winner == 0){//tie game
+					if (end)
+					{
+						end = false;
+						PlaySound(NULL, NULL, NULL);
+						PlaySound("sound/Tie.wav", NULL, SND_LOOP | SND_ASYNC);
+					}
 					gameResult = 0;
 				}
 				else if (winner == Player->getTeam()){
 					gameResult = 1;
+					if (end)
+					{
+						end = false;
+						PlaySound(NULL, NULL, NULL);
+						PlaySound("sound/win.wav", NULL, SND_LOOP | SND_ASYNC);
+					}
 				}
 				else{
+					if (end)
+					{
+						end = false;
+						PlaySound(NULL, NULL, NULL);
+						PlaySound("sound/Lost.wav", NULL, SND_LOOP | SND_ASYNC);
+					}
 					gameResult = -1;
 				}
 			}
@@ -747,13 +783,13 @@ void PlayState::drawHUD(ClientGame* client){
 
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	if (currGameTime >= 120000)
+	if (currGameTime % 60000 == 0)
 	{
 		timercoeef++;
 	}
 
 	int time[4];
-	int now = (240000 / timercoeef) - currGameTime;
+	int now = (240000) - 6000 * (timercoeef - 1) - currGameTime;
 	int one = now / 60000;
 
 	now = now % 60000;
@@ -762,21 +798,21 @@ void PlayState::drawHUD(ClientGame* client){
 
 	//timer triangle
 
-	if ((float)currGameTime*timercoeef < 15000)
+	if ((float)currGameTime< 15000)
 	{
 
 		timerX = 3 * width / 8 + ((float)currGameTime / client->getPhase3Time()) * (width / 2);
 
 	}
-	if ((float)currGameTime*timercoeef > 45000)
+	if ((float)currGameTime > 45000)
 	{
 
 		timerX = 5 * width / 8 + (((float)currGameTime - 60000) / client->getPhase3Time()) * (width / 2);
 
 	}
 	glColor3f(1, 1, 1);
-	drawCircleOutline(20, Vector3(timerX, height / 6, 0), 0);
-	drawCircleOutline(18.5, Vector3(width / 2, height / 6, 0), 1);
+	drawCircleOutline(20, Vector3(timerX, height / 5, 0), 0);
+	drawCircleOutline(18.5, Vector3(width / 2, height / 5, 0), 1);
 
 
 	//bottom panel
@@ -1387,6 +1423,29 @@ void PlayState::Draw(ClientGame* client) {
 	glTranslatef(250, 50, 250);
 	p_DavidsBuilding->Render();
 	glPopMatrix();
+	glPushMatrix();
+	glTranslatef(340, 50, 250);
+	p_DavidsBuilding->Render();
+	glPopMatrix();
+	glPushMatrix();
+	glTranslatef(-80, -1, -75);
+	glScalef(7, 7, 7);
+	p_DavidsGrave->Render();
+	glPopMatrix();
+
+
+	glPushMatrix();
+	glTranslatef(-8, -1, -75);
+	glScalef(5, 5, 5);
+	p_DavidsGrave->Render();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(-10, -1, -75);
+	glScalef(7, 7, 7);
+	p_DavidsGrave->Render();
+	glPopMatrix();
+
 	if (Player->getTeam() == 1) {
 		if (!weap1 && Player->getID() == pnum1) {
 			Player->EquipWeapon((Weapon*)p_SunMace);
@@ -1419,6 +1478,29 @@ void PlayState::Draw(ClientGame* client) {
 	}
 
 	p_regShade->unbind();
+
+	if (isNight)
+	{
+		if (nightonce)
+		{
+			currentControler = 0;
+			dayonce = true;
+			nightonce = false;
+			PlaySound(NULL, NULL, NULL);
+			PlaySound("sound/night.wav", NULL, SND_ASYNC | SND_LOOP);
+		}
+	}
+	else
+	{
+		if (dayonce)
+		{
+			currentControler = 0;
+			dayonce = false;
+			nightonce = true;
+			PlaySound(NULL, NULL, NULL);
+			PlaySound("sound/day.wav", NULL, SND_ASYNC | SND_LOOP);
+		}
+	}
 
 	//RenderParticle(Cam.GetRotation().y, p_ShrineFire, 0, 14, 0);
 	

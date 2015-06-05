@@ -26,7 +26,7 @@ public:
 	void MouseMotion(GLFWwindow* window, double xpos, double ypos) {};
 	void MouseScroll(GLFWwindow* window, double xoffset, double yoffset) {};
 private:
-	void drawTitleImage();
+	void drawTitleImage(int i);
 	// Window management
 	float ratio;
 	int WindowHandle;

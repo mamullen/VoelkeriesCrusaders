@@ -24,7 +24,7 @@ static void error_callback(int error, const char* description)									{ fputs(d
 ////////////////////////////////////////////////////////////////////////////////
 
 int main(int argc, char **argv) {
-	PlaySound("sound/NightRaid.wav",NULL, SND_ASYNC | SND_LOOP);
+	PlaySound("sound/title.wav",NULL, SND_ASYNC | SND_LOOP);
 	glfwSetErrorCallback(error_callback);
 
 	if (!glfwInit()) {

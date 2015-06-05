@@ -38,9 +38,12 @@ public:
 	PowerProjectile(unsigned int id) : Projectile(id) {
 		setMaxHealth(1);
 		setHealth(1);
+		string filenm = "./ppm/bat.png";
+		proj = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
 	}
 	~PowerProjectile();
 	void drawObj();
+	GLuint proj;
 };
 
 #endif

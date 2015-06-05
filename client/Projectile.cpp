@@ -34,6 +34,24 @@ void Projectile::setRotate(float rot) {
 
 void PowerProjectile::drawObj() {
 	glDisable(GL_CULL_FACE);
-	glColor3f(1.f, 99.0 / 255, 71.0 / 255);
-	glutSolidSphere(5, 30, 30);
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND); //Enable blending.
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glColor4f(1.f, 1.f, 1.f, 1.0f);
+	glBindTexture(GL_TEXTURE_2D, proj);
+	glBegin(GL_QUADS);
+	//glColor3f(1, 1, 1);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-5, 0, -5);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(-5, 0, 5);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(5, 0, 5);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(5, 0, -5);
+	glEnd();
+	glDisable(GL_BLEND);
+
+	
 }

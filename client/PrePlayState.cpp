@@ -208,7 +208,7 @@ void drawRect(float r, float g, float b, float x, float y, float w, float h){
 	glMatrixMode(GL_MODELVIEW);
 }
 
-void PrePlayState::drawTitleImage(){
+void PrePlayState::drawTitleImage(int i){
 	GLint m_viewport[4];
 	glGetIntegerv(GL_VIEWPORT, m_viewport);
 	GLdouble width = GLdouble(m_viewport[2] - m_viewport[0]);
@@ -263,8 +263,9 @@ void PrePlayState::Draw(ClientGame* client) {
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-
+	drawTitleImage(0);
 	if (!name_state){
+		
 		drawText("Press 1 to be a Crusader", .13f, .033f, 11000,5500, 1, 1, 1);
 		drawText("Press 2 to be a Vampire", .65f, .033f, 11000, 5500, 1, 1, 1);
 
@@ -322,7 +323,7 @@ void PrePlayState::Draw(ClientGame* client) {
 		}
 	}
 	else{
-		drawTitleImage();
+		
 		drawText("Username:", .2875f, .59667f, 11000, 5500, 1, 1, 1);
 		drawRect(.2, .2, .2, .375, .57, .25, .041667);
 		drawText(name.c_str(), .385, .6, 11000, 5500, 0, 1, 0);

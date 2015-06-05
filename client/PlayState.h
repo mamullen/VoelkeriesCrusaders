@@ -94,7 +94,7 @@ private:
 	// Components
 	Camera Cam;
 	PlayerType* Player;
-
+	MeshLoader* p_DavidsGrave;
 	SphereEmitter g_ParticleEmitter;
 	CubeEmitter g_CubeEmitter;
 
@@ -156,7 +156,11 @@ private:
 	void drawCircleOutline(float r, Vector3 pos, int i);
 
 	GLuint timer[11];//load numbers here
-
+	bool changeControler;
+	int currentControler;
+	int newController;
+	bool end;
+	bool nightonce, dayonce;
 	int oType;
 	GLuint sunID;
 	GLuint moonID;
