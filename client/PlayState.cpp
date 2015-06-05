@@ -23,8 +23,8 @@ PlayState::PlayState(GLFWwindow* window) : GameState(window) {
 	p_Map = new Map();
 	p_Shrine = new Shrine(0); // 0 id is temp for gameobj
 	p_SunMace = new SunMace(0, Vector3(-75.f, -1.f, -60.f)); // 0 id is temp for gameobj
-	p_DefenseShield = new DefenseShield(0, Vector3(75.f, 1.f, -60.f)); // 0 id is temp for gameobj
-	p_LightningBolt = new LightningBoltAtkSpd(0, Vector3(-75.f, -5.f, 60.f)); // 0 id is temp for gameobj
+	p_DefenseShield = new DefenseShield(0, Vector3(-75.f, 1.f, 60.f)); // 0 id is temp for gameobj
+	p_LightningBolt = new LightningBoltAtkSpd(0, Vector3(75.f, -5.f, -60.f)); // 0 id is temp for gameobj
 	p_BatSword = new BatSword(0, Vector3(75.f, 0.f, 60.f)); // 0 id is temp for gameobj
 	p_DavidsBuilding = new MeshLoader("models/BuildingTestForWes.fbx");
 	p_DavidsBuilding->DisableBones();
@@ -848,18 +848,19 @@ void PlayState::Draw(ClientGame* client) {
 	glTranslatef(250, 50, 250);
 	p_DavidsBuilding->Render();
 	glPopMatrix();
-
-	if (!weap1 && Player->getID() == pnum1) {
-		Player->EquipWeapon((Weapon*)p_SunMace);
-	}
-	else if (!weap2 && Player->getID() == pnum2) {
-		Player->EquipWeapon((Weapon*)p_DefenseShield);
-	}
-	else if (!weap3 && Player->getID() == pnum3) {
-		Player->EquipWeapon((Weapon*)p_LightningBolt);
-	}
-	else if (!weap4 && Player->getID() == pnum4) {
-		Player->EquipWeapon((Weapon*)p_BatSword);
+	if (Player->getTeam() == 1) {
+		if (!weap1 && Player->getID() == pnum1) {
+			Player->EquipWeapon((Weapon*)p_SunMace);
+		}
+		else if (!weap2 && Player->getID() == pnum2) {
+			Player->EquipWeapon((Weapon*)p_DefenseShield);
+		}
+		else if (!weap3 && Player->getID() == pnum3) {
+			Player->EquipWeapon((Weapon*)p_LightningBolt);
+		}
+		else if (!weap4 && Player->getID() == pnum4) {
+			Player->EquipWeapon((Weapon*)p_BatSword);
+		}
 	}
 	p_SunMace->Draw();
 	p_DefenseShield->Draw();
@@ -880,8 +881,6 @@ void PlayState::Draw(ClientGame* client) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-
-enum AnimationIndices { a_IDLE, a_RUNFORWARD, a_COMBOATTACK, a_STRAFELEFT, a_STRAFEFORWARDLEFT, a_STRAFERIGHT, a_STRAFEFORWARDRIGHT, a_WALKBACK, a_RUNMELEE};
 
 void PlayState::Input(ClientGame* client) {
 	if (!Player)
@@ -928,7 +927,9 @@ void PlayState::Input(ClientGame* client) {
 		client->addEvent(Player->getID(), "move_right;", ACTION_EVENT);
 	}
 	else {
-		Player->setAnimation(a_IDLE);
+		if (!attacking) {
+			Player->setAnimation(a_IDLE);
+		}
 	}
 
 	if (glfwGetKey(window, JUMP)) {
@@ -1006,7 +1007,6 @@ void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods
 	}
 	else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
 		attacking = false;
-		Player->setAnimation(a_IDLE);
 	}
 
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS){
@@ -1015,7 +1015,6 @@ void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods
 	}
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		Player->setAnimation(a_IDLE);
 		Player->setAttacking2Starts(Player->getAttacking2Starts()+1);
 	}
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {

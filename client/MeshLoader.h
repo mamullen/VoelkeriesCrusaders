@@ -21,6 +21,8 @@
 #include <iostream>
 #include <vector>
 
+enum AnimationIndices { a_IDLE, a_RUNFORWARD, a_COMBOATTACK, a_STRAFELEFT, a_STRAFEFORWARDLEFT, a_STRAFERIGHT, a_STRAFEFORWARDRIGHT, a_WALKBACK, a_RUNMELEE };
+
 struct CachedVertex {
 	CachedVertex() { cached = false; }
 	aiVector3D vec;
@@ -49,6 +51,7 @@ public:
 	void SetLeftHand(const aiMatrix4x4& LeftHandPosTrafo) { m_LeftHandPosTrafo = new aiMatrix4x4(LeftHandPosTrafo); }
 	aiMatrix4x4* GetLeftHand() { return m_LeftHandPosTrafo; }
 	void IsEquippedWeapon(aiMatrix4x4* PosTrafo);
+	float animRate = 2.f;
 
 private:
 	const aiScene* m_Scene;
@@ -62,6 +65,7 @@ private:
 	double a_CurrentTime;
 	double a_LastPlaying;
 	bool a_IsWeapon;
+	bool a_LockIndex;
 	bool playable;
 };
 

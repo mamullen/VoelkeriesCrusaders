@@ -17,6 +17,7 @@ MeshLoader::MeshLoader() {
 	m_EnforceNoBones = false;
 	m_LeftHandPosTrafo = NULL;
 	a_IsWeapon = false;
+	a_LockIndex = false;
 	playable = false;
 }
 
@@ -121,7 +122,7 @@ bool MeshLoader::LoadAsset(const char* filename) {
 }
 
 void MeshLoader::ChangeAnimation(unsigned int index) {
-	if (m_Scene->HasAnimations()) {
+	if (m_Scene->HasAnimations() && !a_LockIndex) {
 		mAnimator->SetAnimIndex(index);
 	}
 }
@@ -308,16 +309,17 @@ void MeshLoader::RenderMesh(const aiNode* node) {
 }
 
 void MeshLoader::UpdateAnimation() {
-	static float animRate = 2.f;
 	if (m_Scene->HasAnimations()) {
-		a_CurrentTime += clock() *animRate / double(CLOCKS_PER_SEC) - a_LastPlaying;
-		double time = a_CurrentTime;
-		aiAnimation* mAnim = mAnimator->CurrentAnim();
-		if (mAnim && mAnim->mDuration > 0.0) {
-			double tps = 25.f;
-			time = fmod(time, mAnim->mDuration / tps);
+		if (mAnimator->CurrentAnimIndex() == a_RUNMELEE) {
+			animRate = 3.f;
+			a_LockIndex = true;
 		}
-		mAnimator->Calculate(time);
+		else {
+			animRate = 2.f;
+		}
+		a_CurrentTime += clock() *animRate / double(CLOCKS_PER_SEC) - a_LastPlaying;
+		mAnimator->Calculate(a_CurrentTime);
+		a_LockIndex = false;
 		a_LastPlaying = a_CurrentTime;
 	}
 }
