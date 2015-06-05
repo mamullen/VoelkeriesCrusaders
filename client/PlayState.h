@@ -146,7 +146,7 @@ private:
 	Shader* p_regShade;
 	Shader* p_bumpShade;
 
-	
+	GLuint attackpic[2];
 	GLuint avatar[2];
 	GLuint hud[3];
 	void drawCircleOutline(float r, Vector3 pos, int i);

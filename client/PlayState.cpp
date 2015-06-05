@@ -143,58 +143,79 @@ int PlayState::Initialize() {
 
 	filenm = "./particles/textures/sun.png";
 	sunID = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	if (true)
+	{
 
-	filenm = "./ppm/0-v.png";
-	timer[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/0-v.png";
+		timer[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/1-v.png";
+		timer[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/2-v.png";
+		timer[2] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/3-v.png";
+		timer[3] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/4-v.png";
+		timer[4] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/5-v.png";
+		timer[5] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/6-v.png";
+		timer[6] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/7-v.png";
+		timer[7] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/8-v.png";
+		timer[8] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/9-v.png";
+		timer[9] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/colon-v.png";
+		timer[10] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/hp-hud-v.png";
+		hud[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/side-hud-v.png";
+		hud[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/time-hud-v.png";
+		hud[2] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/vamp1.png";
+		attackpic[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/vamp2.png";
+		attackpic[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	}
+	else
+	{
 
-	filenm = "./ppm/1-v.png";
-	timer[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
-	filenm = "./ppm/2-v.png";
-	timer[2] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
-	filenm = "./ppm/3-v.png";
-	timer[3] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
-
-
-	filenm = "./ppm/4-v.png";
-	timer[4] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
-
-	filenm = "./ppm/5-v.png";
-	timer[5] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
-
-	filenm = "./ppm/6-v.png";
-	timer[6] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
-	filenm = "./ppm/7-v.png";
-	timer[7] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
-
-	filenm = "./ppm/8-v.png";
-	timer[8] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
-
-	filenm = "./ppm/9-v.png";
-	timer[9] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
-	filenm = "./ppm/colon-v.png";
-	timer[10] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
-	filenm = "./ppm/hp-hud-c.png";
-	hud[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
-
-	filenm = "./ppm/side-hud-c.png";
-	hud[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
-	filenm = "./ppm/time-hud-c.png";
-	hud[2] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-
-
-	return 0;
+		filenm = "./ppm/0-c.png";
+		timer[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/1-c.png";
+		timer[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/2-c.png";
+		timer[2] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/3-c.png";
+		timer[3] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/4-c.png";
+		timer[4] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/5-c.png";
+		timer[5] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/6-c.png";
+		timer[6] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/7-c.png";
+		timer[7] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/8-c.png";
+		timer[8] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/9-c.png";
+		timer[9] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/colon-c.png";
+		timer[10] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/hp-hud-c.png";
+		hud[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/side-hud-c.png";
+		hud[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/time-hud-c.png";
+		hud[2] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/crus1.png";
+		attackpic[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+		filenm = "./ppm/crus2.png";
+		attackpic[1] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	}
+		return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -425,6 +446,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 
 			Projectile* p = new Projectile(objID);
 			p->setPos(xPos, yPos+7.3, zPos);
+			p->setRotate(-Cam.GetRotation().y + 360);
 
 			printf("Projectile ID: %d\n", objID);
 
@@ -1084,7 +1106,34 @@ void PlayState::drawHUD(ClientGame* client){
 	glVertex2f((width / 3) + (4 * width / 15), 0.0f);
 	glEnd();
 
-	glColor4f(1, 1, 1, 0.75f);
+	glColor4f(1, 1, 1, 1.75f);
+	glBindTexture(GL_TEXTURE_2D, attackpic[0]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width - width / 12+width/150, height / 8 + height / 16);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width - width / 12+width/150, 3 * height / 4 - 3 * height / 8);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width - width / 150, 3 * height / 4 - 3 * height / 8);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width - width / 150, height / 8 + height / 16);
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, attackpic[1]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(width - width / 12 + width / 150, height / 8 + height / 16+height/4);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(width - width / 12 + width / 150, 3 * height / 4 - 3 * height / 8 + height / 4);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(width - width / 150, 3 * height / 4 - 3 * height / 8 + height / 4);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(width - width / 150, height / 8 + height / 16 + height / 4);
+	glEnd();
+
+
+
+	glColor4f(1, 1, 1, 1.75f);
 	glBindTexture(GL_TEXTURE_2D, hud[0]);
 	glBegin(GL_QUADS);
 
@@ -1100,7 +1149,7 @@ void PlayState::drawHUD(ClientGame* client){
 	glVertex2f((0), height - height / 6);
 	glEnd();
 
-	glColor4f(1, 1, 1, 0.75f);
+	glColor4f(1, 1, 1, 1.75f);
 	glBindTexture(GL_TEXTURE_2D, hud[1]);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f);
@@ -1112,6 +1161,11 @@ void PlayState::drawHUD(ClientGame* client){
 	glTexCoord2f(1.0f, 0.0f);
 	glVertex2f(width, height / 8);
 	glEnd();
+
+
+
+
+
 	glDisable(GL_BLEND);
 
 	glPopMatrix();
@@ -1179,7 +1233,7 @@ void PlayState::Draw(ClientGame* client) {
 	std::map<int, Projectile*>::iterator it2;
 	for (it2 = projectiles.begin(); it2 != projectiles.end(); it2++)
 	{
-		((PlayerType*)(it2->second))->update(false, Cam.GetRotation().y, Player->getTeam());
+		((it2->second))->update(false, -Cam.GetRotation().y + 360, Player->getTeam());
 	}
 
 	// David's building(no collision)
