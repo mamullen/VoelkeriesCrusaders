@@ -22,6 +22,7 @@ public:
 	virtual void updateTime(int, int, std::vector<GameObject*>*); // first int is day/night, second int is time elapsed
 	virtual void attack2Start()	{};
 	virtual void attack2End()	{};
+	virtual void attack2EndExtra() {};
 
 	void updateCD();
 	void resetDir()			{ hDir = 0; vDir = 0; }
@@ -47,6 +48,8 @@ public:
 	void updateDisable(int time);
 	void isDisabled(int time);
 	bool getDisabled();
+
+
 
 protected:
 	Action* default_attack_1, *default_attack_2;

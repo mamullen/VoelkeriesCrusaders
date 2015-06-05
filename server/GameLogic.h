@@ -16,6 +16,7 @@
 #include "Timer.h"
 #include "Human.h"
 #include "Projectile.h"
+#include "StealthBox.h"
 
 class GameLogic
 {
@@ -58,6 +59,7 @@ public:
 	
 	std::list<std::pair<int, string>> playerNames;
 	static std::vector<Projectile*> projectileList;
+	static std::vector<StealthBox*> stealthBoxList;
     static std::vector<Player*> playerList;
 	static std::list<Packet*> serverPackets;
 

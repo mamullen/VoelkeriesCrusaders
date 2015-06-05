@@ -31,6 +31,15 @@ public:
 		changes.push_back(std::pair<int, std::string*>(id, change));
 	}
 
+	virtual void removeHp(float h) {
+		hp -= h;
+		if (hp < 0){
+			hp = 0;
+		}
+		std::string* change = new std::string("hp");
+		changes.push_back(std::pair<int, std::string*>(id, change));
+	}
+
 	void setPos(float, float, float);
 	void setPos(Vector3&);
 	void moveForward();
@@ -61,7 +70,7 @@ public:
 	void setSpeed(float s) { speed=s; }
 	static std::list<std::pair<int, std::string*>> changes;
 	bool isPlayer;
-	int objectType; // 0: building, 1: shrine, 2: player , 3:human, 4: vampire, 5: crusader
+	int objectType; // 0: building, 1: shrine, 2: player , 3:human, 4: crusader, 5: vampire, 6: stealthbox
 	Vector3 forward;
 	Vector3 jumpup;
 	void setType(int t){ objectType = t; }

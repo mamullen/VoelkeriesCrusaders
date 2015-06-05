@@ -4,6 +4,7 @@
 using namespace std;
 
 vector<Projectile*> GameLogic::projectileList;
+vector<StealthBox*> GameLogic::stealthBoxList;
 vector<Player*> GameLogic::playerList;
 list<Packet*> GameLogic::serverPackets;
 vector<GameObject*> GameLogic::gameObjects;
@@ -61,18 +62,22 @@ void GameLogic::update(int time)
 		return;
 	}
 
-	// update projectiles
+	// update projectiles && stealthboxes
 	float p_update_freq = atof(ConfigSettings::config->getValue("ProjectileUpdateFreq").c_str());; // update frequency
 	for (int i = 0; i < p_update_freq; i++){
 		for (std::vector<Projectile*>::iterator it = GameLogic::projectileList.begin(); it != GameLogic::projectileList.end(); it++){
-			if (!(*it)->updateTime(time/p_update_freq, &gameObjects)){
+			if (!(*it)->updateTime(time / p_update_freq, &gameObjects)){
 				(*it)->sendDeathPacket();
 				GameLogic::projectileList.erase(it);
 				it--;
 			}
 		}
+
+		for (std::vector<StealthBox*>::iterator it = GameLogic::stealthBoxList.begin(); it != GameLogic::stealthBoxList.end(); it++){
+			(*it)->updateTime(time / p_update_freq);
+		}
 	}
-	
+
 
 	// go through each player and update their attack cd and status based on time
 	for (int i = 0; i < gameObjects.size(); i++){
@@ -713,6 +718,7 @@ void GameLogic::hardReset(){
 	gameObjects.clear();
 	playerList.clear();
 	projectileList.clear();
+	stealthBoxList.clear();
 	playerNames.clear();
 
 	ticksSinceSend = ticksPerTimerSend;
@@ -742,7 +748,7 @@ void GameLogic::updateState()
 		if (gameObjects[i]->isPlayer){
 			((Player *)gameObjects[i])->gravity();
 			if (gameObjects[i]->getHP() <= 0){
-				
+
 				Player * player = (Player *)(gameObjects[i]);
 				if (player->team == 1)
 					vampScore++;
@@ -770,11 +776,11 @@ void GameLogic::updateState()
 			}
 			/*
 			else{
-				int team = ((Player *)gameObjects[i])->team;
-				if (team == 1)
-					aliveCrusaders++;
-				else if (team == 2)
-					aliveVampires++;
+			int team = ((Player *)gameObjects[i])->team;
+			if (team == 1)
+			aliveCrusaders++;
+			else if (team == 2)
+			aliveVampires++;
 			}
 			*/
 		}
@@ -1171,21 +1177,21 @@ void GameLogic::updateState()
 		int gameover = 0; // 0: draw, 1: crusaders win, 2: vampires win
 		/*
 		if (crusadersToStart == 0 || vampiresToStart == 0){
-			if (ticksSinceSend == ticksPerTimerSend)
-				printf("Dev mode: 0 Crusaders or 0 Vampires to start selected NEVER ENDING THE GAME...\n");
-			return;
+		if (ticksSinceSend == ticksPerTimerSend)
+		printf("Dev mode: 0 Crusaders or 0 Vampires to start selected NEVER ENDING THE GAME...\n");
+		return;
 		}
 
-		
+
 		if (aliveCrusaders == 0){
-			printf("We have %d crusaders left, VAMPIRES WIN!\n", aliveCrusaders);
-			gameState = END;
-			gameover = 2;
+		printf("We have %d crusaders left, VAMPIRES WIN!\n", aliveCrusaders);
+		gameState = END;
+		gameover = 2;
 		}
 		else if (aliveVampires == 0){
-			printf("We have %d vampires left, CRUSADERS WIN!\n", aliveCrusaders);
-			gameState = END;
-			gameover = 1;
+		printf("We have %d vampires left, CRUSADERS WIN!\n", aliveCrusaders);
+		gameState = END;
+		gameover = 1;
 		}
 		*/
 

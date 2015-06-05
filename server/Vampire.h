@@ -12,6 +12,7 @@ public:
 	virtual ~Vampire();
 	void attack2Start();
 	void attack2End();
+	void attack2EndExtra() {};
 	virtual void updateTime(int, int, std::vector<GameObject*>*);
 
 	int dashDivider = atof(ConfigSettings::config->getValue("VampireDashDivider").c_str());
