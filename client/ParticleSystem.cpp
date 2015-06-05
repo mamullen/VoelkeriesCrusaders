@@ -101,7 +101,7 @@ void ParticleEffect::Update(float fDeltaTime)
 			if (m_pParticleEmitter != NULL) EmitParticle(particle);
 			else RandomizeParticle(particle);
 		}
-		//Wider and Slower
+
 		float lifeRatio = saturate(particle.m_fAge / particle.m_fLifeTime);
 		particle.m_Velocity += (m_Force * fDeltaTime);
 		particle.m_Position += (particle.m_Velocity * fDeltaTime);
@@ -133,6 +133,7 @@ void ParticleEffect::BuildVertexBuffer()
 	for (unsigned int i = 0; i < m_Particles.size(); ++i)
 	{
 		Particle& particle = m_Particles[i];
+
 		Quaternion rotation = Quaternion(particle.m_fRotate, Z);
 
 		unsigned int vertexIndex = i * 4;
@@ -191,7 +192,6 @@ void ParticleEffect::Render()
 
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
-	//glEnable(GL_DEPTH_TEST);
 }
 
 void ParticleEffect::Resize(unsigned int numParticles)

@@ -131,7 +131,7 @@ private:
 	MeshLoader* p_DavidsBuilding;
 
 	Texture m_pTrivialNormalMap;
-	ParticleEffect* p_DeathByBlood;
+	ParticleEffect* p_ShrineFire;
 	Light* p_Light;
 	Map* p_Map;
 	bool isNight;
