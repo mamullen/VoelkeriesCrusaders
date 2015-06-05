@@ -47,7 +47,7 @@ bool StealthBox::updateTime(int time){
 
 
 	float expF = 0;
-	printf("ASDF: %d %d %d\n", startTime, expandTime, fadeTime);
+	//printf("ASDF: %d %d %d\n", startTime, expandTime, fadeTime);
 	if (startTime <= expandTime){
 		expF = (float)(startTime - time) / (float)expandTime;
 		float testMod = xMod * expF;
@@ -61,7 +61,7 @@ bool StealthBox::updateTime(int time){
 		stealthed = 1;
 		 
 		expF = (float)(fadeTime-startTime) / (float)(fadeTime-expandTime);
-		printf("EXPF is %f\n", expF);
+		//printf("EXPF is %f\n", expF);
 		alpha = 0 + expF;
 		if (alpha >= .6)
 			alpha = 1;
@@ -71,9 +71,14 @@ bool StealthBox::updateTime(int time){
 		if (expF < 0.1)
 			expF = 0.1;
 
+		float mult = 3;
 		if (alpha <= .6){
-			setMin(Vector3(getMin().x - (xMod / expF), getMin().y, getMin().z - (zMod / expF)));
-			setMax(Vector3(getMax().x + (xMod / expF), getMax().y + (yMod + 3 / expF), getMax().z + (zMod / expF)));
+			setMin(Vector3(getMin().x - (xMod / (expF * mult)), getMin().y, getMin().z - (zMod / (expF * mult))));
+			setMax(Vector3(getMax().x + (xMod / (expF * mult)), getMax().y + (yMod + 3 / expF), getMax().z + (zMod / (expF * mult))));
+		}
+		else{
+			setMin(Vector3(crus->getPos().x - (xMod * expF), crus->getPos().y - (yMod * expF), crus->getPos().z - (zMod * expF)));
+			setMax(Vector3(crus->getPos().x + (xMod * expF), crus->getPos().y + (yMod + 3 * expF), crus->getPos().z + (zMod * expF)));
 		}
 	}
 

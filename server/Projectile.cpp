@@ -46,6 +46,9 @@ bool Projectile::updateTime(int time, std::vector<GameObject*>* objects)
 				std::string* change = new std::string("pos:");
 				changes.push_back(std::pair<int, std::string*>(p->getID(), change));
 			}
+			if (isStun){
+				p->isDisabled(1000);
+			}
 			hit++;
 		}
 	}

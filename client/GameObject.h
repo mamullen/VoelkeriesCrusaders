@@ -37,9 +37,9 @@ public:
 	void print(std::string);
 
 	unsigned int getID()				{ return id; }
-	float getHealth()						{ return currHP; }
+	float getHealth()					{ return currHP; }
 	void setHealth(float h);
-	float getMaxHealth()					{ return maxHP; }
+	float getMaxHealth()				{ return maxHP; }
 	void setMaxHealth(float h);
 	bool getShowHP()					{ return showHP; }
 	void setShowHP(bool t)				{ showHP = t; }
@@ -62,6 +62,8 @@ public:
 	void setAttacking2Starts(int d)		{ attack2Starts = d; }
 	void setAttacking2Ends(int d)		{ attack2Ends = d; }
 	void setAttacking2(bool t);
+	bool isVisible()					{ return visible; };
+	void setVisible(bool t)				{ visible = t; };
 
 	void loadShader(Shader* reg) { 
 		p_regShade = reg;
@@ -76,7 +78,7 @@ private:
 	Vector3* min, * max;
 	char* name = NULL;
 	float dashRange = 0;
-	bool attacking2 = false;
+	bool attacking2 = false, visible = true;
 	int attack2Starts = 0, attack2Ends = 0;
 
 	Vector4 position = Vector4(0, 2, 0, 1);

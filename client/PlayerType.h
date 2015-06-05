@@ -25,7 +25,50 @@ public:
 	void EquipWeapon(Weapon* weapon) {
 		equippedWeapon = weapon;
 		weapon->SetPosition(Vector3(getPos().x, getPos().y, getPos().z));
-		weapon->SetRotation(g_Model->GetLeftHand());
+	}
+
+	void UpdateMoveAnimation(bool isNight, PlayerType *Player) {
+		float speedup;
+		if (isNight && Player->getTeam() == 2)
+			speedup = 3.f;
+		else
+			speedup = 2.f;
+
+		if (g_Model != NULL && g_Model->HasAnimations()) {
+			if (getVDir() == 1) { // forward
+				if (getHDir() == 1) { // forward right
+					setAnimation(a_RUNFORWARD, -30, speedup);
+				}
+				else if (getHDir() == -1) { // forward left
+					setAnimation(a_RUNFORWARD, 30, speedup);
+				}
+				else { // just forward
+					setAnimation(a_RUNFORWARD, 0, speedup);
+				}
+			}
+			else if (getVDir() == -1)  { // backward
+				if (getHDir() == 1) { // backward right
+					setAnimation(a_RUNFORWARD, 30, speedup);
+				}
+				else if (getHDir() == -1) { // backward left
+					setAnimation(a_RUNFORWARD, -30, speedup);
+				}
+				else { // just backward
+					setAnimation(a_WALKBACK, 0, speedup);
+				}
+			}
+			else { // no vdir
+				if (getHDir() == 1) { // right
+					setAnimation(a_STRAFERIGHT, 0, speedup);
+				}
+				else if (getHDir() == -1) { // left
+					setAnimation(a_STRAFELEFT, 0, speedup);
+				}
+				else { // idle
+					setAnimation(a_IDLE, 0, speedup);
+				}
+			}
+		}
 	}
 
 private:

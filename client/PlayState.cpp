@@ -49,10 +49,9 @@ int PlayState::InitGL() {
 	ratio = WinX / (float)WinY;
 
 	// Background color
-	glClearColor(0.5f, 0.0f, 0.0f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
-
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);	
+	
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -179,7 +178,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 		char * serverEvent = serverPacket->packet_data;
 		unsigned int objID = serverPacket->id;
 
-		printf("%s\n", serverEvent);
+		//printf("%s\n", serverEvent);
 		//printf("%d\n", objID);
 
 		if (strcmp(serverEvent, "create") == 0){
@@ -203,7 +202,7 @@ void PlayState::UpdateClient(ClientGame* client) {
 				Vector3* v1 = new Vector3(x1, y1, z1);
 				Vector3* v2 = new Vector3(x2, y2, z2);
 
-				b1 = new Building(v1, v2, rot, objID);
+				Building* b1 = new Building(v1, v2, rot, objID);
 				b1->tex = colorbuild;
 				b1->norm = normalbuild;
 				b1->shade = p_bumpShade;
@@ -224,9 +223,6 @@ void PlayState::UpdateClient(ClientGame* client) {
 				memcpy(&zPos, serverEvent + 19, sizeof(float));
 				memcpy(&rot, serverEvent + 23, sizeof(float));
 				memcpy(&hp, serverEvent + 27, sizeof(float));
-
-
-				printf("PERSON: %f,%f,%f,%f,%f\n", xPos, yPos, zPos, rot, hp);
 				
 				//glScalef(0.01, 0.01, 0.01);
 				PlayerType* p;
@@ -265,6 +261,91 @@ void PlayState::UpdateClient(ClientGame* client) {
 			}
 		}
 
+		if (strcmp(serverEvent, "create_stealth") == 0){
+			float x1, y1, z1, x2, y2, z2, a;
+			memcpy(&x1, serverEvent + 15, sizeof(float));
+			memcpy(&y1, serverEvent + 19, sizeof(float));
+			memcpy(&z1, serverEvent + 23, sizeof(float));
+			memcpy(&x2, serverEvent + 27, sizeof(float));
+			memcpy(&y2, serverEvent + 31, sizeof(float));
+			memcpy(&z2, serverEvent + 35, sizeof(float));
+			memcpy(&a, serverEvent + 39, sizeof(float));
+
+			//printf("CRUBOX: %f,%f,%f,%f,%f,%f,%f\n", x1, y1, z1, x2, y2, z2, a);
+
+			Vector3* v1 = new Vector3(x1, y1, z1);
+			Vector3* v2 = new Vector3(x2, y2, z2);
+
+			CrusaderBox* c = new CrusaderBox(v1, v2, a, objID);
+			crusaderBoxes.insert(std::pair<int, CrusaderBox*>(objID, c));
+		}
+
+		if (strcmp(serverEvent, "stealth") == 0){
+			float x1, y1, z1, x2, y2, z2, a;
+			int pid, stealthed;
+			memcpy(&x1, serverEvent + 8, sizeof(float));
+			memcpy(&y1, serverEvent + 12, sizeof(float));
+			memcpy(&z1, serverEvent + 16, sizeof(float));
+			memcpy(&x2, serverEvent + 20, sizeof(float));
+			memcpy(&y2, serverEvent + 24, sizeof(float));
+			memcpy(&z2, serverEvent + 28, sizeof(float));
+			memcpy(&a, serverEvent + 32, sizeof(float));
+			memcpy(&pid, serverEvent + 36, sizeof(int));
+			memcpy(&stealthed, serverEvent + 40, sizeof(int));
+
+			//printf("cbox_update: %f, %f, %f, %f, %f, %f, %f, %d, %d\n", x1,y1,z1,x2,y2,z2,a,pid,stealthed);
+
+			if (crusaderBoxes.find(objID) != crusaderBoxes.end()){
+				CrusaderBox* o = crusaderBoxes.at(objID);
+				o->getMin()->x = x1;
+				o->getMin()->y = y1;
+				o->getMin()->z = z1;
+				o->getMax()->x = x2;
+				o->getMax()->y = y2;
+				o->getMax()->z = z2;
+				o->setAlpha(a);
+			}
+
+			if (stealthed == 1){
+				if (Player && pid == Player->getID()){
+					Player->setVisible(false);
+				}
+				else if (gameObjects.find(pid) != gameObjects.end()){
+					GameObject* o = gameObjects.at(pid);
+					o->setVisible(false);
+				}
+			}
+		}
+
+		if (strcmp(serverEvent, "kill_stealth") == 0){
+			float x1, y1, z1, x2, y2, z2, a;
+			int pid, stealthed;
+			memcpy(&x1, serverEvent + 13, sizeof(float));
+			memcpy(&y1, serverEvent + 17, sizeof(float));
+			memcpy(&z1, serverEvent + 21, sizeof(float));
+			memcpy(&x2, serverEvent + 25, sizeof(float));
+			memcpy(&y2, serverEvent + 29, sizeof(float));
+			memcpy(&z2, serverEvent + 33, sizeof(float));
+			memcpy(&a, serverEvent + 37, sizeof(float));
+			memcpy(&pid, serverEvent + 41, sizeof(int));
+			memcpy(&stealthed, serverEvent + 45, sizeof(int));
+
+			printf("killin_stealth %d\n",pid);
+
+			if (crusaderBoxes.find(objID) != crusaderBoxes.end()){
+				std::map<int, CrusaderBox*>::iterator it2;
+				it2 = crusaderBoxes.find(objID);
+				crusaderBoxes.erase(it2);
+			}
+			if (Player && pid == Player->getID()){
+				Player->setVisible(true);
+			}
+			else if (gameObjects.find(pid) != gameObjects.end()){
+				GameObject* o = gameObjects.at(pid);
+				o->setVisible(true);
+			}
+		}
+
 		if (strcmp(serverEvent, "projectile") == 0){
 			float xPos;
 			float yPos;
@@ -277,6 +358,22 @@ void PlayState::UpdateClient(ClientGame* client) {
 			p->setPos(xPos, yPos+7.3, zPos);
 
 			printf("Projectile ID: %d\n", objID);
+
+			projectiles.insert(std::pair<int, Projectile*>(objID, p));
+		}
+
+		if (strcmp(serverEvent, "projectile2") == 0){
+			float xPos;
+			float yPos;
+			float zPos;
+			memcpy(&xPos, serverEvent + 11, sizeof(float));
+			memcpy(&yPos, serverEvent + 15, sizeof(float));
+			memcpy(&zPos, serverEvent + 19, sizeof(float));
+
+			PowerProjectile* p = new PowerProjectile(objID);
+			p->setPos(xPos, yPos + 7.3, zPos);
+
+			printf("Projectile2 ID: %d\n", objID);
 
 			projectiles.insert(std::pair<int, Projectile*>(objID, p));
 		}
@@ -463,6 +560,11 @@ void PlayState::UpdateClient(ClientGame* client) {
 				hpTemp = Player->getHealth() - hpTemp;
 				if (hpTemp < -1){
 					damagedTime = damagedAnimLength;
+					redBorder = true;
+				}
+				else if (hpTemp>40){
+					damagedTime = damagedAnimLength;
+					redBorder = false;
 				}
 			}
 			else if (gameObjects.find(objID) != gameObjects.end()){
@@ -516,9 +618,7 @@ void PlayState::RenderParticle(float rot, ParticleEffect* p, float xx, float yy,
 {
 	glPushMatrix();
 	glTranslatef(xx, yy, zz);
-	glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
 	glRotatef(rot, 0, 1, 0);
-	glScalef(0.3f, 0.3f, 0.3f);
 	p->Render();
 	glPopMatrix();
 }
@@ -723,22 +823,42 @@ void PlayState::drawHUD(ClientGame* client){
 	}
 
 	if (damagedTime > 0){
-		//draw edges when getting hit
+		//draw edges when getting hit or healed
 		glPushMatrix();
 		glEnable(GL_BLEND); //Enable blending.
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glBegin(GL_QUADS);
-		glColor4f(1.f, 0.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		if (redBorder){
+			glColor4f(1.f, 0.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		}
+		else{
+			glColor4f(0.f, 1.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		}
 		glVertex2f(0, 0);
 		glVertex2f(width, 0);
-		glColor4f(1.f, 0.f, 0.f, 0.f);
+		if (redBorder){
+			glColor4f(1.f, 0.f, 0.f, 0);
+		}
+		else{
+			glColor4f(0.f, 1.f, 0.f, 0);
+		}
 		glVertex2f(width, height / 8);
 		glVertex2f(0, height / 8);
 
-		glColor4f(1.f, 0.f, 0.f, 0.f);
+		if (redBorder){
+			glColor4f(1.f, 0.f, 0.f, 0);
+		}
+		else{
+			glColor4f(0.f, 1.f, 0.f, 0);
+		}
 		glVertex2f(0, height - (height / 8));
 		glVertex2f(width, height - (height / 8));
-		glColor4f(1.f, 0.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		if (redBorder){
+			glColor4f(1.f, 0.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		}
+		else{
+			glColor4f(0.f, 1.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		}
 		glVertex2f(width, height);
 		glVertex2f(0, height);
 		glEnd();
@@ -767,20 +887,50 @@ void PlayState::drawHUD(ClientGame* client){
 		glEnable(GL_BLEND); //Enable blending.
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glBegin(GL_QUADS);
-		glColor4f(1.f, 0.f, 0.f, ((float)damagedTime/damagedAnimLength));
+		if (redBorder){
+			glColor4f(1.f, 0.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		}
+		else{
+			glColor4f(0.f, 1.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		}
 		glVertex2f(0, 0);
-		glColor4f(1.f, 0.f, 0.f, 0.f);
+		if (redBorder){
+			glColor4f(1.f, 0.f, 0.f, 0);
+		}
+		else{
+			glColor4f(0.f, 1.f, 0.f, 0);
+		}
 		glVertex2f(width / 10, 0);
 		glVertex2f(width / 10, height);
-		glColor4f(1.f, 0.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		if (redBorder){
+			glColor4f(1.f, 0.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		}
+		else{
+			glColor4f(0.f, 1.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		}
 		glVertex2f(0, height);
 
-		glColor4f(1.f, 0.f, 0.f, 0.f);
+		if (redBorder){
+			glColor4f(1.f, 0.f, 0.f, 0);
+		}
+		else{
+			glColor4f(0.f, 1.f, 0.f, 0);
+		}
 		glVertex2f(width - (width / 10), 0);
-		glColor4f(1.f, 0.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		if (redBorder){
+			glColor4f(1.f, 0.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		}
+		else{
+			glColor4f(0.f, 1.f, 0.f, ((float)damagedTime / damagedAnimLength));
+		}
 		glVertex2f(width, 0);
 		glVertex2f(width, height);
-		glColor4f(1.f, 0.f, 0.f, 0.f);
+		if (redBorder){
+			glColor4f(1.f, 0.f, 0.f, 0);
+		}
+		else{
+			glColor4f(0.f, 1.f, 0.f, 0);
+		}
 		glVertex2f(width - (width / 10), height);
 		glEnd();
 		glDisable(GL_BLEND);
@@ -818,13 +968,20 @@ void PlayState::Draw(ClientGame* client) {
 	p_bumpShade->unbind();
 
 	p_regShade->bind();
+
+	
 	p_Shrine->Draw();
 
 	//Player->update(true, Cam.GetRotation().y);
+	Player->UpdateMoveAnimation(isNight, Player);
+	Player->update(true, Cam.GetRotation().y);
+
 	std::map<int, GameObject*>::iterator it;
 	for (it = gameObjects.begin(); it != gameObjects.end(); it++)
 	{
+		((PlayerType*)(it->second))->UpdateMoveAnimation(isNight, Player);
 		((PlayerType*)(it->second))->update(false, Cam.GetRotation().y);
+
 		if (!weap1 && ((PlayerType*)(it->second))->getID() == pnum1) {
 			((PlayerType*)(it->second))->EquipWeapon((Weapon*)p_SunMace);
 		}
@@ -844,8 +1001,6 @@ void PlayState::Draw(ClientGame* client) {
 	{
 		((PlayerType*)(it2->second))->update(false, Cam.GetRotation().y);
 	}
-
-	Player->update(true, Cam.GetRotation().y);
 
 	// David's building(no collision)
 	glPushMatrix();
@@ -871,6 +1026,13 @@ void PlayState::Draw(ClientGame* client) {
 	p_LightningBolt->Draw();
 	p_BatSword->Draw();
 	
+	//draw transparent stuff here
+	std::map<int, CrusaderBox*>::iterator it3;
+	for (it3 = crusaderBoxes.begin(); it3 != crusaderBoxes.end(); it3++)
+	{
+		(it3->second)->update(false, Cam.GetRotation().y);
+	}
+
 	p_regShade->unbind();
 
 	if (parti && abs(currGameTime-deathTime) < 2000)
@@ -891,7 +1053,7 @@ void PlayState::Input(ClientGame* client) {
 		return;
 	
 	float speedup;
-	if (isNight)
+	if (isNight && Player->getTeam() == 2)
 		speedup = 3.f;
 	else
 		speedup = 2.f;
@@ -899,61 +1061,61 @@ void PlayState::Input(ClientGame* client) {
 	if (glfwGetKey(window, FORWARD) || glfwGetKey(window, BACKWARD))
 	{
 		if (glfwGetKey(window, FORWARD)) {
-			if (!attacking) {
+			/*if (!attacking) {
 				Player->setAnimation(a_RUNFORWARD, 0, speedup);
-			}
+			}*/
 			client->addEvent(Player->getID(), "move_forward;", ACTION_EVENT);
 
 			if (glfwGetKey(window, STRAFELEFT)) {
-				if (!attacking) {
+				/*if (!attacking) {
 					Player->setAnimation(a_RUNFORWARD, 30, speedup);
-				}
+				}*/
 				client->addEvent(Player->getID(), "move_left;", ACTION_EVENT);
 			}
 			if (glfwGetKey(window, STRAFERIGHT)) {
-				if (!attacking) {
+				/*if (!attacking) {
 					Player->setAnimation(a_RUNFORWARD, -30, speedup);
-				}
+				}*/
 				client->addEvent(Player->getID(), "move_right;", ACTION_EVENT);
 			}
 		}
 		if (glfwGetKey(window, BACKWARD)) {
-			if (!attacking) {
+			/*if (!attacking) {
 				Player->setAnimation(a_WALKBACK);
-			}
+			}*/
 			client->addEvent(Player->getID(), "move_backward;", ACTION_EVENT);
 
 			if (glfwGetKey(window, STRAFELEFT)) {
-				if (!attacking) {
+				/*if (!attacking) {
 					Player->setAnimation(a_RUNFORWARD, -30, speedup);
-				}
+				}*/
 				client->addEvent(Player->getID(), "move_left;", ACTION_EVENT);
 			}
 			if (glfwGetKey(window, STRAFERIGHT)) {
-				if (!attacking) {
+				/*if (!attacking) {
 					Player->setAnimation(a_RUNFORWARD, 30, speedup);
-				}
+				}*/
 				client->addEvent(Player->getID(), "move_right;", ACTION_EVENT);
 			}
 		}
 
 	}
 	else if (glfwGetKey(window, STRAFELEFT)) {
-		if (!attacking) {
+		/*if (!attacking) {
 			Player->setAnimation(a_STRAFELEFT, 0, speedup);
-		}
+		}*/
 		client->addEvent(Player->getID(), "move_left;", ACTION_EVENT);
 	}
 	else if (glfwGetKey(window, STRAFERIGHT)) {
-		if (!attacking) {
+		/*if (!attacking) {
 			Player->setAnimation(a_STRAFERIGHT, 0, speedup);
-		}
+		}*/
 		client->addEvent(Player->getID(), "move_right;", ACTION_EVENT);
 	}
 	else {
-		if (!attacking) {
+		/*if (!attacking) {
 			Player->setAnimation(a_IDLE);
-		}
+		}*/
 	}
 
 	if (glfwGetKey(window, JUMP)) {
@@ -965,7 +1127,14 @@ void PlayState::Input(ClientGame* client) {
 	if (glfwGetKey(window, GLFW_KEY_B)) {
 		client->addEvent(Player->getID(), "b;", ACTION_EVENT);
 	}
-
+	// attack mode change //////////////////////////////////////////////
+	if (glfwGetKey(window, GLFW_KEY_1)){
+		client->addEvent(Player->getID(), "sw1;", ACTION_EVENT);
+	}
+	else if (glfwGetKey(window, GLFW_KEY_2)){
+		client->addEvent(Player->getID(), "sw2;", ACTION_EVENT);
+	}
+	///////////////////////////////////////////////////////////////////
 	if (rotationChanged){
 		rotationChanged = false;
 		float rotate = -Cam.GetRotation().y + 360;
@@ -992,15 +1161,19 @@ void PlayState::Input(ClientGame* client) {
 		client->addEvent(Player->getID(), "attack;", ACTION_EVENT);
 	}
 
-	if (Player->getAttacking2Starts() >= Player->getAttacking2Ends() && Player->getAttacking2Starts()>0){
+	if (Player->getAttacking2Starts() >= Player->getAttacking2Ends() && Player->getAttacking2Starts()>0 && !startJustSent){
+		printf("Attaching Start\n");
 		client->addEvent(Player->getID(), "attack2Start;", ACTION_EVENT);
 		Player->setAttacking2Starts(Player->getAttacking2Starts()-1);
 		Player->setAttacking2(true);
+		startJustSent = true;
 	}
-	else if (Player->getAttacking2Starts() < Player->getAttacking2Ends()){
+	else if (Player->getAttacking2Starts() < Player->getAttacking2Ends() && startJustSent){
+		printf("Attaching End\n");
 		client->addEvent(Player->getID(), "attack2End;", ACTION_EVENT);
 		Player->setAttacking2Ends(Player->getAttacking2Ends() - 1);
 		Player->setAttacking2(false);
+		startJustSent = false;
 	}
 }
 
@@ -1037,7 +1210,7 @@ void PlayState::MouseButton(GLFWwindow* window, int button, int action, int mods
 		Player->setAnimation(a_COMBOATTACK);
 		Player->setAttacking2Starts(Player->getAttacking2Starts() + 1);
 	}
-	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
+	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
 		Player->setAttacking2Ends(Player->getAttacking2Ends() + 1);
 	}
 }
