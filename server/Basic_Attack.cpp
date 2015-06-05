@@ -14,7 +14,6 @@ Basic_Attack::Basic_Attack()
 	c_range = range;
 	default_dotAngle = stof(ConfigSettings::config->getValue("BasicAngle").c_str());
 	dotAngle = default_dotAngle;
-	printf("dotAngle = %f\n", dotAngle);
 }
 
 
@@ -51,10 +50,6 @@ bool Basic_Attack::inRange(GameObject* obj,GameObject* target)
 {
 	float dot = (target->getPos() - obj->getPos()).Normalize().Dot(obj->forward.Normalize());
 	float distance = (target->getPos() - obj->getPos()).Mag();
-	printf("dot = %f\n", dot);
-	printf("dotAngle = %f\n", dotAngle);
-	printf("distance = %f\n", distance);
-	printf("range = %f\n", getRange());
 	if (dot < dotAngle){
 		return false;
 	}

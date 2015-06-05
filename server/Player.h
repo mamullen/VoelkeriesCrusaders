@@ -52,7 +52,7 @@ public:
 
 
 protected:
-	Action* default_attack_1, *default_attack_2;
+	Action* default_attack_1, *default_attack_2,*default_attack_3;
 	DisableTimer disableTimer;
 	Score score;
 	unsigned int pid; // corresponds to Client ID

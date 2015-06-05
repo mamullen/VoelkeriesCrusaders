@@ -74,6 +74,7 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 	int currEnd = in.find(';', currInd);
 
 	Vector3 direction(0, 0, 0);
+	int move_flag = 0;
 	//std::cout << "packet update = " << in.c_str() << std::endl;
 	//this->gravity();
 
@@ -94,12 +95,13 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 		if (cEvent.compare("move_forward") == 0){
 			if (!isChanged[0]){
 				change_counter[0]++;
-
-				std::string* change = new std::string("pos:");
-				changes.push_back(std::pair<int, std::string*>(id, change));
+				//std::string* change = new std::string("pos:");
+				//changes.push_back(std::pair<int, std::string*>(id, change));
 				if (!(collide(objects, forward)))
 				{
-					this->moveForward();
+					//this->moveForward();
+					move_flag = 1;
+					direction += this->forward;
 				}
 				vDir++;
 			}
@@ -112,7 +114,6 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 				changes.push_back(std::pair<int, std::string*>(id, change));
 				if (!(collide(objects, forward / 2)))
 				{
-
 					this->jump();
 				}
 			}
@@ -176,11 +177,13 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 		else if (cEvent.compare("move_backward") == 0){
 			if (!isChanged[0]){
 				change_counter[0]++;
-				std::string* change = new std::string("pos:");
-				changes.push_back(std::pair<int, std::string*>(id, change));
+				//std::string* change = new std::string("pos:");
+				//changes.push_back(std::pair<int, std::string*>(id, change));
 				if (!(collide(objects, -forward)))
 				{
-					this->moveBackward();
+					move_flag = 1;
+					direction -= this->forward;
+					//this->moveBackward();
 				}
 				vDir--;
 			}
@@ -188,11 +191,13 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 		else if (cEvent.compare("move_left") == 0){
 			if (!isChanged[0]){
 				change_counter[0]++;
-				std::string* change = new std::string("pos:");
-				changes.push_back(std::pair<int, std::string*>(id, change));
+				//std::string* change = new std::string("pos:");
+				//changes.push_back(std::pair<int, std::string*>(id, change));
 				if (!(collide(objects, -right)))
 				{
-					this->strafeLeft();
+					move_flag = 1;
+					//this->strafeLeft();
+					direction -= this->right;
 				}
 				hDir--;
 			}
@@ -200,11 +205,13 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 		else if (cEvent.compare("move_right") == 0){
 			if (!isChanged[0]){
 				change_counter[0]++;
-				std::string* change = new std::string("pos:");
-				changes.push_back(std::pair<int, std::string*>(id, change));
+				//std::string* change = new std::string("pos:");
+				//changes.push_back(std::pair<int, std::string*>(id, change));
 				if (!(collide(objects, right)))
 				{
-					this->strafeRight();
+					move_flag = 1;
+					//this->strafeRight();
+					direction += this->right;
 				}
 				hDir++;
 			}
@@ -257,6 +264,13 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 		}
 	}
 
+	if (move_flag == 1){
+		direction.Normalize();
+		//direction.Print();
+		this->setPos(position + direction*speed);
+		std::string* change = new std::string("pos:");
+		changes.push_back(std::pair<int, std::string*>(id, change));
+	}
 	for (int i = 0; i < attr_num; i++){
 		if (change_counter[i] >0){
 			isChanged[i] = true;
