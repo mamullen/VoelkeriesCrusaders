@@ -9,6 +9,7 @@ Crusader::Crusader() :Player()
 	default_attack_1 = new Basic_Range();
 	default_attack_2 = new Basic_Knock();
 	setAttack(default_attack_1);
+	crusSpeed = default_speed;
 }
 
 
@@ -23,6 +24,7 @@ Crusader::Crusader(int i) :Player(i)
 	default_attack_1 = new Basic_Range();
 	default_attack_2 = new Basic_Knock();
 	setAttack(default_attack_1);
+	crusSpeed = default_speed;
 }
 
 void Crusader::updateTime(int time, int delta, std::vector<GameObject*>* obj)
@@ -30,21 +32,24 @@ void Crusader::updateTime(int time, int delta, std::vector<GameObject*>* obj)
 	if (time == 0){
 		//day
 		attack_mode->setRange(atof((ConfigSettings::config->getValue("CrusaderAttackRangeInc").c_str())));
-		speed = atof((ConfigSettings::config->getValue("CrusaderMovespeedDay").c_str())) * default_speed;
+		speed = atof((ConfigSettings::config->getValue("CrusaderMovespeedDay").c_str())) * crusSpeed;
 	}
 	else if (time == 1){
 		//night
 		attack_mode->setRange(atof((ConfigSettings::config->getValue("CrusaderAttackRangeDec").c_str())));
-		speed = atof((ConfigSettings::config->getValue("CrusaderMovespeedNight").c_str())) * default_speed;
+		speed = atof((ConfigSettings::config->getValue("CrusaderMovespeedNight").c_str())) * crusSpeed;
 	}
 }
 
 
 void Crusader::attack2Start(){
 
+	
+
 	if (attack2started){
 		return;
 	}
+	 
 
 	attack2started = true;
 	StealthBox * sb = new StealthBox(this);
@@ -98,6 +103,7 @@ void Crusader::attack2Start(){
 void Crusader::attack2EndExtra(){
 	// remove the stealthbox
 	attack2started = false;
+	crusSpeed = default_speed;
 
 	for (std::vector<StealthBox*>::iterator it = GameLogic::stealthBoxList.begin(); it != GameLogic::stealthBoxList.end(); it++){
 		if ((*it)->getID() == sbox->getID()){

@@ -19,6 +19,8 @@ public:
 	bool stealth = false;
 	bool attack2started = false;
 
+	float crusSpeed;
+
 	StealthBox *sbox;
 };
 

@@ -56,10 +56,10 @@ bool StealthBox::updateTime(int time){
 		alpha = expF;
 		if (alpha > 1)
 			alpha = 1;
+		crus->crusSpeed = atof((ConfigSettings::config->getValue("PlayerMoveSpeed").c_str())) * atof((ConfigSettings::config->getValue("StealthMoveslow").c_str()));
 	}
 	else if (startTime <= fadeTime){
 		stealthed = 1;
-		 
 		expF = (float)(fadeTime-startTime) / (float)(fadeTime-expandTime);
 		//printf("EXPF is %f\n", expF);
 		alpha = 0 + expF;
@@ -73,6 +73,7 @@ bool StealthBox::updateTime(int time){
 
 		float mult = 3;
 		if (alpha <= .6){
+			crus->crusSpeed = atof((ConfigSettings::config->getValue("PlayerMoveSpeed").c_str())) * atof((ConfigSettings::config->getValue("StealthMovespeed").c_str()));
 			setMin(Vector3(getMin().x - (xMod / (expF * mult)), getMin().y, getMin().z - (zMod / (expF * mult))));
 			setMax(Vector3(getMax().x + (xMod / (expF * mult)), getMax().y + (yMod + 3 / expF), getMax().z + (zMod / (expF * mult))));
 		}
