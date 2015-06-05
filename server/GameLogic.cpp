@@ -338,14 +338,14 @@ void GameLogic::update(int time)
 		}
 		else if (key->compare("particles") == 0){
 			float r = gameObjects.at(index)->getHP();
-			float t = gameObjects.at(index)->objectType;
+			int t = gameObjects.at(index)->objectType;
 			///////////////////////////////////////////////////////////////////////////
 			char data[PACKET_DATA_LEN];
 			int pointer = 0;
 			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "particles", 10);
 			pointer += 10;
-			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &t, sizeof(float));
-			pointer += sizeof(float);;
+			memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &t, sizeof(int));
+			pointer += sizeof(int);;
 			data[pointer] = ',';
 			pointer++;
 			///////////////////////////////////////////////////////////////////////////

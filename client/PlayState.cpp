@@ -147,7 +147,7 @@ int PlayState::Initialize() {
 
 	string filenm = "./particles/textures/moon.png";
 	moonID = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-	string filenm = "./particles/textures/moon.png";
+	filenm = "./particles/textures/sun.png";
 	sunID = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
 	filenm = "./ppm/0-c.png";
 	vtimer[0] = SOIL_load_OGL_texture(filenm.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
