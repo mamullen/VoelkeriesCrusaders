@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Player.h"
 #include <iostream>
+#include "GameLogic.h"
 
 Player::Player() :GameObject()
 {
@@ -245,6 +246,51 @@ void Player::update(Packet* packet, std::vector<GameObject*>* objects)
 				//printf("range\n");
 				attack_mode->attack(this);
 			}
+			else if (attack_mode->getType() == 2){ // basic knock shockwave business
+
+				bool sendPacket = false;
+				printf("melee!\n");
+				if (attack_mode->getCD() <= 0){
+					sendPacket = true;
+					attack_mode->maxCD();
+					for (int i = 0; i < objects->size(); i++)
+					{
+						if (objects->at(i)->isPlayer){
+							attack_mode->attack(this, objects->at(i));
+						}
+					}
+				}
+
+				
+				if (sendPacket){
+					Packet* packet = new Packet;
+					packet->packet_type = ACTION_EVENT;
+					packet->id = getID();
+
+
+					float x = getPos().x;
+					float y = getPos().y;
+					float z = getPos().z;
+					float range = attack_mode->getRange();
+
+					char data[PACKET_DATA_LEN];
+					int pointer = 0;
+					memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "shockwave", 10);
+					pointer += 10;
+					memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &x, sizeof(float));
+					pointer += sizeof(float);
+					memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &y, sizeof(float));
+					pointer += sizeof(float);
+					memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &z, sizeof(float));
+					pointer += sizeof(float);
+					memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &range, sizeof(float));
+					pointer += sizeof(float);
+					data[pointer] = ',';
+					pointer++;
+					memcpy_s(packet->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+					GameLogic::serverPackets.push_back(packet);
+				}
+			}
 		}
 		else if (cEvent.compare("attack2Start") == 0){
 			attack2Start();
@@ -316,7 +362,38 @@ void Player::setAttack(Action* act)
 
 void Player::updateCD()
 {
-	attack_mode->update();
+	default_attack_1->update();
+	default_attack_2->update();
+
+	Packet* packet = new Packet;
+	packet->packet_type = ACTION_EVENT;
+	packet->id = getID();
+
+
+	float cooldown1 = default_attack_1->getCD() / default_attack_1->getMaxCD();
+	float cooldown2 = default_attack_2->getCD() / default_attack_2->getMaxCD();
+
+	if (cooldown1 <= 0)
+		cooldown1 = 0;
+
+	if (cooldown2 <= 0)
+		cooldown2 = 0;
+
+	//printf("COOLDOWNS are 1: %f, and 2: %f \n", cooldown1, cooldown2);
+
+	char data[PACKET_DATA_LEN];
+	int pointer = 0;
+	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, "cooldown", 9);
+	pointer += 9;
+	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &cooldown1, sizeof(float));
+	pointer += sizeof(float);
+	memcpy_s(data + pointer, PACKET_DATA_LEN - pointer, &cooldown2, sizeof(float));
+	pointer += sizeof(float);
+	data[pointer] = ',';
+	pointer++;
+	memcpy_s(packet->packet_data, PACKET_DATA_LEN, data, PACKET_DATA_LEN);
+	GameLogic::serverPackets.push_back(packet);
+
 }
 
 void Player::updateTime(int time, int delta, std::vector<GameObject*>* obj){

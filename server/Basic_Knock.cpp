@@ -12,6 +12,7 @@ Basic_Knock::Basic_Knock()
 	maxcd = stof(ConfigSettings::config->getValue("MeleeKnockBackCD").c_str());
 	ad = atof(ConfigSettings::config->getValue("MeleeKnockBackDMG").c_str());
 	c_ad = ad;
+	type = 2;
 }
 
 
@@ -35,7 +36,7 @@ void Basic_Knock::attack(GameObject* obj, GameObject* target)
 		direction.Normalize();
 
 		Player * player = (Player*)target;
-		for (int i = 45; i > 0; i--){
+		for (int i = c_range; i > 0; i--){
 			float spd = i;
 			if (!(player->collide(&GameLogic::gameObjects, direction, spd))){
 				player->setPos(player->getPos() + direction *spd);
