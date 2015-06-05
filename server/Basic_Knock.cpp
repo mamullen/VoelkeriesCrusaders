@@ -22,6 +22,8 @@ void Basic_Knock::attack(GameObject* obj, GameObject* target)
 	if (obj->getID() == target->getID()){
 		return;
 	}
+	if (obj->objectType == target->objectType)
+		return;
 	if (inRange(obj, target)){
 		if (target->objectType == 4 && target->getHP() >= 0){
 			obj->addHp(0.5*c_ad);
